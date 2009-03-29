@@ -1,0 +1,26 @@
+// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
+package de.ufinke.cubaja.config;
+
+import java.lang.annotation.Annotation;
+
+/**
+ * Factory for method parameter types.
+ * <p/>
+ * <code>ParameterFactory</code>s are provided by
+ * <code>ParameterFactoryFinder</code>s.
+ * @author Uwe Finke
+ */
+public interface ParameterFactory {
+
+  /**
+   * Returns an object of a given type representing a configuration value.
+   * @param value attribute value or element content
+   * @param type (super-) type of the object to be returned
+   * @param annotations annotations of the setter / adder method
+   * @return an object of type <code>type</code> used as parameter of a setter / adder method
+   * @throws Exception
+   */
+  public Object createParameter(String value, Class<?> type, Annotation[] annotations) throws Exception;
+}

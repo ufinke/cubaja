@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<!-- Sample config -->
+
+<config>
+
+  <!-- 2 database connections -->
+  <dbone driver="org.db.jdbc.Driver"
+         url="jdbc:db:thin:@localhost/mydb"
+         user="me"
+         password="dontknow"/>
+  <dbtwo driver="com.wombat.Driver"
+         url="jdbc:wombat@server:1234"
+         user="userid"
+         password="somepassword"/>
+  
+  <!-- 2 files -->        
+  <file key="input" name="/temp/data/test/input.txt"/>
+  <file key="output" name="/temp/data/test/output.txt"/>
+  
+  <!-- Mail -->
+  <mail server="smtp.mycompany.com"
+        port="25"
+        subject="Test"
+        from="admin@mycompany.com">
+    <content>
+      This is a test.\n\n
+      Sincerly\n
+      Your application
+    </content>
+    <to address="mary.poppins@chimney.edu"
+        title="Hi Mary"/>
+    <to address="santa.claus@northpole.gov"
+        title="Dear Sir"/>
+  </mail>
+
+  <!-- some demo values -->  
+  <someValues date="2009-01-15"
+              amount="123.45"
+              quality="Draft"
+              calculator="de.ufinke.cubaja.config.test.example1.MyCalculator"
+              months="3, 6, 9, 12"/>
+  
+</config>

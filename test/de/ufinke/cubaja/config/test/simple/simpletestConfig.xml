@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<config string="hello world">
+  
+  <configSettings decimalPoint=","
+                  datePattern="dd.MM.yyyy"/>
+  
+  <configProperty name="fortyTwo" value="42"/>
+  
+  <configInclude define="text">
+    this is the value\n
+    splitted into two lines
+  </configInclude>
+  
+  <configInclude define="num">
+    42
+  </configInclude>
+  
+  <subElement enums="constant_a, constant_c"
+              decimal="1,23"
+              intArray="1, 2">
+    <!-- <number><configInclude include="num"/></number> -->
+    <number>
+      ${fortyTwo}
+    </number>
+    <configInclude include="text"/>
+  </subElement>
+  
+</config>
