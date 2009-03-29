@@ -2,7 +2,7 @@ package de.ufinke.cubaja.config.test.simple;
 
 import de.ufinke.cubaja.config.*;
 
-public class Config extends ConfigNode {
+public class Config {
 
   private String string;
   private SubElement subElement;

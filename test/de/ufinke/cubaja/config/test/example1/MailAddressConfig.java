@@ -2,7 +2,7 @@ package de.ufinke.cubaja.config.test.example1;
 
 import de.ufinke.cubaja.config.*;
 
-public class MailAddressConfig extends ConfigNode {
+public class MailAddressConfig {
 
   private String address;
   private String title;

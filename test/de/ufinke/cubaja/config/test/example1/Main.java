@@ -8,9 +8,10 @@ public class Main {
     
     try {
       Configurator configurator = new Configurator();
-      configurator.setBaseName("example_1_config");
+      configurator.setBaseName(Main.class.getPackage().getName().replace('.', '/') + "/example_1_config");
       Config config = configurator.configure(new Config());
       System.out.println("Quality=" + config.getSomeValues().getQuality());
+      System.out.println("Content=" + config.getMail().getContent());
     } catch (Exception e) {
       e.printStackTrace();
     }

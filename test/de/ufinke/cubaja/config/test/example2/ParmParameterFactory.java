@@ -18,4 +18,9 @@ public class ParmParameterFactory implements ParameterFactory {
     Class<?> clazz = (Class<?>) infoMap.get("parmClass");
     return clazz.newInstance();
   }
+  
+  public boolean isNode() {
+    
+    return true;
+  }
 }

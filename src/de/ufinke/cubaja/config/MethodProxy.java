@@ -1,45 +1,53 @@
-// Copyright (c) 2008, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
+import java.lang.annotation.*;
 import de.ufinke.cubaja.util.Text;
 
-class MethodEntry {
+class MethodProxy {
 
-  static private Text text = new Text(MethodEntry.class);
+  static private Text text = new Text(MethodProxy.class);
   
   private Method method;
-  private Class<?> parmType;
+  private Class<?> type;
+  private Annotation[] annotations;
   private int useCount;
   private boolean mandatory;
   private boolean unique;
-  private boolean nodeType;
+  private boolean charData;
   
-  MethodEntry(Method method) {
+  MethodProxy(Method method) {
 
     this.method = method;
-    parmType = method.getParameterTypes()[0];
+    type = method.getParameterTypes()[0];
+    annotations = method.getAnnotations();
     mandatory = method.isAnnotationPresent(Mandatory.class);
+    charData = method.isAnnotationPresent(CharData.class) && method.getParameterTypes()[0] == String.class;
     unique = method.getName().startsWith("set");
-    nodeType = ConfigNode.class.isAssignableFrom(parmType);
+  }
+  
+  Class<?> getType() {
+    
+    return type;
+  }
+  
+  Annotation[] getAnnotations() {
+    
+    return annotations;
+  }
+  
+  boolean isCharData() {
+    
+    return charData;
   }
   
   Method getMethod() {
-    
+  
     return method;
-  }
-  
-  Class<?> getParmType() {
-    
-    return parmType;
-  }
-  
-  boolean isNodeType() {
-    
-    return nodeType;
   }
   
   void invoke(String nodeName, Object target, Object arg) throws ConfigException {

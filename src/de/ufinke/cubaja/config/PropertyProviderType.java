@@ -44,5 +44,5 @@ public enum PropertyProviderType {
    * After adding this provider type, no other providers will be added to 
    * the <code>Configurator</code>, neither explicit nor automatically.
    */
-  NULL
+  NULL;
 }

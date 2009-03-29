@@ -12,7 +12,7 @@ public class ParmParameterFactoryFinder implements ParameterFactoryFinder {
     parmFactory = new ParmParameterFactory(infoMap);
   }
 
-  public ParameterFactory findFactory(Class<?> type) throws Exception {
+  public ParameterFactory findFactory(Class<?> type) throws ConfigException {
 
     ParameterFactory factory = null;
     

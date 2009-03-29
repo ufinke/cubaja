@@ -27,8 +27,8 @@ public class Configurator {
   private String baseName;
   private ResourceLoader loader;
   
-  Stack<XMLPropertyProvider> baseXMLStack;
-  Stack<PropertyProvider> baseResourceStack;
+  private Stack<XMLPropertyProvider> baseXMLStack;
+  private Stack<PropertyProvider> baseResourceStack;
   private XMLPropertyProvider lastBaseXMLProvider;
   private PropertyProvider lastBaseResourceProvider;
   private PropertyProvider dummyProvider;
@@ -40,7 +40,7 @@ public class Configurator {
   private boolean nullProvider;  
   
   private Map<String, NamedPropertyProvider> namedProviderMap;
-  List<PropertyProvider> providerSequenceList;
+  private List<PropertyProvider> providerSequenceList;
   private PropertyProvider masterProvider;
   
   private ParameterManager parameterManager;
@@ -72,8 +72,9 @@ public class Configurator {
         
         String result = null;
         int i = 0;
-        while (result == null && i < providerSequenceList.size()) {
-          result = providerSequenceList.get(i).getProperty(key);
+        List<PropertyProvider> seqList = getProviderSequenceList();
+        while (result == null && i < seqList.size()) {
+          result = seqList.get(i).getProperty(key);
           i++;
         }
         return result;
@@ -89,12 +90,17 @@ public class Configurator {
     };
   }
   
+  List<PropertyProvider> getProviderSequenceList() {
+    
+    return providerSequenceList;
+  }
+  
   /**
    * Returns a shared map.
    * <p/>
    * The map is shared between the
    * application (can be accessed with this method)
-   * and all <code>ConfigNode</code> instances.
+   * and all implementors of the <code>ManagedElement</code> interface.
    * We can optionally put general information into the 
    * map. 
    * There is one map per <code>Configurator</code> instance.
@@ -205,9 +211,10 @@ public class Configurator {
           public String getProperty(String key) throws ConfigException {
             
             String result = null;
-            int i = baseResourceStack.size() - 1;
+            Stack<PropertyProvider> stack = getBaseResourceStack();
+            int i = stack.size() - 1;
             while (result == null && i >= 0) {
-              result = baseResourceStack.get(i).getProperty(key);
+              result = stack.get(i).getProperty(key);
               i--;
             }
             return result;
@@ -226,9 +233,10 @@ public class Configurator {
           public String getProperty(String key) throws ConfigException {
             
             String result = null;
-            int i = baseXMLStack.size() - 1;
+            Stack<XMLPropertyProvider> stack = getBaseXMLStack();
+            int i = stack.size() - 1;
             while (result == null && i >= 0) {
-              result = baseXMLStack.get(i).getProperty(key);
+              result = stack.get(i).getProperty(key);
               i--;
             }
             return result;
@@ -251,6 +259,16 @@ public class Configurator {
         
         break;
     }
+  }
+  
+  Stack<XMLPropertyProvider> getBaseXMLStack() {
+    
+    return baseXMLStack;
+  }
+  
+  Stack<PropertyProvider> getBaseResourceStack() {
+    
+    return baseResourceStack;
   }
   
   private void finishProviders() throws ConfigException {
@@ -306,7 +324,8 @@ public class Configurator {
    * for the basic parameter types.
    * <p/>
    * Additionally to the global finders
-   * a <code>ConfigNode</code> may provide an individual
+   * an element node object may implement the <code>DynamicElement</code> interface
+   * to provide an individual
    * finder which is used only in the scope of that node.
    * @param finder a parameter factory finder
    */
@@ -393,14 +412,13 @@ public class Configurator {
   }
   
   /**
-   * Parses the XML document and sets the <code>ConfigNode</code>'s values.
-   * @param <T>
-   *        The type of our <code>ConfigNode</code> subclass.
-   * @param rootNode our application's root <code>ConfigNode</code>
-   * @return the root <code>ConfigNode</code>
+   * Parses the XML document and sets the root element values.
+   * @param <T> the type of our root element
+   * @param rootNode our application's root element
+   * @return the root element
    * @throws ConfigException
    */
-  public <T extends ConfigNode> T configure(T rootNode) throws ConfigException {
+  public <T> T configure(T rootNode) throws ConfigException {
     
     finishProviders();
     lastBaseXMLProvider = new XMLPropertyProvider();

@@ -9,23 +9,32 @@ import java.util.Map;
 import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
-class Element {
+class ElementProxy {
 
-  static private Text text = new Text(Element.class);
+  static private Text text = new Text(ElementProxy.class);
   static private String EMPTY_STRING = "";
   
   private String name;
-  private ConfigNode node;
-  private Map<String, MethodEntry> methodMap;
-  private MethodEntry parentMethod;
   private ElementKind kind;
+  private Object node;
+  private boolean managedNode;
+  private boolean dynamicNode;
+  private Map<String, MethodProxy> methodMap;
+  private MethodProxy parentMethod;
+  private MethodProxy charDataMethod;
+  private ParameterFactory factory;
   private StringBuilder charData;
   private boolean cdata;
   
-  Element(String name, ElementKind kind) {
+  ElementProxy(String name, ElementKind kind) {
   
     this.name = name;
     this.kind = kind;
+  }
+  
+  String getName() {
+    
+    return name;
   }
   
   void setKind(ElementKind kind) {
@@ -38,9 +47,14 @@ class Element {
     return kind;
   }
   
-  String getName() {
+  void setFactory(ParameterFactory factory) {
     
-    return name;
+    this.factory = factory;
+  }
+  
+  ParameterFactory getFactory() {
+    
+    return factory;
   }
   
   void toggleCData() {
@@ -77,17 +91,36 @@ class Element {
     return charData == null ? EMPTY_STRING : charData.toString();
   }
   
-  void setNode(ConfigNode node) throws ConfigException {
+  void setNode(Object node) throws ConfigException {
     
     this.node = node;
-    methodMap = new HashMap<String, MethodEntry>();
     
+    for (Class<?> implementedInterface : node.getClass().getInterfaces()) {
+      if (ManagedElement.class.isAssignableFrom(implementedInterface)) {
+        managedNode = true;
+      }
+      if (DynamicElement.class.isAssignableFrom(implementedInterface)) {
+        dynamicNode = true;
+      }
+    }
+    
+    methodMap = new HashMap<String, MethodProxy>();
     for (Method method : node.getClass().getMethods()) {
       String methodName = method.getName();
       if (methodName.startsWith("set") || methodName.startsWith("add")) {
         checkMethod(method);
       }
     }
+  }
+  
+  boolean isManagedNode() {
+    
+    return managedNode;
+  }
+  
+  boolean isDynamicNode() {
+    
+    return dynamicNode;
   }
   
   private void checkMethod(Method method) throws ConfigException {
@@ -108,47 +141,61 @@ class Element {
       return;
     }
 
-    MethodEntry entry = new MethodEntry(method);
+    MethodProxy entry = new MethodProxy(method);
     
     String searchName = method.getName().substring(3);
     
     if (methodMap.put(searchName, entry) != null) {
       throw new ConfigException(text.get("duplicateMethod", method.getName()));
     }
+    
+    if (entry.isCharData()) {
+      charDataMethod = entry;
+    }
   }
   
-  ConfigNode getNode() {
+  Object getNode() {
     
     return node;
   }
   
-  MethodEntry findMethod(String methodName) {
+  MethodProxy findMethod(String methodName) throws ConfigException {
     
-    MethodEntry result = methodMap.get(Util.createMethodName(methodName, null));
+    MethodProxy result = methodMap.get(Util.createMethodName(methodName, null));
     
-    if (result == null && node != null) {
-      String alternateName = node.assignAlternateName(methodName);
+    if (result == null && node != null && dynamicNode) {
+      DynamicElement dynamicNode = (DynamicElement) node;
+      String alternateName = dynamicNode.alternateName(methodName);
       if (alternateName != null) {        
         result = methodMap.get(Util.createMethodName(alternateName, null));
       }
     }
     
+    if (result == null) {
+      throw new ConfigException(text.get("unexpectedElement", name));
+    }
+    
     return result;
   }
   
-  void setParentMethod(MethodEntry parentMethod) {
+  void setParentMethod(MethodProxy parentMethod) {
     
     this.parentMethod = parentMethod;
   }
   
-  MethodEntry getParentMethod() {
+  MethodProxy getParentMethod() {
     
     return parentMethod;
   }
   
+  MethodProxy getCharDataMethod() {
+    
+    return charDataMethod;
+  }
+  
   void checkMandatory() throws ConfigException {
     
-    for (MethodEntry entry : methodMap.values()) {
+    for (MethodProxy entry : methodMap.values()) {
       entry.checkMandatory(name);
     }
   }

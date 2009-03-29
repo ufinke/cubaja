@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
  * If the value doesn't match the regular expression of the pattern, an exception will be thrown.
  * The message includes the hint. If no hint is specified, the original pattern string will be used.
  * <p/>
- * For <code>ConfigNode</code> parameter types, there is no pattern check.
+ * For element nodes, there is no pattern check.
  * <p/>
  * For <code>java.util.Date</code> parameter types, the pattern is not a regular expression.
  * It is used for parsing

@@ -7,12 +7,12 @@
  * This framework makes configuration issues nearly as easy as coding simple data access objects.
  * </p>
  * <p>
- * The central classes of this package are <code>Configurator</code> and <code>ConfigNode</code>.
+ * The central class of this package is <code>Configurator</code>.
  * </p>
  * <p>
- * A <code>ConfigNode</code> represents
- * an XML element. Like XML elements, <code>ConfigNode</code>s may be nested.
- * For every type of XML element, we code a subclass of <code>ConfigNode</code>.
+ * An arbitrary object represents
+ * an XML element. Like XML elements, the element node objects may be nested.
+ * For every type of XML element, we code a separate class.
  * These classes have 'setter' and 'adder' methods; that is, their names begin
  * with <code>set</code> or <code>add</code>, followed by the name of an XML attribute
  * or the tag name of an XML element. The difference between setter and adder methods is, 
@@ -22,23 +22,28 @@
  * </p>
  * <p>
  * Setter and adder methods must have a <code>void</code> return type and exactly one
- * parameter. Supported parameter types are subclasses of <code>ConfigNode</code>,
+ * parameter. Builtin supported parameter types are
  * <code>Enum</code>s, all primitive types and their corresponding object classes, 
  * <code>String</code>, <code>java.util.Date</code>, <code>java.math.BigInteger</code>,
  * <code>java.math.BigDecimal</code>, <code>Class</code> and interfaces.
- * An attribute value will be passed to the actual <code>ConfigNode</code>
+ * Other types with a public parameterless constructor are considered to be element nodes.
+ * When we implement the <code>ManagedElement</code> and / or
+ * <code>DynamicElement</code> interface for an element node class, the element nodes gain more
+ * control over the configuration process.
+ * </p>
+ * <p>
+ * An attribute value will be passed to the actual element node object
  * as the appropriate parameter type when processing the starting XML element tag.
  * Element content (subelements) 
  * are also passed with the appropriate type to the adder / setter method when
  * processing the XML elements end tag. 
- * In case the parameter type is an array of the types listed above 
- * (with the exception of <code>ConfigNode</code>), 
+ * In case the parameter type is an array of the types listed above,
  * the attribute value or element content may be a comma separated list which is split 
  * into separate trimmed strings. The strings then are processed in the same way as single values
  * and collected in an array.
  * </p>
  * <p>
- * The application passes an instance of its root <code>ConfigNode</code> to
+ * The application passes an instance of its root element node to
  * the method <code>configure</code> of a <code>Configurator</code> instance.
  * Before doing so, we can customize the <code>Configurator</code>,
  * e.g. by setting the base name of the XML source,

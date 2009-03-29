@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import de.ufinke.cubaja.config.ConfigException;
-import de.ufinke.cubaja.config.ConfigNode;
 import de.ufinke.cubaja.config.Mandatory;
 import de.ufinke.cubaja.util.Text;
 
@@ -54,7 +53,7 @@ import de.ufinke.cubaja.util.Text;
  * </p>
  * @author Uwe Finke
  */
-public class FileConfig extends ConfigNode {
+public class FileConfig {
 
   static private Text text = new Text(FileConfig.class);
   

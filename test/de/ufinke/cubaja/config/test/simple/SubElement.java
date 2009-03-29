@@ -2,8 +2,9 @@ package de.ufinke.cubaja.config.test.simple;
 
 import de.ufinke.cubaja.config.*;
 
-public class SubElement extends ConfigNode {
+public class SubElement {
 
+  private String value;
   private int number;
   private double decimal;
   private SomeEnum[] enums;
@@ -24,9 +25,15 @@ public class SubElement extends ConfigNode {
     return number;
   }
   
+  @CharData
+  public void setValue(String value) {
+    
+    this.value = value;
+  }
+  
   public String getValue() {
     
-    return charData();
+    return value;
   }
   
   public void setEnums(SomeEnum[] enums) {

@@ -16,7 +16,7 @@ public interface ParameterFactoryFinder {
    * return <code>null</code>.
    * @param type the parameter type of a setter / adder method
    * @return a paramter factory or <code>null</code>
-   * @throws Exception
+   * @throws ConfigException
    */
-  public ParameterFactory findFactory(Class<?> type) throws Exception;
+  public ParameterFactory findFactory(Class<?> type) throws ConfigException;
 }

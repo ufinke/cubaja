@@ -1,11 +1,10 @@
 package de.ufinke.cubaja.config.test.example2;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import de.ufinke.cubaja.config.*;
 
-public class Config extends ConfigNode {
+public class Config implements DynamicElement {
 
   private List<GenericModule> moduleList;
   
@@ -24,7 +23,7 @@ public class Config extends ConfigNode {
     return moduleList;
   }
   
-  protected String assignAlternateName(String originalName) {
+  public String alternateName(String originalName) {
     
     if (originalName.equals("dynamic")) {
       return "module";
@@ -42,22 +41,11 @@ public class Config extends ConfigNode {
     System.out.println(hello.getHello());
   }
   
-  protected ParameterFactoryFinder parameterFactorFinder() {
+  public ParameterFactoryFinder parameterFactoryFinder() {
     
     return new ParameterFactoryFinder() {
 
-      public ParameterFactory findFactory(Class<?> type) throws Exception {
-
-        if (type == HelloConfig.class) {
-          
-          return new ParameterFactory() {
-
-            public Object createParameter(String value, Class<?> parmType, Annotation[] annotations) throws Exception {
-
-              return parmType.newInstance();
-            }  
-          };
-        }
+      public ParameterFactory findFactory(Class<?> type) throws ConfigException {
         
         return null;
       }

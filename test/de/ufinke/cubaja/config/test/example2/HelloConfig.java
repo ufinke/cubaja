@@ -1,8 +1,6 @@
 package de.ufinke.cubaja.config.test.example2;
 
-import de.ufinke.cubaja.config.*;
-
-public class HelloConfig extends ConfigNode {
+public class HelloConfig {
 
   private String hello;
 

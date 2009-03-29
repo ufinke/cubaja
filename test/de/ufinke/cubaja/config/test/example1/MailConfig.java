@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import de.ufinke.cubaja.config.*;
 
-public class MailConfig extends ConfigNode {
+public class MailConfig {
 
   private String server;
   private int port;

@@ -2,7 +2,7 @@ package de.ufinke.cubaja.config.test.example1;
 
 import de.ufinke.cubaja.config.*;
 
-public class DatabaseConfig extends ConfigNode {
+public class DatabaseConfig {
 
   private String driver;
   private String url;

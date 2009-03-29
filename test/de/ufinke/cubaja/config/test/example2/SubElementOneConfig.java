@@ -1,8 +1,6 @@
 package de.ufinke.cubaja.config.test.example2;
 
-import de.ufinke.cubaja.config.*;
-
-public class SubElementOneConfig extends ConfigNode {
+public class SubElementOneConfig {
 
   private int number;
   

@@ -1,19 +1,30 @@
 package de.ufinke.cubaja.config.test.example2;
 
 import de.ufinke.cubaja.config.*;
+import java.util.*;
 
-public class ModuleConfig extends ConfigNode {
+public class ModuleConfig implements ManagedElement {
 
   private GenericModule module;
+  private Map<Object, Object> infoMap;
   
   public ModuleConfig() {
+    
+  }
+  
+  public void init(Map<Object, Object> infoMap) {
+    
+    this.infoMap = infoMap;
+  }
+  
+  public void finish() {
     
   }
   
   public void setClass(GenericModule module) {
     
     this.module = module;
-    infoMap().put("parmClass", module.getParmClass());
+    infoMap.put("parmClass", module.getParmClass());
   }
   
   public GenericModule getModule() {

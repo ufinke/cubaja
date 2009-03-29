@@ -32,11 +32,11 @@ class SAXHandler extends DefaultHandler2 {
   private IncludeDefinition includeDefinition;
     
   private Stack<Locator> locatorStack;
-  private Stack<Element> elementStack;
+  private Stack<ElementProxy> elementStack;
   private Stack<NamedPropertyValue> propertyStack;
   private Stack<String> includeStack;
   
-  private ConfigNode rootNode;
+  private Object rootNode;
   private Locator locator;
   private boolean includedRoot;
   private boolean includedContent;
@@ -47,13 +47,13 @@ class SAXHandler extends DefaultHandler2 {
   SAXHandler() {
   
     locatorStack = new Stack<Locator>();
-    elementStack = new Stack<Element>();
+    elementStack = new Stack<ElementProxy>();
     propertyStack = new Stack<NamedPropertyValue>();
     includeStack = new Stack<String>();
     includeMap = new HashMap<String, IncludeDefinition>();
   }
   
-  void setRootNode(ConfigNode rootNode) {
+  void setRootNode(Object rootNode) {
 
     this.rootNode = rootNode;
   }
@@ -176,9 +176,9 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private Element peekElement() {
+  private ElementProxy peekElement() {
     
-    Element element = elementStack.peek();
+    ElementProxy element = elementStack.peek();
     if (element.getKind() == ElementKind.INCLUDED_ROOT) {
       element = elementStack.get(elementStack.size() - 2);
     }
@@ -250,7 +250,7 @@ class SAXHandler extends DefaultHandler2 {
       }
     }
     
-    Element element = new Element(localName, kind);
+    ElementProxy element = new ElementProxy(localName, kind);
     
     switch (kind) {
       case UNKNOWN:
@@ -289,12 +289,12 @@ class SAXHandler extends DefaultHandler2 {
   
   private void endElement() throws SAXException {
     
-    Element element = elementStack.pop();
+    ElementProxy element = elementStack.pop();
     //System.out.println("pop  " + element.getName() + ": " + element.getKind());
     
     switch (element.getKind()) {
       case ROOT_NODE:
-      case CONFIG_NODE:
+      case NODE:
       case ATTRIBUTE:
         endElement(element);
         break;
@@ -350,27 +350,26 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private void startElement(Element element, Attributes atts) throws SAXException {
+  private void startElement(ElementProxy element, Attributes atts) throws SAXException {
     
-    ConfigNode node = null;
+    Object node = null;
     
     if (element.getKind() == ElementKind.ROOT_NODE) {
       node = rootNode;
     } else {      
-      Element parent = peekElement();
-      MethodEntry entry = parent.findMethod(element.getName());
-      if (entry == null) {
-        throw new ConfigException(text.get("unexpectedElement", element.getName()));
-      }
-      element.setParentMethod(entry);
-      if (entry.isNodeType()) {
+      ElementProxy parentElement = peekElement();
+      MethodProxy parentMethod = parentElement.findMethod(element.getName());
+      element.setParentMethod(parentMethod);
+      ParameterFactory factory = parameterManager.getFactory(parentMethod.getType());
+      element.setFactory(factory);
+      if (factory.isNode()) {
         try {          
-          node = (ConfigNode) parameterManager.createParameter(element.getName(), entry);
+          node = parameterManager.createParameter(factory, element.getName(), parentMethod);
         } catch (Exception e) {
-          String clazz = entry.getParmType().getName();
+          String clazz = parentMethod.getMethod().getParameterTypes()[0].getName();
           throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()));
         }
-        element.setKind(ElementKind.CONFIG_NODE);
+        element.setKind(ElementKind.NODE);
       } else {
         element.setKind(ElementKind.ATTRIBUTE);
       }
@@ -378,50 +377,81 @@ class SAXHandler extends DefaultHandler2 {
     
     if (node != null) {
       element.setNode(node);
-      node.info(infoMap);
-      node.init();
-      parameterManager.pushParameterFactoryFinder(node.parameterFactoryFinder());
-      for (int i = 0; i < atts.getLength(); i++) {
-        setAttribute(element, atts.getLocalName(i), atts.getValue(i));
+    }
+    
+    if (element.isManagedNode()) {
+      ManagedElement managed = (ManagedElement) node;
+      managed.init(infoMap);
+    }
+    
+    if (element.isDynamicNode()) {
+      DynamicElement dynamic = (DynamicElement) node;
+      parameterManager.pushParameterFactoryFinder(dynamic.parameterFactoryFinder());
+    }
+    
+    if (atts.getLength() > 0) {      
+      if (element.getKind() == ElementKind.ATTRIBUTE) {
+        throw new ConfigException(text.get("leaf", element.getName()));
+      } else {
+        for (int i = 0; i < atts.getLength(); i++) {
+          setAttribute(element, atts.getLocalName(i), atts.getValue(i));
+        }
       }
     }
   }
   
-  private void setAttribute(Element element, String name, String value) throws SAXException {
+  private void setAttribute(ElementProxy element, String name, String value) throws SAXException {
     
-    MethodEntry entry = element.findMethod(name);
-    if (entry == null) {
+    MethodProxy method = element.findMethod(name);
+    if (method == null) {
       throw new ConfigException(text.get("unexpectedAttribute", name));
     }
     
     Object parm = null;
     value = resolve(value, false);
-    try {      
-      parm = parameterManager.createParameter(value, entry);
+    try {
+      ParameterFactory factory = parameterManager.getFactory(method.getType());
+      parm = parameterManager.createParameter(factory, value, method);
     } catch (Exception e) {
       throw new ConfigException(text.get("createParameter", value, name, e.getLocalizedMessage()));
     }
-    entry.invoke(name, element.getNode(), parm);
+    method.invoke(name, element.getNode(), parm);
   }
   
-  private void endElement(Element element) throws SAXException {
+  private void endElement(ElementProxy element) throws SAXException {
     
     Object parm = null;
     
     switch (element.getKind()) {
+      
       case ROOT_NODE:
-      case CONFIG_NODE:
-        ConfigNode node = element.getNode();
+      case NODE:
+        
+        parm = element.getNode();
+        
         element.checkMandatory();
-        node.charData(resolve(element.getCharData(), true));
-        node.finish();
-        parameterManager.popParameterFactoryFinder();
-        parm = node;
+        
+        MethodProxy charDataMethod = element.getCharDataMethod();
+        if (charDataMethod != null) {
+          charDataMethod.invoke(element.getName(), parm, resolve(element.getCharData(), true));
+        }
+
+        if (element.isManagedNode()) {
+          ManagedElement managed = (ManagedElement) parm;
+          managed.finish();
+        }
+        
+        if (element.isDynamicNode()) {
+          parameterManager.popParameterFactoryFinder();
+        }
+        
         break;
+        
       case ATTRIBUTE:
+        
         String value = resolve(element.getCharData().toString(), true);
-        try {      
-          parm = parameterManager.createParameter(value, element.getParentMethod());
+        try {
+          parm = parameterManager.createParameter(element.getFactory(), value, element.getParentMethod());
         } catch (Exception e) {
           throw new ConfigException(text.get("createParameter", value, element.getName(), e.getLocalizedMessage()));
         }
@@ -429,12 +459,12 @@ class SAXHandler extends DefaultHandler2 {
     }
     
     if (! (element.getKind() == ElementKind.ROOT_NODE)) {      
-      ConfigNode parentNode = peekElement().getNode();
+      Object parentNode = peekElement().getNode();
       element.getParentMethod().invoke(element.getName(), parentNode, parm);
     }
   }
   
-  private void startInclude(Element element, Attributes atts) throws SAXException {
+  private void startInclude(ElementProxy element, Attributes atts) throws SAXException {
     
     int includeIndex = atts.getIndex("", "include");
     int defineIndex = atts.getIndex("", "define");
@@ -454,28 +484,28 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
 
-  private void endInclude(Element element) throws SAXException {
+  private void endInclude(ElementProxy element) throws SAXException {
     
     runXMLReader(includeStack.pop()); 
   }
   
-  private void endIncludeDefinition(Element element) {
+  private void endIncludeDefinition(ElementProxy element) {
     
     includeMap.put(includeDefinition.getName(), includeDefinition);
     includedContent = false;
   }
   
-  private void startIncludedContent(Element element, Attributes atts) {
+  private void startIncludedContent(ElementProxy element, Attributes atts) {
     
     includeDefinition.startElement(element.getName(), atts);
   }
   
-  private void endIncludedContent(Element element) {
+  private void endIncludedContent(ElementProxy element) {
     
     includeDefinition.endElement(element.getName());
   }
   
-  private void startProperty(Element element, Attributes atts) throws ConfigException {
+  private void startProperty(ElementProxy element, Attributes atts) throws ConfigException {
     
     int nameIndex = atts.getIndex("", "name");
     if (nameIndex == -1) {
@@ -502,13 +532,13 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private void endPropertyProvider(Element element) throws SAXException {
+  private void endPropertyProvider(ElementProxy element) throws SAXException {
 
     NamedPropertyValue entry = propertyStack.pop();
     setXMLProperty(entry.getName(), entry.getProvider(), entry.getParms());
   }
   
-  private void startPropertyParm(Element element, Attributes atts) throws SAXException {
+  private void startPropertyParm(ElementProxy element, Attributes atts) throws SAXException {
     
     int nameIndex = atts.getIndex("", "name");
     int valueIndex = atts.getIndex("", "value");
@@ -522,7 +552,7 @@ class SAXHandler extends DefaultHandler2 {
     entry.addParm(name, value);
   }
   
-  private void startSettings(Element element, Attributes atts) throws SAXException {
+  private void startSettings(ElementProxy element, Attributes atts) throws SAXException {
 
     for (int i = 0; i < atts.getLength(); i++) {
       String name = atts.getLocalName(i);

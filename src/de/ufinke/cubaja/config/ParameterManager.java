@@ -19,11 +19,16 @@ class ParameterManager implements ParameterFactoryFinder {
   
   static Text text = new Text(ParameterManager.class);
   
-  static class ConfigNodeFactory implements ParameterFactory {
+  static class NodeFactory implements ParameterFactory {
     
     public Object createParameter(String value, Class<?> type, Annotation[] annotations) throws Exception {
       
       return type.newInstance();
+    }
+    
+    public boolean isNode() {
+      
+      return true;
     }
   }
   
@@ -52,6 +57,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmEnum", sb.toString()));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class StringFactory implements ParameterFactory {
@@ -68,6 +78,11 @@ class ParameterManager implements ParameterFactoryFinder {
       parameterManager.checkPattern(value, annotations);
       
       return value;
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
 
@@ -89,6 +104,11 @@ class ParameterManager implements ParameterFactoryFinder {
       }
       
       return value.charAt(0);
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
 
@@ -115,6 +135,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmBoolean"));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
 
   static class ByteFactory implements ParameterFactory {
@@ -135,6 +160,11 @@ class ParameterManager implements ParameterFactoryFinder {
       } catch (Exception e) {
         throw new ConfigException(text.get("parmByte"));
       }
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
   
@@ -157,6 +187,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmShort"));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class IntegerFactory implements ParameterFactory {
@@ -177,6 +212,11 @@ class ParameterManager implements ParameterFactoryFinder {
       } catch (Exception e) {
         throw new ConfigException(text.get("parmInteger"));
       }
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
   
@@ -199,6 +239,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmLong"));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class FloatFactory implements ParameterFactory {
@@ -219,6 +264,11 @@ class ParameterManager implements ParameterFactoryFinder {
       } catch (Exception e) {
         throw new ConfigException(text.get("parmDecimal"));
       }
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
   
@@ -241,6 +291,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmDecimal"));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class BigIntegerFactory implements ParameterFactory {
@@ -262,6 +317,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmBigInteger"));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class BigDecimalFactory implements ParameterFactory {
@@ -282,6 +342,11 @@ class ParameterManager implements ParameterFactoryFinder {
       } catch (Exception e) {
         throw new ConfigException(text.get("parmDecimal"));
       }
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
   
@@ -326,6 +391,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(text.get("parmDate", hint));
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   static class ClassFactory implements ParameterFactory {
@@ -347,6 +417,11 @@ class ParameterManager implements ParameterFactoryFinder {
       } catch (Exception e) {
         throw new ConfigException(e.toString());
       }
+    }
+    
+    public boolean isNode() {
+      
+      return false;
     }
   }
   
@@ -382,6 +457,11 @@ class ParameterManager implements ParameterFactoryFinder {
         throw new ConfigException(e.toString());
       }
     }
+    
+    public boolean isNode() {
+      
+      return false;
+    }
   }
   
   private Map<Class<?>, ParameterFactory> parameterFactoryMap;
@@ -410,7 +490,7 @@ class ParameterManager implements ParameterFactoryFinder {
     finderStack.add(this);
     
     parameterFactoryMap = new HashMap<Class<?>, ParameterFactory>();    
-    parameterFactoryMap.put(ConfigNode.class, new ConfigNodeFactory());
+    parameterFactoryMap.put(Object.class, new NodeFactory());
     parameterFactoryMap.put(Enum.class, new EnumFactory());
     parameterFactoryMap.put(String.class, new StringFactory(this));
     parameterFactoryMap.put(Character.class, new CharacterFactory(this));
@@ -503,19 +583,14 @@ class ParameterManager implements ParameterFactoryFinder {
     }
   }
   
-  boolean isSupported(Class<?> type) {
-
-    return findFactory(type) != null;
-  }
-  
-  Object createParameter(String value, MethodEntry method) throws Exception {
+  Object createParameter(ParameterFactory factory, String value, MethodProxy method) throws Exception {
     
-    Class<?> parmType = method.getParmType();
+    Class<?> parmType = method.getMethod().getParameterTypes()[0];
     Annotation[] annotations = method.getMethod().getAnnotations();
-    return parmType.isArray() ? createArray(value, parmType, annotations) : createParameter(value, parmType, annotations);
+    return parmType.isArray() ? createArray(factory, value, parmType, annotations) : createParameter(factory, value, parmType, annotations);
   }
   
-  private Object createArray(String value, Class<?> arrayType, Annotation[] annotations) throws Exception {
+  private Object createArray(ParameterFactory factory, String value, Class<?> arrayType, Annotation[] annotations) throws Exception {
     
     String[] values = value.split(",");
     
@@ -523,26 +598,15 @@ class ParameterManager implements ParameterFactoryFinder {
 
     Object array = Array.newInstance(componentType, values.length);
     for (int i = 0; i < values.length; i++) {
-      Array.set(array, i, createParameter(values[i].trim(), componentType, annotations));
+      Array.set(array, i, createParameter(factory, values[i].trim(), componentType, annotations));
     }     
     return array;    
   }
   
-  private Object createParameter(String value, Class<?> parmType, Annotation[] annotations) throws Exception {
+  private Object createParameter(ParameterFactory factory, String value, Class<?> parmType, Annotation[] annotations) throws Exception {
     
     if (parmType.isPrimitive()) {
       parmType = primitivesMap.get(parmType);
-    }
-    
-    ParameterFactory factory = null;
-    int i = finderStack.size();
-    while (factory == null && i > 0) {
-      i--;
-      factory = finderStack.get(i).findFactory(parmType);
-    }
-    
-    if (factory == null) {
-      throw new ConfigException(text.get("unsupportedType", parmType.getName()));
     }
     
     Object parm = factory.createParameter(value, parmType, annotations);
@@ -565,7 +629,24 @@ class ParameterManager implements ParameterFactoryFinder {
     return false;
   }
   
-  public ParameterFactory findFactory(Class<?> parmType) {
+  ParameterFactory getFactory(Class<?> parmType) throws ConfigException {
+    
+    ParameterFactory factory = null;
+    
+    int i = finderStack.size();
+    while (factory == null && i > 0) {
+      i--;
+      factory = finderStack.get(i).findFactory(parmType);
+    }
+    
+    if (factory == null) {
+      throw new ConfigException(text.get("unsupportedType", parmType.getName()));
+    }
+    
+    return factory;
+  }
+  
+  public ParameterFactory findFactory(Class<?> parmType) throws ConfigException {
     
     if (parmType.isArray()) {
       parmType = parmType.getComponentType();
@@ -578,12 +659,16 @@ class ParameterManager implements ParameterFactoryFinder {
     ParameterFactory factory = parameterFactoryMap.get(parmType);
     
     if (factory == null) {      
-      if (ConfigNode.class.isAssignableFrom(parmType)) {
-        factory = parameterFactoryMap.get(ConfigNode.class);
-      } else if (parmType.isEnum()) {
+      if (parmType.isEnum()) {
         factory = parameterFactoryMap.get(Enum.class);
       } else if (parmType.isInterface()) {
         factory = parameterFactoryMap.get(InterfaceFactory.class);
+      } else {
+        try {          
+          parmType.getConstructor(); // public default constructor available ?
+          factory = parameterFactoryMap.get(Object.class);
+        } catch (NoSuchMethodException e) {
+        }
       }
     }
     

@@ -1,9 +1,8 @@
 package de.ufinke.cubaja.config.test.example1;
 
 import java.util.Date;
-import de.ufinke.cubaja.config.*;
 
-public class ValuesConfig extends ConfigNode {
+public class ValuesConfig {
 
   private Date date;
   private double amount;

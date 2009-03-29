@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import de.ufinke.cubaja.config.*;
 
-public class Config extends ConfigNode {
+public class Config {
 
   private DatabaseConfig dbone;
   private DatabaseConfig dbtwo;
