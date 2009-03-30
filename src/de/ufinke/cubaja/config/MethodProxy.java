@@ -3,9 +3,9 @@
 
 package de.ufinke.cubaja.config;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.*;
-import java.lang.annotation.*;
+import java.lang.reflect.Method;
 import de.ufinke.cubaja.util.Text;
 
 class MethodProxy {

@@ -31,14 +31,15 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>name</code></td>
- *     <td align="left" valign="top">File name</td>
+ *     <td align="left" valign="top">file name</td>
  *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     <td>x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>charset</code></td>
- *     <td align="left" valign="top">Character set name</td>
+ *     <td align="left" valign="top">character set name</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>

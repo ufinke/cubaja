@@ -21,7 +21,7 @@ import de.ufinke.cubaja.util.Text;
  * The keys are presented by an <code>Iterator</code> in an ascending order
  * (ascending as defined by the <code>Comparator</code>). 
  * For every key, we can get the matching data objects from the <code>MatchSource</code> instances.
- * The <code>Matcher<code> ensures that any matching data objects we didn't read from the
+ * The <code>Matcher</code> ensures that any matching data objects we didn't read from the
  * <code>MatchSource</code> are skipped before the next key in sequence is determined,
  * which is the lowest next key of all sources.
  * <p/>
