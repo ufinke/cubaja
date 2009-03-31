@@ -2,17 +2,26 @@ package de.ufinke.cubaja.cafebabe;
 
 class Label {
 
+  private String name;
+  private boolean defined;
   private int offset;
   private int stackSize;
   
-  Label() {
+  Label(String name) {
   
-    offset = -1;
+    this.name = name;
   }
   
-  void setOffset(int offset) {
+  void define(int offset, int stackSize) {
     
     this.offset = offset;
+    this.stackSize = Math.max(this.stackSize, stackSize);
+    defined = true;
+  }
+  
+  String getName() {
+    
+    return name;
   }
   
   int getOffset() {
@@ -20,13 +29,13 @@ class Label {
     return offset;
   }
   
-  void setStackSize(int stackSize) {
-    
-    this.stackSize = Math.max(this.stackSize, stackSize);
-  }
-  
   int getStackSize() {
     
     return stackSize;
+  }
+  
+  boolean isDefined() {
+    
+    return defined;
   }
 }

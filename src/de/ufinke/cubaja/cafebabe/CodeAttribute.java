@@ -45,6 +45,25 @@ public class CodeAttribute implements Generatable {
     buffer = new ByteArrayOutputStream();
   }
   
+  private Label getLabel(String labelName) {
+    
+    Label label = labelMap.get(labelName);
+    if (label == null) {
+      label = new Label(labelName);
+      labelMap.put(labelName, label);
+    }
+    return label;
+  }
+  
+  private void createJump(int size, int offsetFromOpCode, String labelName) {
+        
+    jumpList.add(new Jump(size, opCodeOffset, offsetFromOpCode, getLabel(labelName)));
+
+    for (int i = 1; i < size; i++) {
+      write1(0);
+    }
+  }
+  
   private int getLocalVariable(String name) {
     
     Integer index = localVariableMap.get(name);
@@ -87,23 +106,9 @@ public class CodeAttribute implements Generatable {
     buffer.write(value);
   }
   
-  private void write4(int value) {
+  public void defineLabel(String labelName) {
     
-    buffer.write(value >>> 24);
-    buffer.write(value >>> 16);
-    buffer.write(value >>> 8);
-    buffer.write(value);
-  }
-
-  public void defineLabel(String name) {
-    
-    Label label = labelMap.get(name);
-    if (label == null) {
-      label = new Label();
-    }
-    label.setOffset(buffer.size());
-    label.setStackSize(currentStackSize);
-    labelMap.put(name, label);
+    getLabel(labelName).define(buffer.size(), currentStackSize);
   }
   
   public int getLocalVariable(String variableName, Type type) {
@@ -1175,6 +1180,136 @@ public class CodeAttribute implements Generatable {
     writeOpCode(nanIsMinus ? 0x97 : 0x98); // dcmpg : dcmpl
     pop(4);
     push(1);
+  }
+  
+  public void branchIfEqual(String labelName) {
+    
+    writeOpCode(0x99); // ifeq
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void branchIfNotEqual(String labelName) {
+    
+    writeOpCode(0x9A); // ifne
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void branchIfLess(String labelName) {
+    
+    writeOpCode(0x9B); // iflt
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void branchIfGreaterEqual(String labelName) {
+    
+    writeOpCode(0x9C); // ifge
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void branchIfGreater(String labelName) {
+    
+    writeOpCode(0x9D); // ifgt
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void branchIfLessEqual(String labelName) {
+    
+    writeOpCode(0x9E); // ifle
+    createJump(2, 1, labelName);
+    pop(1);
+  }
+  
+  public void compareIntBranchIfEqual(String labelName) {
+    
+    writeOpCode(0x9F); // if_icmpeq
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareIntBranchIfNotEqual(String labelName) {
+    
+    writeOpCode(0xA0); // if_icmpne
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareIntBranchIfLess(String labelName) {
+    
+    writeOpCode(0xA1); // if_icmplt
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareIntBranchIfGreaterEqual(String labelName) {
+    
+    writeOpCode(0xA2); // if_icmpge
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareIntBranchIfGreater(String labelName) {
+    
+    writeOpCode(0xA3); // if_icmpgt
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareIntBranchIfLessEqual(String labelName) {
+    
+    writeOpCode(0xA4); // if_icmple
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareReferenceBranchIfEqual(String labelName) {
+    
+    writeOpCode(0xA5); // if_acmpeq
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void compareReferenceBranchIfNotEqual(String labelName) {
+    
+    writeOpCode(0xA6); // if_acmpne
+    createJump(2, 1, labelName);
+    pop(2);
+  }
+  
+  public void branch(String labelName) {
+    
+    writeOpCode(0xA7); // goto
+    createJump(2, 1, labelName);
+  }
+  
+  public void jumpSubroutine(String labelName) {
+    
+    writeOpCode(0xA8); // jsr
+    createJump(2, 1, labelName);
+    push(1);
+  }
+  
+  public void returnFromSubroutine(String variableName) {
+    
+    returnFromSubroutine(getLocalVariable(variableName));
+  }
+  
+  public void returnFromSubroutine(int index) {
+    
+    checkMaxLocals(index);
+    
+    if (index <= Byte.MAX_VALUE) {
+      writeOpCode(0xA9); // ret
+      write1(index);
+    } else {
+      writeOpCode(0xC4); // wide
+      write1(0xA9); // ret
+      write2(index);
+    }
   }
   
   public void generate(DataOutputStream out) throws IOException {

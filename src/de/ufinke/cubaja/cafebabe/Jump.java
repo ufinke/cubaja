@@ -4,14 +4,14 @@ class Jump {
 
   private int size;
   private int opCodeOffset;
-  private int offset;
+  private int offsetFromOpCode;
   private Label label;
 
-  Jump(int size, int opCodeOffset, int offset, Label label) {
+  Jump(int size, int opCodeOffset, int offsetFromOpCode, Label label) {
 
     this.size = size;
     this.opCodeOffset = opCodeOffset;
-    this.offset = offset;
+    this.offsetFromOpCode = offsetFromOpCode;
     this.label = label;
   }
 
@@ -25,9 +25,9 @@ class Jump {
     return opCodeOffset;
   }
 
-  int getOffset() {
+  int getResolveOffset() {
 
-    return offset;
+    return offsetFromOpCode;
   }
 
   Label getLabel() {
