@@ -1,9 +1,9 @@
 package de.ufinke.cubaja.config.test.simple;
 
-import static org.junit.Assert.*;
-import de.ufinke.cubaja.config.*;
-
-import org.junit.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
+import de.ufinke.cubaja.config.Configurator;
 
 public class SimpleTest {
 

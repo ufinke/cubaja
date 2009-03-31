@@ -1,6 +1,6 @@
 package de.ufinke.cubaja.config.test.example2;
 
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.Configurator;
 
 public class Main {
 

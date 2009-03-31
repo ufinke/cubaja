@@ -3,8 +3,11 @@
 
 package de.ufinke.cubaja.cafebabe;
 
-import java.util.*;
-import de.ufinke.cubaja.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import de.ufinke.cubaja.util.Util;
 
 public class BranchTable {
 

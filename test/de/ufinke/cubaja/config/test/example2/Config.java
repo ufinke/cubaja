@@ -2,7 +2,10 @@ package de.ufinke.cubaja.config.test.example2;
 
 import java.util.ArrayList;
 import java.util.List;
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.config.DynamicElement;
+import de.ufinke.cubaja.config.ParameterFactory;
+import de.ufinke.cubaja.config.ParameterFactoryFinder;
 
 public class Config implements DynamicElement {
 

@@ -1434,6 +1434,188 @@ public class CodeAttribute implements Generatable {
     writeOpCode(0xB1); // return
   }
   
+  public void getStatic(Type fieldClass, Type fieldType, String fieldName) {
+    
+    writeOpCode(0xB2); // getstatic
+    write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+    push(1);
+  }
+  
+  public void putStatic(Type fieldClass, Type fieldType, String fieldName) {
+
+    pop(1);
+    writeOpCode(0xB3); // putstatic
+    write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+  }
+  
+  public void getField(Type fieldClass, Type fieldType, String fieldName) {
+    
+    pop(1);
+    writeOpCode(0xB4); // getfield
+    write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+    push(1);
+  }
+  
+  public void putField(Type fieldClass, Type fieldType, String fieldName) {
+
+    pop(2);
+    writeOpCode(0xB5); // putfield
+    write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+  }
+  
+  public void invokeVirtual(Type methodClass, Type returnType, String methodName, Type... argTypes) {
+    
+    invoke(0xB6, 1, methodClass, returnType, methodName, argTypes); // invokevirtual
+  }
+  
+  public void invokeSpecial(Type methodClass, Type returnType, String methodName, Type... argTypes) {
+    
+    invoke(0xB7, 1, methodClass, returnType, methodName, argTypes); // invokespecial
+  }
+  
+  public void invokeStatic(Type methodClass, Type returnType, String methodName, Type... argTypes) {
+    
+    invoke(0xB8, 0, methodClass, returnType, methodName, argTypes); // invokestatic
+  }
+  
+  public void invokeInterface(Type methodClass, Type returnType, String methodName, Type... argTypes) {
+    
+    invoke(0xB9, 1, methodClass, returnType, methodName, argTypes); // invokeinterface
+  }
+  
+  private void invoke(int opCode, int referenceCount, Type methodClass, Type returnType, String methodName, Type... argTypes) {
+    
+    int popCount = referenceCount;
+    for (int i = 0; i < argTypes.length; i++) {
+      popCount += argTypes[i].getSize();
+    }
+    pop(popCount);
+    
+    writeOpCode(opCode);
+    write2(constantPool.addMethodref(methodClass, methodName, returnType, argTypes));
+    
+    if (opCode == 0xB9) { // invokeinterface (historical)     
+      write1(popCount);
+      write1(0);
+    }
+    
+    push(returnType.getSize());
+  }
+  
+  // opCode 0xBA is unused
+  
+  public void newObject(Type clazz) {
+    
+    writeOpCode(0xBB); // new
+    write2(constantPool.addClass(clazz));
+    push(1);
+  }
+  
+  public void newArray(Type elementType) {
+    
+    pop(1);
+    
+    int arrayType = 0;
+    switch (elementType.getDescriptor().charAt(0)) {
+      case 'Z':
+        arrayType = 4;
+        break;
+      case 'C':
+        arrayType = 5;
+        break;
+      case 'F':
+        arrayType = 6;
+        break;
+      case 'D':
+        arrayType = 7;
+        break;
+      case 'B':
+        arrayType = 8;
+        break;
+      case 'S':
+        arrayType = 9;
+        break;
+      case 'I':
+        arrayType = 10;
+        break;
+      case 'J':
+        arrayType = 11;
+        break;
+    }
+
+    if (arrayType != 0) {      
+      writeOpCode(0xBC); // newarray
+      write1(arrayType);
+    } else {
+      writeOpCode(0xBD); // anewarray
+      write2(constantPool.addClass(elementType));
+    }
+    
+    push(1);
+  }
+  
+  public void arraylength() {
+    
+    pop(1);
+    writeOpCode(0xBE); // arraylength
+    push(1);
+  }
+  
+  public void throwException() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xBF); // athrow
+    push(1);
+  }
+  
+  public void cast(Type checkedType) {
+    
+    writeOpCode(0xC0); // checkcast
+    write2(constantPool.addClass(checkedType));
+  }
+  
+  public void checkInstance(Type checkedType) {
+    
+    pop(1);
+    writeOpCode(0xC1); // instanceof
+    write2(constantPool.addClass(checkedType));
+    push(1);
+  }
+  
+  public void monitorEnter() {
+    
+    pop(1);
+    writeOpCode(0xC2); // monitorenter
+  }
+  
+  public void monitorExit() {
+    
+    pop(1);
+    writeOpCode(0xC3); // monitorexit
+  }
+  
+  // opCode 0xC4 (wide) handled with appropriate opCodes
+  
+  // opCode 0xC5 (multianewarray) not supported (too exotic use case; only available for reference arrays)
+  
+  public void branchIfNull(String labelName) {
+    
+    pop(1);
+    writeOpCode(0xC6); // ifnull
+    createJump(2, labelName);
+  }
+    
+  public void branchIfNonNull(String labelName) {
+    
+    pop(1);
+    writeOpCode(0xC7); // ifnonnull
+    createJump(2, labelName);
+  }
+
+  // opCode 0xC8 (goto_w) not supported (would be nonsense, see VM Spec note)
+  
+  // opCode 0xC9 (jsr_w) not supported (would be nonsense, see VM Spec note)
+  
   public void generate(DataOutputStream out) throws IOException {
     
     buffer.close();

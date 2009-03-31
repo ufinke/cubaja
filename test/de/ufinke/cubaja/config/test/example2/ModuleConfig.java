@@ -1,7 +1,7 @@
 package de.ufinke.cubaja.config.test.example2;
 
-import de.ufinke.cubaja.config.*;
-import java.util.*;
+import java.util.Map;
+import de.ufinke.cubaja.config.ManagedElement;
 
 public class ModuleConfig implements ManagedElement {
 

@@ -33,6 +33,7 @@ public class Type {
   public Type(String type) {
   
     componentName = type;
+    size = -1;
   }
   
   public Type(String type, String parameterName) {
@@ -74,9 +75,22 @@ public class Type {
   
   int getSize() {
 
-    if (size == 0) {
-      size = ("D".equals(getDescriptor()) || "J".equals(getDescriptor())) ? 2 : 1;
+    if (size == -1) {
+      size = 1;
+      String descriptor = getDescriptor();
+      if (descriptor.length() == 1) {
+        switch (descriptor.charAt(0)) {
+          case 'V':
+            size = 0;
+            break;
+          case 'D':
+          case 'L':
+            size = 2;
+            break;
+        }
+      }
     }
+    
     return size;
   }
   

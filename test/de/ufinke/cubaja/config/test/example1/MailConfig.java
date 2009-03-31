@@ -2,7 +2,7 @@ package de.ufinke.cubaja.config.test.example1;
 
 import java.util.ArrayList;
 import java.util.List;
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.Mandatory;
 
 public class MailConfig {
 

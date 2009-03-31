@@ -1,6 +1,7 @@
 package de.ufinke.cubaja.config.test.simple;
 
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.CharData;
+import de.ufinke.cubaja.config.Mandatory;
 
 public class SubElement {
 

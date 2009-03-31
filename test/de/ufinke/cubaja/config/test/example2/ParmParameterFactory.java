@@ -2,7 +2,7 @@ package de.ufinke.cubaja.config.test.example2;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.ParameterFactory;
 
 public class ParmParameterFactory implements ParameterFactory {
 

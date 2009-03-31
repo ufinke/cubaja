@@ -1,7 +1,9 @@
 package de.ufinke.cubaja.config.test.example2;
 
 import java.util.Map;
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.config.ParameterFactory;
+import de.ufinke.cubaja.config.ParameterFactoryFinder;
 
 public class ParmParameterFactoryFinder implements ParameterFactoryFinder {
 
