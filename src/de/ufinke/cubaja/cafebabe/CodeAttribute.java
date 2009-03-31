@@ -1,3 +1,6 @@
+// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.cafebabe;
 
 import java.io.ByteArrayOutputStream;
@@ -55,11 +58,11 @@ public class CodeAttribute implements Generatable {
     return label;
   }
   
-  private void createJump(int size, int offsetFromOpCode, String labelName) {
+  private void createJump(int size, String labelName) {
         
-    jumpList.add(new Jump(size, opCodeOffset, offsetFromOpCode, getLabel(labelName)));
+    jumpList.add(new Jump(size, opCodeOffset, buffer.size(), getLabel(labelName)));
 
-    for (int i = 1; i < size; i++) {
+    for (int i = 0; i < size; i++) {
       write1(0);
     }
   }
@@ -102,6 +105,14 @@ public class CodeAttribute implements Generatable {
   
   private void write2(int value) {
     
+    buffer.write(value >>> 8);
+    buffer.write(value);
+  }
+  
+  private void write4(int value) {
+    
+    buffer.write(value >>> 24);
+    buffer.write(value >>> 16);
     buffer.write(value >>> 8);
     buffer.write(value);
   }
@@ -392,12 +403,12 @@ public class CodeAttribute implements Generatable {
     push(2);
   }
   
-  public void loadLocalObject(String variableName) {
+  public void loadLocalReference(String variableName) {
     
-    loadLocalObject(getLocalVariable(variableName));
+    loadLocalReference(getLocalVariable(variableName));
   }
   
-  public void loadLocalObject(int index) {
+  public void loadLocalReference(int index) {
     
     checkMaxLocals(index);
     
@@ -437,57 +448,57 @@ public class CodeAttribute implements Generatable {
   
   public void loadLongArrayElement() {
     
-    writeOpCode(0x2F); // laload
     pop(2);
+    writeOpCode(0x2F); // laload
     push(2);
   }
   
   public void loadFloatArrayElement() {
     
-    writeOpCode(0x30); // faload
     pop(2);
+    writeOpCode(0x30); // faload
     push(1);
   }
   
   public void loadDoubleArrayElement() {
     
-    writeOpCode(0x31); // laload
     pop(2);
+    writeOpCode(0x31); // laload
     push(2);
   }
   
-  public void loadObjectArrayElement() {
+  public void loadReferenceArrayElement() {
     
-    writeOpCode(0x32); // aaload
     pop(2);
+    writeOpCode(0x32); // aaload
     push(1);
   }
   
   public void loadBooleanArrayElement() {
     
-    writeOpCode(0x33); // baload
     pop(2);
+    writeOpCode(0x33); // baload
     push(1);
   }
   
   public void loadByteArrayElement() {
     
-    writeOpCode(0x33); // baload
     pop(2);
+    writeOpCode(0x33); // baload
     push(1);
   }
   
   public void loadCharArrayElement() {
     
-    writeOpCode(0x34); // caload
     pop(2);
+    writeOpCode(0x34); // caload
     push(1);
   }
   
   public void loadShortArrayElement() {
     
-    writeOpCode(0x35); // saload
     pop(2);
+    writeOpCode(0x35); // saload
     push(1);
   }
   
@@ -499,6 +510,8 @@ public class CodeAttribute implements Generatable {
   public void storeLocalInt(int index) {
    
     checkMaxLocals(index);
+    
+    pop(1);
     
     switch (index) {
       case 0:
@@ -523,8 +536,6 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
-    
-    pop(1);
   }
   
   public void storeLocalLong(String variableName) {
@@ -535,6 +546,8 @@ public class CodeAttribute implements Generatable {
   public void storeLocalLong(int index) {
     
     checkMaxLocals(index + 1);
+    
+    pop(2);
     
     switch (index) {
       case 0:
@@ -559,8 +572,6 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
-    
-    pop(2);
   }
   
   public void storeLocalFloat(String variableName) {
@@ -571,6 +582,8 @@ public class CodeAttribute implements Generatable {
   public void storeLocalFloat(int index) {
     
     checkMaxLocals(index);
+    
+    pop(1);
     
     switch (index) {
       case 0:
@@ -595,8 +608,6 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
-    
-    pop(1);
   }
   
   public void storeLocalDouble(String variableName) {
@@ -607,6 +618,8 @@ public class CodeAttribute implements Generatable {
   public void storeLocalDouble(int index) {
     
     checkMaxLocals(index + 1);
+    
+    pop(2);
     
     switch (index) {
       case 0:
@@ -631,18 +644,18 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
-    
-    pop(2);
   }
   
-  public void storeLocalObject(String variableName) {
+  public void storeLocalReference(String variableName) {
     
-    storeLocalObject(getLocalVariable(variableName));
+    storeLocalReference(getLocalVariable(variableName));
   }
   
-  public void storeLocalObject(int index) {
+  public void storeLocalReference(int index) {
     
     checkMaxLocals(index);
+    
+    pop(1);
     
     switch (index) {
       case 0:
@@ -667,74 +680,72 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
-    
-    pop(1);
   }
   
   public void storeIntArrayElement() {
     
-    writeOpCode(0x4F); // iastore
     pop(3);
+    writeOpCode(0x4F); // iastore
   }
   
   public void storeLongArrayElement() {
     
-    writeOpCode(0x50); // lastore
     pop(4);
+    writeOpCode(0x50); // lastore
   }
   
   public void storeFloatArrayElement() {
     
-    writeOpCode(0x51); // fastore
     pop(3);
+    writeOpCode(0x51); // fastore
   }
   
   public void storeDoubleArrayElement() {
     
-    writeOpCode(0x52); // lastore
     pop(4);
+    writeOpCode(0x52); // lastore
   }
   
-  public void storeObjectArrayElement() {
+  public void storeReferenceArrayElement() {
     
-    writeOpCode(0x53); // aastore
     pop(3);
+    writeOpCode(0x53); // aastore
   }
   
   public void storeBooleanArrayElement() {
     
-    writeOpCode(0x54); // bastore
     pop(3);
+    writeOpCode(0x54); // bastore
   }
   
   public void storeByteArrayElement() {
     
-    writeOpCode(0x54); // bastore
     pop(3);
+    writeOpCode(0x54); // bastore
   }
   
   public void storeCharArrayElement() {
     
-    writeOpCode(0x55); // castore
     pop(3);
+    writeOpCode(0x55); // castore
   }
   
   public void storeShortArrayElement() {
     
-    writeOpCode(0x56); // sastore
     pop(3);
+    writeOpCode(0x56); // sastore
   }
   
   public void pop() {
     
-    writeOpCode(0x57); // pop
     pop(1);
+    writeOpCode(0x57); // pop
   }
   
   public void popDouble() {
     
-    writeOpCode(0x58); // pop2
     pop(2);
+    writeOpCode(0x58); // pop2
   }
   
   public void duplicate() {
@@ -780,253 +791,253 @@ public class CodeAttribute implements Generatable {
   
   public void addInt() {
     
-    writeOpCode(0x60); // iadd
     pop(2);
+    writeOpCode(0x60); // iadd
     push(1);
   }
   
   public void addLong() {
     
-    writeOpCode(0x61); // ladd
     pop(4);
+    writeOpCode(0x61); // ladd
     push(2);
   }
   
   public void addFloat() {
     
-    writeOpCode(0x62); // fadd
     pop(2);
+    writeOpCode(0x62); // fadd
     push(1);
   }
   
   public void addDouble() {
     
-    writeOpCode(0x63); // dadd
     pop(4);
+    writeOpCode(0x63); // dadd
     push(2);
   }
   
   public void subtractInt() {
     
-    writeOpCode(0x64); // isub
     pop(2);
+    writeOpCode(0x64); // isub
     push(1);
   }
   
   public void subtractLong() {
     
-    writeOpCode(0x65); // lsub
     pop(4);
+    writeOpCode(0x65); // lsub
     push(2);
   }
   
   public void subtractFloat() {
     
-    writeOpCode(0x66); // fsub
     pop(2);
+    writeOpCode(0x66); // fsub
     push(1);
   }
   
   public void subtractDouble() {
     
-    writeOpCode(0x67); // dsub
     pop(4);
+    writeOpCode(0x67); // dsub
     push(2);
   }
   
   public void multiplyInt() {
     
-    writeOpCode(0x68); // imul
     pop(2);
+    writeOpCode(0x68); // imul
     push(1);
   }
   
   public void mulitiplyLong() {
     
-    writeOpCode(0x69); // lmul
     pop(4);
+    writeOpCode(0x69); // lmul
     push(2);
   }
   
   public void multiplyFloat() {
     
-    writeOpCode(0x6A); // fmul
     pop(2);
+    writeOpCode(0x6A); // fmul
     push(1);
   }
   
   public void multiplyDouble() {
     
-    writeOpCode(0x6B); // dmul
     pop(4);
+    writeOpCode(0x6B); // dmul
     push(2);
   }
   
   public void divideInt() {
     
-    writeOpCode(0x6C); // idiv
     pop(2);
+    writeOpCode(0x6C); // idiv
     push(1);
   }
   
   public void divideLong() {
     
-    writeOpCode(0x6D); // ldiv
     pop(4);
+    writeOpCode(0x6D); // ldiv
     push(2);
   }
   
   public void divideFloat() {
     
-    writeOpCode(0x6E); // fdiv
     pop(2);
+    writeOpCode(0x6E); // fdiv
     push(1);
   }
   
   public void divideDouble() {
     
-    writeOpCode(0x6F); // ddiv
     pop(4);
+    writeOpCode(0x6F); // ddiv
     push(2);
   }
   
   public void remainderInt() {
     
-    writeOpCode(0x70); // irem
     pop(2);
+    writeOpCode(0x70); // irem
     push(1);
   }
   
   public void remainderLong() {
     
-    writeOpCode(0x71); // lrem
     pop(4);
+    writeOpCode(0x71); // lrem
     push(2);
   }
   
   public void remainderFloat() {
     
-    writeOpCode(0x72); // frem
     pop(2);
+    writeOpCode(0x72); // frem
     push(1);
   }
   
   public void remainderDouble() {
     
-    writeOpCode(0x73); // drem
     pop(4);
+    writeOpCode(0x73); // drem
     push(2);
   }
   
   public void negateInt() {
     
-    writeOpCode(0x74); // ineg
     pop(1);
+    writeOpCode(0x74); // ineg
     push(1);
   }
   
   public void negateLong() {
     
-    writeOpCode(0x75); // lneg
     pop(2);
+    writeOpCode(0x75); // lneg
     push(2);
   }
   
   public void negateFloat() {
     
-    writeOpCode(0x76); // fneg
     pop(1);
+    writeOpCode(0x76); // fneg
     push(1);
   }
   
   public void negateDouble() {
     
-    writeOpCode(0x77); // dneg
     pop(2);
+    writeOpCode(0x77); // dneg
     push(2);
   }
   
   public void shiftLeftInt() {
     
-    writeOpCode(0x78); // ishl
     pop(2);
+    writeOpCode(0x78); // ishl
     push(1);
   }
   
   public void shiftLeftLong() {
     
-    writeOpCode(0x79); // lshl
     pop(3);
+    writeOpCode(0x79); // lshl
     push(2);
   }
   
   public void arithmeticShiftRightInt() {
     
-    writeOpCode(0x7A); // ishr
     pop(2);
+    writeOpCode(0x7A); // ishr
     push(1);
   }
   
   public void arithmeticShiftRightLong() {
     
-    writeOpCode(0x7B); // lshr
     pop(3);
+    writeOpCode(0x7B); // lshr
     push(2);
   }
   
   public void logicalShiftRightInt() {
     
-    writeOpCode(0x7C); // iushr
     pop(2);
+    writeOpCode(0x7C); // iushr
     push(1);
   }
   
   public void logicalShiftRightLong() {
     
-    writeOpCode(0x7D); // lushr
     pop(3);
+    writeOpCode(0x7D); // lushr
     push(2);
   }
   
   public void booleanAndInt() {
     
-    writeOpCode(0x7E); // iand
     pop(2);
+    writeOpCode(0x7E); // iand
     push(1);
   }
   
   public void booleanAndLong() {
     
-    writeOpCode(0x7F); // land
     pop(4);
+    writeOpCode(0x7F); // land
     push(2);
   }
   
   public void booleanOrInt() {
     
-    writeOpCode(0x80); // ior
     pop(2);
+    writeOpCode(0x80); // ior
     push(1);
   }
   
   public void booleanOrLong() {
     
-    writeOpCode(0x81); // lor
     pop(4);
+    writeOpCode(0x81); // lor
     push(2);
   }
   
   public void booleanXorInt() {
     
-    writeOpCode(0x82); // ixor
     pop(2);
+    writeOpCode(0x82); // ixor
     push(1);
   }
   
   public void booleanXorLong() {
     
-    writeOpCode(0x83); // lxor
     pop(4);
+    writeOpCode(0x83); // lxor
     push(2);
   }
   
@@ -1058,238 +1069,238 @@ public class CodeAttribute implements Generatable {
   
   public void convertIntToLong() {
     
-    writeOpCode(0x85); // i2l
     pop(1);
+    writeOpCode(0x85); // i2l
     push(2);
   }
   
   public void convertIntToFloat() {
     
-    writeOpCode(0x86); // i2f
     pop(1);
+    writeOpCode(0x86); // i2f
     push(1);
   }
   
   public void convertIntToDouble() {
     
-    writeOpCode(0x87); // i2d
     pop(1);
+    writeOpCode(0x87); // i2d
     push(2);
   }
   
   public void convertLongToInt() {
     
-    writeOpCode(0x88); // l2i
     pop(2);
+    writeOpCode(0x88); // l2i
     push(1);
   }
   
   public void convertLongToFloat() {
     
-    writeOpCode(0x89); // l2f
     pop(2);
+    writeOpCode(0x89); // l2f
     push(1);
   }
   
   public void convertLongToDouble() {
     
-    writeOpCode(0x8A); // l2d
     pop(2);
+    writeOpCode(0x8A); // l2d
     push(2);
   }
   
   public void convertFloatToInt() {
     
-    writeOpCode(0x8B); // f2i
     pop(1);
+    writeOpCode(0x8B); // f2i
     push(1);
   }
   
   public void convertFloatToLong() {
     
-    writeOpCode(0x8C); // f2l
     pop(1);
+    writeOpCode(0x8C); // f2l
     push(2);
   }
   
   public void convertFloatToDouble() {
     
-    writeOpCode(0x8D); // f2d
     pop(1);
+    writeOpCode(0x8D); // f2d
     push(2);
   }
   
   public void convertDoubleToInt() {
     
-    writeOpCode(0x8E); // d2i
     pop(2);
+    writeOpCode(0x8E); // d2i
     push(1);
   }
   
   public void convertDoubleToLong() {
     
-    writeOpCode(0x8F); // d2l
     pop(2);
+    writeOpCode(0x8F); // d2l
     push(2);
   }
   
   public void convertDoubleToFloat() {
     
-    writeOpCode(0x90); // d2f
     pop(2);
+    writeOpCode(0x90); // d2f
     push(1);
   }
   
   public void convertIntToByte() {
     
-    writeOpCode(0x91); // i2b
     pop(1);
+    writeOpCode(0x91); // i2b
     push(1);
   }
   
   public void convertIntToChar() {
     
-    writeOpCode(0x92); // i2c
     pop(1);
+    writeOpCode(0x92); // i2c
     push(1);
   }
   
   public void convertIntToShort() {
     
-    writeOpCode(0x93); // i2s
     pop(1);
+    writeOpCode(0x93); // i2s
     push(1);
   }
   
   public void compareLong() {
     
-    writeOpCode(0x94); // lcmp
     pop(4);
+    writeOpCode(0x94); // lcmp
     push(1);
   }
   
   public void compareFloat(boolean nanIsMinus) {
     
-    writeOpCode(nanIsMinus ? 0x95 : 0x96); // fcmpg : fcmpl
     pop(2);
+    writeOpCode(nanIsMinus ? 0x95 : 0x96); // fcmpg : fcmpl
     push(1);
   }
   
   public void compareDouble(boolean nanIsMinus) {
     
-    writeOpCode(nanIsMinus ? 0x97 : 0x98); // dcmpg : dcmpl
     pop(4);
+    writeOpCode(nanIsMinus ? 0x97 : 0x98); // dcmpg : dcmpl
     push(1);
   }
   
   public void branchIfEqual(String labelName) {
     
-    writeOpCode(0x99); // ifeq
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x99); // ifeq
+    createJump(2, labelName);
   }
   
   public void branchIfNotEqual(String labelName) {
     
-    writeOpCode(0x9A); // ifne
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x9A); // ifne
+    createJump(2, labelName);
   }
   
   public void branchIfLess(String labelName) {
     
-    writeOpCode(0x9B); // iflt
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x9B); // iflt
+    createJump(2, labelName);
   }
   
   public void branchIfGreaterEqual(String labelName) {
     
-    writeOpCode(0x9C); // ifge
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x9C); // ifge
+    createJump(2, labelName);
   }
   
   public void branchIfGreater(String labelName) {
     
-    writeOpCode(0x9D); // ifgt
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x9D); // ifgt
+    createJump(2, labelName);
   }
   
   public void branchIfLessEqual(String labelName) {
     
-    writeOpCode(0x9E); // ifle
-    createJump(2, 1, labelName);
     pop(1);
+    writeOpCode(0x9E); // ifle
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfEqual(String labelName) {
     
-    writeOpCode(0x9F); // if_icmpeq
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0x9F); // if_icmpeq
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfNotEqual(String labelName) {
     
-    writeOpCode(0xA0); // if_icmpne
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA0); // if_icmpne
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfLess(String labelName) {
     
-    writeOpCode(0xA1); // if_icmplt
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA1); // if_icmplt
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfGreaterEqual(String labelName) {
     
-    writeOpCode(0xA2); // if_icmpge
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA2); // if_icmpge
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfGreater(String labelName) {
     
-    writeOpCode(0xA3); // if_icmpgt
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA3); // if_icmpgt
+    createJump(2, labelName);
   }
   
   public void compareIntBranchIfLessEqual(String labelName) {
     
-    writeOpCode(0xA4); // if_icmple
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA4); // if_icmple
+    createJump(2, labelName);
   }
   
   public void compareReferenceBranchIfEqual(String labelName) {
     
-    writeOpCode(0xA5); // if_acmpeq
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA5); // if_acmpeq
+    createJump(2, labelName);
   }
   
   public void compareReferenceBranchIfNotEqual(String labelName) {
     
-    writeOpCode(0xA6); // if_acmpne
-    createJump(2, 1, labelName);
     pop(2);
+    writeOpCode(0xA6); // if_acmpne
+    createJump(2, labelName);
   }
   
   public void branch(String labelName) {
     
     writeOpCode(0xA7); // goto
-    createJump(2, 1, labelName);
+    createJump(2, labelName);
   }
   
   public void jumpSubroutine(String labelName) {
     
     writeOpCode(0xA8); // jsr
-    createJump(2, 1, labelName);
+    createJump(2, labelName);
     push(1);
   }
   
@@ -1310,6 +1321,117 @@ public class CodeAttribute implements Generatable {
       write1(0xA9); // ret
       write2(index);
     }
+  }
+  
+  public void tableswitch(BranchTable table) {
+    
+    codeSwitch(0xAA, table); // tableswitch
+  }
+  
+  public void lookupswitch(BranchTable table) {
+    
+    codeSwitch(0xAB, table); // lookupswitch
+  }
+  
+  private void codeSwitch(int opCode, BranchTable table) {
+    
+    if (table.getPairList().size() == 0) {
+      if (table.getDefaultLabelName() != null) {
+        branch(table.getDefaultLabelName()); // goto
+      }
+      return;
+    }
+        
+    pop(1);
+    
+    writeOpCode(opCode); // tableswitch, lookupswitch
+    
+    while ((buffer.size() & 0x3) != 0) {
+      write1(0);
+    }
+    
+    createJump(4, table.getDefaultLabelName());
+    
+    switch (opCode) {
+      case 0xAA:
+        codeTableswitch(table);
+        break;
+      case 0xAB:
+        codeLookupswitch(table);
+        break;
+    }
+  }
+  
+  private void codeTableswitch(BranchTable table) {
+
+    List<BranchTable.Pair> pairList = table.getPairList();
+    
+    int minKey = pairList.get(0).getKey();
+    int maxKey = pairList.get(pairList.size() - 1).getKey();
+    
+    write4(minKey);
+    write4(maxKey);
+
+    int expectedKey = minKey; 
+    int tableIndex = 0;
+    
+    while (expectedKey <= maxKey) {
+      BranchTable.Pair pair = pairList.get(tableIndex++);
+      while (expectedKey < pair.getKey()) {
+        createJump(4, table.getDefaultLabelName());
+        expectedKey++;
+      }
+      createJump(4, pair.getLabelName());
+      expectedKey++;
+    }
+  }
+  
+  private void codeLookupswitch(BranchTable table) {
+    
+    List<BranchTable.Pair> pairList = table.getPairList();
+    
+    write4(pairList.size());
+    
+    for (BranchTable.Pair pair : pairList) {
+      write4(pair.getKey());
+      createJump(4, pair.getLabelName());
+    }
+  }
+  
+  public void returnInt() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xAC); // ireturn
+  }
+  
+  public void returnLong() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xAD); // lreturn
+  }
+  
+  public void returnFloat() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xAE); // freturn
+  }
+  
+  public void returnDouble() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xAF); // dreturn
+  }
+  
+  public void returnReference() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xB0); // areturn
+  }
+  
+  public void returnVoid() {
+    
+    pop(currentStackSize);
+    writeOpCode(0xB1); // return
   }
   
   public void generate(DataOutputStream out) throws IOException {

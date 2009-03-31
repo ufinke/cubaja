@@ -1,6 +1,9 @@
+// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.cafebabe;
 
-public class AccessFlags {
+public interface AccessFlags {
 
   static public final int ACC_PUBLIC       = 0x0001;
   static public final int ACC_PRIVATE      = 0x0002;
@@ -21,7 +24,4 @@ public class AccessFlags {
   static public final int ACC_ANNOTATION   = 0x2000;
   static public final int ACC_ENUM         = 0x4000;
   
-  private AccessFlags() {
-    
-  }
 }

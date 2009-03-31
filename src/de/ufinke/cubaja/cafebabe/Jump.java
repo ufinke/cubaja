@@ -1,17 +1,20 @@
+// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.cafebabe;
 
 class Jump {
 
   private int size;
   private int opCodeOffset;
-  private int offsetFromOpCode;
+  private int jumpOffset;
   private Label label;
 
-  Jump(int size, int opCodeOffset, int offsetFromOpCode, Label label) {
+  Jump(int size, int opCodeOffset, int jumpOffset, Label label) {
 
     this.size = size;
     this.opCodeOffset = opCodeOffset;
-    this.offsetFromOpCode = offsetFromOpCode;
+    this.jumpOffset = jumpOffset;
     this.label = label;
   }
 
@@ -25,9 +28,9 @@ class Jump {
     return opCodeOffset;
   }
 
-  int getResolveOffset() {
+  int getJumpOffset() {
 
-    return offsetFromOpCode;
+    return jumpOffset;
   }
 
   Label getLabel() {
