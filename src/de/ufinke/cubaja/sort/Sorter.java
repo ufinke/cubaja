@@ -29,7 +29,10 @@ public class Sorter<D> implements Iterable<D> {
     
     //TODO add element
   }
-  
+
+  /**
+   * 
+   */
   public Iterator<D> iterator() {
 
     if (iteratorCreated) {

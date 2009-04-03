@@ -24,7 +24,9 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Returns a single data object.
+   * Returns a single data object with matching key.
+   * We should first test whether the key matches
+   * before calling this method.
    * @return a data object
    * @throws NoSuchElementException if the data doesn't match the key
    */
@@ -39,6 +41,7 @@ public final class MatchSource<D> {
   
   /**
    * Returns an iterator over all matching data objects.
+   * This iterator doesn't support the <code>remove</code> method.
    * @return an iterator
    */
   public Iterable<D> getAll() {

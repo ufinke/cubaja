@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.cafebabe;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -135,7 +134,7 @@ class ConstantPool implements Generatable {
     return sb.toString();
   }
   
-  public void generate(DataOutputStream out) throws IOException {
+  public void generate(DataOutputStream out) throws Exception {
     
     out.writeShort(size);
     for (Generatable entry : entryList) {

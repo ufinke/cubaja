@@ -1,6 +1,7 @@
 /**
  * <p>
  * Bytecode generator.
+ * To use the package, start with <code>GenClassLoader</code>.
  * </p>
  * <p>
  * Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.

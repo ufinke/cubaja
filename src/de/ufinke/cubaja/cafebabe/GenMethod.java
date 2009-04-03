@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.cafebabe;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +44,7 @@ public class GenMethod implements Generatable, AccessFlags {
     exceptionAttribute.addException(exception);
   }
   
-  public void generate(DataOutputStream out) throws IOException {
+  public void generate(DataOutputStream out) throws Exception {
     
     out.writeShort(accessFlags);
     out.writeShort(methodNameIndex);

@@ -12,7 +12,8 @@ import de.ufinke.cubaja.util.Text;
 
 public class GenClassLoader extends ClassLoader {
 
-  static Text text = new Text(GenClassLoader.class);
+  static private Text text = new Text(GenClassLoader.class);
+  static private String dumpDirectory = System.getProperty(GenClassLoader.class.getPackage().getName() + ".dump");
 
   private Generator currentGenerator;
   
@@ -60,23 +61,23 @@ public class GenClassLoader extends ClassLoader {
     Class<?> clazz = defineClass(className, array, 0, array.length);
     resolveClass(clazz);
     
+    currentGenerator = null;
+    
     return clazz;
   }
   
   private void dump(String className, byte[] array) throws Exception {
     
-    String dirName = System.getProperty(GenClassLoader.class.getPackage().getName() + ".dump");
-    
-    if (dirName == null) {
+    if (dumpDirectory == null) {
       return;
     }
     
     File classFile = new File(className.replace('.', '/'));
     String parent = classFile.getParent();
     if (parent != null) {
-      dirName = dirName + "/" + parent;
+      dumpDirectory = dumpDirectory + "/" + parent;
     }
-    File dir = new File(dirName);
+    File dir = new File(dumpDirectory);
     dir.mkdirs();
     File file = new File(dir, classFile.getName() + ".class");
     

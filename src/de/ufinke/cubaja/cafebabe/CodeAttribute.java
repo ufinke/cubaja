@@ -5,17 +5,19 @@ package de.ufinke.cubaja.cafebabe;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import de.ufinke.cubaja.util.*;
 
 public class CodeAttribute implements Generatable {
 
+  static private Text text = new Text(CodeAttribute.class);
+  
   private ConstantPool constantPool;
   private int nameIndex;
-  private int currentStackSize;
+  private int currentStack;
   private int maxStackSize;
   private int maxLocals;
   private Map<String, Integer> localVariableMap;
@@ -48,25 +50,6 @@ public class CodeAttribute implements Generatable {
     buffer = new ByteArrayOutputStream();
   }
   
-  private Label getLabel(String labelName) {
-    
-    Label label = labelMap.get(labelName);
-    if (label == null) {
-      label = new Label(labelName);
-      labelMap.put(labelName, label);
-    }
-    return label;
-  }
-  
-  private void createJump(int size, String labelName) {
-        
-    jumpList.add(new Jump(size, opCodeOffset, buffer.size(), getLabel(labelName)));
-
-    for (int i = 0; i < size; i++) {
-      write1(0);
-    }
-  }
-  
   private int getLocalVariable(String name) {
     
     Integer index = localVariableMap.get(name);
@@ -81,15 +64,10 @@ public class CodeAttribute implements Generatable {
     maxLocals = Math.max(maxLocals, index);
   }
   
-  private void push(int stackIncrement) {
+  private void incrementStack(int increment) {
     
-    currentStackSize += stackIncrement;
-    maxStackSize = Math.max(maxStackSize, currentStackSize);
-  }
-  
-  private void pop(int stackDecrement) {
-    
-    currentStackSize -= stackDecrement;
+    currentStack += increment;
+    maxStackSize = Math.max(maxStackSize, currentStack);
   }
   
   private void writeOpCode(int opCode) {
@@ -117,9 +95,39 @@ public class CodeAttribute implements Generatable {
     buffer.write(value);
   }
   
+  private Label getLabel(String labelName) {
+    
+    Label label = labelMap.get(labelName);
+    if (label == null) {
+      label = new Label(labelName);
+      labelMap.put(labelName, label);
+    }
+    return label;
+  }
+  
+  private void checkLabelStack(Label label) {
+    
+    currentStack = label.stackSize(currentStack);
+  }
+  
+  private void createJump(int size, String labelName) {
+        
+    Label label = getLabel(labelName);
+    
+    jumpList.add(new Jump(size, opCodeOffset, buffer.size(), label));
+
+    for (int i = 0; i < size; i++) {
+      write1(0);
+    }
+    
+    checkLabelStack(label);
+  }
+  
   public void defineLabel(String labelName) {
     
-    getLabel(labelName).define(buffer.size(), currentStackSize);
+    Label label = getLabel(labelName);
+    label.define(buffer.size());
+    checkLabelStack(label);
   }
   
   public int getLocalVariable(String variableName, Type type) {
@@ -128,11 +136,16 @@ public class CodeAttribute implements Generatable {
     checkMaxLocals(index + type.getSize() - 1);
     return index;
   }
+
+  public void nop() {
+    
+    writeOpCode(0x00); // nop
+  }
   
   public void loadNull() {
   
     writeOpCode(0x01); // aconst_null
-    push(1);
+    incrementStack(1);
   }
   
   public void loadConstant(int value) {
@@ -178,7 +191,7 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadConstant(long value) {
@@ -192,7 +205,7 @@ public class CodeAttribute implements Generatable {
       write2(constantPool.addLong(value));
     }
     
-    push(2);
+    incrementStack(2);
   }
   
   public void loadConstant(float value) {
@@ -214,7 +227,7 @@ public class CodeAttribute implements Generatable {
       }
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadConstant(double value) {
@@ -228,7 +241,7 @@ public class CodeAttribute implements Generatable {
       write2(constantPool.addDouble(value));
     }
     
-    push(2);
+    incrementStack(2);
   }
   
   public void loadConstant(String value) {
@@ -242,7 +255,7 @@ public class CodeAttribute implements Generatable {
       write2(index);
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadConstant(Class<?> value) {
@@ -256,7 +269,7 @@ public class CodeAttribute implements Generatable {
       write2(index);
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadLocalInt(String variableName) {
@@ -292,7 +305,7 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadLocalLong(String variableName) {
@@ -328,7 +341,7 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(2);
+    incrementStack(2);
   }
   
   public void loadLocalFloat(String variableName) {
@@ -364,7 +377,7 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadLocalDouble(String variableName) {
@@ -400,7 +413,7 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(2);
+    incrementStack(2);
   }
   
   public void loadLocalReference(String variableName) {
@@ -436,70 +449,59 @@ public class CodeAttribute implements Generatable {
         }
     }
     
-    push(1);
+    incrementStack(1);
   }
   
   public void loadIntArrayElement() {
     
     writeOpCode(0x2E); // iaload
-    pop(2);
-    push(1);
+    currentStack--;
   }
   
   public void loadLongArrayElement() {
     
-    pop(2);
     writeOpCode(0x2F); // laload
-    push(2);
   }
   
   public void loadFloatArrayElement() {
     
-    pop(2);
     writeOpCode(0x30); // faload
-    push(1);
+    currentStack--;
   }
   
   public void loadDoubleArrayElement() {
     
-    pop(2);
     writeOpCode(0x31); // laload
-    push(2);
   }
   
   public void loadReferenceArrayElement() {
     
-    pop(2);
     writeOpCode(0x32); // aaload
-    push(1);
+    currentStack--;
   }
   
   public void loadBooleanArrayElement() {
     
-    pop(2);
     writeOpCode(0x33); // baload
-    push(1);
+    currentStack--;
   }
   
   public void loadByteArrayElement() {
     
-    pop(2);
     writeOpCode(0x33); // baload
-    push(1);
+    currentStack--;
   }
   
   public void loadCharArrayElement() {
     
-    pop(2);
     writeOpCode(0x34); // caload
-    push(1);
+    currentStack--;
   }
   
   public void loadShortArrayElement() {
     
-    pop(2);
     writeOpCode(0x35); // saload
-    push(1);
+    currentStack--;
   }
   
   public void storeLocalInt(String variableName) {
@@ -510,8 +512,6 @@ public class CodeAttribute implements Generatable {
   public void storeLocalInt(int index) {
    
     checkMaxLocals(index);
-    
-    pop(1);
     
     switch (index) {
       case 0:
@@ -536,6 +536,8 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
+    
+    currentStack--;
   }
   
   public void storeLocalLong(String variableName) {
@@ -546,8 +548,6 @@ public class CodeAttribute implements Generatable {
   public void storeLocalLong(int index) {
     
     checkMaxLocals(index + 1);
-    
-    pop(2);
     
     switch (index) {
       case 0:
@@ -572,6 +572,8 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
+    
+    currentStack -= 2;
   }
   
   public void storeLocalFloat(String variableName) {
@@ -582,8 +584,6 @@ public class CodeAttribute implements Generatable {
   public void storeLocalFloat(int index) {
     
     checkMaxLocals(index);
-    
-    pop(1);
     
     switch (index) {
       case 0:
@@ -608,6 +608,8 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
+    
+    currentStack--;
   }
   
   public void storeLocalDouble(String variableName) {
@@ -618,8 +620,6 @@ public class CodeAttribute implements Generatable {
   public void storeLocalDouble(int index) {
     
     checkMaxLocals(index + 1);
-    
-    pop(2);
     
     switch (index) {
       case 0:
@@ -644,6 +644,8 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
+    
+    currentStack -= 2;
   }
   
   public void storeLocalReference(String variableName) {
@@ -654,8 +656,6 @@ public class CodeAttribute implements Generatable {
   public void storeLocalReference(int index) {
     
     checkMaxLocals(index);
-    
-    pop(1);
     
     switch (index) {
       case 0:
@@ -680,108 +680,110 @@ public class CodeAttribute implements Generatable {
           write2(index);
         }
     }
+    
+    currentStack--;
   }
   
   public void storeIntArrayElement() {
     
-    pop(3);
     writeOpCode(0x4F); // iastore
+    currentStack -= 3;
   }
   
   public void storeLongArrayElement() {
     
-    pop(4);
     writeOpCode(0x50); // lastore
+    currentStack -= 4;
   }
   
   public void storeFloatArrayElement() {
     
-    pop(3);
     writeOpCode(0x51); // fastore
+    currentStack -= 3;
   }
   
   public void storeDoubleArrayElement() {
     
-    pop(4);
     writeOpCode(0x52); // lastore
+    currentStack -= 4;
   }
   
   public void storeReferenceArrayElement() {
     
-    pop(3);
     writeOpCode(0x53); // aastore
+    currentStack -= 3;
   }
   
   public void storeBooleanArrayElement() {
     
-    pop(3);
     writeOpCode(0x54); // bastore
+    currentStack -= 3;
   }
   
   public void storeByteArrayElement() {
     
-    pop(3);
     writeOpCode(0x54); // bastore
+    currentStack -= 3;
   }
   
   public void storeCharArrayElement() {
     
-    pop(3);
     writeOpCode(0x55); // castore
+    currentStack -= 3;
   }
   
   public void storeShortArrayElement() {
     
-    pop(3);
     writeOpCode(0x56); // sastore
+    currentStack -= 3;
   }
   
   public void pop() {
     
-    pop(1);
     writeOpCode(0x57); // pop
+    currentStack--;
   }
   
   public void popDouble() {
     
-    pop(2);
     writeOpCode(0x58); // pop2
+    currentStack -= 2;
   }
   
   public void duplicate() {
     
     writeOpCode(0x59); // dup
-    push(1);
+    incrementStack(1);
   }
   
   public void duplicateSkip() {
     
     writeOpCode(0x5A); // dup_x1
-    push(1);
+    incrementStack(1);
   }
   
   public void duplicateSkipDouble() {
     
     writeOpCode(0x5B); // dup_x2
-    push(1);
+    incrementStack(1);
   }
   
   public void duplicateDouble() {
     
     writeOpCode(0x5C); // dup2
-    push(2);
+    incrementStack(2);
   }
   
   public void duplicateDoubleSkip() {
     
     writeOpCode(0x5D); // dup2_x1
-    push(2);
+    incrementStack(2);
   }
   
   public void duplicateDoubleSkipDouble() {
     
     writeOpCode(0x5E); // dup2_x2
-    push(2);
+    incrementStack(2);
   }
   
   public void swap() {
@@ -791,254 +793,214 @@ public class CodeAttribute implements Generatable {
   
   public void addInt() {
     
-    pop(2);
     writeOpCode(0x60); // iadd
-    push(1);
+    currentStack--;
   }
   
   public void addLong() {
     
-    pop(4);
     writeOpCode(0x61); // ladd
-    push(2);
+    currentStack -= 2;
   }
   
   public void addFloat() {
     
-    pop(2);
     writeOpCode(0x62); // fadd
-    push(1);
+    currentStack--;
   }
   
   public void addDouble() {
     
-    pop(4);
     writeOpCode(0x63); // dadd
-    push(2);
+    currentStack -= 2;
   }
   
   public void subtractInt() {
     
-    pop(2);
     writeOpCode(0x64); // isub
-    push(1);
+    currentStack--;
   }
   
   public void subtractLong() {
     
-    pop(4);
     writeOpCode(0x65); // lsub
-    push(2);
+    currentStack -= 2;
   }
   
   public void subtractFloat() {
     
-    pop(2);
     writeOpCode(0x66); // fsub
-    push(1);
+    currentStack--;
   }
   
   public void subtractDouble() {
     
-    pop(4);
     writeOpCode(0x67); // dsub
-    push(2);
+    currentStack -= 2;
   }
   
   public void multiplyInt() {
     
-    pop(2);
     writeOpCode(0x68); // imul
-    push(1);
+    currentStack--;
   }
   
   public void mulitiplyLong() {
     
-    pop(4);
     writeOpCode(0x69); // lmul
-    push(2);
+    currentStack -= 2;
   }
   
   public void multiplyFloat() {
     
-    pop(2);
     writeOpCode(0x6A); // fmul
-    push(1);
+    currentStack--;
   }
   
   public void multiplyDouble() {
     
-    pop(4);
     writeOpCode(0x6B); // dmul
-    push(2);
+    currentStack -= 2;
   }
   
   public void divideInt() {
     
-    pop(2);
     writeOpCode(0x6C); // idiv
-    push(1);
+    currentStack--;
   }
   
   public void divideLong() {
     
-    pop(4);
     writeOpCode(0x6D); // ldiv
-    push(2);
+    currentStack -= 2;
   }
   
   public void divideFloat() {
     
-    pop(2);
     writeOpCode(0x6E); // fdiv
-    push(1);
+    currentStack--;
   }
   
   public void divideDouble() {
     
-    pop(4);
     writeOpCode(0x6F); // ddiv
-    push(2);
+    currentStack -= 2;
   }
   
   public void remainderInt() {
     
-    pop(2);
     writeOpCode(0x70); // irem
-    push(1);
+    currentStack--;
   }
   
   public void remainderLong() {
     
-    pop(4);
     writeOpCode(0x71); // lrem
-    push(2);
+    currentStack -= 2;
   }
   
   public void remainderFloat() {
     
-    pop(2);
     writeOpCode(0x72); // frem
-    push(1);
+    currentStack--;
   }
   
   public void remainderDouble() {
     
-    pop(4);
     writeOpCode(0x73); // drem
-    push(2);
+    currentStack -= 2;
   }
   
   public void negateInt() {
     
-    pop(1);
     writeOpCode(0x74); // ineg
-    push(1);
   }
   
   public void negateLong() {
     
-    pop(2);
     writeOpCode(0x75); // lneg
-    push(2);
   }
   
   public void negateFloat() {
     
-    pop(1);
     writeOpCode(0x76); // fneg
-    push(1);
   }
   
   public void negateDouble() {
     
-    pop(2);
     writeOpCode(0x77); // dneg
-    push(2);
   }
   
   public void shiftLeftInt() {
     
-    pop(2);
     writeOpCode(0x78); // ishl
-    push(1);
+    currentStack--;
   }
   
   public void shiftLeftLong() {
     
-    pop(3);
     writeOpCode(0x79); // lshl
-    push(2);
+    currentStack--;
   }
   
   public void arithmeticShiftRightInt() {
     
-    pop(2);
     writeOpCode(0x7A); // ishr
-    push(1);
+    currentStack--;
   }
   
   public void arithmeticShiftRightLong() {
     
-    pop(3);
     writeOpCode(0x7B); // lshr
-    push(2);
+    currentStack--;
   }
   
   public void logicalShiftRightInt() {
     
-    pop(2);
     writeOpCode(0x7C); // iushr
-    push(1);
+    currentStack--;
   }
   
   public void logicalShiftRightLong() {
     
-    pop(3);
     writeOpCode(0x7D); // lushr
-    push(2);
+    currentStack--;
   }
   
   public void booleanAndInt() {
     
-    pop(2);
     writeOpCode(0x7E); // iand
-    push(1);
+    currentStack--;
   }
   
   public void booleanAndLong() {
     
-    pop(4);
     writeOpCode(0x7F); // land
-    push(2);
+    currentStack -= 2;
   }
   
   public void booleanOrInt() {
     
-    pop(2);
     writeOpCode(0x80); // ior
-    push(1);
+    currentStack--;
   }
   
   public void booleanOrLong() {
     
-    pop(4);
     writeOpCode(0x81); // lor
-    push(2);
+    currentStack -= 2;
   }
   
   public void booleanXorInt() {
     
-    pop(2);
     writeOpCode(0x82); // ixor
-    push(1);
+    currentStack--;
   }
   
   public void booleanXorLong() {
     
-    pop(4);
     writeOpCode(0x83); // lxor
-    push(2);
+    currentStack -= 2;
   }
   
   public void incrementLocalInt(String variableName, int increment) {
@@ -1069,225 +1031,200 @@ public class CodeAttribute implements Generatable {
   
   public void convertIntToLong() {
     
-    pop(1);
     writeOpCode(0x85); // i2l
-    push(2);
+    incrementStack(1);
   }
   
   public void convertIntToFloat() {
     
-    pop(1);
     writeOpCode(0x86); // i2f
-    push(1);
   }
   
   public void convertIntToDouble() {
     
-    pop(1);
     writeOpCode(0x87); // i2d
-    push(2);
+    incrementStack(1);
   }
   
   public void convertLongToInt() {
     
-    pop(2);
     writeOpCode(0x88); // l2i
-    push(1);
+    currentStack--;
   }
   
   public void convertLongToFloat() {
     
-    pop(2);
     writeOpCode(0x89); // l2f
-    push(1);
+    currentStack--;
   }
   
   public void convertLongToDouble() {
     
-    pop(2);
     writeOpCode(0x8A); // l2d
-    push(2);
   }
   
   public void convertFloatToInt() {
     
-    pop(1);
     writeOpCode(0x8B); // f2i
-    push(1);
   }
   
   public void convertFloatToLong() {
     
-    pop(1);
     writeOpCode(0x8C); // f2l
-    push(2);
+    incrementStack(1);
   }
   
   public void convertFloatToDouble() {
     
-    pop(1);
     writeOpCode(0x8D); // f2d
-    push(2);
+    incrementStack(1);
   }
   
   public void convertDoubleToInt() {
     
-    pop(2);
     writeOpCode(0x8E); // d2i
-    push(1);
+    currentStack--;
   }
   
   public void convertDoubleToLong() {
     
-    pop(2);
     writeOpCode(0x8F); // d2l
-    push(2);
   }
   
   public void convertDoubleToFloat() {
     
-    pop(2);
     writeOpCode(0x90); // d2f
-    push(1);
+    currentStack--;
   }
   
   public void convertIntToByte() {
     
-    pop(1);
     writeOpCode(0x91); // i2b
-    push(1);
   }
   
   public void convertIntToChar() {
     
-    pop(1);
     writeOpCode(0x92); // i2c
-    push(1);
   }
   
   public void convertIntToShort() {
     
-    pop(1);
     writeOpCode(0x93); // i2s
-    push(1);
   }
   
   public void compareLong() {
     
-    pop(4);
     writeOpCode(0x94); // lcmp
-    push(1);
+    currentStack -= 3;
   }
   
   public void compareFloat(boolean nanIsMinus) {
     
-    pop(2);
     writeOpCode(nanIsMinus ? 0x95 : 0x96); // fcmpg : fcmpl
-    push(1);
+    currentStack--;
   }
   
   public void compareDouble(boolean nanIsMinus) {
     
-    pop(4);
     writeOpCode(nanIsMinus ? 0x97 : 0x98); // dcmpg : dcmpl
-    push(1);
+    currentStack -= 3;
   }
   
   public void branchIfEqual(String labelName) {
     
-    pop(1);
     writeOpCode(0x99); // ifeq
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void branchIfNotEqual(String labelName) {
     
-    pop(1);
     writeOpCode(0x9A); // ifne
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void branchIfLess(String labelName) {
     
-    pop(1);
     writeOpCode(0x9B); // iflt
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void branchIfGreaterEqual(String labelName) {
     
-    pop(1);
     writeOpCode(0x9C); // ifge
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void branchIfGreater(String labelName) {
     
-    pop(1);
     writeOpCode(0x9D); // ifgt
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void branchIfLessEqual(String labelName) {
     
-    pop(1);
     writeOpCode(0x9E); // ifle
+    currentStack--;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0x9F); // if_icmpeq
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfNotEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0xA0); // if_icmpne
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfLess(String labelName) {
     
-    pop(2);
     writeOpCode(0xA1); // if_icmplt
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfGreaterEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0xA2); // if_icmpge
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfGreater(String labelName) {
     
-    pop(2);
     writeOpCode(0xA3); // if_icmpgt
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareIntBranchIfLessEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0xA4); // if_icmple
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareReferenceBranchIfEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0xA5); // if_acmpeq
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
   public void compareReferenceBranchIfNotEqual(String labelName) {
     
-    pop(2);
     writeOpCode(0xA6); // if_acmpne
+    currentStack -= 2;
     createJump(2, labelName);
   }
   
@@ -1295,13 +1232,14 @@ public class CodeAttribute implements Generatable {
     
     writeOpCode(0xA7); // goto
     createJump(2, labelName);
+    currentStack = 0;
   }
   
   public void jumpSubroutine(String labelName) {
     
     writeOpCode(0xA8); // jsr
+    incrementStack(1);
     createJump(2, labelName);
-    push(1);
   }
   
   public void returnFromSubroutine(String variableName) {
@@ -1342,7 +1280,7 @@ public class CodeAttribute implements Generatable {
       return;
     }
         
-    pop(1);
+    currentStack--;
     
     writeOpCode(opCode); // tableswitch, lookupswitch
     
@@ -1360,6 +1298,8 @@ public class CodeAttribute implements Generatable {
         codeLookupswitch(table);
         break;
     }
+    
+    currentStack = 0;
   }
   
   private void codeTableswitch(BranchTable table) {
@@ -1400,67 +1340,65 @@ public class CodeAttribute implements Generatable {
   
   public void returnInt() {
     
-    pop(currentStackSize);
     writeOpCode(0xAC); // ireturn
+    currentStack = 0;
   }
   
   public void returnLong() {
     
-    pop(currentStackSize);
     writeOpCode(0xAD); // lreturn
+    currentStack = 0;
   }
   
   public void returnFloat() {
     
-    pop(currentStackSize);
     writeOpCode(0xAE); // freturn
+    currentStack = 0;
   }
   
   public void returnDouble() {
     
-    pop(currentStackSize);
     writeOpCode(0xAF); // dreturn
+    currentStack = 0;
   }
   
   public void returnReference() {
     
-    pop(currentStackSize);
     writeOpCode(0xB0); // areturn
+    currentStack = 0;
   }
   
   public void returnVoid() {
     
-    pop(currentStackSize);
     writeOpCode(0xB1); // return
+    currentStack = 0;
   }
   
   public void getStatic(Type fieldClass, Type fieldType, String fieldName) {
     
     writeOpCode(0xB2); // getstatic
     write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
-    push(1);
+    incrementStack(1);
   }
   
   public void putStatic(Type fieldClass, Type fieldType, String fieldName) {
 
-    pop(1);
     writeOpCode(0xB3); // putstatic
     write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+    currentStack--;
   }
   
   public void getField(Type fieldClass, Type fieldType, String fieldName) {
     
-    pop(1);
     writeOpCode(0xB4); // getfield
     write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
-    push(1);
   }
   
   public void putField(Type fieldClass, Type fieldType, String fieldName) {
 
-    pop(2);
     writeOpCode(0xB5); // putfield
     write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
+    currentStack -= 2;
   }
   
   public void invokeVirtual(Type methodClass, Type returnType, String methodName, Type... argTypes) {
@@ -1489,7 +1427,7 @@ public class CodeAttribute implements Generatable {
     for (int i = 0; i < argTypes.length; i++) {
       popCount += argTypes[i].getSize();
     }
-    pop(popCount);
+    currentStack -= popCount;
     
     writeOpCode(opCode);
     write2(constantPool.addMethodref(methodClass, methodName, returnType, argTypes));
@@ -1499,21 +1437,17 @@ public class CodeAttribute implements Generatable {
       write1(0);
     }
     
-    push(returnType.getSize());
+    incrementStack(returnType.getSize());
   }
-  
-  // opCode 0xBA is unused
   
   public void newObject(Type clazz) {
     
     writeOpCode(0xBB); // new
     write2(constantPool.addClass(clazz));
-    push(1);
+    incrementStack(1);
   }
   
   public void newArray(Type elementType) {
-    
-    pop(1);
     
     int arrayType = 0;
     switch (elementType.getDescriptor().charAt(0)) {
@@ -1550,22 +1484,18 @@ public class CodeAttribute implements Generatable {
       writeOpCode(0xBD); // anewarray
       write2(constantPool.addClass(elementType));
     }
-    
-    push(1);
   }
   
   public void arraylength() {
     
-    pop(1);
     writeOpCode(0xBE); // arraylength
-    push(1);
   }
   
   public void throwException() {
-    
-    pop(currentStackSize);
+
     writeOpCode(0xBF); // athrow
-    push(1);
+    currentStack = 0;
+    incrementStack(1);
   }
   
   public void cast(Type checkedType) {
@@ -1576,51 +1506,63 @@ public class CodeAttribute implements Generatable {
   
   public void checkInstance(Type checkedType) {
     
-    pop(1);
     writeOpCode(0xC1); // instanceof
     write2(constantPool.addClass(checkedType));
-    push(1);
   }
   
   public void monitorEnter() {
     
-    pop(1);
     writeOpCode(0xC2); // monitorenter
+    currentStack--;
   }
   
   public void monitorExit() {
     
-    pop(1);
     writeOpCode(0xC3); // monitorexit
+    currentStack--;
   }
   
-  // opCode 0xC4 (wide) handled with appropriate opCodes
-  
-  // opCode 0xC5 (multianewarray) not supported (too exotic use case; only available for reference arrays)
+  public void newMultiReferenceArray(Type clazz, int dimensions) {
+    
+    writeOpCode(0xC5); // multianewarray
+    write2(constantPool.addClass(clazz));
+    write1(dimensions);
+    currentStack -= (dimensions - 1);
+  }
   
   public void branchIfNull(String labelName) {
     
-    pop(1);
     writeOpCode(0xC6); // ifnull
+    currentStack--;
     createJump(2, labelName);
   }
     
   public void branchIfNonNull(String labelName) {
     
-    pop(1);
     writeOpCode(0xC7); // ifnonnull
+    currentStack--;
     createJump(2, labelName);
   }
 
-  // opCode 0xC8 (goto_w) not supported (would be nonsense, see VM Spec note)
+  public void branchFar(String labelName) {
+    
+    writeOpCode(0xC8); // goto_w
+    createJump(4, labelName);
+    currentStack = 0;
+  }
   
-  // opCode 0xC9 (jsr_w) not supported (would be nonsense, see VM Spec note)
+  public void jumpFarSubroutine(String labelName) {
+    
+    writeOpCode(0xC9); // jsr_w
+    incrementStack(1);
+    createJump(4, labelName);
+  }
   
-  public void generate(DataOutputStream out) throws IOException {
+  public void generate(DataOutputStream out) throws Exception {
     
     buffer.close();
     byte[] code = buffer.toByteArray();
-    //TODO resolve jump / verify label
+    resolveJumpList(code);
     
     out.writeShort(nameIndex);
     out.writeInt(12 + code.length);
@@ -1630,5 +1572,32 @@ public class CodeAttribute implements Generatable {
     out.write(code);
     out.writeShort(0); // try / catch not implemented
     out.writeShort(0); // attributes
+  }
+  
+  private void resolveJumpList(byte[] code) throws Exception {
+    
+    for (Jump jump : jumpList) {
+      resolveJump(jump, code);
+    }
+  }
+  
+  private void resolveJump(Jump jump, byte[] code) throws Exception {
+    
+    Label label = jump.getLabel();
+    if (! label.isDefined()) {
+      throw new CafebabeException(text.get("undefinedLabel", label.getName()));
+    }
+    
+    int distance = label.getOffset() - jump.getOpCodeOffset();
+    int index = jump.getJumpOffset();
+    
+    switch (jump.getSize()) {
+      case 4:
+        code[index++] = (byte) (0xff & (distance >> 24));
+        code[index++] = (byte) (0xff & (distance >> 16));
+      case 2:
+        code[index++] = (byte) (0xff & (distance >> 8));
+        code[index]   = (byte) (0xff & distance);
+    }
   }
 }

@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.cafebabe;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +75,7 @@ public class GenClass implements Generatable, AccessFlags {
     return constantPool;
   }
   
-  public void generate(DataOutputStream out) throws IOException {
+  public void generate(DataOutputStream out) throws Exception {
         
     out.writeInt(0xCAFEBABE);
     

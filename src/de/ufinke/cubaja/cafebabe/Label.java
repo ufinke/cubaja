@@ -15,10 +15,9 @@ class Label {
     this.name = name;
   }
   
-  void define(int offset, int stackSize) {
+  void define(int offset) {
     
     this.offset = offset;
-    this.stackSize = Math.max(this.stackSize, stackSize);
     defined = true;
   }
   
@@ -30,6 +29,12 @@ class Label {
   int getOffset() {
     
     return offset;
+  }
+  
+  int stackSize(int stackSize) {
+    
+    this.stackSize = Math.max(this.stackSize, stackSize);
+    return this.stackSize;
   }
   
   int getStackSize() {

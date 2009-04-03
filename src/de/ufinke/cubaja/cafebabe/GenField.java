@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.cafebabe;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
 
 public class GenField implements Generatable, AccessFlags {
 
@@ -52,7 +51,7 @@ public class GenField implements Generatable, AccessFlags {
     constantValue = new ConstantValueAttribute(genClass, genClass.getConstantPool().addString(value));
   }
   
-  public void generate(DataOutputStream out) throws IOException {
+  public void generate(DataOutputStream out) throws Exception {
     
     out.writeShort(accessFlags);
     out.writeShort(fieldNameIndex);
