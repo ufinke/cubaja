@@ -1,0 +1,44 @@
+package de.ufinke.cubaja.io.test.cafebabe;
+
+import java.util.*;
+
+public class Data {
+
+  private int integer;
+  private String string;
+  private Date date;
+
+  public Data() {
+
+  }
+
+  public int getInteger() {
+
+    return integer;
+  }
+
+  public void setInteger(int integer) {
+
+    this.integer = integer;
+  }
+
+  public String getString() {
+
+    return string;
+  }
+
+  public void setString(String string) {
+
+    this.string = string;
+  }
+
+  public Date getDate() {
+
+    return date;
+  }
+
+  public void setDate(Date date) {
+
+    this.date = date;
+  }
+}

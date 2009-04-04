@@ -17,11 +17,11 @@ public class GenClassLoader extends ClassLoader {
 
   private Generator currentGenerator;
   
-  protected GenClassLoader() {
+  public GenClassLoader() {
   
   }
   
-  protected GenClassLoader(ClassLoader parentClassLoader) {
+  public GenClassLoader(ClassLoader parentClassLoader) {
     
     super(parentClassLoader);
   }

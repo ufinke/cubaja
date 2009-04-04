@@ -1,3 +1,6 @@
+// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.io;
 
 import java.io.DataInputStream;
@@ -226,6 +229,24 @@ public class BinaryInputStream extends DataInputStream {
       return null;
     } else {
       return clazz.getEnumConstants()[readInt()];
+    }
+  }
+  
+  /**
+   * Reads a <code>Streamable</code> object.
+   * @param <D> data type
+   * @param clazz data class
+   * @return an object
+   * @throws Exception
+   */
+  public <D extends Streamable> D readStreamable(Class<D> clazz) throws Exception {
+    
+    if (read() == 0) {
+      return null;
+    } else {
+      D object = clazz.newInstance();
+      object.read(this);
+      return object;
     }
   }
 }

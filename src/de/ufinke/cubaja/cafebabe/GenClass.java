@@ -23,6 +23,7 @@ public class GenClass implements Generatable, AccessFlags {
   private int accessFlags;
   private String className;
   private int classNameIndex;
+  private Type superClass;
   private int superClassIndex;
   private int[] interfaceIndex;
   private List<GenField> fieldList;
@@ -30,8 +31,9 @@ public class GenClass implements Generatable, AccessFlags {
   
   public GenClass(int accessFlags, String className, Type superClass, Type... interfaces) {
 
-    this.accessFlags = accessFlags;
+    this.accessFlags = accessFlags | ACC_SUPER; //TODO always acc_super ?
     this.className = className;
+    this.superClass = superClass;
     
     constantPool = new ConstantPool();
     
@@ -63,6 +65,17 @@ public class GenClass implements Generatable, AccessFlags {
   public GenMethod createConstructor(int methodAccessFlags, Type... args) {
     
     return createMethod(methodAccessFlags, new Type(Void.TYPE), "<init>", args);
+  }
+  
+  public void createDefaultConstructor() {
+    
+    GenMethod constructor = createConstructor(ACC_PUBLIC);
+    
+    CodeAttribute code = constructor.getCode();
+    
+    code.loadLocalReference(0);
+    code.invokeSpecial(superClass, new Type(Void.TYPE), "<init>");
+    code.returnVoid();
   }
   
   public String getName() {

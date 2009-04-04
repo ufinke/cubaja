@@ -24,6 +24,7 @@ public class CodeAttribute implements Generatable {
   private ByteArrayOutputStream buffer;
   private Map<String, Label> labelMap;
   private List<Jump> jumpList;
+  private List<ExceptionHandlerDefinition> exceptionHandlerList;
   private int opCodeOffset;
   
   CodeAttribute(GenClass genClass, boolean isStatic, Type[] args) {
@@ -47,6 +48,7 @@ public class CodeAttribute implements Generatable {
     
     labelMap = new HashMap<String, Label>();
     jumpList = new ArrayList<Jump>();
+    exceptionHandlerList = new ArrayList<ExceptionHandlerDefinition>();
     buffer = new ByteArrayOutputStream();
   }
   
@@ -128,6 +130,11 @@ public class CodeAttribute implements Generatable {
     Label label = getLabel(labelName);
     label.define(buffer.size());
     checkLabelStack(label);
+  }
+  
+  public void defineExceptionHandler(String startLabelName, String endLabelName, Type exceptionType, String handlerLabelName) {
+    
+    exceptionHandlerList.add(new ExceptionHandlerDefinition(getLabel(startLabelName), getLabel(endLabelName), exceptionType, getLabel(handlerLabelName)));
   }
   
   public int getLocalVariable(String variableName, Type type) {
@@ -1565,12 +1572,12 @@ public class CodeAttribute implements Generatable {
     resolveJumpList(code);
     
     out.writeShort(nameIndex);
-    out.writeInt(12 + code.length);
+    out.writeInt(12 + code.length + exceptionHandlerList.size() * 8);
     out.writeShort(maxStackSize);
     out.writeShort(maxLocals);
     out.writeInt(code.length);
     out.write(code);
-    out.writeShort(0); // try / catch not implemented
+    generateExceptionHandlers(out);
     out.writeShort(0); // attributes
   }
   
@@ -1599,5 +1606,30 @@ public class CodeAttribute implements Generatable {
         code[index++] = (byte) (0xff & (distance >> 8));
         code[index]   = (byte) (0xff & distance);
     }
+  }
+  
+  private void generateExceptionHandlers(DataOutputStream out) throws Exception {
+
+    out.writeShort(exceptionHandlerList.size());
+    
+    for (ExceptionHandlerDefinition handler : exceptionHandlerList) {
+      generateProgramCounter(out, handler.getStartLabel());
+      generateProgramCounter(out, handler.getEndLabel());
+      generateProgramCounter(out, handler.getHandlerLabel());
+      if (handler.getExceptionType() == null) {
+        out.writeShort(0);
+      } else {
+        out.writeShort(constantPool.addClass(handler.getExceptionType()));
+      }
+    }
+  }
+  
+  private void generateProgramCounter(DataOutputStream out, Label label) throws Exception {
+    
+    if (! label.isDefined()) {
+      throw new CafebabeException(text.get("undefinedLabel", label.getName()));
+    }
+    
+    out.writeShort(label.getOffset());
   }
 }

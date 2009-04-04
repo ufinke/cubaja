@@ -10,6 +10,9 @@ import java.util.List;
 public class GenMethod implements Generatable, AccessFlags {
 
   private GenClass genClass;
+  private Type returnType;
+  private String methodName;
+  private Type[] args;
   private int accessFlags;
   private int methodNameIndex;
   private int descriptorIndex;
@@ -21,6 +24,9 @@ public class GenMethod implements Generatable, AccessFlags {
   
     this.genClass = genClass;
     this.accessFlags = accessFlags;
+    this.returnType = returnType;
+    this.methodName = methodName;
+    this.args = args;
     
     methodNameIndex = genClass.getConstantPool().addName(methodName);
     descriptorIndex = genClass.getConstantPool().addMethodDescriptor(returnType, args);
@@ -42,6 +48,67 @@ public class GenMethod implements Generatable, AccessFlags {
       attributeList.add(exceptionAttribute);
     }
     exceptionAttribute.addException(exception);
+  }
+  
+  public void createGenericBridge(Type genericReturnType, Type... genericArgs) {
+    
+    GenMethod bridge = genClass.createMethod(accessFlags | ACC_BRIDGE | ACC_SYNTHETIC, genericReturnType, methodName, genericArgs);
+    
+    CodeAttribute code = bridge.getCode();
+    
+    code.loadLocalReference(0);
+    
+    for (int i = 0; i < args.length; i++) {
+      switch (args[i].getDescriptor().charAt(0)) {
+        case 'I':
+        case 'C':
+        case 'S':
+        case 'B':
+        case 'Z':
+          code.loadLocalInt(i + 1);
+          break;
+        case 'J':
+          code.loadLocalLong(i + 1);
+          break;
+        case 'D':
+          code.loadLocalDouble(i + 1);
+          break;
+        case 'F':
+          code.loadLocalFloat(i + 1);
+          break;
+        default:
+          code.loadLocalReference(i + 1);
+          if (! genericArgs[i].equals(args[i])) {
+            code.cast(args[i]);
+          }
+      }  
+    }
+    
+    code.invokeVirtual(new Type(genClass), returnType, methodName, args);
+    
+    switch (genericReturnType.getDescriptor().charAt(0)) {
+      case 'V':
+        code.returnVoid();
+        break;
+      case 'I':
+      case 'C':
+      case 'S':
+      case 'B':
+      case 'Z':
+        code.returnInt();
+        break;
+      case 'J':
+        code.returnLong();
+        break;
+      case 'D':
+        code.returnDouble();
+        break;
+      case 'F':
+        code.returnFloat();
+        break;
+      default:
+        code.returnReference();
+    }
   }
   
   public void generate(DataOutputStream out) throws Exception {

@@ -1,3 +1,6 @@
+// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.io;
 
 import java.io.DataOutputStream;
@@ -250,6 +253,21 @@ public class BinaryOutputStream extends DataOutputStream {
     } else {
       write(1);
       writeChar(value.ordinal());
+    }
+  }
+  
+  /**
+   * Writes a <code>Streamable</code> object.
+   * @param value a streamable
+   * @throws Exception
+   */
+  public void writeStreamable(Streamable value) throws Exception {
+    
+    if (value == null) {
+      write(0);
+    } else {
+      write(1);
+      value.write(this);
     }
   }
 }

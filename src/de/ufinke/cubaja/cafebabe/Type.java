@@ -68,6 +68,16 @@ public class Type {
     this.parameterName = parameterName;
   }
   
+  public boolean equals(Object o) {
+    
+    if (! (o instanceof Type)) {
+      return false;
+    }
+    
+    Type other = (Type) o;
+    return getDescriptor().equals(other.getDescriptor());
+  }
+  
   String getParameterName() {
     
     return parameterName;
