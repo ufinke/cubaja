@@ -52,4 +52,11 @@ public abstract class Streamer<D> implements Closeable {
   public abstract void write(D object) throws Exception;
   
   public abstract D read() throws Exception;
+  
+  protected void testState(Object stream) {
+    
+    if (stream == null) {
+      throw new IllegalStateException(text.get("notOpened"));
+    }
+  }
 }

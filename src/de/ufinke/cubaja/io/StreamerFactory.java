@@ -77,8 +77,10 @@ public class StreamerFactory implements Generator {
     code.loadLocalReference(0);
     code.getField(streamerType, outputStreamType, "out");
     code.branchIfNull("nullStream");
+    ...
     
     code.defineLabel("nullStream");
+    ...
   }
   
   private void generateReader(GenMethod method) {

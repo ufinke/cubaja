@@ -1,4 +1,4 @@
-package de.ufinke.cubaja.io.test.cafebabe;
+package de.ufinke.cubaja.io.test.example1;
 
 import java.util.*;
 
@@ -7,6 +7,8 @@ public class Data {
   private int integer;
   private String string;
   private Date date;
+  private TestStreamable streamable;
+  private SubData subData;
 
   public Data() {
 
@@ -40,5 +42,25 @@ public class Data {
   public void setDate(Date date) {
 
     this.date = date;
+  }
+
+  public TestStreamable getStreamable() {
+  
+    return streamable;
+  }
+  
+  public void setStreamable(TestStreamable streamable) {
+  
+    this.streamable = streamable;
+  }
+  
+  public SubData getSubData() {
+    
+    return subData;
+  }
+  
+  public void setSubData(SubData subData) {
+    
+    this.subData = subData;
   }
 }
