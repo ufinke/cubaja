@@ -173,24 +173,24 @@ public class StreamerFactory implements Generator {
     return map;
   }
   
-  static private final Map<Class<?>, Collection<Property>> propertyMap = new HashMap<Class<?>, Collection<Property>>();
+  static private final Map<Class<?>, List<Property>> propertyMap = new HashMap<Class<?>, List<Property>>();
   
-  static private Collection<Property> getPropertyCollection(Class<?> clazz) {
+  static private List<Property> getPropertyList(Class<?> clazz) {
     
-    Collection<Property> collection = propertyMap.get(clazz);
+    List<Property> list = propertyMap.get(clazz);
     
-    if (collection == null) {
-      collection = createPropertyCollection(clazz);
+    if (list == null) {
+      list = createPropertyList(clazz);
     }
     
-    return collection;
+    return list;
   }
   
-  static private synchronized Collection<Property> createPropertyCollection(Class<?> clazz) {
+  static private synchronized List<Property> createPropertyList(Class<?> clazz) {
     
-    Collection<Property> collection = propertyMap.get(clazz);
-    if (collection != null) {
-      return collection;
+    List<Property> list = propertyMap.get(clazz);
+    if (list != null) {
+      return list;
     }
     
     Map<String, Property> map = new HashMap<String, Property>();
@@ -227,7 +227,7 @@ public class StreamerFactory implements Generator {
       }
     }
     
-    List<Property> list = new ArrayList<Property>();
+    list = new ArrayList<Property>();
     for (Property property : map.values()) {
       if (property.isValid()) {
         list.add(property);
@@ -251,6 +251,8 @@ public class StreamerFactory implements Generator {
   private Type genClassType;
   private CodeAttribute readerCode;
   private CodeAttribute writerCode;
+  private int lastWriterLocal;
+  private int lastReaderLocal;
   
   private StreamerFactory(Class<?> clazz) {
   
@@ -287,19 +289,35 @@ public class StreamerFactory implements Generator {
     
     writerCode = writer.getCode();
     readerCode = reader.getCode();
+
+    lastWriterLocal = 1;
+    lastReaderLocal = 0;
     
-    generateIntro(writerCode, outputStreamType, "out", 2);
-    generateIntro(readerCode, inputStreamType, "in", 1);
+    generateCode();
     
-    generate(clazz, true);
+    return genClass;
+  }
+  
+  private void generateCode() {
+    
+    writerCode.loadLocalReference(1); // cast object to its real type
+    writerCode.cast(dataClassType);
+    
+    generateIntro(writerCode, outputStreamType, "out", 1);
+    generateIntro(readerCode, inputStreamType, "in", 2);
+    
+    Parm parm = getParm(clazz);
+    if (parm.isPredefinedObjectType()) {
+      generateBuiltinRoot(parm);
+    } else {      
+      generateUnknown(clazz);
+    }
     
     writerCode.returnVoid();
     readerCode.returnReference();
     
     generateNullStream(writerCode);
     generateNullStream(readerCode);
-    
-    return genClass;
   }
   
   private void generateIntro(CodeAttribute code, Type streamType, String streamFieldName, int local) {
@@ -318,26 +336,39 @@ public class StreamerFactory implements Generator {
     code.invokeStatic(genClassType, voidType, "nullStream"); // call nullStream() to throw IllegalStateException
   }
   
-  private void generate(Class<?> currentClass, boolean root) {
+  private void generateUnknown(Class<?> currentClass) {
 
-    if (root) {
-      writerCode.loadLocalReference(1); // cast object to its real type
-      writerCode.cast(dataClassType);
+    for (Property property : getPropertyList(currentClass)) {
+      
+      Parm parm = getParm(property.getClazz());
+      
+      switch (parm.getKind()) {
+
+        case PRIMITIVE:
+        case BUILTIN:
+          break;
+          
+        case STREAMABLE:
+        case ENUM:
+          break;
+          
+        case UNKNOWN:
+          break;
+      }
     }
-    
-    Parm parm = getParm(currentClass);
-    
-    if (root && parm.isPredefinedObjectType()) {
-      generateBuiltinRoot(parm, currentClass);
-      return;
-    }    
   }
   
-  private void generateUnknown(Class<?> currentClass, boolean root) {
+  private void incrementLastLocal() {
     
+    if (lastWriterLocal == 1) {
+      lastWriterLocal++;
+      lastReaderLocal++;
+    }
+    lastWriterLocal++;
+    lastReaderLocal++;
   }
   
-  private void generateBuiltinRoot(Parm parm, Class<?> currentClass) {
+  private void generateBuiltinRoot(Parm parm) {
 
     writerCode.loadLocalReference(2); // stream
     writerCode.loadLocalReference(1); // object
@@ -345,7 +376,7 @@ public class StreamerFactory implements Generator {
     
     readerCode.loadLocalReference(1); // stream
     if (parm.needsClassParameter()) {
-      readerCode.loadConstant(currentClass);
+      readerCode.loadConstant(clazz);
       readerCode.invokeVirtual(inputStreamType, parm.getType(), parm.getReaderMethod(), classType); // readXXX(Class)
     } else {      
       readerCode.invokeVirtual(inputStreamType, parm.getType(), parm.getReaderMethod()); // readXXX
