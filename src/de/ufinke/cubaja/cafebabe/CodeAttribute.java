@@ -125,6 +125,11 @@ public class CodeAttribute implements Generatable {
     checkLabelStack(label);
   }
   
+  public int getStackSize() {
+    
+    return maxStackSize;
+  }
+  
   public void defineLabel(String labelName) {
     
     Label label = getLabel(labelName);

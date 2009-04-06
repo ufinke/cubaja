@@ -10,6 +10,11 @@ public abstract class Streamer<D> implements Closeable {
   
   static protected Text text = new Text(Streamer.class);
   
+  static protected void nullStream() {
+    
+    throw new IllegalStateException(text.get("nullStream"));
+  }
+  
   protected BinaryOutputStream out;
   protected BinaryInputStream in;
   
@@ -17,13 +22,13 @@ public abstract class Streamer<D> implements Closeable {
     
   }
   
-  public void open(OutputStream stream) {
+  public void openOutput(OutputStream stream) {
     
     checkOpened();
     out = new BinaryOutputStream(stream);
   }
   
-  public void open(InputStream stream) {
+  public void openInput(InputStream stream) {
     
     checkOpened();
     in = new BinaryInputStream(stream);
@@ -53,10 +58,4 @@ public abstract class Streamer<D> implements Closeable {
   
   public abstract D read() throws Exception;
   
-  protected void testState(Object stream) {
-    
-    if (stream == null) {
-      throw new IllegalStateException(text.get("notOpened"));
-    }
-  }
 }

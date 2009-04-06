@@ -31,7 +31,7 @@ public class GenClass implements Generatable, AccessFlags {
   
   public GenClass(int accessFlags, String className, Type superClass, Type... interfaces) {
 
-    this.accessFlags = accessFlags | ACC_SUPER; //TODO always acc_super ?
+    this.accessFlags = accessFlags | ACC_SUPER;
     this.className = className;
     this.superClass = superClass;
     

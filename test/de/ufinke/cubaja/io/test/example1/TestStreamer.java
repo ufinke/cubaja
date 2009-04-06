@@ -10,8 +10,6 @@ public class TestStreamer extends Streamer<Data> {
 
   public Data read() throws Exception {
 
-    testState(in);
-    
     Data data = new Data();
     
     data.setInteger(in.readInt());
@@ -28,8 +26,6 @@ public class TestStreamer extends Streamer<Data> {
 
   public void write(Data data) throws Exception {
 
-    testState(out);
-    
     out.writeInt(data.getInteger());
     out.writeString(data.getString());
     SubData subData = data.getSubData();
