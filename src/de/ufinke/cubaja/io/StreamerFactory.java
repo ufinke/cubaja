@@ -3,65 +3,25 @@
 
 package de.ufinke.cubaja.io;
 
-import de.ufinke.cubaja.cafebabe.*;
-import java.util.*;
-import java.math.*;
+import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_PUBLIC;
 import java.lang.reflect.Method;
-import static de.ufinke.cubaja.cafebabe.AccessFlags.*;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import de.ufinke.cubaja.cafebabe.CodeAttribute;
+import de.ufinke.cubaja.cafebabe.GenClass;
+import de.ufinke.cubaja.cafebabe.GenClassLoader;
+import de.ufinke.cubaja.cafebabe.GenMethod;
+import de.ufinke.cubaja.cafebabe.Generator;
+import de.ufinke.cubaja.cafebabe.Type;
 
 public class StreamerFactory implements Generator {
 
-  static class Property {
-  
-    private Class<?> setterClazz;
-    private Class<?> getterClazz;
-    private String setterMethod;
-    private String getterMethod;
-    
-    Property() {
-      
-    }
-
-    Class<?> getClazz() {
-    
-      return setterClazz;
-    }
-    
-    void setSetterClazz(Class<?> clazz) {
-    
-      setterClazz = clazz;
-    }
-    
-    void setGetterClazz(Class<?> clazz) {
-      
-      getterClazz = clazz;
-    }
-    
-    String getSetterMethod() {
-    
-      return setterMethod;
-    }
-    
-    void setSetterMethod(String setterMethod) {
-    
-      this.setterMethod = setterMethod;
-    }
-
-    String getGetterMethod() {
-    
-      return getterMethod;
-    }
-
-    void setGetterMethod(String getterMethod) {
-    
-      this.getterMethod = getterMethod;
-    }
-    
-    boolean isValid() {
-      
-      return setterMethod != null && getterMethod != null && setterClazz == getterClazz;
-    }
-  }
+// parameter kind -------------------------------------------------------------
   
   static enum Kind {
   
@@ -72,6 +32,8 @@ public class StreamerFactory implements Generator {
     UNKNOWN
   }
 
+// parameter types and attributes ---------------------------------------------
+  
   static enum Parm {
     
     BOOLEAN(Boolean.TYPE, Kind.PRIMITIVE, "Boolean"),
@@ -150,16 +112,6 @@ public class StreamerFactory implements Generator {
     }
   }
   
-  static private final GenClassLoader loader = new GenClassLoader();
-  
-  static private final Type objectType = new Type(Object.class);
-  static private final Type classType = new Type(Class.class);
-  static private final Type voidType = new Type(Void.TYPE);
-  static private final Type streamerType = new Type(Streamer.class);
-  static private final Type exceptionType = new Type(Exception.class);
-  static private final Type inputStreamType = new Type(BinaryInputStream.class);
-  static private final Type outputStreamType = new Type(BinaryOutputStream.class);
-  
   static private final Map<Class<?>, Parm> parmMap = createParmMap();
   
   static private Map<Class<?>, Parm> createParmMap() {
@@ -171,6 +123,60 @@ public class StreamerFactory implements Generator {
     }
     
     return map;
+  }
+
+// properties (getter / setter pairs) of classes ------------------------------
+  
+  static class Property {
+    
+    private Class<?> setterClazz;
+    private Class<?> getterClazz;
+    private String setterMethod;
+    private String getterMethod;
+    
+    Property() {
+      
+    }
+
+    Class<?> getClazz() {
+    
+      return setterClazz;
+    }
+    
+    void setSetterClazz(Class<?> clazz) {
+    
+      setterClazz = clazz;
+    }
+    
+    void setGetterClazz(Class<?> clazz) {
+      
+      getterClazz = clazz;
+    }
+    
+    String getSetterMethod() {
+    
+      return setterMethod;
+    }
+    
+    void setSetterMethod(String setterMethod) {
+    
+      this.setterMethod = setterMethod;
+    }
+
+    String getGetterMethod() {
+    
+      return getterMethod;
+    }
+
+    void setGetterMethod(String getterMethod) {
+    
+      this.getterMethod = getterMethod;
+    }
+    
+    boolean isValid() {
+      
+      return setterMethod != null && getterMethod != null && setterClazz == getterClazz;
+    }
   }
   
   static private final Map<Class<?>, List<Property>> propertyMap = new HashMap<Class<?>, List<Property>>();
@@ -238,6 +244,20 @@ public class StreamerFactory implements Generator {
     
     return list;
   }
+  
+// constants ------------------------------------------------------------------
+  
+  static private final GenClassLoader loader = new GenClassLoader();
+  
+  static private final Type objectType = new Type(Object.class);
+  static private final Type classType = new Type(Class.class);
+  static private final Type voidType = new Type(Void.TYPE);
+  static private final Type streamerType = new Type(Streamer.class);
+  static private final Type exceptionType = new Type(Exception.class);
+  static private final Type inputStreamType = new Type(BinaryInputStream.class);
+  static private final Type outputStreamType = new Type(BinaryOutputStream.class);
+  
+// StreamerFactory logic ------------------------------------------------------
   
   @SuppressWarnings("unchecked")
   static public <D> Streamer<D> createStreamer(Class<D> clazz) throws Exception {

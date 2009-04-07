@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <code>DataInputStream</code> extension for handling common object types.
@@ -18,6 +20,8 @@ import java.util.Date;
  */
 public class BinaryInputStream extends DataInputStream {
 
+  private final Map<Class<?>, InputObjectHandler> handlerMap = new HashMap<Class<?>, InputObjectHandler>();
+  
   /**
    * Constructor.
    * @param in the underlying <code>InputStream</code>
@@ -233,20 +237,43 @@ public class BinaryInputStream extends DataInputStream {
   }
   
   /**
-   * Reads a <code>Streamable</code> object.
-   * @param <D> data type
-   * @param clazz data class
-   * @return an object
+   * Reads any object.
+   * <p/>
+   * The object is created and filled by an <code>InputObjectHandler</code>.
+   * We can provide our own individual handlers with the <code>addObjectHandler</code> method.
+   * <p/>
+   * If we do not provide an appropriate handler for a data class,
+   * a factory will generate a handler automatically.
+   * An automatically generated handler calls all setter methods of a data object
+   * when there is a matching getter method with the same return type
+   * as the setter parameter type.
+   * When there is an unknown parameter type, the <code>readObject</code>
+   * method is called recursively.
+   * @param <D> data class type
+   * @param clazz data class type
+   * @return object of type <code>clazz</code>
    * @throws Exception
    */
-  public <D extends Streamable> D readStreamable(Class<D> clazz) throws Exception {
+  @SuppressWarnings("unchecked")
+  public <D> D readObject(Class<? extends D> clazz) throws Exception {
     
-    if (read() == 0) {
-      return null;
-    } else {
-      D object = clazz.newInstance();
-      object.read(this);
-      return object;
+    InputObjectHandler handler = handlerMap.get(clazz); 
+    
+    if (handler == null) {
+      handler = BinaryObjectHandlerFactory.getInputHandler(clazz);
+      handlerMap.put(clazz, handler);
     }
+    
+    return (D) handler.read(this, clazz);
   }
+  
+  /**
+   * Adds an object handler for a data class type.
+   * @param clazz data class type
+   * @param handler handler
+   */
+  public void addObjectHandler(Class<?> clazz, InputObjectHandler handler) {
+    
+    handlerMap.put(clazz, handler);
+  }  
 }

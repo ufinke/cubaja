@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Date;
+import java.util.*;
 
 /**
  * <code>DataOutputStream</code> extension for handling common object types.
@@ -30,6 +30,8 @@ import java.util.Date;
  */
 public class BinaryOutputStream extends DataOutputStream {
 
+  private final Map<Class<?>, OutputObjectHandler> handlerMap = new HashMap<Class<?>, OutputObjectHandler>();
+  
   /**
    * Constructor.
    * @param out the underlying <code>OutputStream</code>
@@ -257,17 +259,40 @@ public class BinaryOutputStream extends DataOutputStream {
   }
   
   /**
-   * Writes a <code>Streamable</code> object.
-   * @param value a streamable
+   * Writes any object.
+   * <p/>
+   * The object is written by an <code>OutputObjectHandler</code>.
+   * We can provide our own individual handlers with the <code>addObjectHandler</code> method.
+   * <p/>
+   * If we do not provide an appropriate handler for a data class,
+   * a factory will generate a handler automatically.
+   * An automatically generated handler calls all getter methods of a data object
+   * when there is a matching setter method with the same parameter type
+   * as the getter return type.
+   * When there is an unknown parameter type, the <code>writeObject</code>
+   * method is called recursively.
+   * @param object a data object
    * @throws Exception
    */
-  public void writeStreamable(Streamable value) throws Exception {
+  public void writeObject(Object object) throws Exception {
     
-    if (value == null) {
-      write(0);
-    } else {
-      write(1);
-      value.write(this);
+    OutputObjectHandler handler = handlerMap.get(object.getClass()); 
+    
+    if (handler == null) {
+      handler = BinaryObjectHandlerFactory.getOutputHandler(object.getClass());
+      handlerMap.put(object.getClass(), handler);
     }
+    
+    handler.write(this, object);
   }
+  
+  /**
+   * Adds an object handler for a data class type.
+   * @param clazz data class type
+   * @param handler handler
+   */
+  public void addObjectHandler(Class<?> clazz, OutputObjectHandler handler) {
+    
+    handlerMap.put(clazz, handler);
+  }  
 }

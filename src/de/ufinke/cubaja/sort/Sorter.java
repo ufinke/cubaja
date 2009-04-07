@@ -5,14 +5,13 @@ package de.ufinke.cubaja.sort;
 
 import java.util.Comparator;
 import java.util.Iterator;
-import de.ufinke.cubaja.io.Streamer;
 
 public class Sorter<D> implements Iterable<D> {
 
   private boolean iteratorCreated;
   private SortAlgorithm<D> algorithm;
   
-  public Sorter(Comparator<D> comparator, Streamer<D> streamer) {
+  public Sorter(Comparator<D> comparator) {
     
   }
   

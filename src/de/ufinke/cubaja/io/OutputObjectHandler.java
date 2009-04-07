@@ -3,9 +3,7 @@
 
 package de.ufinke.cubaja.io;
 
-public interface Streamable {
+public interface OutputObjectHandler {
 
-  public void write(BinaryOutputStream stream) throws Exception;
-  
-  public void read(BinaryInputStream stream) throws Exception;
+  public void write(BinaryOutputStream stream, Object object) throws Exception;
 }

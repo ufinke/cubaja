@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.Text;
 
 public class CodeAttribute implements Generatable {
 
