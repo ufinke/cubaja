@@ -276,14 +276,35 @@ public class BinaryOutputStream extends DataOutputStream {
    */
   public void writeObject(Object object) throws Exception {
     
+    if (object == null) {
+      write(0);
+      return;
+    }
+    
+    write(1);
+    
     OutputObjectHandler handler = handlerMap.get(object.getClass()); 
     
     if (handler == null) {
-      handler = BinaryObjectHandlerFactory.getOutputHandler(object.getClass());
+      handler = getGeneratedHandler(object.getClass());
       handlerMap.put(object.getClass(), handler);
     }
     
     handler.write(this, object);
+  }
+  
+  private OutputObjectHandler getGeneratedHandler(Class<?> clazz) throws Exception {
+    
+    PropertyClassAnalyzer analyzer = new PropertyClassAnalyzer(clazz);
+    List<PropertyDescription> properties = analyzer.getPropertyList();
+    
+    writeShort(properties.size());
+    for (PropertyDescription property : properties) {
+      writeUTF(property.getName());
+      writeUTF(property.getClass().getName());
+    }
+    
+    return OutputObjectHandlerFactory.getHandler(clazz, properties);
   }
   
   /**

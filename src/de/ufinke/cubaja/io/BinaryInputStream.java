@@ -10,7 +10,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.*;
 
 /**
  * <code>DataInputStream</code> extension for handling common object types.
@@ -257,14 +258,34 @@ public class BinaryInputStream extends DataInputStream {
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws Exception {
     
+    if (read() == 0) {
+      return null;
+    }
+    
     InputObjectHandler handler = handlerMap.get(clazz); 
     
     if (handler == null) {
-      handler = BinaryObjectHandlerFactory.getInputHandler(clazz);
+      handler = getGeneratedHandler(clazz);
       handlerMap.put(clazz, handler);
     }
     
     return (D) handler.read(this, clazz);
+  }
+  
+  private InputObjectHandler getGeneratedHandler(Class<?> clazz) throws Exception {
+    
+    int size = readShort();
+    List<PropertyDescription> receivedProperties = new ArrayList<PropertyDescription>(size);
+    for (int i = 0; i < size; i++) {
+      String name = readUTF();
+      Class<?> type = Class.forName(readUTF());
+      receivedProperties.add(new PropertyDescription(name, type));
+    }
+    
+    PropertyClassAnalyzer analyzer = new PropertyClassAnalyzer(clazz);
+    analyzer.checkIntersection(receivedProperties);
+    
+    return InputObjectHandlerFactory.getHandler(clazz, receivedProperties);
   }
   
   /**
