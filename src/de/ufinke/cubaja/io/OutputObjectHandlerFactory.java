@@ -3,39 +3,70 @@
 
 package de.ufinke.cubaja.io;
 
-import java.math.*;
-import java.util.*;
+import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_PUBLIC;
+import java.util.List;
+import de.ufinke.cubaja.cafebabe.CodeAttribute;
+import de.ufinke.cubaja.cafebabe.GenClass;
+import de.ufinke.cubaja.cafebabe.GenClassLoader;
+import de.ufinke.cubaja.cafebabe.GenMethod;
+import de.ufinke.cubaja.cafebabe.Generator;
+import de.ufinke.cubaja.cafebabe.Type;
 
-class OutputObjectHandlerFactory {
+class OutputObjectHandlerFactory implements Generator {
 
-  static private final Map<Class<?>, OutputObjectHandler> handlerMap = new HashMap<Class<?>, OutputObjectHandler>();
+  static private final GenClassLoader loader = new GenClassLoader();
   
-  static OutputObjectHandler getHandler(Class<?> dataClass, List<PropertyDescription> properties) {
+  static private final Type objectType = new Type(Object.class);
+  static private final Type classType = new Type(Class.class);
+  static private final Type voidType = new Type(Void.TYPE);
+  static private final Type exceptionType = new Type(Exception.class);
+  static private final Type streamType = new Type(BinaryOutputStream.class);
+  static private final Type handlerType = new Type(OutputObjectHandler.class);
+  
+  static OutputObjectHandler getHandler(Class<?> dataClass, List<PropertyDescription> propertyList) throws Exception {
     
-    OutputObjectHandler handler = null;
-    
-    synchronized (handlerMap) {
-      handler = handlerMap.get(dataClass);
+    return (OutputObjectHandler) loader.createInstance(new OutputObjectHandlerFactory(dataClass, propertyList));
+  }
+  
+  private List<PropertyDescription> propertyList;
+  private Class<?> dataClass;
+  private String dataClassName;
+  private Type dataClassType;
+  private Type genClassType;
+  private CodeAttribute code;
+  
+  private OutputObjectHandlerFactory(Class<?> dataClass, List<PropertyDescription> propertyList) {
+  
+    this.dataClass = dataClass;
+    this.propertyList = propertyList;
+  }
+  
+  public String getClassName() throws Exception {
+
+    if (dataClassName == null) {
+      StringBuilder sb = new StringBuilder(200);
+      sb.append(getClass().getPackage().getName());
+      sb.append("OutputObjectHandler_");
+      sb.append(dataClass.getName().replace('.', '_'));
+      dataClassName = sb.toString();
     }
     
-    if (handler == null) {
-      handler = new OutputObjectHandlerFactory().createHandler(dataClass);
-      synchronized (handlerMap) {
-        handlerMap.put(dataClass, handler);
-      }
-    }
-    
-    return handler;
+    return dataClassName;
   }
   
-  private OutputObjectHandlerFactory() {
+  public GenClass generate() throws Exception {
+
+    GenClass genClass = new GenClass(ACC_PUBLIC, getClassName(), objectType, handlerType);
     
-  }
-  
-  private OutputObjectHandler createHandler(Class<?> dataClass) {
+    genClassType = new Type(genClass);
+    dataClassType = new Type(dataClass);
     
-    //TODO
-    return null;
+    genClass.createDefaultConstructor();
+    
+    GenMethod write = genClass.createMethod(ACC_PUBLIC, voidType, "write", streamType, objectType);    
+    write.addException(exceptionType);    
+    code = write.getCode();
+    
+    return genClass;
   }
-  
 }

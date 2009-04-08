@@ -8,14 +8,14 @@ public class Main {
 
   static public void main(String[] args) {
     
-    try {      
-      Streamer<Data> streamer = StreamerFactory.createStreamer(Data.class);
-      streamer.openOutput(new FileOutputStream("~/temp/test.txt"));
-      streamer.write(createData());
-      streamer.close();
-      streamer.openInput(new FileInputStream("~/temp/test.txt"));
-      Data data = streamer.read();
-      streamer.close();
+    try {
+      BinaryOutputStream output = new BinaryOutputStream(new FileOutputStream("~/temp/test.txt"));
+      output.writeObject(createData());
+      output.close();
+      BinaryInputStream input = new BinaryInputStream(new FileInputStream("~/temp/test.txt"));
+      Data data = input.readObject(Data.class);
+      System.out.println(data.getSubData().getName());
+      input.close();
     } catch (Exception e) {
       e.printStackTrace();
     }
