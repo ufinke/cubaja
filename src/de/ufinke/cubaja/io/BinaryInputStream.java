@@ -22,6 +22,21 @@ import java.util.Map;
  */
 public class BinaryInputStream extends DataInputStream {
 
+  static private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
+  
+  static private Map<String, Class<?>> createPrimitivesMap() {
+  
+    Map<String, Class<?>> map = new HashMap<String, Class<?>>();
+    
+    for (BinaryStreamParameter parameter : BinaryStreamParameter.values()) {
+      if (parameter.isPrimitive()) {
+        map.put(parameter.getClazz().getName(), parameter.getClazz());
+      }
+    }
+    
+    return map;
+  }
+  
   private final Map<Class<?>, InputObjectHandler> handlerMap = new HashMap<Class<?>, InputObjectHandler>();
   
   /**
@@ -234,7 +249,7 @@ public class BinaryInputStream extends DataInputStream {
     if (read() == 0) {
       return null;
     } else {
-      return clazz.getEnumConstants()[readInt()];
+      return clazz.getEnumConstants()[readChar()];
     }
   }
   
@@ -278,9 +293,13 @@ public class BinaryInputStream extends DataInputStream {
     int size = readShort();
     List<PropertyDescription> receivedProperties = new ArrayList<PropertyDescription>(size);
     for (int i = 0; i < size; i++) {
-      String name = readUTF();
-      Class<?> type = Class.forName(readUTF());
-      receivedProperties.add(new PropertyDescription(name, type));
+      String propertyName = readUTF();
+      String propertyClazzName = readUTF();
+      Class<?> propertyClazz = primitivesMap.get(propertyClazzName);
+      if (propertyClazz == null) {
+        propertyClazz = Class.forName(propertyClazzName);
+      }
+      receivedProperties.add(new PropertyDescription(propertyName, propertyClazz));
     }
     
     PropertyClassAnalyzer analyzer = new PropertyClassAnalyzer(clazz);

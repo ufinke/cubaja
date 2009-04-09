@@ -43,7 +43,7 @@ public class CodeAttribute implements Generatable {
         parmName = "parm_" + (i + 1);
       }
       getLocalVariable(parmName);
-      maxLocals += (args[i].getSize() == 1) ? 1 : 2;
+      maxLocals += args[i].getSize();
     }
     
     labelMap = new HashMap<String, Label>();
@@ -57,6 +57,7 @@ public class CodeAttribute implements Generatable {
     Integer index = localVariableMap.get(name);
     if (index == null) {
       index = maxLocals;
+      localVariableMap.put(name, index);
     }
     return index;
   }
@@ -755,6 +756,18 @@ public class CodeAttribute implements Generatable {
     
     writeOpCode(0x58); // pop2
     currentStack -= 2;
+  }
+  
+  public void pop(int popSize) {
+
+    int remainingPops = popSize;
+    while (remainingPops >= 2) {
+      popDouble();
+      remainingPops -= 2;
+    }
+    if (remainingPops == 1) {
+      pop();
+    }
   }
   
   public void duplicate() {

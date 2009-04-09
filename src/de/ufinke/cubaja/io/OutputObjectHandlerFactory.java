@@ -17,7 +17,6 @@ class OutputObjectHandlerFactory implements Generator {
   static private final GenClassLoader loader = new GenClassLoader();
   
   static private final Type objectType = new Type(Object.class);
-  static private final Type classType = new Type(Class.class);
   static private final Type voidType = new Type(Void.TYPE);
   static private final Type exceptionType = new Type(Exception.class);
   static private final Type streamType = new Type(BinaryOutputStream.class);
@@ -32,8 +31,7 @@ class OutputObjectHandlerFactory implements Generator {
   private Class<?> dataClass;
   private String dataClassName;
   private Type dataClassType;
-  private Type genClassType;
-  private CodeAttribute code;
+  private CodeAttribute write;
   
   private OutputObjectHandlerFactory(Class<?> dataClass, List<PropertyDescription> propertyList) {
   
@@ -46,7 +44,7 @@ class OutputObjectHandlerFactory implements Generator {
     if (dataClassName == null) {
       StringBuilder sb = new StringBuilder(200);
       sb.append(getClass().getPackage().getName());
-      sb.append("OutputObjectHandler_");
+      sb.append(".OutputObjectHandler_");
       sb.append(dataClass.getName().replace('.', '_'));
       dataClassName = sb.toString();
     }
@@ -56,17 +54,41 @@ class OutputObjectHandlerFactory implements Generator {
   
   public GenClass generate() throws Exception {
 
-    GenClass genClass = new GenClass(ACC_PUBLIC, getClassName(), objectType, handlerType);
-    
-    genClassType = new Type(genClass);
     dataClassType = new Type(dataClass);
+    
+    GenClass genClass = new GenClass(ACC_PUBLIC, getClassName(), objectType, handlerType);
     
     genClass.createDefaultConstructor();
     
-    GenMethod write = genClass.createMethod(ACC_PUBLIC, voidType, "write", streamType, objectType);    
-    write.addException(exceptionType);    
-    code = write.getCode();
+    GenMethod writer = genClass.createMethod(ACC_PUBLIC, voidType, "write", streamType, objectType);    
+    writer.addException(exceptionType);    
+    write = writer.getCode();
+    
+    generateWrite();
     
     return genClass;
   }
+  
+  private void generateWrite() {
+    
+    write.loadLocalReference(1); // stream
+    write.loadLocalReference(2); // object
+    write.cast(dataClassType);
+    
+    for (PropertyDescription property : propertyList) {
+      generateWriteProperty(property);
+    }
+    
+    write.returnVoid();
+  }
+  
+  private void generateWriteProperty(PropertyDescription property) {
+    
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property);
+    
+    write.duplicateDouble(); // 2 addresses on stack are needed on every loop
+    write.invokeVirtual(dataClassType, property.getType(), property.getGetterName()); // xxx = data.getXXX()    
+    write.invokeVirtual(streamType, voidType, parameter.getWriterMethod(), parameter.getType()); // stream.writeXXX(xxx)
+  }
+  
 }

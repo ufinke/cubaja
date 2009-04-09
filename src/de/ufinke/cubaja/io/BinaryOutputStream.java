@@ -304,7 +304,7 @@ public class BinaryOutputStream extends DataOutputStream {
     writeShort(properties.size());
     for (PropertyDescription property : properties) {
       writeUTF(property.getName());
-      writeUTF(property.getClass().getName());
+      writeUTF(property.getClazz().getName());
     }
     
     return OutputObjectHandlerFactory.getHandler(clazz, properties);

@@ -66,12 +66,12 @@ class PropertyClassAnalyzer {
 
     HashMap<String, Class<?>> map = new HashMap<String, Class<?>>();
     for (PropertyDescription property : propertyList) {
-      map.put(property.getName(), property.getType());
+      map.put(property.getName(), property.getClazz());
     }
     
     for (PropertyDescription property : received) {
       Class<?> type = map.get(property.getName());
-      if (type == null || type != property.getType()) {
+      if (type == null || type != property.getClazz()) {
         property.markNoSetterPresent();
       }
     }

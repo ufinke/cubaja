@@ -6,33 +6,36 @@ package de.ufinke.cubaja.io;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import de.ufinke.cubaja.cafebabe.Type;
 
 enum BinaryStreamParameter {
 
-  BOOLEAN(Boolean.TYPE, true, false, "Boolean"),
-  BYTE(Byte.TYPE, true, false, "Byte"),
-  SHORT(Short.TYPE, true, false, "Short"),
-  CHAR(Character.TYPE, true, false, "Char"),
-  INT(Integer.TYPE, true, false, "Int"),
-  LONG(Long.TYPE, true, false, "Long"),
-  FLOAT(Float.TYPE, true, false, "Float"),
-  DOUBLE(Double.TYPE, true, false, "Double"),
-  BOOLEAN_OBJECT(Boolean.class, false, false, "BooleanObject"),
-  BYTE_OBJECT(Byte.class, false, false, "ByteObject"),
-  SHORT_OBJECT(Short.class, false, false, "ShortObject"),
-  CHAR_OBJECT(Character.class, false, false, "CharObject"),
-  INT_OBJECT(Integer.class, false, false, "IntObject"),
-  LONG_OBJECT(Long.class, false, false, "LongObject"),
-  FLOAT_OBJECT(Float.class, false, false, "FloatObject"),
-  DOUBLE_OBJECT(Double.class, false, false, "DoubleObject"),
-  STRING(String.class, false, false, "String"),
-  DATE(Date.class, false, false, "Date"),
-  BIG_INTEGER(BigInteger.class, false, false, "BigInteger"),
-  BIG_DECIMAL(BigDecimal.class, false, false, "BigDecimal"),
-  BYTE_ARRAY(byte[].class, false, false, "ByteArray"),
-  ENUM(Enum.class, false, true, "Enum"),
-  OBJECT(Object.class, false, true, "Object");
+  // CONSTANT(clazz, isPrimitive, needsClazz, streamMethodName)
+  BOOLEAN       (Boolean.TYPE    , true , false, "Boolean"      ),
+  BYTE          (Byte.TYPE       , true , false, "Byte"         ),
+  SHORT         (Short.TYPE      , true , false, "Short"        ),
+  CHAR          (Character.TYPE  , true , false, "Char"         ),
+  INT           (Integer.TYPE    , true , false, "Int"          ),
+  LONG          (Long.TYPE       , true , false, "Long"         ),
+  FLOAT         (Float.TYPE      , true , false, "Float"        ),
+  DOUBLE        (Double.TYPE     , true , false, "Double"       ),
+  BOOLEAN_OBJECT(Boolean.class   , false, false, "BooleanObject"),
+  BYTE_OBJECT   (Byte.class      , false, false, "ByteObject"   ),
+  SHORT_OBJECT  (Short.class     , false, false, "ShortObject"  ),
+  CHAR_OBJECT   (Character.class , false, false, "CharObject"   ),
+  INT_OBJECT    (Integer.class   , false, false, "IntObject"    ),
+  LONG_OBJECT   (Long.class      , false, false, "LongObject"   ),
+  FLOAT_OBJECT  (Float.class     , false, false, "FloatObject"  ),
+  DOUBLE_OBJECT (Double.class    , false, false, "DoubleObject" ),
+  STRING        (String.class    , false, false, "String"       ),
+  DATE          (Date.class      , false, false, "Date"         ),
+  BIG_INTEGER   (BigInteger.class, false, false, "BigInteger"   ),
+  BIG_DECIMAL   (BigDecimal.class, false, false, "BigDecimal"   ),
+  BYTE_ARRAY    (byte[].class    , false, false, "ByteArray"    ),
+  ENUM          (Enum.class      , false, true , "Enum"         ),
+  OBJECT        (Object.class    , false, true , "Object"       );
   
   private Class<?> clazz;
   private Type type;
@@ -80,4 +83,35 @@ enum BinaryStreamParameter {
     
     return needsClazz;
   }
+  
+// --- parameter finder -------------------------------------------------------
+  
+  static private final Map<Class<?>, BinaryStreamParameter> parameterMap = createParameterMap();
+  
+  static private Map<Class<?>, BinaryStreamParameter> createParameterMap() {
+    
+    Map<Class<?>, BinaryStreamParameter> map = new HashMap<Class<?>, BinaryStreamParameter>();
+    
+    for (BinaryStreamParameter streamParameter : BinaryStreamParameter.values()) {
+      map.put(streamParameter.getClazz(), streamParameter);
+    }
+    
+    return map;
+  }
+  
+  static BinaryStreamParameter getStreamParameter(PropertyDescription property) {
+    
+    BinaryStreamParameter parameter = parameterMap.get(property.getClazz());
+    
+    if (parameter == null) {
+      if (property.getClazz().isEnum()) {
+        parameter = BinaryStreamParameter.ENUM;
+      } else {
+        parameter = BinaryStreamParameter.OBJECT;
+      }
+    }
+    
+    return parameter;
+  }
+  
 }

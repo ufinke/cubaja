@@ -32,8 +32,7 @@ class InputObjectHandlerFactory implements Generator {
   private Class<?> dataClass;
   private String dataClassName;
   private Type dataClassType;
-  private Type genClassType;
-  private CodeAttribute code;
+  private CodeAttribute read;
   
   private InputObjectHandlerFactory(Class<?> dataClass, List<PropertyDescription> propertyList) {
   
@@ -46,7 +45,7 @@ class InputObjectHandlerFactory implements Generator {
     if (dataClassName == null) {
       StringBuilder sb = new StringBuilder(200);
       sb.append(getClass().getPackage().getName());
-      sb.append("InputObjectHandler_");
+      sb.append(".InputObjectHandler_");
       sb.append(dataClass.getName().replace('.', '_'));
       dataClassName = sb.toString();
     }
@@ -58,15 +57,55 @@ class InputObjectHandlerFactory implements Generator {
 
     GenClass genClass = new GenClass(ACC_PUBLIC, getClassName(), objectType, handlerType);
     
-    genClassType = new Type(genClass);
     dataClassType = new Type(dataClass);
     
     genClass.createDefaultConstructor();
     
-    GenMethod read = genClass.createMethod(ACC_PUBLIC, voidType, "read", streamType, classType);    
-    read.addException(exceptionType);    
-    code = read.getCode();
+    GenMethod reader = genClass.createMethod(ACC_PUBLIC, objectType, "read", streamType, classType);    
+    reader.addException(exceptionType);    
+    read = reader.getCode();
+    
+    generateRead();
     
     return genClass;
   }
+  
+  private void generateRead() {
+    
+    read.newObject(dataClassType);
+    read.duplicate(); // data object
+    read.invokeSpecial(dataClassType, voidType, "<init>"); // default constructor
+    read.loadLocalReference(1); // stream
+    
+    for (PropertyDescription property : propertyList) {
+      generateReadProperty(property);
+    }
+    
+    read.pop(); // stream
+    read.returnReference(); // data object
+  }
+
+  private void generateReadProperty(PropertyDescription property) {
+
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property);
+    
+    read.duplicateDouble();
+    
+    if (parameter.needsClazz()) {
+      read.loadConstant(property.getClazz());
+      read.invokeVirtual(streamType, parameter.getType(), parameter.getReaderMethod(), classType); // xxx = stream.readXXX(class)
+    } else {
+      read.invokeVirtual(streamType, parameter.getType(), parameter.getReaderMethod()); // xxx = stream.readXXX()      
+    }
+    
+    if (property.isNoSetterPresent()) {
+      read.pop(parameter.getType().getSize()); // discard stack element
+    } else {
+      if (parameter.needsClazz() && parameter.getClazz() != property.getClazz()) {
+        read.cast(property.getType());
+      }
+      read.invokeVirtual(dataClassType, voidType, property.getSetterName(), property.getType()); // data.setXXX(xxx)
+    }
+  }
+  
 }

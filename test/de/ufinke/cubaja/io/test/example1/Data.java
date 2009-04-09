@@ -8,6 +8,7 @@ public class Data {
   private String string;
   private Date date;
   private SubData subData;
+  private TestEnum testEnum;
 
   public Data() {
 
@@ -44,12 +45,22 @@ public class Data {
   }
 
   public SubData getSubData() {
-    
+
     return subData;
   }
-  
+
   public void setSubData(SubData subData) {
-    
+
     this.subData = subData;
+  }
+
+  public TestEnum getTestEnum() {
+
+    return testEnum;
+  }
+
+  public void setTestEnum(TestEnum testEnum) {
+
+    this.testEnum = testEnum;
   }
 }

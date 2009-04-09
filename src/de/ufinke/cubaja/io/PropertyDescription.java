@@ -1,15 +1,21 @@
+// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.io;
+
+import de.ufinke.cubaja.cafebabe.Type;
 
 class PropertyDescription implements Comparable<PropertyDescription> {
 
   private String name;
-  private Class<?> type;
+  private Class<?> clazz;
+  private Type type;
   private boolean noSetterPresent;
 
-  PropertyDescription(String name, Class<?> type) {
+  PropertyDescription(String name, Class<?> clazz) {
 
     this.name = name;
-    this.type = type;
+    this.clazz = clazz;
   }
   
   public int compareTo(PropertyDescription other) {
@@ -21,9 +27,27 @@ class PropertyDescription implements Comparable<PropertyDescription> {
 
     return name;
   }
+  
+  String getSetterName() {
+    
+    return "set" + name;
+  }
+  
+  String getGetterName() {
+    
+    return "get" + name;
+  }
 
-  Class<?> getType() {
+  Class<?> getClazz() {
 
+    return clazz;
+  }
+  
+  Type getType() {
+    
+    if (type == null) {
+      type = new Type(clazz);
+    }
     return type;
   }
   

@@ -29,11 +29,11 @@ public class Type {
   private String descriptor;
   private String parameterName;
   private int size;
+  private boolean sizeInitialized;
   
   public Type(String type) {
   
     componentName = type;
-    size = -1;
   }
   
   public Type(String type, String parameterName) {
@@ -83,9 +83,9 @@ public class Type {
     return parameterName;
   }
   
-  int getSize() {
+  public int getSize() {
 
-    if (size == -1) {
+    if (! sizeInitialized) {
       size = 1;
       String descriptor = getDescriptor();
       if (descriptor.length() == 1) {
@@ -99,6 +99,7 @@ public class Type {
             break;
         }
       }
+      sizeInitialized = true;
     }
     
     return size;
