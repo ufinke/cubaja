@@ -74,17 +74,23 @@ class OutputObjectHandlerFactory implements Generator {
     write.loadLocalReference(1); // stream
     write.loadLocalReference(2); // object
     write.cast(dataClassType);
+
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(dataClass);
     
-    for (PropertyDescription property : propertyList) {
-      generateWriteProperty(property);
-    }
+    if (parameter == BinaryStreamParameter.OBJECT) {      
+      for (PropertyDescription property : propertyList) {
+        generateWriteProperty(property);
+      }
+    } else { // builtin type   
+      write.invokeVirtual(streamType, voidType, parameter.getWriterMethod(), parameter.getType()); // stream.writeXXX(xxx)
+    }    
     
     write.returnVoid();
   }
   
   private void generateWriteProperty(PropertyDescription property) {
     
-    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property);
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property.getClazz());
     
     write.duplicateDouble(); // 2 addresses on stack are needed on every loop
     write.invokeVirtual(dataClassType, property.getType(), property.getGetterName()); // xxx = data.getXXX()    

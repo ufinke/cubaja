@@ -99,12 +99,12 @@ enum BinaryStreamParameter {
     return map;
   }
   
-  static BinaryStreamParameter getStreamParameter(PropertyDescription property) {
+  static BinaryStreamParameter getStreamParameter(Class<?> parameterClazz) {
     
-    BinaryStreamParameter parameter = parameterMap.get(property.getClazz());
+    BinaryStreamParameter parameter = parameterMap.get(parameterClazz);
     
     if (parameter == null) {
-      if (property.getClazz().isEnum()) {
+      if (parameterClazz.isEnum()) {
         parameter = BinaryStreamParameter.ENUM;
       } else {
         parameter = BinaryStreamParameter.OBJECT;

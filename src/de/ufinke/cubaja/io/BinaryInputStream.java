@@ -20,7 +20,7 @@ import java.util.Map;
  * by <code>BinaryOutputStream</code>. 
  * @author Uwe Finke
  */
-public class BinaryInputStream extends DataInputStream {
+public class BinaryInputStream extends DataInputStream implements BinaryInput {
 
   static private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
   

@@ -31,7 +31,7 @@ import java.util.Map;
  * </p> 
  * @author Uwe Finke
  */
-public class BinaryOutputStream extends DataOutputStream {
+public class BinaryOutputStream extends DataOutputStream implements BinaryOutput {
 
   private final Map<Class<?>, OutputObjectHandler> handlerMap = new HashMap<Class<?>, OutputObjectHandler>();
   

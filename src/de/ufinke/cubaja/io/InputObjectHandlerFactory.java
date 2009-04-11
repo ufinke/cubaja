@@ -72,6 +72,12 @@ class InputObjectHandlerFactory implements Generator {
   
   private void generateRead() {
     
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(dataClass);
+    if (parameter == BinaryStreamParameter.OBJECT) { // builtin type
+      generateBuiltin(parameter);
+      return;
+    }
+    
     read.newObject(dataClassType);
     read.duplicate(); // data object
     read.invokeSpecial(dataClassType, voidType, "<init>"); // default constructor
@@ -84,10 +90,22 @@ class InputObjectHandlerFactory implements Generator {
     read.pop(); // stream
     read.returnReference(); // data object
   }
+  
+  private void generateBuiltin(BinaryStreamParameter parameter) {
+    
+    read.loadLocalReference(1);
+    if (parameter.needsClazz()) {
+      read.loadConstant(dataClass);
+      read.invokeVirtual(streamType, parameter.getType(), parameter.getReaderMethod(), classType); // xxx = stream.readXXX(class)
+    } else {
+      read.invokeVirtual(streamType, parameter.getType(), parameter.getReaderMethod()); // xxx = stream.readXXX()      
+    }
+    read.returnReference();
+  }
 
   private void generateReadProperty(PropertyDescription property) {
 
-    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property);
+    BinaryStreamParameter parameter = BinaryStreamParameter.getStreamParameter(property.getClazz());
     
     read.duplicateDouble();
     
