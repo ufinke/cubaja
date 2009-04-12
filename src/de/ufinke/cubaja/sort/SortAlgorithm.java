@@ -8,9 +8,9 @@ import java.util.Comparator;
 /**
  * Sort algorithm.
  * @author Uwe Finke
- * @param <T> element data type
+ * @param <D> element data type
  */
-public interface SortAlgorithm<T> {
+public interface SortAlgorithm<D> {
 
   /**
    * Sorts an array with data elements.
@@ -19,5 +19,9 @@ public interface SortAlgorithm<T> {
    * @param comparator the comparator
    * @throws Exception
    */
-  public void sort(T[] array, int size, Comparator<T> comparator);
+  public Object[] sort(Object[] array, int size);
+  
+  public void setComparator(Comparator<? super D> comparator);
+  
+  public double memoryFactor();
 }

@@ -10,16 +10,13 @@ import java.util.Random;
 * Quicksort algorithm.
 * @author Uwe Finke
 */
-public class Quicksort<T> implements SortAlgorithm<T> {
+public class Quicksort<D> implements SortAlgorithm<D> {
 
   static private final int INSERTION_THRESHOLD = 7;
   
   private Random random;
-  private T[] entries;
-  private T temp;
-  private Comparator<T> comparator;
-  
-  private int insertionThreshold;
+  @SuppressWarnings("unchecked")
+  private Comparator comparator;
   
   /**
   * Constructor.
@@ -27,55 +24,64 @@ public class Quicksort<T> implements SortAlgorithm<T> {
   public Quicksort() {
    
    random = new Random();
-   insertionThreshold = INSERTION_THRESHOLD;
   }
   
-  public void sort(T[] entries, int size, Comparator<T> comparator) {
+  public double memoryFactor() {
+    
+    return 1;
+  }
   
-   this.entries = entries;
-   this.comparator = comparator;
+  public void setComparator(Comparator<? super D> comparator) {
+    
+    this.comparator = comparator;
+  }
+  
+  public Object[] sort(Object[] array, int size) {
+  
+   sort(array, 0, size - 1);
    
-   sort(0, size - 1);
+   return array;
   }
   
-  private void sort(int left, int right) {
+  @SuppressWarnings("unchecked")
+  private void sort(Object[] array, int left, int right) {
   
    while (right > left) {
      
-     if ((right - left) <= insertionThreshold) {
+     if ((right - left) <= INSERTION_THRESHOLD) {
        
-       insertionSort(left, right);
+       insertionSort(array, left, right);
        left = right;
        
      } else {
        
-       findBestPivot(left, right);
+       findBestPivot(array, left, right);
        
-       T pivot = entries[right];
+       Object pivot = array[right];
        int leftIndex = left - 1;
        int rightIndex = right;
        boolean loop = true;
        
        while (loop) {
-         while (comparator.compare(entries[++leftIndex], pivot) < 0) {
+         while (comparator.compare(array[++leftIndex], pivot) < 0) {
          }
-         while (comparator.compare(entries[--rightIndex], pivot) > 0 && rightIndex > leftIndex) {
+         while (comparator.compare(array[--rightIndex], pivot) > 0 && rightIndex > leftIndex) {
          }
          if (leftIndex >= rightIndex) {
            loop = false;
          } else {
-           swap(leftIndex, rightIndex);
+           swap(array, leftIndex, rightIndex);
          }
        }
        
-       entries[right] = entries[leftIndex];
-       entries[leftIndex] = pivot;
+       array[right] = array[leftIndex];
+       array[leftIndex] = pivot;
        
        if ((leftIndex - left) < (right - leftIndex)) {
-         sort(left, leftIndex - 1);
+         sort(array, left, leftIndex - 1);
          left = leftIndex + 1;
        } else {
-         sort(leftIndex + 1, right);
+         sort(array, leftIndex + 1, right);
          right = leftIndex - 1;
        }
      }
@@ -83,34 +89,35 @@ public class Quicksort<T> implements SortAlgorithm<T> {
    
   }
   
-  private void insertionSort(int left, int right) {
+  @SuppressWarnings("unchecked")
+  private void insertionSort(Object[] array, int left, int right) {
    
    int j;
    int i = left + 1;
    
    while (i <= right) {
-     temp = entries[i];
+     Object temp = array[i];
      j = i - 1;
-     while (j >= left && comparator.compare(temp, entries[j]) < 0) {
-       entries[j + 1] = entries[j];
+     while (j >= left && comparator.compare(temp, array[j]) < 0) {
+       array[j + 1] = array[j];
        j--;
      }
-     entries[j + 1] = temp;
+     array[j + 1] = temp;
      i++;
    }
   }
   
-  private void findBestPivot(int left, int right) {
+  private void findBestPivot(Object[] array, int left, int right) {
   
    int median = left + random.nextInt(right - left + 1);
-   swap(right, median);
+   swap(array, right, median);
   }
   
-  private void swap(int a, int b) {
+  private void swap(Object[] array, int a, int b) {
    
-   temp = entries[a];
-   entries[a] = entries[b];
-   entries[b] = temp;
+   Object temp = array[a];
+   array[a] = array[b];
+   array[b] = temp;
   }
   
 }

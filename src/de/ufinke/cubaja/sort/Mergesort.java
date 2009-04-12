@@ -11,11 +11,12 @@ import java.util.Comparator;
  * Stable sort; the original sequence of equal elements will be retained.
  * @author Uwe Finke
  */
-public class Mergesort<T> implements SortAlgorithm<T> {
+public class Mergesort<D> implements SortAlgorithm<D> {
 
-  private T[] entries;
-  private T[] temp;
-  private Comparator<T> comparator;
+  private Object[] entries;
+  private Object[] temp;
+  @SuppressWarnings("unchecked")
+  private Comparator comparator;
   
   /**
    * Constructor.
@@ -24,20 +25,32 @@ public class Mergesort<T> implements SortAlgorithm<T> {
     
   }
   
+  public double memoryFactor() {
+    
+    return 2;
+  }
+  
+  public void setComparator(Comparator<? super D> comparator) {
+    
+    this.comparator = comparator;
+  }
+  
   @SuppressWarnings("unchecked")
-  public void sort(T[] entries, int size, Comparator<T> comparator) {
+  public Object[] sort(Object[] entries, int size) {
 
     if (size == 0) {
-      return;
+      return entries;
     }
     
     this.entries = entries;
-    this.comparator = comparator;
     
-    temp = (T[]) Array.newInstance(entries[0].getClass(), size);
+    temp = (D[]) Array.newInstance(entries[0].getClass(), size);
     mergesort(0, size - 1);
+    
+    return entries;
   }
   
+  @SuppressWarnings("unchecked")
   private void mergesort(int left, int right) {
     
     if (right <= left) {
