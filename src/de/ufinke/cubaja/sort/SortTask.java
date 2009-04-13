@@ -31,11 +31,13 @@ class SortTask<D> implements Callable<Info<D>> {
         
         case PROCESS_INPUT:
           SortArray<D> array = info.getArray();
-          algorithm.sort(array.getArray(), array.getSize());
+          D[] tempArray = algorithm.sort(array.getArray(), array.getSize()); 
+          info.setArray(new SortArray<D>(tempArray, array.getSize()));
           writeTaskQueue.put(info);
           break;
           
-        case END:
+        case END_INPUT:
+          writeTaskQueue.put(info);
           loop = false;
           break;
       }

@@ -29,8 +29,8 @@ class StreamTask<D> implements Callable<Info<D>> {
           //TODO
           break;
           
-        case END:
-          loop = false;
+        case END_INPUT:
+          //TODO
           break;
       }
     }

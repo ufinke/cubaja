@@ -6,7 +6,7 @@ package de.ufinke.cubaja.sort;
 import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.SynchronousQueue;
 
@@ -40,7 +40,7 @@ public class Sorter<D> implements Iterable<D> {
     this(comparator, new SortConfig());
   }
   
-  public void add(D element) throws Exception {
+  public void add(D element) {
   
     if (iteratorCreated) {
       throw new IllegalStateException();
@@ -56,50 +56,63 @@ public class Sorter<D> implements Iterable<D> {
     array.add(element);
   }
   
-  private void activateSortTask() throws Exception {
+  private void activateSortTask() {
     
     Info<D> info = new Info<D>(Action.PROCESS_INPUT);
     info.setArray(array);
-    sortTaskQueue.put(info);
+    activateTask(sortTaskQueue, info);
+  }
+  
+  private void activateTask(BlockingQueue<Info<D>> queue, Info<D> info) {
+    
+    try {      
+      queue.put(info);
+    } catch (Throwable t) {
+      throw new SortException(t);
+    }
   }
   
   @SuppressWarnings("unchecked")
   private void allocateArray(D element) {
     
     D[] newArray = (D[]) Array.newInstance(element.getClass(), memoryManager.getInputArrayCapacity());
-    array = new SortArray<D>(newArray);
+    array = new SortArray<D>(newArray, 0);
   }
 
   public Iterator<D> iterator() {
 
+    try {      
+      switchState();
+    } catch (Throwable t) {      
+      throw new SortException(t);
+    }
+    
+    return new SortIterator<D>(this);
+  }
+  
+  private void switchState() throws Exception {
+    
     if (iteratorCreated) {
       throw new IllegalStateException();
     }
     iteratorCreated = true;
     
-    //TODO sort remaining items
-
-    array = null;
+    if (array != null) {
+      activateSortTask();
+      array = null;
+    }
+  }
+  
+  boolean hasNext() throws Exception {
     
-    return new Iterator<D>() {
-
-      public boolean hasNext() {
-
-        executors.shutdown(); //TODO shutdown when nothing more to do
-        // TODO Auto-generated method stub
-        return false;
-      }
-
-      public D next() {
-
-        // TODO Auto-generated method stub
-        return null;
-      }
-
-      public void remove() {
-
-        throw new UnsupportedOperationException();
-      }
-    };
+    executors.shutdown(); //TODO shutdown when nothing more to do
+    // TODO Auto-generated method stub
+    return false;
+  }
+  
+  D next() throws Exception {
+    
+    //TODO
+    return null;
   }
 }

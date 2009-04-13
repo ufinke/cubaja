@@ -1,3 +1,6 @@
+// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.sort;
 
 class SortArray<D> {
@@ -5,9 +8,10 @@ class SortArray<D> {
   private D[] array;
   private int size;
   
-  SortArray(D[] array) {
+  SortArray(D[] array, int size) {
     
     this.array = array;
+    this.size = size;
   }
   
   boolean isFull() {
