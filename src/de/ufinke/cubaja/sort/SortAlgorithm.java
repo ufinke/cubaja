@@ -12,14 +12,7 @@ import java.util.Comparator;
  */
 public interface SortAlgorithm<D> {
 
-  /**
-   * Sorts an array with data elements.
-   * @param array the array
-   * @param size number of valid array elements
-   * @param comparator the comparator
-   * @throws Exception
-   */
-  public Object[] sort(Object[] array, int size);
+  public D[] sort(D[] array, int size);
   
   public void setComparator(Comparator<? super D> comparator);
   

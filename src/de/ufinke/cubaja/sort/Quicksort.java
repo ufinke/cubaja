@@ -36,7 +36,7 @@ public class Quicksort<D> implements SortAlgorithm<D> {
     this.comparator = comparator;
   }
   
-  public Object[] sort(Object[] array, int size) {
+  public D[] sort(D[] array, int size) {
   
    sort(array, 0, size - 1);
    
@@ -44,7 +44,7 @@ public class Quicksort<D> implements SortAlgorithm<D> {
   }
   
   @SuppressWarnings("unchecked")
-  private void sort(Object[] array, int left, int right) {
+  private void sort(D[] array, int left, int right) {
   
    while (right > left) {
      
@@ -57,7 +57,7 @@ public class Quicksort<D> implements SortAlgorithm<D> {
        
        findBestPivot(array, left, right);
        
-       Object pivot = array[right];
+       D pivot = array[right];
        int leftIndex = left - 1;
        int rightIndex = right;
        boolean loop = true;
@@ -90,13 +90,13 @@ public class Quicksort<D> implements SortAlgorithm<D> {
   }
   
   @SuppressWarnings("unchecked")
-  private void insertionSort(Object[] array, int left, int right) {
+  private void insertionSort(D[] array, int left, int right) {
    
    int j;
    int i = left + 1;
    
    while (i <= right) {
-     Object temp = array[i];
+     D temp = array[i];
      j = i - 1;
      while (j >= left && comparator.compare(temp, array[j]) < 0) {
        array[j + 1] = array[j];
@@ -107,15 +107,15 @@ public class Quicksort<D> implements SortAlgorithm<D> {
    }
   }
   
-  private void findBestPivot(Object[] array, int left, int right) {
+  private void findBestPivot(D[] array, int left, int right) {
   
    int median = left + random.nextInt(right - left + 1);
    swap(array, right, median);
   }
   
-  private void swap(Object[] array, int a, int b) {
+  private void swap(D[] array, int a, int b) {
    
-   Object temp = array[a];
+   D temp = array[a];
    array[a] = array[b];
    array[b] = temp;
   }

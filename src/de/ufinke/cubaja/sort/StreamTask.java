@@ -6,26 +6,26 @@ package de.ufinke.cubaja.sort;
 import java.util.concurrent.Callable;
 import java.util.concurrent.SynchronousQueue;
 
-class WriteTask implements Callable<SyncInfo> {
+class StreamTask<D> implements Callable<Info<D>> {
 
-  private SynchronousQueue<SyncInfo> queue;
+  private SynchronousQueue<Info<D>> queue;
   
-  WriteTask(SynchronousQueue<SyncInfo> queue) {
+  StreamTask(SynchronousQueue<Info<D>> queue) {
   
     this.queue = queue; 
   }
 
-  public SyncInfo call() throws Exception {
+  public Info<D> call() throws Exception {
 
     boolean loop = true;
     
     while (loop) {
       
-      SyncInfo syncInfo = queue.take();
+      Info<D> info = queue.take();
       
-      switch (syncInfo.getAction()) {
+      switch (info.getAction()) {
         
-        case PROCESS_INPUT_ARRAY:
+        case PROCESS_INPUT:
           //TODO
           break;
           
@@ -35,6 +35,6 @@ class WriteTask implements Callable<SyncInfo> {
       }
     }
     
-    return new SyncInfo(SyncAction.FINISHED, null);
+    return null;
   }
 }

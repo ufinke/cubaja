@@ -13,8 +13,8 @@ import java.util.Comparator;
  */
 public class Mergesort<D> implements SortAlgorithm<D> {
 
-  private Object[] entries;
-  private Object[] temp;
+  private D[] entries;
+  private D[] temp;
   @SuppressWarnings("unchecked")
   private Comparator comparator;
   
@@ -36,7 +36,7 @@ public class Mergesort<D> implements SortAlgorithm<D> {
   }
   
   @SuppressWarnings("unchecked")
-  public Object[] sort(Object[] entries, int size) {
+  public D[] sort(D[] entries, int size) {
 
     if (size == 0) {
       return entries;

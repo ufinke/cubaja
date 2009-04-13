@@ -3,6 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
+import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
@@ -12,29 +13,26 @@ import java.util.concurrent.SynchronousQueue;
 public class Sorter<D> implements Iterable<D> {
 
   private boolean iteratorCreated;
-  private SortAlgorithm<D> algorithm;
   private MemoryManager memoryManager;
   private ExecutorService executors;
-  private SynchronousQueue<SyncInfo> sortTaskQueue;
+  private SynchronousQueue<Info<D>> sortTaskQueue;
   
-  private Object[] array;
-  private int arraySize;
+  private SortArray<D> array;
   
   @SuppressWarnings("unchecked")
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
     
-    algorithm = (SortAlgorithm<D>) config.getAlgorithm();
+    SortAlgorithm<D> algorithm = (SortAlgorithm<D>) config.getAlgorithm();
     algorithm.setComparator(comparator);
     
     memoryManager = new MemoryManager(config);
-    allocateArray();
     
     executors = Executors.newCachedThreadPool();
     
-    sortTaskQueue = new SynchronousQueue<SyncInfo>();
-    SynchronousQueue<SyncInfo> writeTaskQueue = new SynchronousQueue<SyncInfo>();
-    executors.submit(new AlgorithmTask(sortTaskQueue, writeTaskQueue));
-    executors.submit(new WriteTask(writeTaskQueue));
+    sortTaskQueue = new SynchronousQueue<Info<D>>();
+    SynchronousQueue<Info<D>> writeTaskQueue = new SynchronousQueue<Info<D>>();
+    executors.submit(new SortTask(algorithm, sortTaskQueue, writeTaskQueue));
+    executors.submit(new StreamTask(writeTaskQueue));
   }
   
   public Sorter(Comparator<? super D> comparator) {
@@ -48,27 +46,28 @@ public class Sorter<D> implements Iterable<D> {
       throw new IllegalStateException();
     }
 
-    if (array.length == arraySize) {
-      activateAlgorithm();
-      allocateArray();
+    if (array == null) {
+      allocateArray(element);
+    } else if (array.isFull()) {
+      activateSortTask();
+      allocateArray(element);
     }
     
-    array[arraySize++] = element;
+    array.add(element);
   }
   
-  private void activateAlgorithm() throws Exception {
+  private void activateSortTask() throws Exception {
     
-    InputInfo sortInfo = new InputInfo();
-    sortInfo.setAlgorithm(algorithm);
-    sortInfo.setArray(array);
-    sortInfo.setArraySize(arraySize);
-    sortTaskQueue.put(new SyncInfo(SyncAction.PROCESS_INPUT_ARRAY, sortInfo));
+    Info<D> info = new Info<D>(Action.PROCESS_INPUT);
+    info.setArray(array);
+    sortTaskQueue.put(info);
   }
   
-  private void allocateArray() {
+  @SuppressWarnings("unchecked")
+  private void allocateArray(D element) {
     
-    array = new Object[memoryManager.getInputArrayCapacity()];
-    arraySize = 0;
+    D[] newArray = (D[]) Array.newInstance(element.getClass(), memoryManager.getInputArrayCapacity());
+    array = new SortArray<D>(newArray);
   }
 
   public Iterator<D> iterator() {
