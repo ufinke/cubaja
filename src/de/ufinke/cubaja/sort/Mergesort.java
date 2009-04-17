@@ -3,7 +3,6 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.lang.reflect.Array;
 import java.util.Comparator;
 
 /**
@@ -11,10 +10,10 @@ import java.util.Comparator;
  * Stable sort; the original sequence of equal elements will be retained.
  * @author Uwe Finke
  */
-public class Mergesort<D> implements SortAlgorithm<D> {
+public class Mergesort implements SortAlgorithm {
 
-  private D[] entries;
-  private D[] temp;
+  private Object[] entries;
+  private Object[] temp;
   @SuppressWarnings("unchecked")
   private Comparator comparator;
   
@@ -30,13 +29,13 @@ public class Mergesort<D> implements SortAlgorithm<D> {
     return 2;
   }
   
-  public void setComparator(Comparator<? super D> comparator) {
+  @SuppressWarnings("unchecked")
+  public void setComparator(Comparator comparator) {
     
     this.comparator = comparator;
   }
   
-  @SuppressWarnings("unchecked")
-  public D[] sort(D[] entries, int size) {
+  public Object[] sort(Object[] entries, int size) {
 
     if (size == 0) {
       return entries;
@@ -44,7 +43,7 @@ public class Mergesort<D> implements SortAlgorithm<D> {
     
     this.entries = entries;
     
-    temp = (D[]) Array.newInstance(entries[0].getClass(), size);
+    temp = new Object[size];
     mergesort(0, size - 1);
     
     return entries;

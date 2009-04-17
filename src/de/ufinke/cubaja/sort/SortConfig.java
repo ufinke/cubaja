@@ -7,7 +7,9 @@ public class SortConfig {
 
   private long totalRecordCount;
   private long inMemoryRecordCount;
-  private SortAlgorithm<?> algorithm;
+  private SortAlgorithm algorithm;
+  private String workDirectory;
+  private String filePrefix;
 
   public SortConfig() {
 
@@ -39,8 +41,7 @@ public class SortConfig {
     this.inMemoryRecordCount = inMemoryRecordCount;
   }
 
-  @SuppressWarnings("unchecked")
-  public SortAlgorithm<?> getAlgorithm() {
+  public SortAlgorithm getAlgorithm() {
 
     if (algorithm == null) {
       algorithm = new Quicksort();
@@ -48,8 +49,31 @@ public class SortConfig {
     return algorithm;
   }
 
-  public void setAlgorithm(SortAlgorithm<?> algorithm) {
+  public void setAlgorithm(SortAlgorithm algorithm) {
 
     this.algorithm = algorithm;
+  }
+
+  public String getWorkDirectory() {
+
+    return workDirectory;
+  }
+
+  public void setWorkDirectory(String workDirectory) {
+
+    this.workDirectory = workDirectory;
+  }
+
+  public String getFilePrefix() {
+
+    if (filePrefix == null) {
+      filePrefix = "sort_";
+    }
+    return filePrefix;
+  }
+
+  public void setFilePrefix(String filePrefix) {
+
+    this.filePrefix = filePrefix;
   }
 }

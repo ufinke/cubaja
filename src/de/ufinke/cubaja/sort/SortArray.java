@@ -3,12 +3,12 @@
 
 package de.ufinke.cubaja.sort;
 
-class SortArray<D> {
+class SortArray {
 
-  private D[] array;
+  private Object[] array;
   private int size;
   
-  SortArray(D[] array, int size) {
+  SortArray(Object[] array, int size) {
     
     this.array = array;
     this.size = size;
@@ -19,7 +19,7 @@ class SortArray<D> {
     return size == array.length;
   }
   
-  void add(D element) {
+  void add(Object element) {
     
     array[size++] = element;
   }
@@ -29,7 +29,7 @@ class SortArray<D> {
     return size;
   }
   
-  D[] getArray() {
+  Object[] getArray() {
     
     return array;
   }

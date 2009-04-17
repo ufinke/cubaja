@@ -4,33 +4,25 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.concurrent.*;
+import de.ufinke.cubaja.io.*;
 
-class SortTask {
+class WriteTask {
 
   Semaphore semaphore;
-  WriteTask writeTask;
+  Future<Object> result;
   
-  private SortAlgorithm algorithm;
   private ExecutorService workerService;
-  private Future<Object> result;
+  private FileManager fileManager;
+  private BinaryOutput stream;
   
-  SortTask(ExecutorService workerService, SortAlgorithm algorithm, WriteTask writeTask) {
+  WriteTask(ExecutorService workerService, FileManager fileManager) {
     
     this.workerService = workerService;
-    this.algorithm = algorithm;
-    this.writeTask = writeTask;
+    this.fileManager = fileManager;
     semaphore = new Semaphore(1);
   }
   
-  SortArray sort(SortArray array) {
-    
-    Object[] result = algorithm.sort(array.getArray(), array.getSize());
-    return new SortArray(result, array.getSize());
-  }
-  
   void checkException() throws Exception {
-    
-    writeTask.checkException();
     
     if (result != null && result.isDone()) {
       try {
@@ -41,15 +33,29 @@ class SortTask {
     }
   }
   
+  void write(SortArray array) throws Exception {
+    
+    if (stream == null) {
+      stream = fileManager.createOutput();
+    }
+    
+    Object[] objects = array.getArray();
+    int size = array.getSize();
+    
+    for (int i = 0; i < size; i++) {
+      stream.writeObject(objects[i]);
+    }
+  }
+  
   void runWorker(final SortArray array) throws Exception {
     
     semaphore.acquire();
-    
+
     result = workerService.submit(new Callable<Object>() {
-     
+      
       public Object call() throws Exception {
         
-        writeTask.runWorker(sort(array));
+        write(array);
         semaphore.release();
         return null;
       }

@@ -3,36 +3,36 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.lang.reflect.Array;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.SynchronousQueue;
+import de.ufinke.cubaja.io.*;
 
 public class Sorter<D> implements Iterable<D> {
 
   private boolean iteratorCreated;
-  private MemoryManager memoryManager;
-  private ExecutorService executors;
-  private SynchronousQueue<Info<D>> sortTaskQueue;
+  private SortAlgorithm algorithm;
+  private MemoryManager memoryManager;  
+  private ExecutorService workerService;
+  private SortArray array;
+
+  private List<HandlerDefinition> handlerList;
+  private FileManager fileManager;
+  private WriteTask writeTask;
+  private SortTask sortTask;
   
-  private SortArray<D> array;
-  
-  @SuppressWarnings("unchecked")
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
     
-    SortAlgorithm<D> algorithm = (SortAlgorithm<D>) config.getAlgorithm();
+    algorithm = config.getAlgorithm();
     algorithm.setComparator(comparator);
     
     memoryManager = new MemoryManager(config);
     
-    executors = Executors.newCachedThreadPool();
+    workerService = Executors.newCachedThreadPool();
     
-    sortTaskQueue = new SynchronousQueue<Info<D>>();
-    SynchronousQueue<Info<D>> writeTaskQueue = new SynchronousQueue<Info<D>>();
-    executors.submit(new SortTask(algorithm, sortTaskQueue, writeTaskQueue));
-    executors.submit(new StreamTask(writeTaskQueue));
+    handlerList = new ArrayList<HandlerDefinition>();
+    fileManager = new FileManager(config, handlerList);
+    writeTask = new WriteTask(workerService, fileManager);
+    sortTask = new SortTask(workerService, algorithm, writeTask);
   }
   
   public Sorter(Comparator<? super D> comparator) {
@@ -40,8 +40,22 @@ public class Sorter<D> implements Iterable<D> {
     this(comparator, new SortConfig());
   }
   
+  public void addObjectHandler(Class<?> clazz, OutputObjectHandler outputHandler, InputObjectHandler inputHandler) {
+    
+    handlerList.add(new HandlerDefinition(clazz, outputHandler, inputHandler));
+  }
+  
   public void add(D element) {
   
+    try {      
+      doAdd(element);
+    } catch (Throwable t) {
+      throw new SortException(t);
+    }
+  }
+  
+  private void doAdd(D element) throws Exception {
+    
     if (iteratorCreated) {
       throw new IllegalStateException();
     }
@@ -49,34 +63,18 @@ public class Sorter<D> implements Iterable<D> {
     if (array == null) {
       allocateArray(element);
     } else if (array.isFull()) {
-      activateSortTask();
+      sortTask.checkException();
+      sortTask.runWorker(array);
       allocateArray(element);
     }
     
     array.add(element);
   }
   
-  private void activateSortTask() {
-    
-    Info<D> info = new Info<D>(Action.PROCESS_INPUT);
-    info.setArray(array);
-    activateTask(sortTaskQueue, info);
-  }
-  
-  private void activateTask(BlockingQueue<Info<D>> queue, Info<D> info) {
-    
-    try {      
-      queue.put(info);
-    } catch (Throwable t) {
-      throw new SortException(t);
-    }
-  }
-  
-  @SuppressWarnings("unchecked")
   private void allocateArray(D element) {
     
-    D[] newArray = (D[]) Array.newInstance(element.getClass(), memoryManager.getInputArrayCapacity());
-    array = new SortArray<D>(newArray, 0);
+    Object[] newArray = new Object[memoryManager.getInputArrayCapacity()];
+    array = new SortArray(newArray, 0);
   }
 
   public Iterator<D> iterator() {
@@ -97,15 +95,14 @@ public class Sorter<D> implements Iterable<D> {
     }
     iteratorCreated = true;
     
-    if (array != null) {
-      activateSortTask();
-      array = null;
-    }
+    sortTask.checkException();
+    array = sortTask.sort(array);
+    fileManager.closeOutput();
   }
   
   boolean hasNext() throws Exception {
     
-    executors.shutdown(); //TODO shutdown when nothing more to do
+    workerService.shutdown(); //TODO shutdown when nothing more to do
     // TODO Auto-generated method stub
     return false;
   }

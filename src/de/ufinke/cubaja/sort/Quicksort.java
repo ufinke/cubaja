@@ -10,7 +10,7 @@ import java.util.Random;
 * Quicksort algorithm.
 * @author Uwe Finke
 */
-public class Quicksort<D> implements SortAlgorithm<D> {
+public class Quicksort implements SortAlgorithm {
 
   static private final int INSERTION_THRESHOLD = 7;
   
@@ -31,12 +31,13 @@ public class Quicksort<D> implements SortAlgorithm<D> {
     return 1;
   }
   
-  public void setComparator(Comparator<? super D> comparator) {
+  @SuppressWarnings("unchecked")
+  public void setComparator(Comparator comparator) {
     
     this.comparator = comparator;
   }
   
-  public D[] sort(D[] array, int size) {
+  public Object[] sort(Object[] array, int size) {
   
    sort(array, 0, size - 1);
    
@@ -44,7 +45,7 @@ public class Quicksort<D> implements SortAlgorithm<D> {
   }
   
   @SuppressWarnings("unchecked")
-  private void sort(D[] array, int left, int right) {
+  private void sort(Object[] array, int left, int right) {
   
    while (right > left) {
      
@@ -57,7 +58,7 @@ public class Quicksort<D> implements SortAlgorithm<D> {
        
        findBestPivot(array, left, right);
        
-       D pivot = array[right];
+       Object pivot = array[right];
        int leftIndex = left - 1;
        int rightIndex = right;
        boolean loop = true;
@@ -90,13 +91,13 @@ public class Quicksort<D> implements SortAlgorithm<D> {
   }
   
   @SuppressWarnings("unchecked")
-  private void insertionSort(D[] array, int left, int right) {
+  private void insertionSort(Object[] array, int left, int right) {
    
    int j;
    int i = left + 1;
    
    while (i <= right) {
-     D temp = array[i];
+     Object temp = array[i];
      j = i - 1;
      while (j >= left && comparator.compare(temp, array[j]) < 0) {
        array[j + 1] = array[j];
@@ -107,15 +108,15 @@ public class Quicksort<D> implements SortAlgorithm<D> {
    }
   }
   
-  private void findBestPivot(D[] array, int left, int right) {
+  private void findBestPivot(Object[] array, int left, int right) {
   
    int median = left + random.nextInt(right - left + 1);
    swap(array, right, median);
   }
   
-  private void swap(D[] array, int a, int b) {
+  private void swap(Object[] array, int a, int b) {
    
-   D temp = array[a];
+   Object temp = array[a];
    array[a] = array[b];
    array[b] = temp;
   }

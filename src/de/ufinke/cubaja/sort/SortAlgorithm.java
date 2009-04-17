@@ -10,11 +10,12 @@ import java.util.Comparator;
  * @author Uwe Finke
  * @param <D> element data type
  */
-public interface SortAlgorithm<D> {
+public interface SortAlgorithm {
 
-  public D[] sort(D[] array, int size);
+  public Object[] sort(Object[] array, int size);
   
-  public void setComparator(Comparator<? super D> comparator);
+  @SuppressWarnings("unchecked")
+  public void setComparator(Comparator comparator);
   
   public double memoryFactor();
 }
