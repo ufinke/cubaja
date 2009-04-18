@@ -317,7 +317,7 @@ public class BinaryInputStream extends FilterInputStream {
                   | ((buf[pos++] & 0xFF) << 8)
                   |  (buf[pos++] & 0xFF);
     bufferPosition = pos;
-    return (long) highBytes << 32 | lowBytes;
+    return (((long) highBytes) << 32) | (lowBytes & 0xFFFFFFFFL);
   }
   
   /**
@@ -395,11 +395,12 @@ public class BinaryInputStream extends FilterInputStream {
     byte c2 = 0;
     byte c3 = 0;
     
-    try {      
-      for (int i = 0; i < utfLength; i++) {
+    try {
+      int posLimit = pos + utfLength;
+      while (pos < posLimit) {
         c = buf[pos++];
-        switch ((c & 0xFF) >>> 4) {
-          case 0:
+        switch ((c & 0xF0) >>> 4) {
+          case 0: 
           case 1:
           case 2:
           case 3:

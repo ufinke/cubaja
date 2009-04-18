@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.*;
+import java.util.Iterator;
 
 class SortIterator<D> implements Iterator<D> {
 

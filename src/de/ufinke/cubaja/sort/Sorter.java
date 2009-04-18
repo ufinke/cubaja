@@ -3,9 +3,14 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.*;
-import java.util.concurrent.*;
-import de.ufinke.cubaja.io.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import de.ufinke.cubaja.io.InputObjectHandler;
+import de.ufinke.cubaja.io.OutputObjectHandler;
 
 public class Sorter<D> implements Iterable<D> {
 

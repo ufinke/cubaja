@@ -3,8 +3,12 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.*;
-import de.ufinke.cubaja.io.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+import de.ufinke.cubaja.io.BinaryOutputStream;
 
 class WriteTask {
 

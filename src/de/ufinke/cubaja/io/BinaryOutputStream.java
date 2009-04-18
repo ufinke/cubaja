@@ -5,14 +5,15 @@ package de.ufinke.cubaja.io;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;
-import java.io.*;
+import java.io.OutputStream;
+import java.io.UTFDataFormatException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.Text;
 
 /**
  * Writes primitive types and objects to an <code>OutputStream</code>.

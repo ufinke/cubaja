@@ -1,6 +1,7 @@
 package de.ufinke.cubaja.sort;
 
-import de.ufinke.cubaja.io.*;
+import de.ufinke.cubaja.io.InputObjectHandler;
+import de.ufinke.cubaja.io.OutputObjectHandler;
 
 class HandlerDefinition {
 
