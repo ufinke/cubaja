@@ -34,12 +34,14 @@ import de.ufinke.cubaja.util.*;
  */
 public class BinaryOutputStream extends FilterOutputStream {
 
-  static private final int BUFFER_SIZE = Character.MAX_VALUE;
+  static private final int DEFAULT_BUFFER_SIZE = 8192;
+  static private final int MIN_BUFFER_SIZE = 64;
   
   static private final Text text = new Text(BinaryOutputStream.class);
   
   private final Map<Class<?>, OutputObjectHandler> handlerMap = new HashMap<Class<?>, OutputObjectHandler>();
   
+  private int bufferSize;
   private long streamPosition;
   private byte[] buffer;
   private int bufferPosition;
@@ -50,19 +52,29 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public BinaryOutputStream(OutputStream out) {
     
+    this(out, DEFAULT_BUFFER_SIZE);
+  }
+  
+  public BinaryOutputStream(OutputStream out, int bufferSize) {
+    
     super(out);
-    buffer = new byte[BUFFER_SIZE];
+    this.bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
+    buffer = new byte[this.bufferSize];
   }
   
   private byte[] ensureBuffer(int requestedLength) throws IOException {
   
-    if (requestedLength > BUFFER_SIZE - bufferPosition) {
+    if (requestedLength > bufferSize - bufferPosition) {
       writeBuffer();
     }
     return buffer;
   }
   
   private void writeBuffer() throws IOException {
+    
+    if (bufferPosition == 0) {
+      return;
+    }
     
     streamPosition += bufferPosition;
     out.write(buffer, 0, bufferPosition);
@@ -89,7 +101,7 @@ public class BinaryOutputStream extends FilterOutputStream {
   
   public void write(byte[] value, int offset, int length) throws IOException {
 
-    if (length <= BUFFER_SIZE) {
+    if (length <= bufferSize) {
       byte[] buf = ensureBuffer(length);
       System.arraycopy(value, offset, buf, bufferPosition, length);
       bufferPosition += length;
@@ -329,7 +341,7 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     int length = value.length();
     int utfLength = length * 3;
-    boolean ownBuffer = utfLength + 2 > BUFFER_SIZE;
+    boolean ownBuffer = utfLength + 2 > bufferSize;
     byte[] utf = ownBuffer ? new byte[utfLength] : ensureBuffer(utfLength + 2);
     int utfPos = ownBuffer ? 0 : bufferPosition + 2;
 
@@ -358,7 +370,7 @@ public class BinaryOutputStream extends FilterOutputStream {
       length = utfPos - pos - 2;
       utf[pos]     = (byte) (length >>> 8);
       utf[pos + 1] = (byte) length;
-      bufferPosition = length + 2;
+      bufferPosition = pos + 2 + length;
     }
   }
   

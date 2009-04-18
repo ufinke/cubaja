@@ -27,7 +27,8 @@ import java.util.Map;
  */
 public class BinaryInputStream extends FilterInputStream {
 
-  static private final int BUFFER_SIZE = Character.MAX_VALUE; // do not reduce because of UTF length
+  static private final int DEFAULT_BUFFER_SIZE = 8192;
+  static private final int MIN_BUFFER_SIZE = 64;
   
   static private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
   
@@ -46,6 +47,7 @@ public class BinaryInputStream extends FilterInputStream {
   
   private final Map<Class<?>, InputObjectHandler> handlerMap = new HashMap<Class<?>, InputObjectHandler>();
   
+  private int bufferSize;
   private byte[] buffer;
   private int bufferLimit;
   private int bufferPosition;
@@ -56,9 +58,15 @@ public class BinaryInputStream extends FilterInputStream {
    * @param in the underlaying <code>InputStream</code>
    */
   public BinaryInputStream(InputStream in) {
+
+    this(in, DEFAULT_BUFFER_SIZE);
+  }
+  
+  public BinaryInputStream(InputStream in, int bufferSize) {
     
     super(in);
-    buffer = new byte[BUFFER_SIZE];
+    this.bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
+    buffer = new byte[this.bufferSize];
   }
   
   private byte[] ensureBuffer(int requestedLength) throws IOException {
@@ -73,7 +81,7 @@ public class BinaryInputStream extends FilterInputStream {
       return buffer;
     }
     
-    if (requestedLength > BUFFER_SIZE - bufferPosition) {
+    if (requestedLength > bufferSize - bufferPosition) {
       streamPosition += bufferPosition;
       if (availableLength > 0) {
         System.arraycopy(buffer, bufferPosition, buffer, 0, availableLength);
@@ -82,16 +90,14 @@ public class BinaryInputStream extends FilterInputStream {
       bufferLimit = availableLength;
     }
     
-    requestedLength -= availableLength;
-    
-    while (requestedLength > 0) {      
-      int bytesRead = in.read(buffer, bufferLimit, BUFFER_SIZE - bufferLimit);
+    while (availableLength < requestedLength) {      
+      int bytesRead = in.read(buffer, bufferLimit, bufferSize - bufferLimit);
       if (bytesRead < 0) {
         throw new EOFException();
       }
+      availableLength += bytesRead;
       bufferLimit += bytesRead;
-      requestedLength -= bytesRead;
-    }
+    }    
     
     return buffer;
   }
@@ -377,8 +383,10 @@ public class BinaryInputStream extends FilterInputStream {
       return "";
     }
     
-    byte[] buf = ensureBuffer(utfLength);
-    int pos = bufferPosition;
+    boolean ownBuffer = utfLength > bufferSize;
+    
+    byte[] buf = ownBuffer ? createUTFBuffer(utfLength) : ensureBuffer(utfLength);
+    int pos = ownBuffer ? 0 : bufferPosition;
     
     char[] charBuffer = new char[utfLength];
     int charSize = 0;
@@ -425,9 +433,35 @@ public class BinaryInputStream extends FilterInputStream {
       throw new UTFDataFormatException();
     }
     
-    bufferPosition = pos;
+    if (ownBuffer) {
+      streamPosition += utfLength;
+      bufferPosition = 0;
+      bufferLimit = 0;
+    } else {      
+      bufferPosition = pos;
+    }
     
     return new String(charBuffer, 0, charSize);
+  }
+  
+  private byte[] createUTFBuffer(int length) throws IOException {
+    
+    byte[] buf = new byte[length];
+    
+    int bytesAvailable = bufferLimit - bufferPosition;
+    if (bytesAvailable > 0) {
+      System.arraycopy(buffer, bufferPosition, buf, 0, bytesAvailable);
+    }
+    
+    while (bytesAvailable < buf.length) {      
+      int bytesRead = in.read(buf, bytesAvailable, buf.length - bytesAvailable);
+      if (bytesRead < 0) {
+        throw new EOFException();
+      }
+      bytesAvailable += bytesRead;
+    }
+    
+    return buf;
   }
   
   /**
@@ -499,7 +533,7 @@ public class BinaryInputStream extends FilterInputStream {
       return b;
     } 
     
-    if (len <= BUFFER_SIZE) {      
+    if (len <= bufferSize) {      
       ensureBuffer(len);
       System.arraycopy(buffer, bufferPosition, b, 0, len);
       bufferPosition += len;
@@ -508,7 +542,7 @@ public class BinaryInputStream extends FilterInputStream {
     
     int offset = 0;
     while (len > 0) {
-      int chunkLen = Math.min(len, BUFFER_SIZE);
+      int chunkLen = Math.min(len, bufferSize);
       ensureBuffer(chunkLen);
       System.arraycopy(buffer, bufferPosition, b, offset, chunkLen);
       bufferPosition += chunkLen;
