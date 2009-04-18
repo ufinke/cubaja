@@ -3,9 +3,11 @@
 
 package de.ufinke.cubaja.io;
 
-import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UTFDataFormatException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -15,13 +17,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <code>DataInputStream</code> extension for handling common object types.
- * The input data must have been written
- * by <code>BinaryOutputStream</code>. 
+ * Reads primitive types and objects from an <code>InputStream</code>.
+ * The input data should have been written
+ * by <code>BinaryOutputStream</code>.
+ * This class maintains an internal buffer;
+ * it is not necessary to wrap the underlaying stream into
+ * a <code>BufferedInputStream</code>.
  * @author Uwe Finke
  */
-public class BinaryInputStream extends DataInputStream implements BinaryInput {
+public class BinaryInputStream extends FilterInputStream {
 
+  static private final int BUFFER_SIZE = Character.MAX_VALUE; // do not reduce because of UTF length
+  
   static private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
   
   static private Map<String, Class<?>> createPrimitivesMap() {
@@ -39,13 +46,122 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
   
   private final Map<Class<?>, InputObjectHandler> handlerMap = new HashMap<Class<?>, InputObjectHandler>();
   
+  private byte[] buffer;
+  private int bufferLimit;
+  private int bufferPosition;
+  private long streamPosition;
+  
   /**
    * Constructor.
-   * @param in the underlying <code>InputStream</code>
+   * @param in the underlaying <code>InputStream</code>
    */
   public BinaryInputStream(InputStream in) {
     
     super(in);
+    buffer = new byte[BUFFER_SIZE];
+  }
+  
+  private byte[] ensureBuffer(int requestedLength) throws IOException {
+
+    if (in == null) {
+      throw new IOException("Stream closed");
+    }
+    
+    int availableLength = bufferLimit - bufferPosition;
+    
+    if (requestedLength <= availableLength) {
+      return buffer;
+    }
+    
+    if (requestedLength > BUFFER_SIZE - bufferPosition) {
+      streamPosition += bufferPosition;
+      if (availableLength > 0) {
+        System.arraycopy(buffer, bufferPosition, buffer, 0, availableLength);
+      }
+      bufferPosition = 0;
+      bufferLimit = availableLength;
+    }
+    
+    requestedLength -= availableLength;
+    
+    while (requestedLength > 0) {      
+      int bytesRead = in.read(buffer, bufferLimit, BUFFER_SIZE - bufferLimit);
+      if (bytesRead < 0) {
+        throw new EOFException();
+      }
+      bufferLimit += bytesRead;
+      requestedLength -= bytesRead;
+    }
+    
+    return buffer;
+  }
+  
+  public int read() throws IOException {
+    
+    try {
+      ensureBuffer(1);
+      return buffer[bufferPosition++];
+    } catch (EOFException e) {
+      return -1;
+    }
+  }
+  
+  public int read(byte[] b, int off, int len) throws IOException {
+    
+    try {
+      ensureBuffer(1);
+      len = Math.min(len, bufferLimit - bufferPosition);
+      System.arraycopy(buffer, bufferPosition, b, off, len);
+      bufferPosition += len;
+      return len;
+    } catch (EOFException e) {
+      return -1;
+    }
+  }
+  
+  public long skip(long n) throws IOException {
+    
+    try {
+      ensureBuffer(1);
+      long skipped = Math.min(n, bufferLimit - bufferPosition);
+      bufferPosition += skipped;
+      return skipped;
+    } catch (EOFException e) {
+      return -1;
+    }
+  }
+  
+  public boolean markSupported() {
+    
+    return false;
+  }
+  
+  public void mark(int readLimit) {
+    
+  }
+  
+  public void reset() throws IOException {
+    
+    throw new IOException("mark / reset not supported");
+  }
+  
+  public int available() throws IOException {
+    
+    return in.available() + bufferLimit - bufferPosition;
+  }
+  
+  public void close() throws IOException {
+    
+    if (in != null) {
+      in.close();
+      in = null;
+      buffer = null;
+    }
+  }
+  
+  public long position() {
+    
+    return streamPosition + bufferPosition;
   }
   
   /**
@@ -55,11 +171,18 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Boolean readBooleanObject() throws IOException {
     
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Boolean.valueOf(readBoolean());
     }
+  }
+  
+  public boolean readBoolean() throws IOException {
+
+    ensureBuffer(1);
+    return buffer[bufferPosition++] != 0;
   }
   
   /**
@@ -69,11 +192,18 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Byte readByteObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Byte.valueOf(readByte());
     }
+  }
+  
+  public byte readByte() throws IOException {
+
+    ensureBuffer(1);
+    return buffer[bufferPosition++];
   }
   
   /**
@@ -83,11 +213,22 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Short readShortObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Short.valueOf(readShort());
     }
+  }
+  
+  public short readShort() throws IOException {
+    
+    byte[] buf = ensureBuffer(2);
+    int pos = bufferPosition;
+    short result = (short) (((buf[pos++] & 0xFF) << 8) 
+                           | (buf[pos++] & 0xFF));
+    bufferPosition = pos;
+    return result;
   }
   
   /**
@@ -97,11 +238,22 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Character readCharObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Character.valueOf(readChar());
     }
+  }
+  
+  public char readChar() throws IOException {
+    
+    byte[] buf = ensureBuffer(2);
+    int pos = bufferPosition;
+    char result = (char) (((buf[pos++] & 0xFF) << 8) 
+                         | (buf[pos++] & 0xFF));
+    bufferPosition = pos;
+    return result;
   }
   
   /**
@@ -111,11 +263,24 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Integer readIntObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Integer.valueOf(readInt());
     }
+  }
+  
+  public int readInt() throws IOException {
+    
+    byte[] buf = ensureBuffer(4);
+    int pos = bufferPosition;
+    int result = ((buf[pos++] & 0xFF) << 24)
+               | ((buf[pos++] & 0xFF) << 16)
+               | ((buf[pos++] & 0xFF) << 8)
+               |  (buf[pos++] & 0xFF);
+    bufferPosition = pos;
+    return result;
   }
   
   /**
@@ -125,11 +290,28 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Long readLongObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Long.valueOf(readLong());
     }
+  }
+  
+  public long readLong() throws IOException {
+    
+    byte[] buf = ensureBuffer(8);
+    int pos = bufferPosition;
+    int highBytes = ((buf[pos++] & 0xFF) << 24)
+                  | ((buf[pos++] & 0xFF) << 16)
+                  | ((buf[pos++] & 0xFF) << 8)
+                  |  (buf[pos++] & 0xFF);
+    int lowBytes  = ((buf[pos++] & 0xFF) << 24)
+                  | ((buf[pos++] & 0xFF) << 16)
+                  | ((buf[pos++] & 0xFF) << 8)
+                  |  (buf[pos++] & 0xFF);
+    bufferPosition = pos;
+    return (long) highBytes << 32 | lowBytes;
   }
   
   /**
@@ -139,11 +321,17 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Float readFloatObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Float.valueOf(readFloat());
     }
+  }
+  
+  public float readFloat() throws IOException {
+    
+    return Float.intBitsToFloat(readInt());
   }
   
   /**
@@ -153,11 +341,17 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Double readDoubleObject() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return Double.valueOf(readDouble());
     }
+  }
+  
+  public double readDouble() throws IOException {
+    
+    return Double.longBitsToDouble(readLong());
   }
   
   /**
@@ -167,11 +361,73 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public String readString() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return readUTF();
     }
+  }
+  
+  private String readUTF() throws IOException {
+    
+    int utfLength = readChar();
+
+    if (utfLength == 0) {
+      return "";
+    }
+    
+    byte[] buf = ensureBuffer(utfLength);
+    int pos = bufferPosition;
+    
+    char[] charBuffer = new char[utfLength];
+    int charSize = 0;
+    
+    byte c = 0;
+    byte c2 = 0;
+    byte c3 = 0;
+    
+    try {      
+      for (int i = 0; i < utfLength; i++) {
+        c = buf[pos++];
+        switch ((c & 0xFF) >>> 4) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+            charBuffer[charSize++] = (char) c;
+            break;
+          case 12:
+          case 13:
+            c2 = buf[pos++];
+            if ((c2 & 0xC0) != 0x80) {
+              throw new UTFDataFormatException();
+            }
+            charBuffer[charSize++] = (char) (((c & 0x1F) << 6) | (c2 & 0x3F));
+            break;
+          case 14:
+            c2 = buf[pos++];
+            c3 = buf[pos++];
+            if ((c2 & 0xC0) != 0x80 || (c3 & 0xC0) != 0x80) {
+              throw new UTFDataFormatException();
+            }
+            charBuffer[charSize++] = (char) (((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
+            break;
+          default:
+            throw new UTFDataFormatException();
+        }
+      }
+    } catch (IndexOutOfBoundsException e) {
+      throw new UTFDataFormatException();
+    }
+    
+    bufferPosition = pos;
+    
+    return new String(charBuffer, 0, charSize);
   }
   
   /**
@@ -181,7 +437,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public Date readDate() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return new Date(readLong());
@@ -195,7 +452,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public BigInteger readBigInteger() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return new BigInteger(readNonNullByteArray());
@@ -209,7 +467,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public BigDecimal readBigDecimal() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return new BigDecimal(new BigInteger(readNonNullByteArray()), readInt());
@@ -223,7 +482,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public byte[] readByteArray() throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return readNonNullByteArray();
@@ -232,8 +492,28 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
   
   private byte[] readNonNullByteArray() throws IOException {
     
-    byte[] b = new byte[readInt()];
-    readFully(b);
+    int len = readInt();
+    byte[] b = new byte[len];
+    
+    if (len == 0) {
+      return b;
+    } 
+    
+    if (len <= BUFFER_SIZE) {      
+      ensureBuffer(len);
+      System.arraycopy(buffer, bufferPosition, b, 0, len);
+      bufferPosition += len;
+      return b;
+    }
+    
+    int offset = 0;
+    while (len > 0) {
+      int chunkLen = Math.min(len, BUFFER_SIZE);
+      ensureBuffer(chunkLen);
+      System.arraycopy(buffer, bufferPosition, b, offset, chunkLen);
+      bufferPosition += chunkLen;
+      len -= chunkLen;
+    }
     return b;
   }
   
@@ -246,7 +526,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
    */
   public <E extends Enum<E>> E readEnum(Class<E> clazz) throws IOException {
 
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     } else {
       return clazz.getEnumConstants()[readChar()];
@@ -274,7 +555,8 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws Exception {
     
-    if (read() == 0) {
+    ensureBuffer(1);
+    if (buffer[bufferPosition++] == 0) {
       return null;
     }
     
@@ -317,4 +599,5 @@ public class BinaryInputStream extends DataInputStream implements BinaryInput {
     
     handlerMap.put(clazz, handler);
   }  
+  
 }

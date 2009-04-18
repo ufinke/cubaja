@@ -26,6 +26,7 @@ public class Sorter<D> implements Iterable<D> {
     algorithm.setComparator(comparator);
     
     memoryManager = new MemoryManager(config);
+    allocateArray();
     
     workerService = Executors.newCachedThreadPool();
     
@@ -60,18 +61,16 @@ public class Sorter<D> implements Iterable<D> {
       throw new IllegalStateException();
     }
 
-    if (array == null) {
-      allocateArray(element);
-    } else if (array.isFull()) {
+    if (array.isFull()) {
       sortTask.checkException();
       sortTask.runWorker(array);
-      allocateArray(element);
+      allocateArray();
     }
     
     array.add(element);
   }
   
-  private void allocateArray(D element) {
+  private void allocateArray() {
     
     Object[] newArray = new Object[memoryManager.getInputArrayCapacity()];
     array = new SortArray(newArray, 0);

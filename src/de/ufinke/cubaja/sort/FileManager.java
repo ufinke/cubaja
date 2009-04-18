@@ -33,7 +33,7 @@ class FileManager {
     return file;
   }
   
-  BinaryOutput createOutput() throws Exception {
+  BinaryOutputStream createOutput() throws Exception {
     
     outputStream = new BinaryOutputStream(new BufferedOutputStream(new FileOutputStream(getFile())));
     
@@ -52,7 +52,7 @@ class FileManager {
     }
   }
   
-  BinaryInput createInput() throws Exception {
+  BinaryInputStream createInput() throws Exception {
     
     inputStream = new BinaryInputStream(new BufferedInputStream(new FileInputStream(getFile())));
     

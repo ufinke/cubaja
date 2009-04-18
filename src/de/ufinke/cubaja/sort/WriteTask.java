@@ -13,7 +13,7 @@ class WriteTask {
   
   private ExecutorService workerService;
   private FileManager fileManager;
-  private BinaryOutput stream;
+  private BinaryOutputStream stream;
   
   WriteTask(ExecutorService workerService, FileManager fileManager) {
     
