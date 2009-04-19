@@ -610,8 +610,8 @@ public class BinaryInputStream extends FilterInputStream {
     int size = readShort();
     List<PropertyDescription> receivedProperties = new ArrayList<PropertyDescription>(size);
     for (int i = 0; i < size; i++) {
-      String propertyName = readUTF();
-      String propertyClazzName = readUTF();
+      String propertyName = readString();
+      String propertyClazzName = readString();
       Class<?> propertyClazz = primitivesMap.get(propertyClazzName);
       if (propertyClazz == null) {
         propertyClazz = Class.forName(propertyClazzName);

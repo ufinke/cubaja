@@ -102,16 +102,17 @@ public class BinaryOutputStream extends FilterOutputStream {
   
   public void write(byte[] value, int offset, int length) throws IOException {
 
-    if (length <= bufferSize) {
-      byte[] buf = ensureBuffer(length);
-      System.arraycopy(value, offset, buf, bufferPosition, length);
-      bufferPosition += length;
-      return;
+    if (length > bufferSize - bufferPosition) {
+      writeBuffer();
     }
     
-    writeBuffer();
-    out.write(value, offset, length);
-    streamPosition += length;
+    if (length <= bufferSize) {
+      System.arraycopy(value, offset, buffer, bufferPosition, length);
+      bufferPosition += length;
+    } else {
+      out.write(value, offset, length);
+      streamPosition += length;
+    }
   }
   
   public long position() {
@@ -126,11 +127,10 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeBooleanObject(Boolean value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x10;
     } else {
-      buf[bufferPosition++] = 1;
       writeBoolean(value.booleanValue());
     }
   }
@@ -138,7 +138,7 @@ public class BinaryOutputStream extends FilterOutputStream {
   public void writeBoolean(boolean value) throws IOException {
     
     byte[] buf = ensureBuffer(1);
-    buf[bufferPosition++] = (byte) (value ? 1 : 0);
+    buf[bufferPosition++] = (byte) (value ? 0x12 : 0x11);
   }
 
   /**
@@ -148,19 +148,28 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeByteObject(Byte value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x40;
     } else {
-      buf[bufferPosition++] = 1;
       writeByte(value.byteValue());
     }
   }
   
   public void writeByte(int value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
-    buf[bufferPosition++] = (byte) value;
+    int pos = bufferPosition;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) 0x41;
+    } else {      
+      byte[] buf = ensureBuffer(2);
+      buf[pos++] = (byte) 0x42;
+      buf[pos++] = (byte) value;
+    }
+    
+    bufferPosition = pos;
   }
   
   /**
@@ -170,22 +179,17 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeShortObject(Short value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x50;
     } else {
-      buf[bufferPosition++] = 1;
-      writeShort(value.shortValue());
+      putChar(0x50, value.shortValue());
     }
   }
   
   public void writeShort(int value) throws IOException {
-    
-    byte[] buf = ensureBuffer(2);
-    int pos = bufferPosition;
-    buf[pos++] = (byte) (value >>> 8);
-    buf[pos++] = (byte) value;
-    bufferPosition = pos;
+
+    putChar(0x50, value);
   }
   
   /**
@@ -195,21 +199,41 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeCharObject(Character value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x60;
     } else {
-      buf[bufferPosition++] = 1;
-      writeChar(value.charValue());
+      putChar(0x60, value.charValue());
     }
   }
   
   public void writeChar(int value) throws IOException {
+
+    putChar(0x60, value);
+  }
+  
+  private void putChar(int mask, int value) throws IOException {
     
-    byte[] buf = ensureBuffer(2);
     int pos = bufferPosition;
-    buf[pos++] = (byte) (value >>> 8);
-    buf[pos++] = (byte) value;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) (mask | 0x01);
+    } else if ((value & 0xFF00) == 0x0000) {      
+      byte[] buf = ensureBuffer(2);
+      buf[pos++] = (byte) (mask | 0x05);
+      buf[pos++] = (byte) value;
+    } else if ((value & 0xFF00) == 0xFF00) {      
+      byte[] buf = ensureBuffer(2);
+      buf[pos++] = (byte) (mask | 0x08);
+      buf[pos++] = (byte) value;
+    } else {
+      byte[] buf = ensureBuffer(3);
+      buf[pos++] = (byte) (mask | 0x02);
+      buf[pos++] = (byte) (value >>> 8);
+      buf[pos++] = (byte) value;      
+    }
+    
     bufferPosition = pos;
   }
   
@@ -220,23 +244,76 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeIntObject(Integer value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x70;
     } else {
-      buf[bufferPosition++] = 1;
-      writeInt(value.intValue());
+      putInt(0x70, value.intValue());
     }
   }
   
   public void writeInt(int value) throws IOException {
     
-    byte[] buf = ensureBuffer(4);
+    putInt(0x70, value);
+  }
+  
+  private void putInt(int mask, int value) throws IOException {
+    
     int pos = bufferPosition;
-    buf[pos++] = (byte) (value >>> 24);
-    buf[pos++] = (byte) (value >>> 16);
-    buf[pos++] = (byte) (value >>> 8);
-    buf[pos++] = (byte) value;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) (mask | 0x01);
+    // positive with leading x00 ?
+    } else if ((value & 0xFF000000) == 0x00000000) {
+      if ((value & 0xFFFF0000) == 0x00000000) {
+        if ((value & 0xFFFFFF00) == 0x00000000) {
+          byte[] buf = ensureBuffer(2);
+          buf[pos++] = (byte) (mask | 0x05);
+          buf[pos++] = (byte) value;
+        } else {
+          byte[] buf = ensureBuffer(3);
+          buf[pos++] = (byte) (mask | 0x04);
+          buf[pos++] = (byte) (value >>> 8);
+          buf[pos++] = (byte) value;
+        }
+      } else {
+        byte[] buf = ensureBuffer(4);
+        buf[pos++] = (byte) (mask | 0x03);
+        buf[pos++] = (byte) (value >>> 16);
+        buf[pos++] = (byte) (value >>> 8);
+        buf[pos++] = (byte) value;
+      }
+    // negative with leading xFF ?
+    } else if ((value & 0xFF000000) == 0xFF000000) {
+      if ((value & 0xFFFF0000) == 0xFFFF0000) {
+        if ((value & 0xFFFFFF00) == 0xFFFFFF00) {
+          byte[] buf = ensureBuffer(2);
+          buf[pos++] = (byte) (mask | 0x08);
+          buf[pos++] = (byte) value;
+        } else {
+          byte[] buf = ensureBuffer(3);
+          buf[pos++] = (byte) (mask | 0x07);
+          buf[pos++] = (byte) (value >>> 8);
+          buf[pos++] = (byte) value;
+        }
+      } else {
+        byte[] buf = ensureBuffer(4);
+        buf[pos++] = (byte) (mask | 0x06);
+        buf[pos++] = (byte) (value >>> 16);
+        buf[pos++] = (byte) (value >>> 8);
+        buf[pos++] = (byte) value;
+      }
+    // write fully
+    } else {
+      byte[] buf = ensureBuffer(5);
+      buf[pos++] = (byte) (mask | 0x02);
+      buf[pos++] = (byte) (value >>> 24);
+      buf[pos++] = (byte) (value >>> 16);
+      buf[pos++] = (byte) (value >>> 8);
+      buf[pos++] = (byte) value;
+    }
+    
     bufferPosition = pos;
   }
   
@@ -247,27 +324,144 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeLongObject(Long value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x80;
     } else {
-      buf[bufferPosition++] = 1;
-      writeLong(value.longValue());
+      putLong(0x80, value.longValue());
     }
   }
   
   public void writeLong(long value) throws IOException {
+
+    putLong(0x80, value);
+  }
+  
+  private void putLong(int mask, long value) throws IOException {
     
-    byte[] buf = ensureBuffer(8);
     int pos = bufferPosition;
-    buf[pos++] = (byte) (value >>> 56);
-    buf[pos++] = (byte) (value >>> 48);
-    buf[pos++] = (byte) (value >>> 40);
-    buf[pos++] = (byte) (value >>> 32);
-    buf[pos++] = (byte) (value >>> 24);
-    buf[pos++] = (byte) (value >>> 16);
-    buf[pos++] = (byte) (value >>> 8);
-    buf[pos++] = (byte) value;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) (mask | 0x01);
+    } else {
+      int highBytes = (int) (value >>> 32);
+      int lowBytes = (int) value;
+      // positive with leading x00 ?
+      if ((highBytes & 0xFFFF0000) == 0x00000000) {
+        if ((highBytes & 0xFFFFFF00) == 0x00000000) {
+          if ((highBytes & 0xFFFFFFFF) == 0x00000000) {
+            if ((lowBytes & 0xFF000000) == 0x00000000) {
+              if ((lowBytes & 0xFFFF0000) == 0x00000000) {
+                if ((lowBytes & 0xFFFFFF00) == 0x00000000) {
+                  byte[] buf = ensureBuffer(2);
+                  buf[pos++] = (byte) (mask | 0x08);
+                  buf[pos++] = (byte) lowBytes;
+                } else {
+                  byte[] buf = ensureBuffer(3);
+                  buf[pos++] = (byte) (mask | 0x07);
+                  buf[pos++] = (byte) (lowBytes >>> 8);
+                  buf[pos++] = (byte) lowBytes;
+                }
+              } else {
+                byte[] buf = ensureBuffer(4);
+                buf[pos++] = (byte) (mask | 0x06);
+                buf[pos++] = (byte) (lowBytes >>> 16);
+                buf[pos++] = (byte) (lowBytes >>> 8);
+                buf[pos++] = (byte) lowBytes;
+              }
+            } else {
+              byte[] buf = ensureBuffer(5);
+              buf[pos++] = (byte) (mask | 0x05);
+              buf[pos++] = (byte) (lowBytes >>> 24);
+              buf[pos++] = (byte) (lowBytes >>> 16);
+              buf[pos++] = (byte) (lowBytes >>> 8);
+              buf[pos++] = (byte) lowBytes;
+            }
+          } else {
+            byte[] buf = ensureBuffer(6);
+            buf[pos++] = (byte) (mask | 0x04);
+            buf[pos++] = (byte) highBytes;
+            buf[pos++] = (byte) (lowBytes >>> 24);
+            buf[pos++] = (byte) (lowBytes >>> 16);
+            buf[pos++] = (byte) (lowBytes >>> 8);
+            buf[pos++] = (byte) lowBytes;
+          }
+        } else {
+          byte[] buf = ensureBuffer(6);
+          buf[pos++] = (byte) (mask | 0x03);
+          buf[pos++] = (byte) (highBytes >>> 8);
+          buf[pos++] = (byte) highBytes;
+          buf[pos++] = (byte) (lowBytes >>> 24);
+          buf[pos++] = (byte) (lowBytes >>> 16);
+          buf[pos++] = (byte) (lowBytes >>> 8);
+          buf[pos++] = (byte) lowBytes;
+        }
+      // negative with leading xFF ?
+      } else if ((highBytes & 0xFFFF0000) == 0xFFFF0000) {
+        if ((highBytes & 0xFFFFFF00) == 0xFFFFFF00) {
+          if ((highBytes & 0xFFFFFFFF) == 0xFFFFFFFF) {
+            if ((lowBytes & 0xFF000000) == 0xFF000000) {
+              if ((lowBytes & 0xFFFF0000) == 0xFFFF0000) {
+                if ((lowBytes & 0xFFFFFF00) == 0xFFFFFF00) {
+                  byte[] buf = ensureBuffer(2);
+                  buf[pos++] = (byte) (mask | 0x0E);
+                  buf[pos++] = (byte) lowBytes;
+                } else {
+                  byte[] buf = ensureBuffer(3);
+                  buf[pos++] = (byte) (mask | 0x0D);
+                  buf[pos++] = (byte) (lowBytes >>> 8);
+                  buf[pos++] = (byte) lowBytes;
+                }
+              } else {
+                byte[] buf = ensureBuffer(4);
+                buf[pos++] = (byte) (mask | 0x0C);
+                buf[pos++] = (byte) (lowBytes >>> 16);
+                buf[pos++] = (byte) (lowBytes >>> 8);
+                buf[pos++] = (byte) lowBytes;
+              }
+            } else {
+              byte[] buf = ensureBuffer(5);
+              buf[pos++] = (byte) (mask | 0x0B);
+              buf[pos++] = (byte) (lowBytes >>> 24);
+              buf[pos++] = (byte) (lowBytes >>> 16);
+              buf[pos++] = (byte) (lowBytes >>> 8);
+              buf[pos++] = (byte) lowBytes;
+            }
+          } else {
+            byte[] buf = ensureBuffer(6);
+            buf[pos++] = (byte) (mask | 0x0A);
+            buf[pos++] = (byte) highBytes;
+            buf[pos++] = (byte) (lowBytes >>> 24);
+            buf[pos++] = (byte) (lowBytes >>> 16);
+            buf[pos++] = (byte) (lowBytes >>> 8);
+            buf[pos++] = (byte) lowBytes;
+          }
+        } else {
+          byte[] buf = ensureBuffer(6);
+          buf[pos++] = (byte) (mask | 0x09);
+          buf[pos++] = (byte) (highBytes >>> 8);
+          buf[pos++] = (byte) highBytes;
+          buf[pos++] = (byte) (lowBytes >>> 24);
+          buf[pos++] = (byte) (lowBytes >>> 16);
+          buf[pos++] = (byte) (lowBytes >>> 8);
+          buf[pos++] = (byte) lowBytes;
+        }
+      // write fully
+      } else {
+        byte[] buf = ensureBuffer(8);
+        buf[pos++] = (byte) (mask | 0x02);
+        buf[pos++] = (byte) (highBytes >>> 24);
+        buf[pos++] = (byte) (highBytes >>> 16);
+        buf[pos++] = (byte) (highBytes >>> 8);
+        buf[pos++] = (byte) highBytes;
+        buf[pos++] = (byte) (lowBytes >>> 24);
+        buf[pos++] = (byte) (lowBytes >>> 16);
+        buf[pos++] = (byte) (lowBytes >>> 8);
+        buf[pos++] = (byte) lowBytes;
+      }
+    }
+    
     bufferPosition = pos;
   }
   
@@ -278,18 +472,47 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeFloatObject(Float value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x20;
     } else {
-      buf[bufferPosition++] = 1;
       writeFloat(value.floatValue());
     }
   }
   
   public void writeFloat(float value) throws IOException {
     
-    writeInt(Float.floatToRawIntBits(value));
+    int pos = bufferPosition;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) 0x21;
+    } else {      
+      int iValue = Float.floatToRawIntBits(value);
+      if ((iValue & 0x000000FF) == 0) {
+        if ((iValue & 0x0000FFFF) == 0) {
+          byte[] buf = ensureBuffer(3);
+          buf[pos++] = (byte) 0x24;
+          buf[pos++] = (byte) (iValue >>> 24);
+          buf[pos++] = (byte) (iValue >>> 16);
+        } else {
+          byte[] buf = ensureBuffer(4);
+          buf[pos++] = (byte) 0x23;
+          buf[pos++] = (byte) (iValue >>> 24);
+          buf[pos++] = (byte) (iValue >>> 16);
+          buf[pos++] = (byte) (iValue >>> 8);
+        }
+      } else {
+        byte[] buf = ensureBuffer(5);
+        buf[pos++] = (byte) 0x22;
+        buf[pos++] = (byte) (iValue >>> 24);
+        buf[pos++] = (byte) (iValue >>> 16);
+        buf[pos++] = (byte) (iValue >>> 8);
+        buf[pos++] = (byte) iValue;
+      }
+    }
+    
+    bufferPosition = pos;
   }
   
   /**
@@ -297,20 +520,97 @@ public class BinaryOutputStream extends FilterOutputStream {
    * @param value object
    * @throws IOException
    */
-  public void writeDoubleObject(Double value) throws IOException {
+  public void writeDoubleObject(Float value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x30;
     } else {
-      buf[bufferPosition++] = 1;
       writeDouble(value.doubleValue());
     }
   }
   
   public void writeDouble(double value) throws IOException {
     
-    writeLong(Double.doubleToRawLongBits(value));
+    int pos = bufferPosition;
+    
+    if (value == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[pos++] = (byte) 0x31;
+    } else {      
+      long longValue = Double.doubleToRawLongBits(value);
+      int highBytes = (int) (longValue >>> 32);
+      int lowBytes = (int) longValue;
+      if ((lowBytes & 0x000000FF) == 0) {
+        if ((lowBytes & 0x0000FFFF) == 0) {
+          if ((lowBytes & 0x00FFFFFF) == 0) {
+            if ((lowBytes & 0xFFFFFFFF) == 0) {
+              if ((highBytes & 0x000000FF) == 0) {
+                if ((highBytes & 0x0000FFFF) == 0) {
+                  byte[] buf = ensureBuffer(3);
+                  buf[pos++] = (byte) 0x38;
+                  buf[pos++] = (byte) (highBytes >>> 24);
+                  buf[pos++] = (byte) (highBytes >>> 16);
+                } else {
+                  byte[] buf = ensureBuffer(4);
+                  buf[pos++] = (byte) 0x37;
+                  buf[pos++] = (byte) (highBytes >>> 24);
+                  buf[pos++] = (byte) (highBytes >>> 16);
+                  buf[pos++] = (byte) (highBytes >>> 8);
+                }
+              } else {
+                byte[] buf = ensureBuffer(5);
+                buf[pos++] = (byte) 0x36;
+                buf[pos++] = (byte) (highBytes >>> 24);
+                buf[pos++] = (byte) (highBytes >>> 16);
+                buf[pos++] = (byte) (highBytes >>> 8);
+                buf[pos++] = (byte) highBytes;
+              }
+            } else {
+              byte[] buf = ensureBuffer(6);
+              buf[pos++] = (byte) 0x35;
+              buf[pos++] = (byte) (highBytes >>> 24);
+              buf[pos++] = (byte) (highBytes >>> 16);
+              buf[pos++] = (byte) (highBytes >>> 8);
+              buf[pos++] = (byte) highBytes;
+              buf[pos++] = (byte) (lowBytes >>> 24);
+            }
+          } else {
+            byte[] buf = ensureBuffer(7);
+            buf[pos++] = (byte) 0x34;
+            buf[pos++] = (byte) (highBytes >>> 24);
+            buf[pos++] = (byte) (highBytes >>> 16);
+            buf[pos++] = (byte) (highBytes >>> 8);
+            buf[pos++] = (byte) highBytes;
+            buf[pos++] = (byte) (lowBytes >>> 24);
+            buf[pos++] = (byte) (lowBytes >>> 16);
+          }
+        } else {
+          byte[] buf = ensureBuffer(8);
+          buf[pos++] = (byte) 0x33;
+          buf[pos++] = (byte) (highBytes >>> 24);
+          buf[pos++] = (byte) (highBytes >>> 16);
+          buf[pos++] = (byte) (highBytes >>> 8);
+          buf[pos++] = (byte) highBytes;
+          buf[pos++] = (byte) (lowBytes >>> 24);
+          buf[pos++] = (byte) (lowBytes >>> 16);
+          buf[pos++] = (byte) (lowBytes >>> 8);
+        }
+      } else {
+        byte[] buf = ensureBuffer(9);
+        buf[pos++] = (byte) 0x32;
+        buf[pos++] = (byte) (highBytes >>> 24);
+        buf[pos++] = (byte) (highBytes >>> 16);
+        buf[pos++] = (byte) (highBytes >>> 8);
+        buf[pos++] = (byte) highBytes;
+        buf[pos++] = (byte) (lowBytes >>> 24);
+        buf[pos++] = (byte) (lowBytes >>> 16);
+        buf[pos++] = (byte) (lowBytes >>> 8);
+        buf[pos++] = (byte) lowBytes;
+      }
+    }
+    
+    bufferPosition = pos;
   }
   
   /**
@@ -320,11 +620,13 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeString(CharSequence value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x90;
+    } else if (value.length() == 0) {
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0x91;
     } else {
-      buf[bufferPosition++] = 1;
       writeUTF(value);
     }
   }
@@ -342,9 +644,10 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     int length = value.length();
     int utfLength = length * 3;
-    boolean ownBuffer = utfLength + 2 > bufferSize;
-    byte[] utf = ownBuffer ? new byte[utfLength] : ensureBuffer(utfLength + 2);
-    int utfPos = ownBuffer ? 0 : bufferPosition + 2;
+    boolean ownBuffer = utfLength + 3 > bufferSize;
+    byte[] utf = ownBuffer ? new byte[utfLength] : ensureBuffer(utfLength + 3);
+    int utfPos = ownBuffer ? 0 : bufferPosition + 3;
+    boolean ascii = true;
 
     for (int i = 0; i < length; i++) {
       char c = value.charAt(i);
@@ -353,10 +656,12 @@ public class BinaryOutputStream extends FilterOutputStream {
       } else if (c <= 0x07FF) {
         utf[utfPos++] = (byte) (0xC0 | ((c >>  6) & 0x1F));
         utf[utfPos++] = (byte) (0x80 | ((c >>  0) & 0x3F));
+        ascii = false;
       } else {
         utf[utfPos++] = (byte) (0xE0 | ((c >> 12) & 0x0F));
         utf[utfPos++] = (byte) (0x80 | ((c >>  6) & 0x3F));
         utf[utfPos++] = (byte) (0x80 | ((c >>  0) & 0x3F));
+        ascii = false;
       }
     }
     
@@ -364,14 +669,16 @@ public class BinaryOutputStream extends FilterOutputStream {
       if (utfPos > Character.MAX_VALUE) {
         throw new UTFDataFormatException(text.get("utfTooLong"));
       }
+      writeByte(ascii ? 0x93 : 0x92);
       writeChar(utfPos);
       write(utf, 0, utfPos);
     } else {
       int pos = bufferPosition;
-      length = utfPos - pos - 2;
-      utf[pos]     = (byte) (length >>> 8);
-      utf[pos + 1] = (byte) length;
-      bufferPosition = pos + 2 + length;
+      length = utfPos - pos - 3;
+      utf[pos++] = (byte) (ascii ? 0x93 : 0x92);
+      utf[pos++] = (byte) (length >>> 8);
+      utf[pos++] = (byte) length;
+      bufferPosition = pos + length;
     }
   }
   
@@ -382,12 +689,11 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeDate(Date value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0xC0;
     } else {
-      buf[bufferPosition++] = 1;
-      writeLong(value.getTime());
+      putLong(0xC0, value.getTime());
     }
   }
   
@@ -400,10 +706,11 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      buf[bufferPosition++] = (byte) 0xA0;
+    } else if (value.equals(BigInteger.ZERO)) {
+      buf[bufferPosition++] = (byte) 0xA1;
     } else {
-      buf[bufferPosition++] = 1;
-      writeNonNullByteArray(value.toByteArray());
+      writeNonNullByteArray(0xA0, value.toByteArray());
     }
   }
   
@@ -416,10 +723,11 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      buf[bufferPosition++] = (byte) 0xB0;
+    } else if (value.equals(BigDecimal.ZERO)) {
+      buf[bufferPosition++] = (byte) 0xB1;
     } else {
-      buf[bufferPosition++] = 1;
-      writeNonNullByteArray(value.unscaledValue().toByteArray());
+      writeNonNullByteArray(0xB0, value.unscaledValue().toByteArray());
       writeInt(value.scale());
     }
   }
@@ -433,15 +741,17 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      buf[bufferPosition++] = (byte) 0xE0;
+    } else if (value.length == 0) {
+      buf[bufferPosition++] = (byte) 0xE1;
     } else {
-      buf[bufferPosition++] = 1;
-      writeNonNullByteArray(value);
+      writeNonNullByteArray(0xE0, value);
     }
   }
   
-  private void writeNonNullByteArray(byte[] value) throws IOException {
+  private void writeNonNullByteArray(int mask, byte[] value) throws IOException {
 
+    putInt(mask, value.length);
     write(value, 0, value.length);
   }
   
@@ -452,12 +762,11 @@ public class BinaryOutputStream extends FilterOutputStream {
    */
   public void writeEnum(Enum<?> value) throws IOException {
     
-    byte[] buf = ensureBuffer(1);
     if (value == null) {
-      buf[bufferPosition++] = 0;
+      byte[] buf = ensureBuffer(1);
+      buf[bufferPosition++] = (byte) 0xD0;
     } else {
-      buf[bufferPosition++] = 1;
-      writeChar(value.ordinal());
+      putChar(0xD0, value.ordinal());
     }
   }
   
@@ -482,13 +791,13 @@ public class BinaryOutputStream extends FilterOutputStream {
     byte[] buf = ensureBuffer(1);
     
     if (object == null) {
-      buf[bufferPosition++] = 0;
+      buf[bufferPosition++] = (byte) 0xF0;
       return;
     }
     
-    buf[bufferPosition++] = 1;
-    
     OutputObjectHandler handler = handlerMap.get(object.getClass()); 
+    
+    buf[bufferPosition++] = (byte) (handler == null ? 0xF2 : 0xF1);
     
     if (handler == null) {
       handler = getGeneratedHandler(object.getClass());
@@ -505,8 +814,8 @@ public class BinaryOutputStream extends FilterOutputStream {
     
     writeShort(properties.size());
     for (PropertyDescription property : properties) {
-      writeUTF(property.getName());
-      writeUTF(property.getClazz().getName());
+      writeString(property.getName());
+      writeString(property.getClazz().getName());
     }
     
     return OutputObjectHandlerFactory.getHandler(clazz, properties);
