@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.lang.reflect.Constructor;
 import de.ufinke.cubaja.util.Text;
 
 public class GenClassLoader extends ClassLoader {
@@ -31,6 +32,20 @@ public class GenClassLoader extends ClassLoader {
     currentGenerator = generator;
     Class<?> clazz = loadClass(currentGenerator.getClassName());
     return clazz.newInstance();
+  }
+  
+  public synchronized Object createInstance(Generator generator, Object... args) throws Exception {
+    
+    currentGenerator = generator;
+    Class<?> clazz = loadClass(currentGenerator.getClassName());
+    
+    Class<?>[] argClasses = new Class<?>[args.length];
+    for (int i = 0; i < args.length; i++) {
+      argClasses[i] = args[i].getClass();
+    }
+    Constructor<?> constructor = clazz.getConstructor(argClasses);
+    
+    return constructor.newInstance(args);
   }
   
   protected Class<?> findClass(String className) throws ClassNotFoundException {

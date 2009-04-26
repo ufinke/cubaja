@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import de.ufinke.cubaja.util.Text;
 
 /**
  * Reads primitive types and objects from an <code>InputStream</code>.
@@ -29,6 +30,34 @@ public class BinaryInputStream extends FilterInputStream {
 
   static private final int DEFAULT_BUFFER_SIZE = 8192;
   static private final int MIN_BUFFER_SIZE = 64;
+  
+  static private final Text text = new Text(BinaryInputStream.class);
+  
+  static private final Map<Integer, String> typeMap = createTypeMap();
+  
+  static private Map<Integer, String> createTypeMap() {
+    
+    Map<Integer, String> map = new HashMap<Integer, String>(32);
+    
+    map.put(0x0, "[reserved]");
+    map.put(0x1, "Boolean");
+    map.put(0x2, "Float");
+    map.put(0x3, "Double");
+    map.put(0x4, "Byte");
+    map.put(0x5, "Short");
+    map.put(0x6, "Character");
+    map.put(0x7, "Integer");
+    map.put(0x8, "Long");
+    map.put(0x9, "String");
+    map.put(0xA, "BigInteger");
+    map.put(0xB, "BigDecimal");
+    map.put(0xC, "Date");
+    map.put(0xD, "Enum");
+    map.put(0xE, "byteArray");
+    map.put(0xF, "Object");
+    
+    return map;
+  }
   
   static private final Map<String, Class<?>> primitivesMap = createPrimitivesMap();
   
@@ -53,12 +82,8 @@ public class BinaryInputStream extends FilterInputStream {
   private int bufferPosition;
   private long streamPosition;
   
-  /**
-   * Constructor.
-   * @param in the underlaying <code>InputStream</code>
-   */
   public BinaryInputStream(InputStream in) {
-
+    
     this(in, DEFAULT_BUFFER_SIZE);
   }
   
@@ -67,6 +92,20 @@ public class BinaryInputStream extends FilterInputStream {
     super(in);
     this.bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
     buffer = new byte[this.bufferSize];
+  }
+  
+  private int expectType(int mask) throws IOException {
+    
+    byte[] buf = ensureBuffer(1);
+    int typeByte = buf[bufferPosition++];
+    
+    if ((typeByte & 0xF0) != mask) {
+      int expected = mask >>> 4;
+      int received = (typeByte >>> 4) & 0x0F;
+      throw new IOException(text.get("wrongType", Long.valueOf(position()), typeMap.get(expected), typeMap.get(received)));
+    }
+    
+    return typeByte & 0x0F;
   }
   
   private byte[] ensureBuffer(int requestedLength) throws IOException {
@@ -100,6 +139,499 @@ public class BinaryInputStream extends FilterInputStream {
     }    
     
     return buffer;
+  }
+  
+  private byte getByte(int subType) throws IOException {
+    
+    switch (subType) {
+      
+      case 0:
+      case 1:
+        return (byte) 0;
+        
+      case 2:
+        return ensureBuffer(1)[bufferPosition++];
+        
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private int getSmallInt(int subType) throws IOException {
+    
+    switch (subType) {
+      
+      case 0:
+      case 1:
+        return 0;
+        
+      case 2: {        
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        int result = ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 3:
+        return ensureBuffer(1)[bufferPosition++] & 0xFF;
+        
+      case 4:
+        return 0xFF00 | (ensureBuffer(1)[bufferPosition++] & 0xFF);
+        
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private int getInt(int subType) throws IOException {
+
+    switch (subType) {
+      
+      case 0:
+      case 1:
+        return 0;
+        
+      case 2: {        
+        byte[] buf = ensureBuffer(4);
+        int pos = bufferPosition;
+        int result = ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 3: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        int result = ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 4: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        int result = ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 5:
+        return ensureBuffer(1)[bufferPosition++] & 0xFF;
+        
+      case 6: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        int result = 0xFF000000
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 7: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        int result = 0xFFFF0000
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+        
+      case 8:
+        return 0xFFFFFF00 | (ensureBuffer(1)[bufferPosition++] & 0xFF);
+        
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private long getLong(int subType) throws IOException {
+    
+    switch (subType) {
+      
+      case 0:
+      case 1:
+        return 0;
+        
+      case 2: {
+        byte[] buf = ensureBuffer(8);
+        int pos = bufferPosition;
+        long result = ((long) (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 3: {
+        byte[] buf = ensureBuffer(7);
+        int pos = bufferPosition;
+        long result = ((long) (
+                          ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 4: {
+        byte[] buf = ensureBuffer(6);
+        int pos = bufferPosition;
+        long result = ((long) (
+                          ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 5: {
+        byte[] buf = ensureBuffer(5);
+        int pos = bufferPosition;
+        long result = ((long) (
+                           (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 6: {
+        byte[] buf = ensureBuffer(4);
+        int pos = bufferPosition;
+        long result = ( buf[pos++]         << 24)
+                    | ((buf[pos++] & 0xFF) << 16)
+                    | ((buf[pos++] & 0xFF) << 8)
+                    |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 7: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        long result = ((buf[pos++] & 0xFF) << 16)
+                    | ((buf[pos++] & 0xFF) << 8)
+                    |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 8: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        long result = ((buf[pos++] & 0xFF) << 8)
+                    |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 9: 
+        return ensureBuffer(1)[bufferPosition++] & 0xFF;
+                
+      case 0xA: {
+        byte[] buf = ensureBuffer(6);
+        int pos = bufferPosition;
+        long result = ((long) (0xFFFF0000
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 0xB: {
+        byte[] buf = ensureBuffer(5);
+        int pos = bufferPosition;
+        long result = ((long) (0xFFFFFF00
+                        |  (buf[pos++] & 0xFF)
+                      ) << 32)
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 0xC: {
+        byte[] buf = ensureBuffer(4);
+        int pos = bufferPosition;
+        long result = 0xFFFFFFFF00000000L
+                    | (
+                          ( buf[pos++]         << 24)
+                        | ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 0xD: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        long result = 0xFFFFFFFFFF000000L
+                    | (
+                          ((buf[pos++] & 0xFF) << 16)
+                        | ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 0xE: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        long result = 0xFFFFFFFFFFFF0000L
+                    | (
+                          ((buf[pos++] & 0xFF) << 8)
+                        |  (buf[pos++] & 0xFF)
+                      );
+        bufferPosition = pos;
+        return result;
+      }
+                
+      case 0xF: {
+        return 0xFFFFFFFFFFFFFF00L | (ensureBuffer(1)[bufferPosition++] & 0xFF);
+      }
+                
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private float getFloat(int subType) throws IOException {
+    
+    switch (subType) {
+      
+      case 0:
+      case 1:
+        return 0;
+        
+      case 2: {
+        byte[] buf = ensureBuffer(4);
+        int pos = bufferPosition;
+        int v = ( buf[pos++]         << 24)
+              | ((buf[pos++] & 0xFF) << 16)
+              | ((buf[pos++] & 0xFF) << 8)
+              |  (buf[pos++] & 0xFF);
+        bufferPosition = pos;
+        return Float.intBitsToFloat(v);
+      }
+        
+      case 3: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        int v = ( buf[pos++]         << 24)
+              | ((buf[pos++] & 0xFF) << 16)
+              | ((buf[pos++] & 0xFF) << 8);
+        bufferPosition = pos;
+        return Float.intBitsToFloat(v);
+      }
+        
+      case 4: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        int v = ( buf[pos++]         << 24)
+              | ((buf[pos++] & 0xFF) << 16);
+        bufferPosition = pos;
+        return Float.intBitsToFloat(v);
+      }
+        
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private double getDouble(int subType) throws IOException {
+    
+    switch (subType) {
+
+      case 0:
+      case 1:
+        return 0;
+      
+      case 2: {
+        byte[] buf = ensureBuffer(8);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 ) << 32)
+               | (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 );
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 3: {
+        byte[] buf = ensureBuffer(7);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 ) << 32)
+               | (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                 );
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 4: {
+        byte[] buf = ensureBuffer(6);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 ) << 32)
+               | (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                 );
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 5: {
+        byte[] buf = ensureBuffer(5);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 ) << 32)
+               |     ( buf[pos++]         << 24);
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 6: {
+        byte[] buf = ensureBuffer(4);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                   |  (buf[pos++] & 0xFF)
+                 ) << 32);
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 7: {
+        byte[] buf = ensureBuffer(3);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                   | ((buf[pos++] & 0xFF) << 8)
+                 ) << 32);
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      case 8: {
+        byte[] buf = ensureBuffer(2);
+        int pos = bufferPosition;
+        long v = ((long) (
+                     ( buf[pos++]         << 24)
+                   | ((buf[pos++] & 0xFF) << 16)
+                 ) << 32);
+        bufferPosition = pos;
+        return Double.longBitsToDouble(v);
+      }
+                
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
+    }
+  }
+  
+  private byte[] getArray(int subType) throws IOException {
+    
+    int len = getInt(subType);
+    byte[] b = new byte[len];
+    
+    if (len == 0) {
+      return b;
+    } 
+    
+    if (len <= bufferSize) {      
+      ensureBuffer(len);
+      System.arraycopy(buffer, bufferPosition, b, 0, len);
+      bufferPosition += len;
+      return b;
+    }
+    
+    int offset = 0;
+    while (len > 0) {
+      int chunkLen = Math.min(len, bufferSize);
+      ensureBuffer(chunkLen);
+      System.arraycopy(buffer, bufferPosition, b, offset, chunkLen);
+      bufferPosition += chunkLen;
+      len -= chunkLen;
+    }
+    return b;
   }
   
   public int read() throws IOException {
@@ -177,18 +709,31 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Boolean readBooleanObject() throws IOException {
     
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
-    } else {
-      return Boolean.valueOf(readBoolean());
+    int subType = expectType(0x10);
+    switch (subType) {
+      case 0:
+        return null;
+      case 1:
+        return Boolean.FALSE;
+      case 2:
+        return Boolean.TRUE;
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), "Boolean", Long.valueOf(position())));
     }
   }
   
   public boolean readBoolean() throws IOException {
 
-    ensureBuffer(1);
-    return buffer[bufferPosition++] != 0;
+    int subType = expectType(0x10);
+    switch (subType) {
+      case 0:
+      case 1:
+        return false;
+      case 2:
+        return true;
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), "Boolean", Long.valueOf(position())));
+    }
   }
   
   /**
@@ -198,18 +743,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Byte readByteObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x40);
+    if (subType == 0) {
       return null;
     } else {
-      return Byte.valueOf(readByte());
+      return Byte.valueOf(getByte(subType));
     }
   }
   
   public byte readByte() throws IOException {
 
-    ensureBuffer(1);
-    return buffer[bufferPosition++];
+    return getByte(expectType(0x40));
   }
   
   /**
@@ -219,22 +763,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Short readShortObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x50);
+    if (subType == 0) {
       return null;
     } else {
-      return Short.valueOf(readShort());
+      return Short.valueOf((short) getSmallInt(subType));
     }
   }
   
   public short readShort() throws IOException {
     
-    byte[] buf = ensureBuffer(2);
-    int pos = bufferPosition;
-    short result = (short) (((buf[pos++] & 0xFF) << 8) 
-                           | (buf[pos++] & 0xFF));
-    bufferPosition = pos;
-    return result;
+    return (short) getSmallInt(expectType(0x50));
   }
   
   /**
@@ -244,22 +783,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Character readCharObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x60);
+    if (subType == 0) {
       return null;
     } else {
-      return Character.valueOf(readChar());
+      return Character.valueOf((char) getSmallInt(subType));
     }
   }
   
   public char readChar() throws IOException {
     
-    byte[] buf = ensureBuffer(2);
-    int pos = bufferPosition;
-    char result = (char) (((buf[pos++] & 0xFF) << 8) 
-                         | (buf[pos++] & 0xFF));
-    bufferPosition = pos;
-    return result;
+    return (char) getSmallInt(expectType(0x60));
   }
   
   /**
@@ -269,24 +803,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Integer readIntObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x70);
+    if (subType == 0) {
       return null;
     } else {
-      return Integer.valueOf(readInt());
+      return Integer.valueOf(getInt(subType));
     }
   }
   
   public int readInt() throws IOException {
     
-    byte[] buf = ensureBuffer(4);
-    int pos = bufferPosition;
-    int result = ((buf[pos++] & 0xFF) << 24)
-               | ((buf[pos++] & 0xFF) << 16)
-               | ((buf[pos++] & 0xFF) << 8)
-               |  (buf[pos++] & 0xFF);
-    bufferPosition = pos;
-    return result;
+    return getInt(expectType(0x70));
   }
   
   /**
@@ -296,28 +823,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Long readLongObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x80);
+    if (subType == 0) {
       return null;
     } else {
-      return Long.valueOf(readLong());
+      return Long.valueOf(getLong(subType));
     }
   }
   
   public long readLong() throws IOException {
-    
-    byte[] buf = ensureBuffer(8);
-    int pos = bufferPosition;
-    int highBytes = ((buf[pos++] & 0xFF) << 24)
-                  | ((buf[pos++] & 0xFF) << 16)
-                  | ((buf[pos++] & 0xFF) << 8)
-                  |  (buf[pos++] & 0xFF);
-    int lowBytes  = ((buf[pos++] & 0xFF) << 24)
-                  | ((buf[pos++] & 0xFF) << 16)
-                  | ((buf[pos++] & 0xFF) << 8)
-                  |  (buf[pos++] & 0xFF);
-    bufferPosition = pos;
-    return (((long) highBytes) << 32) | (lowBytes & 0xFFFFFFFFL);
+
+    return getLong(expectType(0x80));
   }
   
   /**
@@ -327,17 +843,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Float readFloatObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x20);
+    if (subType == 0) {
       return null;
     } else {
-      return Float.valueOf(readFloat());
+      return Float.valueOf(getFloat(subType));
     }
   }
   
   public float readFloat() throws IOException {
-    
-    return Float.intBitsToFloat(readInt());
+
+    return getFloat(expectType(0x20));
   }
   
   /**
@@ -347,17 +863,17 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Double readDoubleObject() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0x30);
+    if (subType == 0) {
       return null;
     } else {
-      return Double.valueOf(readDouble());
+      return Double.valueOf(getDouble(subType));
     }
   }
   
   public double readDouble() throws IOException {
     
-    return Double.longBitsToDouble(readLong());
+    return getDouble(expectType(0x30));
   }
   
   /**
@@ -367,17 +883,26 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public String readString() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
-    } else {
-      return readUTF();
+    int subType = expectType(0x90);
+    switch (subType) {
+      case 0:
+        return null;
+      case 1:
+        return "";
+      case 2:
+      case 3:
+        return getString(subType);
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
     }
   }
   
-  private String readUTF() throws IOException {
+  private String getString(int subType) throws IOException {
     
-    int utfLength = readChar();
+    byte[] buf = ensureBuffer(2);
+    int pos = bufferPosition;
+    int utfLength = ((buf[pos++] & 0xFF) << 8) | (buf[pos++] & 0xFF);
+    bufferPosition = pos;
 
     if (utfLength == 0) {
       return "";
@@ -385,53 +910,66 @@ public class BinaryInputStream extends FilterInputStream {
     
     boolean ownBuffer = utfLength > bufferSize;
     
-    byte[] buf = ownBuffer ? createUTFBuffer(utfLength) : ensureBuffer(utfLength);
-    int pos = ownBuffer ? 0 : bufferPosition;
+    buf = ownBuffer ? createStringBuffer(utfLength) : ensureBuffer(utfLength);
+    pos = ownBuffer ? 0 : bufferPosition;
     
     char[] charBuffer = new char[utfLength];
     int charSize = 0;
-    
-    byte c = 0;
-    byte c2 = 0;
-    byte c3 = 0;
-    
-    try {
-      int posLimit = pos + utfLength;
-      while (pos < posLimit) {
-        c = buf[pos++];
-        switch ((c & 0xF0) >>> 4) {
-          case 0: 
-          case 1:
-          case 2:
-          case 3:
-          case 4:
-          case 5:
-          case 6:
-          case 7:
-            charBuffer[charSize++] = (char) c;
-            break;
-          case 12:
-          case 13:
-            c2 = buf[pos++];
-            if ((c2 & 0xC0) != 0x80) {
-              throw new UTFDataFormatException();
+
+    switch (subType) {
+      
+      case 2: // utf
+        
+        byte c = 0;
+        byte c2 = 0;
+        byte c3 = 0;
+        
+        try {
+          int posLimit = pos + utfLength;
+          while (pos < posLimit) {
+            c = buf[pos++];
+            switch ((c & 0xF0) >>> 4) {
+              case 0: 
+              case 1:
+              case 2:
+              case 3:
+              case 4:
+              case 5:
+              case 6:
+              case 7:
+                charBuffer[charSize++] = (char) c;
+                break;
+              case 12:
+              case 13:
+                c2 = buf[pos++];
+                if ((c2 & 0xC0) != 0x80) {
+                  throw new UTFDataFormatException();
+                }
+                charBuffer[charSize++] = (char) (((c & 0x1F) << 6) | (c2 & 0x3F));
+                break;
+              case 14:
+                c2 = buf[pos++];
+                c3 = buf[pos++];
+                if ((c2 & 0xC0) != 0x80 || (c3 & 0xC0) != 0x80) {
+                  throw new UTFDataFormatException();
+                }
+                charBuffer[charSize++] = (char) (((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
+                break;
+              default:
+                throw new UTFDataFormatException();
             }
-            charBuffer[charSize++] = (char) (((c & 0x1F) << 6) | (c2 & 0x3F));
-            break;
-          case 14:
-            c2 = buf[pos++];
-            c3 = buf[pos++];
-            if ((c2 & 0xC0) != 0x80 || (c3 & 0xC0) != 0x80) {
-              throw new UTFDataFormatException();
-            }
-            charBuffer[charSize++] = (char) (((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
-            break;
-          default:
-            throw new UTFDataFormatException();
+          }
+        } catch (IndexOutOfBoundsException e) {
+          throw new UTFDataFormatException();
         }
-      }
-    } catch (IndexOutOfBoundsException e) {
-      throw new UTFDataFormatException();
+        break;
+        
+      case 3: // ascii
+        
+        for (int i = 0; i < utfLength; i++) {
+          charBuffer[i] = (char) buf[pos++];
+        }
+        charSize = utfLength;
     }
     
     if (ownBuffer) {
@@ -445,7 +983,7 @@ public class BinaryInputStream extends FilterInputStream {
     return new String(charBuffer, 0, charSize);
   }
   
-  private byte[] createUTFBuffer(int length) throws IOException {
+  private byte[] createStringBuffer(int length) throws IOException {
     
     byte[] buf = new byte[length];
     
@@ -472,11 +1010,11 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public Date readDate() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0xC0);
+    if (subType == 0) {
       return null;
     } else {
-      return new Date(readLong());
+      return new Date(getLong(subType));
     }
   }
   
@@ -487,11 +1025,14 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public BigInteger readBigInteger() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
-    } else {
-      return new BigInteger(readNonNullByteArray());
+    int subType = expectType(0xA0);
+    switch (subType) {
+      case 0:
+        return null;
+      case 1:
+        return BigInteger.ZERO;
+      default:
+        return new BigInteger(getArray(subType));
     }
   }
   
@@ -502,11 +1043,14 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public BigDecimal readBigDecimal() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
-    } else {
-      return new BigDecimal(new BigInteger(readNonNullByteArray()), readInt());
+    int subType = expectType(0xB0);
+    switch (subType) {
+      case 0:
+        return null;
+      case 1:
+        return BigDecimal.ZERO;
+      default:
+        return new BigDecimal(new BigInteger(getArray(subType)), readInt());
     }
   }
   
@@ -517,39 +1061,15 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public byte[] readByteArray() throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
-    } else {
-      return readNonNullByteArray();
+    int subType = expectType(0xE0);
+    switch (subType) {
+      case 0:
+        return null;
+      case 1:
+        return new byte[0];
+      default:
+        return getArray(subType);
     }
-  }
-  
-  private byte[] readNonNullByteArray() throws IOException {
-    
-    int len = readInt();
-    byte[] b = new byte[len];
-    
-    if (len == 0) {
-      return b;
-    } 
-    
-    if (len <= bufferSize) {      
-      ensureBuffer(len);
-      System.arraycopy(buffer, bufferPosition, b, 0, len);
-      bufferPosition += len;
-      return b;
-    }
-    
-    int offset = 0;
-    while (len > 0) {
-      int chunkLen = Math.min(len, bufferSize);
-      ensureBuffer(chunkLen);
-      System.arraycopy(buffer, bufferPosition, b, offset, chunkLen);
-      bufferPosition += chunkLen;
-      len -= chunkLen;
-    }
-    return b;
   }
   
   /**
@@ -561,11 +1081,11 @@ public class BinaryInputStream extends FilterInputStream {
    */
   public <E extends Enum<E>> E readEnum(Class<E> clazz) throws IOException {
 
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
+    int subType = expectType(0xD0);
+    if (subType == 0) {
       return null;
     } else {
-      return clazz.getEnumConstants()[readChar()];
+      return clazz.getEnumConstants()[getInt(subType)];
     }
   }
   
@@ -590,19 +1110,21 @@ public class BinaryInputStream extends FilterInputStream {
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws Exception {
     
-    ensureBuffer(1);
-    if (buffer[bufferPosition++] == 0) {
-      return null;
+    int subType = expectType(0xF0);
+    switch (subType) {
+      case 0:        
+        return null;
+      case 1:
+      case 2:
+        InputObjectHandler handler = handlerMap.get(clazz); 
+        if (handler == null) {
+          handler = getGeneratedHandler(clazz);
+          handlerMap.put(clazz, handler);
+        }
+        return (D) handler.read(this, clazz);
+      default:
+        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
     }
-    
-    InputObjectHandler handler = handlerMap.get(clazz); 
-    
-    if (handler == null) {
-      handler = getGeneratedHandler(clazz);
-      handlerMap.put(clazz, handler);
-    }
-    
-    return (D) handler.read(this, clazz);
   }
   
   private InputObjectHandler getGeneratedHandler(Class<?> clazz) throws Exception {
