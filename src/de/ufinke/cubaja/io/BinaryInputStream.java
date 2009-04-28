@@ -7,7 +7,6 @@ import java.io.EOFException;
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UTFDataFormatException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -81,6 +80,8 @@ public class BinaryInputStream extends FilterInputStream {
   private int bufferLimit;
   private int bufferPosition;
   private long streamPosition;
+  private char[] charBuffer;
+  private int[] additionalIndex;
   
   public BinaryInputStream(InputStream in) {
     
@@ -92,6 +93,8 @@ public class BinaryInputStream extends FilterInputStream {
     super(in);
     this.bufferSize = Math.max(bufferSize, MIN_BUFFER_SIZE);
     buffer = new byte[this.bufferSize];
+    charBuffer = new char[32];
+    additionalIndex = new int[8];
   }
   
   private int expectType(int mask) throws IOException {
@@ -889,118 +892,76 @@ public class BinaryInputStream extends FilterInputStream {
         return null;
       case 1:
         return "";
-      case 2:
-      case 3:
-        return getString(subType);
-      default:
-        throw new IOException(text.get("wrongSubType", Integer.valueOf(subType), Long.valueOf(position())));
     }
-  }
-  
-  private String getString(int subType) throws IOException {
-    
-    byte[] buf = ensureBuffer(2);
-    int pos = bufferPosition;
-    int utfLength = ((buf[pos++] & 0xFF) << 8) | (buf[pos++] & 0xFF);
-    bufferPosition = pos;
 
-    if (utfLength == 0) {
-      return "";
-    }
+    int length = getInt(subType);
     
-    boolean ownBuffer = utfLength > bufferSize;
+    char[] cb = getCharBuffer(length);
+    int i = 0;
     
-    buf = ownBuffer ? createStringBuffer(utfLength) : ensureBuffer(utfLength);
-    pos = ownBuffer ? 0 : bufferPosition;
+    int[] addIndex = additionalIndex;
+    int addPos = 0;
     
-    char[] charBuffer = new char[utfLength];
-    int charSize = 0;
-
-    switch (subType) {
+    while (i < length) {
       
-      case 2: // utf
-        
-        byte c = 0;
-        byte c2 = 0;
-        byte c3 = 0;
-        
-        try {
-          int posLimit = pos + utfLength;
-          while (pos < posLimit) {
-            c = buf[pos++];
-            switch ((c & 0xF0) >>> 4) {
-              case 0: 
-              case 1:
-              case 2:
-              case 3:
-              case 4:
-              case 5:
-              case 6:
-              case 7:
-                charBuffer[charSize++] = (char) c;
-                break;
-              case 12:
-              case 13:
-                c2 = buf[pos++];
-                if ((c2 & 0xC0) != 0x80) {
-                  throw new UTFDataFormatException();
-                }
-                charBuffer[charSize++] = (char) (((c & 0x1F) << 6) | (c2 & 0x3F));
-                break;
-              case 14:
-                c2 = buf[pos++];
-                c3 = buf[pos++];
-                if ((c2 & 0xC0) != 0x80 || (c3 & 0xC0) != 0x80) {
-                  throw new UTFDataFormatException();
-                }
-                charBuffer[charSize++] = (char) (((c & 0x0F) << 12) | ((c2 & 0x3F) << 6) | (c3 & 0x3F));
-                break;
-              default:
-                throw new UTFDataFormatException();
-            }
+      byte[] buf = ensureBuffer(1);
+      int pos = bufferPosition;
+      int chunkLength = Math.min(length - i, bufferLimit - bufferPosition);
+      int limit = i + chunkLength;
+      
+      while (i < limit) {
+        byte b = buf[pos++];
+        if ((b & 0x80) == 0x80) {
+          if (addPos == addIndex.length) {
+            addIndex = enlargeAdditionalIndex();
           }
-        } catch (IndexOutOfBoundsException e) {
-          throw new UTFDataFormatException();
+          if ((b & 0xC0) == 0xC0) {
+            addIndex[addPos++] = i & 0x80000000;
+          } else {
+            addIndex[addPos++] = i;
+            charBuffer[i] = (char) ((b & 0x3F) << 8);
+          }
+        } else {
+          charBuffer[i] = (char) (b & 0xFF);
         }
-        break;
-        
-      case 3: // ascii
-        
-        for (int i = 0; i < utfLength; i++) {
-          charBuffer[i] = (char) buf[pos++];
-        }
-        charSize = utfLength;
-    }
-    
-    if (ownBuffer) {
-      streamPosition += utfLength;
-      bufferPosition = 0;
-      bufferLimit = 0;
-    } else {      
+        i++;
+      }
+      
       bufferPosition = pos;
     }
     
-    return new String(charBuffer, 0, charSize);
+    if (addPos > 0) {
+      for (i = 0; i < addPos; i++) {
+        int index = addIndex[i];
+        if (index < 0) {
+          byte[] buf = ensureBuffer(2);
+          int pos = bufferPosition;
+          charBuffer[index & 0x7FFFFFFF] = (char) (((buf[pos++] << 8) & 0xFF) | (buf[pos++] & 0xFF));
+          bufferPosition = pos;
+        } else {
+          byte[] buf = ensureBuffer(1);
+          charBuffer[index] |= buf[bufferPosition++] & 0xFF;
+        }
+      }
+    }
+    
+    return new String(cb, 0, length);
   }
   
-  private byte[] createStringBuffer(int length) throws IOException {
+  private char[] getCharBuffer(int length) {
     
-    byte[] buf = new byte[length];
-    
-    int bytesAvailable = bufferLimit - bufferPosition;
-    if (bytesAvailable > 0) {
-      System.arraycopy(buffer, bufferPosition, buf, 0, bytesAvailable);
+    if (charBuffer.length < length) {
+      charBuffer = new char[length];
     }
+    return charBuffer;
+  }
+  
+  private int[] enlargeAdditionalIndex() {
     
-    while (bytesAvailable < buf.length) {      
-      int bytesRead = in.read(buf, bytesAvailable, buf.length - bytesAvailable);
-      if (bytesRead < 0) {
-        throw new EOFException();
-      }
-      bytesAvailable += bytesRead;
-    }
-    
-    return buf;
+    int[] newIndex = new int[additionalIndex.length << 1];
+    System.arraycopy(additionalIndex, 0, newIndex, 0, additionalIndex.length);
+    additionalIndex = newIndex;
+    return newIndex;
   }
   
   /**
@@ -1085,7 +1046,7 @@ public class BinaryInputStream extends FilterInputStream {
     if (subType == 0) {
       return null;
     } else {
-      return clazz.getEnumConstants()[getInt(subType)];
+      return clazz.getEnumConstants()[getSmallInt(subType)];
     }
   }
   
