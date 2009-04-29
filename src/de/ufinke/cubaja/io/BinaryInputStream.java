@@ -916,7 +916,7 @@ public class BinaryInputStream extends FilterInputStream {
             addIndex = enlargeAdditionalIndex();
           }
           if ((b & 0xC0) == 0xC0) {
-            addIndex[addPos++] = i & 0x80000000;
+            addIndex[addPos++] = i | 0x80000000;
           } else {
             addIndex[addPos++] = i;
             charBuffer[i] = (char) ((b & 0x3F) << 8);
