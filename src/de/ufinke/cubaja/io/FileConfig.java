@@ -7,7 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
+import java.io.*;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -159,7 +159,7 @@ public class FileConfig {
    * @return an <code>OutputStream</code>
    * @throws IOException
    */
-  public BufferedOutputStream createOutputStream() throws IOException {
+  public OutputStream createOutputStream() throws IOException {
     
     return new BufferedOutputStream(new FileOutputStream(createOutputFile()));
   }
@@ -172,7 +172,7 @@ public class FileConfig {
    * @return a <code>Writer</code>
    * @throws IOException
    */
-  public BufferedWriter createWriter() throws IOException {
+  public Writer createWriter() throws IOException {
     
     return new BufferedWriter(new OutputStreamWriter(createOutputStream(), getCharset()));
   }
@@ -182,7 +182,7 @@ public class FileConfig {
    * @return an <code>InputStream</code>
    * @throws IOException
    */
-  public BufferedInputStream createInputStream() throws IOException {
+  public InputStream createInputStream() throws IOException {
     
     return new BufferedInputStream(new FileInputStream(createFile()));
   }
@@ -193,7 +193,7 @@ public class FileConfig {
    * @return a <code>Reader</code>
    * @throws IOException
    */
-  public BufferedReader createReader() throws IOException {
+  public Reader createReader() throws IOException {
     
     return new BufferedReader(new InputStreamReader(createInputStream(), getCharset()));
   }
