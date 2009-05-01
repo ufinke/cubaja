@@ -3,33 +3,77 @@
 
 package de.ufinke.cubaja.csv;
 
+import java.util.*;
+
 public class SimpleLineParser implements LineParser {
 
+  private char separator;
+  private String line;
+  private int count;
+  private int[] startArray;
+  private int[] endArray;
+  
   public SimpleLineParser() {
     
+    startArray = new int[32];
+    endArray = new int[32];
   }
 
-  public String getColumn(int index) throws Exception {
+  public void init(CsvConfig config) throws CsvException {
 
-    // TODO Auto-generated method stub
-    return null;
+    separator = config.getSeparator();
   }
 
-  public void init(CsvConfig config) throws Exception {
+  public void setLine(String line, int lineNumber) throws CsvException {
 
-    // TODO Auto-generated method stub
+    this.line = line;
+
+    int[] start = startArray;
+    int[] end = endArray;
     
-  }
-
-  public void setLine(String line) throws Exception {
-
-    // TODO Auto-generated method stub
+    int i = 0;
+    int limit = line.length();
     
+    int startIndex = 0;
+    int endIndex = 0;
+    
+    while (startIndex <= limit) {
+      
+      i++;
+      
+      if (i == start.length) {
+        int newCapacity = start.length << 1;
+        startArray = Arrays.copyOf(start, newCapacity);
+        endArray = Arrays.copyOf(end, newCapacity);
+        start = startArray;
+        end = endArray;
+      }
+      
+      endIndex = line.indexOf(separator, startIndex);      
+      if (endIndex < 0) {
+        endIndex = limit;
+      }
+      
+      start[i] = startIndex;
+      end[i] = endIndex;
+      
+      startIndex = endIndex + 1;
+    }
+    
+    count = i;
   }
-
+  
   public int getColumnCount() {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return count;
   }
+
+  public String getColumn(int index) throws CsvException {
+
+    if (index < 1 || index > count) {
+      return "";
+    }
+    return line.substring(startArray[index], endArray[index]);
+  }
+
 }

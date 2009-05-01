@@ -5,9 +5,12 @@ package de.ufinke.cubaja.csv;
 
 import java.text.*;
 import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.util.*;
 
 public class ColConfig {
 
+  static private final Text text = new Text(ColConfig.class);
+  
   private String name;
   private String header;
   private int position;
@@ -20,6 +23,7 @@ public class ColConfig {
 
   public ColConfig() {
 
+    nullValue = "";
   }
   
   void setCsvConfig(CsvConfig csvConfig) {
@@ -52,9 +56,17 @@ public class ColConfig {
 
     return position;
   }
+  
+  void setInternalPosition(int position) {
+    
+    this.position = position;
+  }
+  
+  public void setPosition(int position) throws ConfigException {
 
-  public void setPosition(int position) {
-
+    if (position < 1) {
+      throw new ConfigException(text.get("invalidPosition"));
+    }
     this.position = position;
   }
 
@@ -68,7 +80,7 @@ public class ColConfig {
     this.nullValue = nullValue;
   }
 
-  public Boolean getTrim() {
+  public Boolean isTrim() {
 
     if (trim == null) {
       trim = csvConfig.getTrim();

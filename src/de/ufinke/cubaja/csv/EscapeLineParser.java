@@ -9,19 +9,19 @@ public class EscapeLineParser implements LineParser {
     
   }
 
-  public String getColumn(int index) throws Exception {
+  public String getColumn(int index) throws CsvException {
 
     // TODO Auto-generated method stub
     return null;
   }
 
-  public void init(CsvConfig config) throws Exception {
+  public void init(CsvConfig config) throws CsvException {
 
     // TODO Auto-generated method stub
     
   }
 
-  public void setLine(String line) throws Exception {
+  public void setLine(String line, int lineNumber) throws CsvException {
 
     // TODO Auto-generated method stub
     
@@ -32,4 +32,5 @@ public class EscapeLineParser implements LineParser {
     // TODO Auto-generated method stub
     return 0;
   }
+
 }

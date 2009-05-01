@@ -48,21 +48,21 @@ public final class MatchSource<D> {
     
     return new Iterable<D>() {
       
-      public final Iterator<D> iterator() {
+      public Iterator<D> iterator() {
 
         return new Iterator<D>() {
           
-          public final boolean hasNext() {
+          public boolean hasNext() {
             
             return matches();
           }
           
-          public final D next() {
+          public D next() {
 
             return get();
           }
           
-          public final void remove() {
+          public void remove() {
             
             throw new UnsupportedOperationException();
           }

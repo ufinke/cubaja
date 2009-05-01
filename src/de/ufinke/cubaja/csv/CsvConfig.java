@@ -29,14 +29,12 @@ public class CsvConfig {
   private Boolean header;
   
   private List<ColConfig> columnList;
-  private Map<String, Integer> columnMap;
-  private int lastColumnIndex;
   private boolean headerDefined;
 
   public CsvConfig() {
 
     columnList = new ArrayList<ColConfig>();
-    columnMap = new HashMap<String, Integer>();
+    addCol(new ColConfig()); // default entry; positions start with 1
   }
 
   public void setFile(String fileName) {
@@ -124,6 +122,9 @@ public class CsvConfig {
 
   public Boolean getTrim() {
 
+    if (trim == null) {
+      trim = Boolean.FALSE;
+    }
     return trim;
   }
 
@@ -147,17 +148,9 @@ public class CsvConfig {
 
   public void addCol(ColConfig column) {
     
-    column.setCsvConfig(this);    
-    if (column.getPosition() == 0) {
-      column.setPosition(++lastColumnIndex);
-    } else {
-      lastColumnIndex = column.getPosition();
-    }
-    
+    column.setCsvConfig(this);        
     headerDefined |= (column.getHeader() != null);
-    
     columnList.add(column);
-    columnMap.put(column.getName(), column.getPosition());
   }
   
   public List<ColConfig> getColumnList() {
@@ -165,19 +158,4 @@ public class CsvConfig {
     return columnList;
   }
   
-  public ColConfig getColumn(String name) {
-    
-    Integer position = columnMap.get(name);
-    return (position == null) ? null : getColumn(position);
-  }
-  
-  public ColConfig getColumn(int position) {
-    
-    return (position <= 0 || position >= columnList.size()) ? null : columnList.get(position - 1);
-  }
-  
-  public int getColumnCount() {
-    
-    return columnList.size();
-  }
 }
