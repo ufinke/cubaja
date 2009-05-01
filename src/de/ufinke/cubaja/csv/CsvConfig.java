@@ -25,6 +25,7 @@ public class CsvConfig {
   private Boolean trim;
   private Character decimalChar;
   private SimpleDateFormat dateFormat;
+  private String[] trueValues;
 
   private Boolean header;
   
@@ -92,7 +93,7 @@ public class CsvConfig {
   public LineParser getParser() {
 
     if (parser == null) {
-      parser = (escapeChar == null) ? new SimpleLineParser() : new EscapeLineParser();
+      parser = (escapeChar == null) ? new SimpleLineParser() : new QuoteLineParser();
     }
     return parser;
   }
@@ -131,6 +132,19 @@ public class CsvConfig {
   public void setTrim(Boolean trim) {
 
     this.trim = trim;
+  }
+  
+  public String[] getTrueValues() {
+
+    if (trueValues == null) {
+      trueValues = text.get("trueValues").split(",");
+    }
+    return trueValues;
+  }
+
+  public void setTrueValues(String[] trueValues) {
+  
+    this.trueValues = trueValues;
   }
 
   public boolean hasHeaderLine() {

@@ -6,6 +6,7 @@ package de.ufinke.cubaja.csv;
 import java.text.*;
 import de.ufinke.cubaja.config.*;
 import de.ufinke.cubaja.util.*;
+import java.util.*;
 
 public class ColConfig {
 
@@ -14,16 +15,16 @@ public class ColConfig {
   private String name;
   private String header;
   private int position;
-  private String nullValue;
   private Boolean trim;
   private Character decimalChar;
   private SimpleDateFormat dateFormat;
+  private String[] trueValues;
+  private List<ReplaceConfig> replaceList;
   
   private CsvConfig csvConfig;
 
   public ColConfig() {
 
-    nullValue = "";
   }
   
   void setCsvConfig(CsvConfig csvConfig) {
@@ -70,16 +71,6 @@ public class ColConfig {
     this.position = position;
   }
 
-  public String getNullValue() {
-
-    return nullValue;
-  }
-
-  public void setNullValue(String nullValue) {
-
-    this.nullValue = nullValue;
-  }
-
   public Boolean isTrim() {
 
     if (trim == null) {
@@ -117,5 +108,31 @@ public class ColConfig {
   public void setDatePattern(String datePattern) {
 
     this.dateFormat = new SimpleDateFormat(datePattern);
+  }
+  
+  public String[] getTrueValues() {
+
+    if (trueValues == null) {
+      trueValues = csvConfig.getTrueValues();
+    }
+    return trueValues;
+  }
+
+  public void setTrueValues(String[] trueValues) {
+  
+    this.trueValues = trueValues;
+  }
+  
+  public void addReplace(ReplaceConfig replace) {
+    
+    if (replaceList == null) {
+      replaceList = new ArrayList<ReplaceConfig>();
+    }
+    replaceList.add(replace);
+  }
+  
+  public List<ReplaceConfig> getReplaceList() {
+    
+    return replaceList;
   }
 }

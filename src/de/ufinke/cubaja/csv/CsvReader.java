@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.*;
 import de.ufinke.cubaja.util.*;
 import de.ufinke.cubaja.config.*;
+import java.math.*;
 
 public class CsvReader {
 
@@ -98,6 +99,11 @@ public class CsvReader {
     parser.init(config);
   }
   
+  public int getLineNumber() {
+    
+    return in.getLineNumber();
+  }
+  
   public void close() throws IOException {
     
     in.close();
@@ -119,7 +125,7 @@ public class CsvReader {
       parser.setLine(line, in.getLineNumber());
       currentIndex = 0;
     } catch (IOException e) {
-      throw new CsvException(text.get("ioException", in.getLineNumber()), e, in.getLineNumber(), null);
+      throw new CsvException(text.get("ioException", Integer.valueOf(getLineNumber())), e, getLineNumber(), null);
     }
     
     eof = (line == null);
@@ -139,6 +145,8 @@ public class CsvReader {
   }
   
   private String getColumn(int index) {
+
+    checkEOF();
     
     currentIndex = index;
     
@@ -151,8 +159,11 @@ public class CsvReader {
       s = s.trim();
     }
     
-    if (s.length() == 0) {
-      s = colConfig.getNullValue();
+    List<ReplaceConfig> replaceList = colConfig.getReplaceList();
+    if (replaceList != null) {
+      for (ReplaceConfig replace : replaceList) {
+        s = s.replaceAll(replace.getRegex(), replace.getReplacement());
+      }
     }
     
     return s;
@@ -165,6 +176,11 @@ public class CsvReader {
       throw new CsvException(text.get("undefinedName", columnName));
     }
     return index; 
+  }
+  
+  private CsvException createParseError(Throwable cause, String value, String type) {
+    
+    return new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), Integer.valueOf(currentIndex)), cause, getLineNumber(), currentIndex, line, value);
   }
   
   public String[] readColumns() throws CsvException {
@@ -201,9 +217,328 @@ public class CsvReader {
     return getColumn(columnPosition);
   }
   
+  private boolean getBoolean(String s) {
+    
+    String[] values = colConfig.getTrueValues();
+    if (values == null) {
+      return false;
+    }
+    
+    int limit = values.length;
+    for (int i = 0; i < limit; i++) {
+      if (values[i].equals(s)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public boolean readBoolean() throws CsvException {
+    
+    return readBoolean(++currentIndex);
+  }
+  
+  public boolean readBoolean(String columnName) throws CsvException {
+    
+    return readBoolean(getColumnIndex(columnName));
+  }
+  
+  public boolean readBoolean(int columnPosition) throws CsvException {
+    
+    return getBoolean(getColumn(columnPosition).trim());
+  }
+  
+  public Boolean readBooleanObject() throws CsvException {
+    
+    return readBooleanObject(++currentIndex);
+  }
+  
+  public Boolean readBooleanObject(String columnName) throws CsvException {
+    
+    return readBooleanObject(getColumnIndex(columnName));
+  }
+  
+  public Boolean readBooleanObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();    
+    return (s.length() == 0) ? null : Boolean.valueOf(getBoolean(s));
+  }
+  
+  private byte getByte(String s) throws CsvException {
+    
+    try {
+      return Byte.parseByte(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "byte");
+    }
+  }
+  
+  public byte readByte(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getByte(s);
+  }
+  
+  public Byte readByteObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Byte.valueOf(getByte(s));
+  }
+  
+  private short getShort(String s) throws CsvException {
+    
+    try {
+      return Short.parseShort(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "short");
+    }
+  }
+  
+  public short readShort(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getShort(s);
+  }
+  
+  public Short readShortObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Short.valueOf(getShort(s));
+  }
+  
+  public char readChar(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return s.charAt(0);
+  }
+  
+  public Character readCharObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Character.valueOf(s.charAt(0));
+  }
+  
+  private int getInt(String s) throws CsvException {
+    
+    try {
+      return Integer.parseInt(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "int");
+    }
+  }
+  
+  public int readInt(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getInt(s);
+  }
+  
+  public Integer readIntObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Integer.valueOf(getInt(s));
+  }
+  
+  private long getLong(String s) throws CsvException {
+    
+    try {
+      return Long.parseLong(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "long");
+    }
+  }
+  
+  public long readLong(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getLong(s);
+  }
+  
+  public Long readLongObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Long.valueOf(getLong(s));
+  }
+  
+  private String prepareDecimalString(String s) {
+  
+    Character decimalChar = colConfig.getDecimalChar();
+    char dc = (decimalChar == null) ? 0 : decimalChar.charValue();
+    
+    StringBuilder sb = new StringBuilder(s.length());
+    int limit = s.length();
+    for (int i = 0; i < limit; i++) {
+      char c = s.charAt(i);
+      switch (c) {
+        case '.':
+          if (dc != ',') {
+            sb.append('.');
+          }
+          break;
+        case ',':
+          if (dc != '.') {
+            sb.append('.');
+          }
+          break;
+        default:
+          sb.append(c);
+      }
+    }
+    
+    return sb.toString();
+  }
+  
+  private float getFloat(String s) throws CsvException {
+    
+    try {
+      return Float.parseFloat(prepareDecimalString(s));
+    } catch (Exception e) {
+      throw createParseError(e, s, "float");
+    }
+  }
+  
+  public float readFloat(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getFloat(s);
+  }
+  
+  public Float readFloatObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Float.valueOf(getFloat(s));
+  }
+  
+  private double getDouble(String s) throws CsvException {
+    
+    try {
+      return Double.parseDouble(prepareDecimalString(s));
+    } catch (Exception e) {
+      throw createParseError(e, s, "double");
+    }
+  }
+  
+  public double readDouble(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return 0;
+    }
+    return getDouble(s);
+  }
+  
+  public Double readDoubleObject(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    return Double.valueOf(getDouble(s));
+  }
+  
+  public BigDecimal readBigDecimal(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    
+    try {      
+      return new BigDecimal(prepareDecimalString(s));
+    } catch (Exception e) {
+      throw createParseError(e, s, "BigDecimal");
+    }
+  }
+  
+  public BigInteger readBigInteger(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    
+    try {      
+      return new BigInteger(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "BigInteger");
+    }
+  }
+  
+  public Date readDate(int columnPosition) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    
+    try {      
+      return colConfig.getDateFormat().parse(s);
+    } catch (Exception e) {
+      throw createParseError(e, s, "Date");
+    }
+  }
+  
+  public <E extends Enum<E>> E readEnum(Class<E> clazz, int columnPosition) {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+
+    try {
+      char c = s.charAt(0);
+      if (c >= 0 && c <= 9) {
+        return clazz.getEnumConstants()[getInt(s)];
+      } else {
+        try {
+          return Enum.valueOf(clazz, s);
+        } catch (Exception e) {
+          return Enum.valueOf(clazz, s.toUpperCase());
+        }
+      }
+    } catch (Exception e) {
+      throw createParseError(e, s, clazz.getName());
+    }
+  }
+  
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
-    checkEOF();
     //TODO
     return null;
   }
