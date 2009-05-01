@@ -3,12 +3,14 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.io.*;
-import de.ufinke.cubaja.io.*;
-import de.ufinke.cubaja.config.*;
-import de.ufinke.cubaja.util.*;
-import java.text.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.io.FileConfig;
+import de.ufinke.cubaja.util.Text;
 
 public class CsvConfig {
 

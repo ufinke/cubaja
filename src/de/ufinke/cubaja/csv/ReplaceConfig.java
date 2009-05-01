@@ -1,6 +1,6 @@
 package de.ufinke.cubaja.csv;
 
-import de.ufinke.cubaja.config.*;
+import de.ufinke.cubaja.config.Mandatory;
 
 public class ReplaceConfig {
 

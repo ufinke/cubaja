@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.util.*;
+import java.util.Arrays;
 
 public class SimpleLineParser implements LineParser {
 

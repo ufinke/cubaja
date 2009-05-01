@@ -3,10 +3,12 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.text.*;
-import de.ufinke.cubaja.config.*;
-import de.ufinke.cubaja.util.*;
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.config.Mandatory;
+import de.ufinke.cubaja.util.Text;
 
 public class ColConfig {
 

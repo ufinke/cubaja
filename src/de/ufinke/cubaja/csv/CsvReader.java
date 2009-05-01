@@ -3,11 +3,17 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.io.*;
-import java.util.*;
-import de.ufinke.cubaja.util.*;
-import de.ufinke.cubaja.config.*;
-import java.math.*;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.util.Text;
 
 public class CsvReader {
 
@@ -16,14 +22,15 @@ public class CsvReader {
   private CsvConfig config;
   private LineNumberReader in;
   
-  private boolean eof;
-  private String line;
-  private int currentIndex;
-    
-  private ColConfig colConfig;
   private List<ColConfig> columnList;
   private Map<String, Integer> nameMap;
   private LineParser parser;
+  
+  private boolean eof;
+  
+  private String line;
+  private int currentIndex;    
+  private ColConfig colConfig;
   
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
@@ -123,7 +130,6 @@ public class CsvReader {
     try {      
       line = in.readLine();
       parser.setLine(line, in.getLineNumber());
-      currentIndex = 0;
     } catch (IOException e) {
       throw new CsvException(text.get("ioException", Integer.valueOf(getLineNumber())), e, getLineNumber(), null);
     }
@@ -169,7 +175,7 @@ public class CsvReader {
     return s;
   }
   
-  private int getColumnIndex(String columnName) throws CsvException {
+  public int getColumnPosition(String columnName) throws CsvException {
     
     Integer index = nameMap.get(columnName);
     if (index == null) {
@@ -202,14 +208,9 @@ public class CsvReader {
     return parser.getColumnCount();
   }
   
-  public String readString() throws CsvException {
-    
-    return readString(++currentIndex);
-  }
-  
   public String readString(String columnName) throws CsvException {
     
-    return readString(getColumnIndex(columnName));
+    return readString(getColumnPosition(columnName));
   }
   
   public String readString(int columnPosition) throws CsvException {
@@ -233,14 +234,9 @@ public class CsvReader {
     return false;
   }
   
-  public boolean readBoolean() throws CsvException {
-    
-    return readBoolean(++currentIndex);
-  }
-  
   public boolean readBoolean(String columnName) throws CsvException {
     
-    return readBoolean(getColumnIndex(columnName));
+    return readBoolean(getColumnPosition(columnName));
   }
   
   public boolean readBoolean(int columnPosition) throws CsvException {
@@ -248,14 +244,9 @@ public class CsvReader {
     return getBoolean(getColumn(columnPosition).trim());
   }
   
-  public Boolean readBooleanObject() throws CsvException {
-    
-    return readBooleanObject(++currentIndex);
-  }
-  
   public Boolean readBooleanObject(String columnName) throws CsvException {
     
-    return readBooleanObject(getColumnIndex(columnName));
+    return readBooleanObject(getColumnPosition(columnName));
   }
   
   public Boolean readBooleanObject(int columnPosition) throws CsvException {
@@ -273,6 +264,11 @@ public class CsvReader {
     }
   }
   
+  public byte readByte(String columnName) throws CsvException {
+    
+    return readByte(getColumnPosition(columnName));
+  }
+  
   public byte readByte(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -280,6 +276,11 @@ public class CsvReader {
       return 0;
     }
     return getByte(s);
+  }
+  
+  public Byte readByteObject(String columnName) throws CsvException {
+    
+    return readByteObject(getColumnPosition(columnName));
   }
   
   public Byte readByteObject(int columnPosition) throws CsvException {
@@ -300,6 +301,11 @@ public class CsvReader {
     }
   }
   
+  public short readShort(String columnName) throws CsvException {
+    
+    return readShort(getColumnPosition(columnName));
+  }
+  
   public short readShort(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -307,6 +313,11 @@ public class CsvReader {
       return 0;
     }
     return getShort(s);
+  }
+  
+  public Short readShortObject(String columnName) throws CsvException {
+    
+    return readShortObject(getColumnPosition(columnName));
   }
   
   public Short readShortObject(int columnPosition) throws CsvException {
@@ -318,6 +329,11 @@ public class CsvReader {
     return Short.valueOf(getShort(s));
   }
   
+  public char readChar(String columnName) throws CsvException {
+    
+    return readChar(getColumnPosition(columnName));
+  }
+  
   public char readChar(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -325,6 +341,11 @@ public class CsvReader {
       return 0;
     }
     return s.charAt(0);
+  }
+  
+  public Character readCharObject(String columnName) throws CsvException {
+    
+    return readCharObject(getColumnPosition(columnName));
   }
   
   public Character readCharObject(int columnPosition) throws CsvException {
@@ -345,6 +366,11 @@ public class CsvReader {
     }
   }
   
+  public int readInt(String columnName) throws CsvException {
+    
+    return readInt(getColumnPosition(columnName));
+  }
+  
   public int readInt(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -352,6 +378,11 @@ public class CsvReader {
       return 0;
     }
     return getInt(s);
+  }
+  
+  public Integer readIntObject(String columnName) throws CsvException {
+    
+    return readIntObject(getColumnPosition(columnName));
   }
   
   public Integer readIntObject(int columnPosition) throws CsvException {
@@ -372,6 +403,11 @@ public class CsvReader {
     }
   }
   
+  public long readLong(String columnName) throws CsvException {
+    
+    return readLong(getColumnPosition(columnName));
+  }
+  
   public long readLong(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -379,6 +415,11 @@ public class CsvReader {
       return 0;
     }
     return getLong(s);
+  }
+  
+  public Long readLongObject(String columnName) throws CsvException {
+    
+    return readLongObject(getColumnPosition(columnName));
   }
   
   public Long readLongObject(int columnPosition) throws CsvException {
@@ -427,6 +468,11 @@ public class CsvReader {
     }
   }
   
+  public float readFloat(String columnName) throws CsvException {
+    
+    return readFloat(getColumnPosition(columnName));
+  }
+  
   public float readFloat(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -434,6 +480,11 @@ public class CsvReader {
       return 0;
     }
     return getFloat(s);
+  }
+  
+  public Float readFloatObject(String columnName) throws CsvException {
+    
+    return readFloatObject(getColumnPosition(columnName));
   }
   
   public Float readFloatObject(int columnPosition) throws CsvException {
@@ -454,6 +505,11 @@ public class CsvReader {
     }
   }
   
+  public double readDouble(String columnName) throws CsvException {
+    
+    return readDouble(getColumnPosition(columnName));
+  }
+  
   public double readDouble(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -463,6 +519,11 @@ public class CsvReader {
     return getDouble(s);
   }
   
+  public Double readDoubleObject(String columnName) throws CsvException {
+    
+    return readDoubleObject(getColumnPosition(columnName));
+  }
+  
   public Double readDoubleObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -470,6 +531,11 @@ public class CsvReader {
       return null;
     }
     return Double.valueOf(getDouble(s));
+  }
+  
+  public BigDecimal readBigDecimal(String columnName) throws CsvException {
+    
+    return readBigDecimal(getColumnPosition(columnName));
   }
   
   public BigDecimal readBigDecimal(int columnPosition) throws CsvException {
@@ -486,6 +552,11 @@ public class CsvReader {
     }
   }
   
+  public BigInteger readBigInteger(String columnName) throws CsvException {
+    
+    return readBigInteger(getColumnPosition(columnName));
+  }
+  
   public BigInteger readBigInteger(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -500,6 +571,11 @@ public class CsvReader {
     }
   }
   
+  public Date readDate(String columnName) throws CsvException {
+    
+    return readDate(getColumnPosition(columnName));
+  }
+  
   public Date readDate(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -512,6 +588,11 @@ public class CsvReader {
     } catch (Exception e) {
       throw createParseError(e, s, "Date");
     }
+  }
+  
+  public <E extends Enum<E>> E readEnum(Class<E> clazz, String columnName) throws CsvException {
+    
+    return readEnum(clazz, getColumnPosition(columnName));
   }
   
   public <E extends Enum<E>> E readEnum(Class<E> clazz, int columnPosition) {

@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.util.*;
+import java.util.Iterator;
 
 class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
 
