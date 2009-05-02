@@ -3,9 +3,9 @@
 
 package de.ufinke.cubaja.csv;
 
-public class QuoteLineParser implements LineParser {
+public class EscapeLineParser implements LineParser {
 
-  public QuoteLineParser() {
+  public EscapeLineParser() {
     
   }
 

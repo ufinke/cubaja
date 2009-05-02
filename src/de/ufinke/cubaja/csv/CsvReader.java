@@ -15,6 +15,34 @@ import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * CSV reader.
+ * <p>
+ * We retrieve lines in a loop calling <code>nextLine</code>
+ * until <code>nextLine</code> returns <code>false</code>.
+ * <p>
+ * For every line, we can read column contents as the type we need in our application,
+ * or we can read an entire line as a data object by using method <code>readObject</code>.
+ * When the column is empty, the read methods for numeric primitive types
+ * return <code>0</code>; read methods for objects types 
+ * (except <code>readObject</code>) return <code>null</code>.
+ * <p>
+ * The position of the first column is 1, not 0.
+ * <p>
+ * The first line is read automatically if the configurations
+ * <code>hasHeaderLine</code> method returns <code>true</code>.
+ * In this case, column positions are determined automatically
+ * when the column configuration contains a header definition.
+ * Despite the automatism, we can retrieve the content of the header
+ * line before we call <code>nextLine</code> the first time. 
+ * <p>
+ * Most methods may throw a <code>CsvException</code>,
+ * which is a <code>RuntimeException</code>.
+ * An exception is thrown if there is an attempt to
+ * read any data after a call to <code>nextLine</code>
+ * returned <code>false</code>, or after the reader was closed.
+ * @author Uwe Finke
+ */
 public class CsvReader {
 
   static private final Text text = new Text(CsvReader.class);
@@ -32,16 +60,37 @@ public class CsvReader {
   private int currentIndex;    
   private ColConfig colConfig;
   
+  /**
+   * Constructor with configuration.
+   * When using this constructor,
+   * we have to set the configurations file property.
+   * @param config
+   * @throws IOException
+   * @throws ConfigException
+   * @throws CsvException
+   */
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
     this(config.createReader(), config);
   }
 
+  /**
+   * Constructor with implicit default configuration.
+   * With this constructor, we have no defined columns.
+   * @param reader
+   * @throws CsvException
+   */
   public CsvReader(Reader reader) throws CsvException {
   
     this(reader, new CsvConfig());
   }
   
+  /**
+   * Constructor with reader and configuration.
+   * @param reader
+   * @param config
+   * @throws CsvException
+   */
   public CsvReader(Reader reader, CsvConfig config) throws CsvException {
   
     this.config = config;
@@ -67,7 +116,7 @@ public class CsvReader {
     
     String[] headers = readColumns();
     Map<String, Integer> headerMap = new HashMap<String, Integer>();
-    for (int i = 0; i < headers.length; i++) {
+    for (int i = headers.length - 1; i >= 0; i--) { // backward because on duplicate headers we prefere the leftmost column
       headerMap.put(headers[i], i + 1);
     }
     
@@ -106,11 +155,19 @@ public class CsvReader {
     parser.init(config);
   }
   
+  /**
+   * Returns the number of the current line.
+   * @return line number
+   */
   public int getLineNumber() {
     
     return in.getLineNumber();
   }
   
+  /**
+   * Closes the reader.
+   * @throws IOException
+   */
   public void close() throws IOException {
     
     in.close();
@@ -125,6 +182,11 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Retrieves the next line.
+   * @return <code>true</code> when a line was successfully read, <code>false</code> when end of file.
+   * @throws CsvException
+   */
   public boolean nextLine() throws CsvException {
     
     try {      
@@ -138,12 +200,25 @@ public class CsvReader {
     return ! eof;
   }
   
+  /**
+   * Returns whether the retrieved line is empty.
+   * A line is assumed to be empty
+   * when the line length is less than the number of columns;
+   * that is, the line contains at most separator characters.
+   * @return flag
+   * @throws CsvException
+   */
   public boolean isEmptyLine() throws CsvException {
 
     checkEOF();
     return line.length() < parser.getColumnCount();
   }
   
+  /**
+   * Returns the complete last retrieved line.
+   * @return line
+   * @throws CsvException
+   */
   public String getLine() throws CsvException {
     
     checkEOF();
@@ -175,6 +250,12 @@ public class CsvReader {
     return s;
   }
   
+  /**
+   * Returns the position of a named column.
+   * @param columnName
+   * @return column position
+   * @throws CsvException
+   */
   public int getColumnPosition(String columnName) throws CsvException {
     
     Integer index = nameMap.get(columnName);
@@ -189,6 +270,11 @@ public class CsvReader {
     return new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), Integer.valueOf(currentIndex)), cause, getLineNumber(), currentIndex, line, value);
   }
   
+  /**
+   * Returns all columns of the last retrieved line.
+   * @return array with columns
+   * @throws CsvException
+   */
   public String[] readColumns() throws CsvException {
     
     int count = parser.getColumnCount();
@@ -202,17 +288,38 @@ public class CsvReader {
     return col;
   }
   
+  /**
+   * Returns the number of columns in the last retrieved line.
+   * @return column count
+   * @throws CsvException
+   */
   public int getColumnCount() throws CsvException {
     
     checkEOF();
     return parser.getColumnCount();
   }
   
+  /**
+   * Returns column content as string.
+   * The original content may have been modified according
+   * to the settings in <code>ColConfig</code>.
+   * @param columnName 
+   * @return string
+   * @throws CsvException
+   */
   public String readString(String columnName) throws CsvException {
     
     return readString(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as string.
+   * The original content may have been modified according
+   * to the settings in <code>ColConfig</code>. 
+   * @param columnPosition
+   * @return string
+   * @throws CsvException
+   */
   public String readString(int columnPosition) throws CsvException {
 
     return getColumn(columnPosition);
@@ -234,21 +341,49 @@ public class CsvReader {
     return false;
   }
   
+  /**
+   * Returns column content as boolean.
+   * See <code>ColConfig</code> to define the <code>true</code> values.
+   * @param columnName
+   * @return boolean
+   * @throws CsvException
+   */
   public boolean readBoolean(String columnName) throws CsvException {
     
     return readBoolean(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as boolean.
+   * See <code>ColConfig</code> to define the <code>true</code> values.
+   * @param columnPosition
+   * @return boolean
+   * @throws CsvException
+   */
   public boolean readBoolean(int columnPosition) throws CsvException {
     
     return getBoolean(getColumn(columnPosition).trim());
   }
   
+  /**
+   * Returns column content as Boolean object.
+   * See <code>ColConfig</code> to define the <code>true</code> values.
+   * @param columnName
+   * @return boolean
+   * @throws CsvException
+   */
   public Boolean readBooleanObject(String columnName) throws CsvException {
     
     return readBooleanObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Boolean object.
+   * See <code>ColConfig</code> to define the <code>true</code> values.
+   * @param columnPosition
+   * @return boolean
+   * @throws CsvException
+   */
   public Boolean readBooleanObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();    
@@ -264,11 +399,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as byte.
+   * @param columnName
+   * @return byte
+   * @throws CsvException
+   */
   public byte readByte(String columnName) throws CsvException {
     
     return readByte(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as byte.
+   * @param columnPosition
+   * @return byte
+   * @throws CsvException
+   */
   public byte readByte(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -278,11 +425,23 @@ public class CsvReader {
     return getByte(s);
   }
   
+  /**
+   * Returns column content as Byte object.
+   * @param columnName
+   * @return byte
+   * @throws CsvException
+   */
   public Byte readByteObject(String columnName) throws CsvException {
     
     return readByteObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Byte object.
+   * @param columnPosition
+   * @return byte
+   * @throws CsvException
+   */
   public Byte readByteObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -301,11 +460,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as short.
+   * @param columnName
+   * @return short
+   * @throws CsvException
+   */
   public short readShort(String columnName) throws CsvException {
     
     return readShort(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as short.
+   * @param columnPosition
+   * @return short
+   * @throws CsvException
+   */
   public short readShort(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -315,11 +486,23 @@ public class CsvReader {
     return getShort(s);
   }
   
+  /**
+   * Returns column content as Short object.
+   * @param columnName
+   * @return short
+   * @throws CsvException
+   */
   public Short readShortObject(String columnName) throws CsvException {
     
     return readShortObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Short object.
+   * @param columnPosition
+   * @return short
+   * @throws CsvException
+   */
   public Short readShortObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -329,11 +512,23 @@ public class CsvReader {
     return Short.valueOf(getShort(s));
   }
   
+  /**
+   * Returns column content as char.
+   * @param columnName
+   * @return char
+   * @throws CsvException
+   */
   public char readChar(String columnName) throws CsvException {
     
     return readChar(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as char.
+   * @param columnPosition
+   * @return char
+   * @throws CsvException
+   */
   public char readChar(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -343,11 +538,23 @@ public class CsvReader {
     return s.charAt(0);
   }
   
+  /**
+   * Returns column content as Character object.
+   * @param columnName
+   * @return char
+   * @throws CsvException
+   */
   public Character readCharObject(String columnName) throws CsvException {
     
     return readCharObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Character object.
+   * @param columnPosition
+   * @return char
+   * @throws CsvException
+   */
   public Character readCharObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -366,11 +573,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as int.
+   * @param columnName
+   * @return int
+   * @throws CsvException
+   */
   public int readInt(String columnName) throws CsvException {
     
     return readInt(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as int.
+   * @param columnPosition
+   * @return int
+   * @throws CsvException
+   */
   public int readInt(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -380,11 +599,23 @@ public class CsvReader {
     return getInt(s);
   }
   
+  /**
+   * Returns column content as Integer object.
+   * @param columnName
+   * @return int
+   * @throws CsvException
+   */
   public Integer readIntObject(String columnName) throws CsvException {
     
     return readIntObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Integer object.
+   * @param columnPosition
+   * @return int
+   * @throws CsvException
+   */
   public Integer readIntObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -402,12 +633,24 @@ public class CsvReader {
       throw createParseError(e, s, "long");
     }
   }
-  
+
+  /**
+   * Returns column content as long.
+   * @param columnName
+   * @return long
+   * @throws CsvException
+   */
   public long readLong(String columnName) throws CsvException {
     
     return readLong(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as long.
+   * @param columnPosition
+   * @return long
+   * @throws CsvException
+   */
   public long readLong(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -417,11 +660,23 @@ public class CsvReader {
     return getLong(s);
   }
   
+  /**
+   * Returns column content as Long object.
+   * @param columnName
+   * @return long
+   * @throws CsvException
+   */
   public Long readLongObject(String columnName) throws CsvException {
     
     return readLongObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Long object.
+   * @param columnPosition
+   * @return long
+   * @throws CsvException
+   */
   public Long readLongObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -468,11 +723,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as float.
+   * @param columnName
+   * @return float
+   * @throws CsvException
+   */
   public float readFloat(String columnName) throws CsvException {
     
     return readFloat(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as float.
+   * @param columnPosition
+   * @return float
+   * @throws CsvException
+   */
   public float readFloat(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -482,11 +749,23 @@ public class CsvReader {
     return getFloat(s);
   }
   
+  /**
+   * Returns column content as Float object.
+   * @param columnName
+   * @return float
+   * @throws CsvException
+   */
   public Float readFloatObject(String columnName) throws CsvException {
     
     return readFloatObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Float object.
+   * @param columnPosition
+   * @return float
+   * @throws CsvException
+   */
   public Float readFloatObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -505,11 +784,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as double.
+   * @param columnName
+   * @return double
+   * @throws CsvException
+   */
   public double readDouble(String columnName) throws CsvException {
     
     return readDouble(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as double.
+   * @param columnPosition
+   * @return double
+   * @throws CsvException
+   */
   public double readDouble(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -519,11 +810,23 @@ public class CsvReader {
     return getDouble(s);
   }
   
+  /**
+   * Returns column content as Double object.
+   * @param columnName
+   * @return double
+   * @throws CsvException
+   */
   public Double readDoubleObject(String columnName) throws CsvException {
     
     return readDoubleObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Double object.
+   * @param columnPosition
+   * @return double
+   * @throws CsvException
+   */
   public Double readDoubleObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -533,11 +836,23 @@ public class CsvReader {
     return Double.valueOf(getDouble(s));
   }
   
+  /**
+   * Returns column content as BigDecimal.
+   * @param columnName
+   * @return BigDecimal
+   * @throws CsvException
+   */
   public BigDecimal readBigDecimal(String columnName) throws CsvException {
     
     return readBigDecimal(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as BigDecimal.
+   * @param columnPosition
+   * @return BigDecimal
+   * @throws CsvException
+   */
   public BigDecimal readBigDecimal(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -552,11 +867,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as BigInteger.
+   * @param columnName
+   * @return BigInteger
+   * @throws CsvException
+   */
   public BigInteger readBigInteger(String columnName) throws CsvException {
     
     return readBigInteger(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as BigInteger.
+   * @param columnPosition
+   * @return BigInteger
+   * @throws CsvException
+   */
   public BigInteger readBigInteger(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -571,11 +898,23 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns column content as Date.
+   * @param columnPosition
+   * @return Date
+   * @throws CsvException
+   */
   public Date readDate(String columnName) throws CsvException {
     
     return readDate(getColumnPosition(columnName));
   }
   
+  /**
+   * Returns column content as Date.
+   * @param columnPosition
+   * @return Date
+   * @throws CsvException
+   */
   public Date readDate(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -589,13 +928,37 @@ public class CsvReader {
       throw createParseError(e, s, "Date");
     }
   }
-  
-  public <E extends Enum<E>> E readEnum(Class<E> clazz, String columnName) throws CsvException {
+
+  /**
+   * Returns a column content as Enum constant.
+   * If the column content start with a digit, 
+   * the constant is derived using the position of the Enum constant value array.
+   * Otherwise, the reader tries to get the constant by name. A last try 
+   * is done with the constant name in uppercase.
+   * @param <E> Enum type
+   * @param columnName
+   * @param clazz Enum class
+   * @return Enum constant 
+   * @throws CsvException
+   */
+  public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws CsvException {
     
-    return readEnum(clazz, getColumnPosition(columnName));
+    return readEnum(getColumnPosition(columnName), clazz);
   }
   
-  public <E extends Enum<E>> E readEnum(Class<E> clazz, int columnPosition) {
+  /**
+   * Returns a column content as Enum constant.
+   * If the column content start with a digit, 
+   * the constant is derived using the position of the Enum constant value array.
+   * Otherwise, the reader tries to get the constant by name. A last try 
+   * is done with the constant name in uppercase.
+   * @param <E> Enum type
+   * @param columnPosition
+   * @param clazz Enum class
+   * @return Enum constant 
+   * @throws CsvException
+   */
+  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) {
     
     String s = getColumn(columnPosition).trim();
     if (s.length() == 0) {
@@ -617,7 +980,26 @@ public class CsvReader {
       throw createParseError(e, s, clazz.getName());
     }
   }
-  
+
+  /**
+   * Returns a data object.
+   * <p>
+   * The data object class must have setter methods corresponding to 
+   * column names. See description of method <code>createMethodName</code> 
+   * of class <code>de.ufinke.cubaja.Util</code> for building method names from
+   * column names.
+   * The setter methods must have a void return type and exactly one parameter
+   * of a type supported by one of the <code>CsvReader</code>s <code>read</code> 
+   * methods.
+   * <p>
+   * Note that for performance reasons
+   * the setter methods are not called by the reflection API but
+   * by an on the fly generated instance of <code>ObjectFactory</code>. 
+   * @param <D> data type
+   * @param clazz
+   * @return data object
+   * @throws CsvException
+   */
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
@@ -628,6 +1010,16 @@ public class CsvReader {
     }
   }
   
+  /**
+   * Returns an <code>Iterable</code> over all data objects.
+   * The underlying <code>Iterator</code> calls <code>nextLine</code>
+   * and <code>readObject</code> until EOF.
+   * May be used to process CSV sources with homogeneous structures and high data quality
+   * in a <code>for</code> loop. 
+   * @param <D> data type
+   * @param clazz
+   * @return Iterable
+   */
   public <D> Iterable<D> iterator(Class<? extends D> clazz) {
     
     return new ObjectIterator<D>(this, clazz);
