@@ -622,7 +622,7 @@ public class CsvReader {
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
     try {
-      return (D) ObjectFactoryManager.getFactory(clazz).createObject(this);
+      return (D) ObjectFactoryManager.getFactory(clazz, nameMap).createObject(this);
     } catch (Exception e) {
       throw new CsvException(text.get("readObject", clazz.getName()), e);
     }
