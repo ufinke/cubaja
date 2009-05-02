@@ -3,20 +3,29 @@
 
 package de.ufinke.cubaja.csv;
 
+import java.util.HashMap;
+import java.util.Map;
 import de.ufinke.cubaja.cafebabe.*;
 
 class ObjectFactoryGenerator implements Generator {
 
   private GenClassLoader loader;
+  private Map<Class<?>, ObjectFactory> factoryMap;
   
   ObjectFactoryGenerator() {
   
     loader = new GenClassLoader();
+    factoryMap = new HashMap<Class<?>, ObjectFactory>();
   }
   
-  ObjectFactory createFactory(Class<?> clazz) throws Exception {
+  ObjectFactory getFactory(Class<?> clazz) throws Exception {
     
-    return (ObjectFactory) loader.createInstance(this);
+    ObjectFactory factory = factoryMap.get(clazz);
+    if (factory == null) {
+      factory = (ObjectFactory) loader.createInstance(this);
+      factoryMap.put(clazz, factory);
+    }    
+    return factory; 
   }
 
   public GenClass generate() throws Exception {

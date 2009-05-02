@@ -32,7 +32,6 @@ public class CsvReader {
   private int currentIndex;    
   private ColConfig colConfig;
   
-  private Map<Class<?>, ObjectFactory> factoryMap;
   private ObjectFactoryGenerator generator;
   
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
@@ -625,20 +624,10 @@ public class CsvReader {
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
     try {
-      
-      if (factoryMap == null) {
-        factoryMap = new HashMap<Class<?>, ObjectFactory>();
+      if (generator == null) {
         generator = new ObjectFactoryGenerator();
       }
-      
-      ObjectFactory factory = factoryMap.get(clazz);
-      if (factory == null) {
-        factory = generator.createFactory(clazz);
-        factoryMap.put(clazz, factory);
-      }
-      
-      return (D) factory.createObject(this);
-      
+      return (D) generator.getFactory(clazz).createObject(this);
     } catch (Exception e) {
       throw new CsvException(text.get("readObject", clazz.getName()), e);
     }
