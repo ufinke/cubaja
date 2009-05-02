@@ -9,43 +9,61 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.lang.reflect.Constructor;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import de.ufinke.cubaja.util.Text;
 
-public class GenClassLoader extends ClassLoader {
+public class Loader extends ClassLoader {
 
-  static private final Text text = new Text(GenClassLoader.class);
-  static private final String dumpDirectory = System.getProperty(GenClassLoader.class.getPackage().getName() + ".dump");
+  static private final String dumpDirectory = System.getProperty(Loader.class.getPackage().getName() + ".dump");
+  static private final Text text = new Text(Loader.class);
+  
+  static private final Loader loader = new Loader();
+  static private final Map<String, Generator> generatorMap = new ConcurrentHashMap<String, Generator>(); 
+  
+  static public String createClassName(Class<?> owner, String prefix, Class<?> suffix) {
+    
+    StringBuilder sb = new StringBuilder(200);
+    sb.append(owner.getPackage().getName());
+    sb.append('.');
+    sb.append(prefix);
+    if (suffix != null) {      
+      sb.append('_');
+      sb.append(suffix.getName().replace('.', '_'));
+    }
+    return sb.toString();
+  }
+  
+  static public void defineGenerator(String className, Generator generator) {
+    
+    generatorMap.put(className, generator);
+  }
 
-  private Generator currentGenerator;
-  
-  public GenClassLoader() {
-  
-  }
-  
-  public GenClassLoader(ClassLoader parentClassLoader) {
+  static public Object createInstance(String className, Generator generator, Object... constructorArgs) throws Exception {
     
-    super(parentClassLoader);
-  }
-  
-  public synchronized Object createInstance(Generator generator) throws Exception {
-  
-    currentGenerator = generator;
-    Class<?> clazz = loadClass(currentGenerator.getClassName());
-    return clazz.newInstance();
-  }
-  
-  public synchronized Object createInstance(Generator generator, Object... args) throws Exception {
+    defineGenerator(className, generator);
     
-    currentGenerator = generator;
-    Class<?> clazz = loadClass(currentGenerator.getClassName());
+    Class<?> clazz = loader.loadClass(className);
     
-    Class<?>[] argClasses = new Class<?>[args.length];
-    for (int i = 0; i < args.length; i++) {
-      argClasses[i] = args[i].getClass();
+    if (constructorArgs.length == 0) {
+      return clazz.newInstance();
+    }
+    
+    Class<?>[] argClasses = new Class<?>[constructorArgs.length];
+    for (int i = 0; i < constructorArgs.length; i++) {
+      argClasses[i] = constructorArgs[i].getClass();
     }
     Constructor<?> constructor = clazz.getConstructor(argClasses);
+    return constructor.newInstance(constructorArgs);
+  }
+  
+  static public ClassLoader getLoader() {
     
-    return constructor.newInstance(args);
+    return loader;
+  }
+  
+  private Loader() {
+    
   }
   
   protected Class<?> findClass(String className) throws ClassNotFoundException {
@@ -59,11 +77,12 @@ public class GenClassLoader extends ClassLoader {
   
   private Class<?> doFindClass(String className) throws Exception {
     
-    if (currentGenerator == null) {
+    Generator generator = generatorMap.get(className);
+    if (generator == null) {
       throw new CafebabeException(text.get("noGenerator", className));
     }
     
-    GenClass genClass = currentGenerator.generate();
+    GenClass genClass = generator.generate(className);
     
     ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     DataOutputStream out = new DataOutputStream(buffer);
@@ -75,8 +94,6 @@ public class GenClassLoader extends ClassLoader {
     
     Class<?> clazz = defineClass(className, array, 0, array.length);
     resolveClass(clazz);
-    
-    currentGenerator = null;
     
     return clazz;
   }

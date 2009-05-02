@@ -32,8 +32,6 @@ public class CsvReader {
   private int currentIndex;    
   private ColConfig colConfig;
   
-  private ObjectFactoryGenerator generator;
-  
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
     this(config.createReader(), config);
@@ -624,10 +622,7 @@ public class CsvReader {
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
     try {
-      if (generator == null) {
-        generator = new ObjectFactoryGenerator();
-      }
-      return (D) generator.getFactory(clazz).createObject(this);
+      return (D) ObjectFactoryManager.getFactory(clazz).createObject(this);
     } catch (Exception e) {
       throw new CsvException(text.get("readObject", clazz.getName()), e);
     }

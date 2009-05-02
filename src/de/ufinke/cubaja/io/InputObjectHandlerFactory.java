@@ -7,15 +7,13 @@ import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_PUBLIC;
 import java.util.List;
 import de.ufinke.cubaja.cafebabe.CodeAttribute;
 import de.ufinke.cubaja.cafebabe.GenClass;
-import de.ufinke.cubaja.cafebabe.GenClassLoader;
 import de.ufinke.cubaja.cafebabe.GenMethod;
 import de.ufinke.cubaja.cafebabe.Generator;
+import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
 
 class InputObjectHandlerFactory implements Generator {
 
-  static private final GenClassLoader loader = new GenClassLoader();
-  
   static private final Type objectType = new Type(Object.class);
   static private final Type classType = new Type(Class.class);
   static private final Type voidType = new Type(Void.TYPE);
@@ -25,12 +23,12 @@ class InputObjectHandlerFactory implements Generator {
   
   static InputObjectHandler getHandler(Class<?> dataClass, List<PropertyDescription> propertyList) throws Exception {
     
-    return (InputObjectHandler) loader.createInstance(new InputObjectHandlerFactory(dataClass, propertyList));
+    String className = Loader.createClassName(InputObjectHandlerFactory.class, "InputObjectHandler", dataClass);
+    return (InputObjectHandler) Loader.createInstance(className, new InputObjectHandlerFactory(dataClass, propertyList));
   }
   
   private List<PropertyDescription> propertyList;
   private Class<?> dataClass;
-  private String dataClassName;
   private Type dataClassType;
   private CodeAttribute read;
   
@@ -40,22 +38,9 @@ class InputObjectHandlerFactory implements Generator {
     this.propertyList = propertyList;
   }
   
-  public String getClassName() throws Exception {
+  public GenClass generate(String className) throws Exception {
 
-    if (dataClassName == null) {
-      StringBuilder sb = new StringBuilder(200);
-      sb.append(getClass().getPackage().getName());
-      sb.append(".InputObjectHandler_");
-      sb.append(dataClass.getName().replace('.', '_'));
-      dataClassName = sb.toString();
-    }
-    
-    return dataClassName;
-  }
-  
-  public GenClass generate() throws Exception {
-
-    GenClass genClass = new GenClass(ACC_PUBLIC, getClassName(), objectType, handlerType);
+    GenClass genClass = new GenClass(ACC_PUBLIC, className, objectType, handlerType);
     
     dataClassType = new Type(dataClass);
     
