@@ -15,6 +15,11 @@ public class CsvException extends RuntimeException {
     this(message, null, 0, 0, null, null);
   }
 
+  public CsvException(String message, Throwable cause) {
+
+    this(message, cause, 0, 0, null, null);
+  }
+
   public CsvException(String message, int lineNumber, String line) {
 
     this(message, null, lineNumber, 0, line, null);

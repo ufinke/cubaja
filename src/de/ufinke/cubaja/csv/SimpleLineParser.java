@@ -70,9 +70,6 @@ public class SimpleLineParser implements LineParser {
 
   public String getColumn(int index) throws CsvException {
 
-    if (index < 1 || index > count) {
-      return "";
-    }
     return line.substring(startArray[index], endArray[index]);
   }
 

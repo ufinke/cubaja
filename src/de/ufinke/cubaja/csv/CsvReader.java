@@ -32,6 +32,9 @@ public class CsvReader {
   private int currentIndex;    
   private ColConfig colConfig;
   
+  private Map<Class<?>, ObjectFactory> factoryMap;
+  private ObjectFactoryGenerator generator;
+  
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
     this(config.createReader(), config);
@@ -156,7 +159,7 @@ public class CsvReader {
     
     currentIndex = index;
     
-    String s = parser.getColumn(index);
+    String s = (index < 1 || index > parser.getColumnCount()) ? "" : parser.getColumn(index);
     
     int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
     colConfig = columnList.get(configIndex);
@@ -618,15 +621,32 @@ public class CsvReader {
     }
   }
   
+  @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
-    //TODO
-    return null;
+    try {
+      
+      if (factoryMap == null) {
+        factoryMap = new HashMap<Class<?>, ObjectFactory>();
+        generator = new ObjectFactoryGenerator();
+      }
+      
+      ObjectFactory factory = factoryMap.get(clazz);
+      if (factory == null) {
+        factory = generator.createFactory(clazz);
+        factoryMap.put(clazz, factory);
+      }
+      
+      return (D) factory.createObject(this);
+      
+    } catch (Exception e) {
+      throw new CsvException(text.get("readObject", clazz.getName()), e);
+    }
   }
   
   public <D> Iterable<D> iterator(Class<? extends D> clazz) {
     
     return new ObjectIterator<D>(this, clazz);
   }
-  
+
 }
