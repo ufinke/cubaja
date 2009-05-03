@@ -128,7 +128,7 @@ public class CsvConfig {
   /**
    * Returns the column content delimiter character.
    * By default, no such character is defined.
-   * @return
+   * @return delimiter char
    */
   public Character getEscapeChar() {
 
@@ -226,7 +226,7 @@ public class CsvConfig {
   /**
    * Returns the global constants representing the boolean value <code>true</code>.
    * They depend on the localized package properties.
-   * @return
+   * @return trueValues
    */
   public String[] getTrueValues() {
 

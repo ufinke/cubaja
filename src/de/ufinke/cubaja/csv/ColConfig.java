@@ -121,7 +121,7 @@ public class ColConfig {
    * Returns the trim property.
    * If not specified,
    * we get the global trim property from <code>CsvConfig</code>
-   * @return
+   * @return trim
    */
   public Boolean isTrim() {
 

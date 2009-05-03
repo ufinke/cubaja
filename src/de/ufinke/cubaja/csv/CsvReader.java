@@ -962,7 +962,7 @@ public class CsvReader {
   
   /**
    * Returns column content as Date.
-   * @param columnPosition
+   * @param columnName
    * @return Date
    * @throws CsvException
    */

@@ -8,7 +8,6 @@ import java.util.Comparator;
 /**
  * Sort algorithm.
  * @author Uwe Finke
- * @param <D> element data type
  */
 public interface SortAlgorithm {
 

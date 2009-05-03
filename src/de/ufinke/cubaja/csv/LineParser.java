@@ -14,7 +14,7 @@ public interface LineParser {
 
   /**
    * Called during <code>CsvReader</code> initialization.
-   * @param reader
+   * @param in
    * @param config
    * @throws CsvException
    */
