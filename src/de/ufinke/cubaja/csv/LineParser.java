@@ -25,7 +25,7 @@ public interface LineParser {
    * @return line
    * @throws IOException
    */
-  public String readLine() throws IOException;
+  public String readLine() throws IOException, CsvException;
   
   /**
    * Returns a column.

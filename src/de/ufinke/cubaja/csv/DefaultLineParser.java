@@ -3,11 +3,11 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.Arrays;
+import de.ufinke.cubaja.util.*;
 
 /**
  * Default <code>LineParser</code> implementation.
@@ -15,14 +15,13 @@ import java.util.Arrays;
  */
 public class DefaultLineParser implements LineParser {
 
+  static private final Text text = new Text(DefaultLineParser.class);
+  
   private char separator;
   private char escapeChar;
   private boolean escapeDefined;
 
-  private LineNumberReader lineReader;
-  private Reader reader;
-  
-  private char[] buffer;
+  private LineNumberReader lineReader;  
   private String line;
   
   private int count;
@@ -49,17 +48,15 @@ public class DefaultLineParser implements LineParser {
     escapeDefined = (config.getEscapeChar() != null);
     if (escapeDefined) {
       escapeChar = config.getEscapeChar();
-      buffer = new char[256];
-      reader = (in instanceof BufferedReader) ? in : new BufferedReader(in);
-    } else {
-      lineReader = (in instanceof LineNumberReader) ? (LineNumberReader) in : new LineNumberReader(in);
     }
+    
+    lineReader = (in instanceof LineNumberReader) ? (LineNumberReader) in : new LineNumberReader(in);
   }
 
   /**
    * Reads the next line.
    */
-  public String readLine() throws IOException {
+  public String readLine() throws IOException, CsvException {
 
     line = escapeDefined ? parseEscape() : parseSimple();    
     return line;
@@ -69,8 +66,11 @@ public class DefaultLineParser implements LineParser {
 
     String line = lineReader.readLine();
     if (line == null) {
+      count = 0;
       return null;
     }
+    
+    char sep = separator;
     
     int[] start = startArray;
     int[] end = endArray;
@@ -94,7 +94,7 @@ public class DefaultLineParser implements LineParser {
         end = endArray;
       }
       
-      endIndex = line.indexOf(separator, startIndex);      
+      endIndex = line.indexOf(sep, startIndex);      
       if (endIndex < 0) {
         endIndex = limit;
       }
@@ -110,10 +110,13 @@ public class DefaultLineParser implements LineParser {
     return line;
   }
   
-  private String parseEscape() throws IOException {
+  private String parseEscape() throws IOException, CsvException {
 
-    char[] buf = buffer;
-    int pos = 0;
+    String line = lineReader.readLine();
+    if (line == null) {
+      count = 0;
+      return null;
+    }
     
     char sep = separator;
     char esc = escapeChar;
@@ -123,11 +126,9 @@ public class DefaultLineParser implements LineParser {
     boolean[] doubleEscape = escapeArray;
     
     int i = 0;
-    int limit = line.length();
-    
+    int limit = line.length();    
     int startIndex = 0;
-    int endIndex = 0;
-    boolean noLiteral = true;
+    int nextColStart = 0;
     
     while (startIndex <= limit) {
       
@@ -140,37 +141,69 @@ public class DefaultLineParser implements LineParser {
         escapeArray = Arrays.copyOf(escapeArray, newCapacity);
         start = startArray;
         end = endArray;
+        doubleEscape = escapeArray;
       }
       
       doubleEscape[i] = false;
-      
-      boolean searchForEnd = true;
-      while (searchForEnd && endIndex < limit) {
-        char c = line.charAt(i);
-        if (c == separator && noLiteral) {
-          searchForEnd = false;
-        } else if (c == escapeChar) {
-          noLiteral = ! noLiteral;
-        }
-        endIndex++;
-      }
 
-      if (line.charAt(startIndex) == escapeChar) {
+      int endIndex = startIndex;
+      
+      if (startIndex < limit && line.charAt(startIndex) == esc) { // escaped
+        
         startIndex++;
-        if (line.charAt(endIndex) == escapeChar) {
-          endIndex--;
+        endIndex++;
+        boolean escaped = true;
+        
+        while (escaped) {
+          
+          while (endIndex == limit) {
+            String contLine = lineReader.readLine();
+            if (contLine == null) {
+              throw new CsvException(text.get("eofEscaped"));
+            } else {
+              line = line + contLine;
+              limit = line.length();
+            }
+          }
+          
+          if (line.charAt(endIndex) == esc) {
+            nextColStart = endIndex + 1;
+            if (nextColStart < limit) {
+              char nextChar = line.charAt(nextColStart);
+              if (nextChar == sep) {
+                escaped = false;
+                nextColStart++;
+              } else if (nextChar == esc) {
+                doubleEscape[i] = true;
+                endIndex++;
+              } else {
+                throw new CsvException(text.get("escapeInEscape"));
+              }
+            } else {
+              escaped = false;
+            }
+          }
         }
+        
+      } else { // non-escaped
+        
+        while (endIndex < limit && line.charAt(endIndex) != sep) {
+          endIndex++;
+        }
+        
+        nextColStart = endIndex + 1;
+        
       }
-            
+      
       start[i] = startIndex;
       end[i] = endIndex;
-      
-      startIndex = endIndex + 1;
+
+      startIndex = nextColStart;
     }
     
     count = i;
     
-    return String.valueOf(buffer, 0, pos);
+    return line;
   }
   
   /**
