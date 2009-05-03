@@ -5,5 +5,5 @@ package de.ufinke.cubaja.csv;
 
 public interface ObjectFactory {
 
-  public Object createObject(CsvReader reader) throws Exception;
+  public Object createObject(CsvReader reader) throws CsvException;
 }

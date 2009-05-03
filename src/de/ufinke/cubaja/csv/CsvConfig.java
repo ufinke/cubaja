@@ -27,6 +27,7 @@ public class CsvConfig {
   private Character separator;
   private Character escapeChar;
   private LineParser parser;
+  private LineFilter lineFilter;
 
   private Boolean trim;
   private Character decimalChar;
@@ -142,14 +143,13 @@ public class CsvConfig {
 
   /**
    * Returns the parser.
-   * By default, this is <code>SimpleLineParser</code>.
-   * If an escape character was specified, it is <code>EscapeLineParser</code>.
+   * By default, this is a <code>DefaultLineParser</code>.
    * @return parser
    */
   public LineParser getParser() {
 
     if (parser == null) {
-      parser = (escapeChar == null) ? new SimpleLineParser() : new EscapeLineParser();
+      parser = new DefaultLineParser();
     }
     return parser;
   }
@@ -264,6 +264,25 @@ public class CsvConfig {
   public void setHeader(Boolean header) {
 
     this.header = header;
+  }
+
+  /**
+   * Returns the line filter.
+   * By default, there is no line filter.
+   * @return line filter
+   */
+  public LineFilter getLineFilter() {
+  
+    return lineFilter;
+  }
+  
+  /**
+   * Sets a line filter.
+   * @param lineFilter
+   */
+  public void setLineFilter(LineFilter lineFilter) {
+  
+    this.lineFilter = lineFilter;
   }
 
   /**

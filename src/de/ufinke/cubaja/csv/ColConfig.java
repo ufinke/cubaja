@@ -35,6 +35,7 @@ public class ColConfig {
   private Character decimalChar;
   private SimpleDateFormat dateFormat;
   private String[] trueValues;
+  private ColumnEditor editor;
   private List<ReplaceConfig> replaceList;
   
   private CsvConfig csvConfig;
@@ -215,7 +216,26 @@ public class ColConfig {
   
     this.trueValues = trueValues;
   }
+
+  /**
+   * Returns the column editor.
+   * By default, there is no column editor.
+   * @return column editor
+   */
+  public ColumnEditor getEditor() {
   
+    return editor;
+  }
+
+  /**
+   * Sets the column editor.
+   * @param editor
+   */
+  public void setEditor(ColumnEditor editor) {
+  
+    this.editor = editor;
+  }
+
   /**
    * Adds a replacement definition.
    * @param replace

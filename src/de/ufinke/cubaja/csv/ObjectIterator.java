@@ -4,6 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 import java.util.Iterator;
+import de.ufinke.cubaja.util.*;
 
 class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
 
@@ -27,7 +28,11 @@ class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
     
     if (! calledHasNext) {
       calledHasNext = true;
-      hasNext = reader.nextLine();
+      try {
+        hasNext = reader.nextLine();
+      } catch (Exception e) {
+        throw new IteratorException(e);
+      }
     }
     
     return hasNext;
@@ -41,8 +46,12 @@ class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
       }
     }
     calledHasNext = false;
-    
-    return reader.readObject(clazz);
+
+    try {
+      return reader.readObject(clazz);
+    } catch (Exception e) {
+      throw new IteratorException(e);
+    }
   }
   
   public void remove() {

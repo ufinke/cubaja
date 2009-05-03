@@ -51,7 +51,7 @@ class ObjectFactoryManager implements Generator {
   static private final Type intType = new Type(Integer.TYPE);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
   static private final Type csvReaderType = new Type(CsvReader.class);
-  static private final Type exceptionType = new Type(Exception.class);
+  static private final Type csvExceptionType = new Type(CsvException.class);
 
   private Type dataClassType;
   private Map<String, Integer> searchMap;
@@ -71,7 +71,7 @@ class ObjectFactoryManager implements Generator {
     genClass.createDefaultConstructor();
     
     GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "createObject", csvReaderType);
-    method.addException(exceptionType);
+    method.addException(csvExceptionType);
     generateCode(method.getCode());    
     
     return genClass;

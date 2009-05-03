@@ -5,12 +5,9 @@ package de.ufinke.cubaja.csv;
 
 /**
  * Exception thrown during CSV processing.
- * This is a <code>RuntimeException</code>
- * because of <code>Iterable</code> usage
- * whose methods accept no exception declarations.
  * @author Uwe Finke
  */
-public class CsvException extends RuntimeException {
+public class CsvException extends Exception {
 
   private int lineNumber;
   private int columnNumber;

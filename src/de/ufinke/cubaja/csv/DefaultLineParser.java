@@ -5,7 +5,7 @@ package de.ufinke.cubaja.csv;
 
 import java.util.Arrays;
 
-public class SimpleLineParser implements LineParser {
+public class DefaultLineParser implements LineParser {
 
   private char separator;
   private String line;
@@ -13,7 +13,7 @@ public class SimpleLineParser implements LineParser {
   private int[] startArray;
   private int[] endArray;
   
-  public SimpleLineParser() {
+  public DefaultLineParser() {
     
     startArray = new int[32];
     endArray = new int[32];

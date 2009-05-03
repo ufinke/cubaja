@@ -36,8 +36,7 @@ import de.ufinke.cubaja.util.Text;
  * Despite the automatism, we can retrieve the content of the header
  * line before we call <code>nextLine</code> the first time. 
  * <p>
- * Most methods may throw a <code>CsvException</code>,
- * which is a <code>RuntimeException</code>.
+ * Most methods may throw a <code>CsvException</code>.
  * An exception is thrown if there is an attempt to
  * read any data after a call to <code>nextLine</code>
  * returned <code>false</code>, or after the reader was closed.
@@ -53,6 +52,8 @@ public class CsvReader {
   private List<ColConfig> columnList;
   private Map<String, Integer> nameMap;
   private LineParser parser;
+  private LineFilter lineFilter;
+  private ErrorHandler errorHandler;
   
   private boolean eof;
   
@@ -80,7 +81,7 @@ public class CsvReader {
    * @param reader
    * @throws CsvException
    */
-  public CsvReader(Reader reader) throws CsvException {
+  public CsvReader(Reader reader) throws IOException, CsvException {
   
     this(reader, new CsvConfig());
   }
@@ -91,7 +92,7 @@ public class CsvReader {
    * @param config
    * @throws CsvException
    */
-  public CsvReader(Reader reader, CsvConfig config) throws CsvException {
+  public CsvReader(Reader reader, CsvConfig config) throws IOException, CsvException {
   
     this.config = config;
     in = new LineNumberReader(reader);
@@ -104,7 +105,7 @@ public class CsvReader {
     initParser();
   }
   
-  private void readHeaderLine() {
+  private void readHeaderLine() throws IOException, CsvException {
     
     if (! config.hasHeaderLine()) {
       return;
@@ -149,10 +150,25 @@ public class CsvReader {
     }
   }
   
-  private void initParser() {
+  private void initParser() throws CsvException {
     
     parser = config.getParser();
     parser.init(config);
+    
+    lineFilter = config.getLineFilter();
+    errorHandler = new DefaultErrorHandler();
+  }
+  
+  /**
+   * Sets the error handler.
+   * @param errorHandler
+   */
+  public void setErrorHandler(ErrorHandler errorHandler) {
+    
+    if (errorHandler == null) {
+      errorHandler = new DefaultErrorHandler();
+    }
+    this.errorHandler = errorHandler;
   }
   
   /**
@@ -187,16 +203,21 @@ public class CsvReader {
    * @return <code>true</code> when a line was successfully read, <code>false</code> when end of file.
    * @throws CsvException
    */
-  public boolean nextLine() throws CsvException {
+  public boolean nextLine() throws IOException, CsvException {
     
-    try {      
+    boolean accepted = false;
+    
+    while (! accepted) {
       line = in.readLine();
-      parser.setLine(line, in.getLineNumber());
-    } catch (IOException e) {
-      throw new CsvException(text.get("ioException", Integer.valueOf(getLineNumber())), e, getLineNumber(), null);
+      eof = (line == null);
+      if (eof) {
+        accepted = true;
+      } else {
+        parser.setLine(line, in.getLineNumber());
+        accepted = (lineFilter == null) ? true : lineFilter.acceptLine(this);
+      }
     }
     
-    eof = (line == null);
     return ! eof;
   }
   
@@ -225,7 +246,36 @@ public class CsvReader {
     return line;
   }
   
-  private String getColumn(int index) {
+  /**
+   * Sets a column editor.
+   * @param columnName
+   * @param editor
+   */
+  public void setColumnEditor(String columnName, ColumnEditor editor) throws CsvException {
+    
+    setColumnEditor(getColumnPosition(columnName), editor);
+  }
+  
+  /**
+   * Sets a column editor.
+   * @param columnPosition
+   * @param editor
+   */
+  public void setColumnEditor(int columnPosition, ColumnEditor editor) {
+    
+    columnList.get(columnPosition).setEditor(editor);
+  }
+  
+  /**
+   * Sets a line filter.
+   * @param lineFilter
+   */
+  public void setLineFilter(LineFilter lineFilter) {
+    
+    config.setLineFilter(lineFilter);
+  }
+  
+  private String getColumn(int index) throws CsvException {
 
     checkEOF();
     
@@ -235,6 +285,10 @@ public class CsvReader {
     
     int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
     colConfig = columnList.get(configIndex);
+    
+    if (colConfig.getEditor() != null) {
+      s = colConfig.getEditor().editColumn(s, colConfig, this);
+    }
     
     if (colConfig.isTrim()) {
       s = s.trim();
@@ -265,9 +319,10 @@ public class CsvReader {
     return index; 
   }
   
-  private CsvException createParseError(Throwable cause, String value, String type) {
+  private void handleParseError(Throwable cause, String value, String type) throws CsvException {
     
-    return new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), Integer.valueOf(currentIndex)), cause, getLineNumber(), currentIndex, line, value);
+    CsvException error = new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), Integer.valueOf(currentIndex)), cause, getLineNumber(), currentIndex, line, value);
+    errorHandler.handleError(error);
   }
   
   /**
@@ -390,15 +445,6 @@ public class CsvReader {
     return (s.length() == 0) ? null : Boolean.valueOf(getBoolean(s));
   }
   
-  private byte getByte(String s) throws CsvException {
-    
-    try {
-      return Byte.parseByte(s);
-    } catch (Exception e) {
-      throw createParseError(e, s, "byte");
-    }
-  }
-  
   /**
    * Returns column content as byte.
    * @param columnName
@@ -422,7 +468,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getByte(s);
+    try {
+      return Byte.parseByte(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "byte");
+      return 0;
+    }
   }
   
   /**
@@ -448,15 +499,11 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Byte.valueOf(getByte(s));
-  }
-  
-  private short getShort(String s) throws CsvException {
-    
     try {
-      return Short.parseShort(s);
+      return Byte.valueOf(s);
     } catch (Exception e) {
-      throw createParseError(e, s, "short");
+      handleParseError(e, s, "byte");
+      return null;
     }
   }
   
@@ -483,7 +530,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getShort(s);
+    try {
+      return Short.parseShort(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "short");
+      return 0;
+    }
   }
   
   /**
@@ -509,7 +561,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Short.valueOf(getShort(s));
+    try {
+      return Short.valueOf(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "short");
+      return null;
+    }
   }
   
   /**
@@ -564,15 +621,6 @@ public class CsvReader {
     return Character.valueOf(s.charAt(0));
   }
   
-  private int getInt(String s) throws CsvException {
-    
-    try {
-      return Integer.parseInt(s);
-    } catch (Exception e) {
-      throw createParseError(e, s, "int");
-    }
-  }
-  
   /**
    * Returns column content as int.
    * @param columnName
@@ -596,7 +644,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getInt(s);
+    try {
+      return Integer.parseInt(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "int");
+      return 0;
+    }
   }
   
   /**
@@ -622,18 +675,14 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Integer.valueOf(getInt(s));
-  }
-  
-  private long getLong(String s) throws CsvException {
-    
     try {
-      return Long.parseLong(s);
+      return Integer.valueOf(s);
     } catch (Exception e) {
-      throw createParseError(e, s, "long");
+      handleParseError(e, s, "int");
+      return null;
     }
   }
-
+  
   /**
    * Returns column content as long.
    * @param columnName
@@ -657,7 +706,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getLong(s);
+    try {
+      return Long.parseLong(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "long");
+      return 0;
+    }
   }
   
   /**
@@ -683,7 +737,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Long.valueOf(getLong(s));
+    try {
+      return Long.valueOf(s);
+    } catch (Exception e) {
+      handleParseError(e, s, "long");
+      return null;
+    }
   }
   
   private String prepareDecimalString(String s) {
@@ -714,15 +773,6 @@ public class CsvReader {
     return sb.toString();
   }
   
-  private float getFloat(String s) throws CsvException {
-    
-    try {
-      return Float.parseFloat(prepareDecimalString(s));
-    } catch (Exception e) {
-      throw createParseError(e, s, "float");
-    }
-  }
-  
   /**
    * Returns column content as float.
    * @param columnName
@@ -746,7 +796,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getFloat(s);
+    try {
+      return Float.parseFloat(prepareDecimalString(s));
+    } catch (Exception e) {
+      handleParseError(e, s, "float");
+      return 0;
+    }
   }
   
   /**
@@ -772,15 +827,11 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Float.valueOf(getFloat(s));
-  }
-  
-  private double getDouble(String s) throws CsvException {
-    
     try {
-      return Double.parseDouble(prepareDecimalString(s));
+      return Float.valueOf(prepareDecimalString(s));
     } catch (Exception e) {
-      throw createParseError(e, s, "double");
+      handleParseError(e, s, "float");
+      return null;
     }
   }
   
@@ -807,7 +858,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return 0;
     }
-    return getDouble(s);
+    try {
+      return Double.parseDouble(prepareDecimalString(s));
+    } catch (Exception e) {
+      handleParseError(e, s, "double");
+      return 0;
+    }
   }
   
   /**
@@ -833,7 +889,12 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    return Double.valueOf(getDouble(s));
+    try {
+      return Double.valueOf(prepareDecimalString(s));
+    } catch (Exception e) {
+      handleParseError(e, s, "double");
+      return null;
+    }
   }
   
   /**
@@ -859,11 +920,11 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    
     try {      
       return new BigDecimal(prepareDecimalString(s));
     } catch (Exception e) {
-      throw createParseError(e, s, "BigDecimal");
+      handleParseError(e, s, "BigDecimal");
+      return null;
     }
   }
   
@@ -890,11 +951,11 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    
     try {      
       return new BigInteger(s);
     } catch (Exception e) {
-      throw createParseError(e, s, "BigInteger");
+      handleParseError(e, s, "BigInteger");
+      return null;
     }
   }
   
@@ -921,11 +982,11 @@ public class CsvReader {
     if (s.length() == 0) {
       return null;
     }
-    
     try {      
       return colConfig.getDateFormat().parse(s);
     } catch (Exception e) {
-      throw createParseError(e, s, "Date");
+      handleParseError(e, s, "Date");
+      return null;
     }
   }
 
@@ -958,17 +1019,16 @@ public class CsvReader {
    * @return Enum constant 
    * @throws CsvException
    */
-  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) {
+  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
     if (s.length() == 0) {
       return null;
     }
-
     try {
       char c = s.charAt(0);
       if (c >= 0 && c <= 9) {
-        return clazz.getEnumConstants()[getInt(s)];
+        return clazz.getEnumConstants()[readInt(columnPosition)];
       } else {
         try {
           return Enum.valueOf(clazz, s);
@@ -977,7 +1037,8 @@ public class CsvReader {
         }
       }
     } catch (Exception e) {
-      throw createParseError(e, s, clazz.getName());
+      handleParseError(e, s, clazz.getName());
+      return null;
     }
   }
 
