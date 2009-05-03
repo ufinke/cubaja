@@ -99,9 +99,14 @@ public class CsvReader {
 
     columnList = config.getColumnList();
     
+    parser = config.getParser();
+    parser.init(in, config);
+    
+    lineFilter = config.getLineFilter();
+    errorHandler = new DefaultErrorHandler();
+    
     readHeaderLine();
     initPositions();
-    initParser();
   }
   
   private void readHeaderLine() throws IOException, CsvException {
@@ -147,15 +152,6 @@ public class CsvReader {
       
       nameMap.put(col.getName(), col.getPosition());
     }
-  }
-  
-  private void initParser() throws IOException, CsvException {
-    
-    parser = config.getParser();
-    parser.init(in, config);
-    
-    lineFilter = config.getLineFilter();
-    errorHandler = new DefaultErrorHandler();
   }
   
   /**

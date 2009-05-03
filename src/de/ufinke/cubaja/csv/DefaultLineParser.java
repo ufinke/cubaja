@@ -145,7 +145,6 @@ public class DefaultLineParser implements LineParser {
       }
       
       doubleEscape[i] = false;
-
       int endIndex = startIndex;
       
       if (startIndex < limit && line.charAt(startIndex) == esc) { // escaped
@@ -182,6 +181,8 @@ public class DefaultLineParser implements LineParser {
             } else {
               escaped = false;
             }
+          } else {
+            endIndex++;
           }
         }
         
@@ -193,7 +194,7 @@ public class DefaultLineParser implements LineParser {
         
         nextColStart = endIndex + 1;
         
-      }
+      } // end escaped / non-escaped
       
       start[i] = startIndex;
       end[i] = endIndex;
@@ -230,21 +231,18 @@ public class DefaultLineParser implements LineParser {
     
     int start = startArray[index];
     int end = endArray[index];
+    char esc = escapeChar;
     
     StringBuilder sb = new StringBuilder(end - start);
     
-    boolean ignoreEscape = false;
-    for (int i = start; i < end; i++) {
+    int i = start;    
+    while (i < end) {
       char c = line.charAt(i);
-      if (c == escapeChar) {
-        if (! ignoreEscape) {
-          sb.append(c);
-        }
-        ignoreEscape = ! ignoreEscape;
-      } else {
-        ignoreEscape = false;
-        sb.append(c);
+      if (c == esc) {
+        i++;
       }
+      sb.append(c);
+      i++;
     }
     
     return sb.toString();

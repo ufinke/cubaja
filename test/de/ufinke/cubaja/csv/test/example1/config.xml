@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<config>
+
+  <csv file="/home/uwe/ae/workspace/cubaja/test/de/ufinke/cubaja/csv/test/example1/inputfile.csv"
+       charset="UTF-8"
+       escapeChar='\"'>
+    <col name="text" header="a string"/>
+    <col name="number" header="a number"/>
+    <col name="choice" header="an enum"/>
+  </csv>
+  
+</config>
