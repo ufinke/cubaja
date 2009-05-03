@@ -320,8 +320,14 @@ public class CsvReader {
   }
   
   private void handleParseError(Throwable cause, String value, String type) throws CsvException {
+
+    StringBuilder sb = new StringBuilder(50);
+    sb.append(currentIndex);
+    sb.append(" (");
+    sb.append(colConfig.getName());
+    sb.append(')');
     
-    CsvException error = new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), Integer.valueOf(currentIndex)), cause, getLineNumber(), currentIndex, line, value);
+    CsvException error = new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), sb, type), cause, getLineNumber(), currentIndex, line, value);
     errorHandler.handleError(error);
   }
   

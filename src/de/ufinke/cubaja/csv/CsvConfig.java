@@ -45,7 +45,10 @@ public class CsvConfig {
   public CsvConfig() {
 
     columnList = new ArrayList<ColConfig>();
-    addCol(new ColConfig()); // default entry; positions start with 1
+    
+    ColConfig defaultColumn = new ColConfig();
+    defaultColumn.setName("*undefined*");
+    addCol(defaultColumn); // default entry; positions start with 1
   }
 
   /**
