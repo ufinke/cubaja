@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.csv;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -47,7 +46,8 @@ public class CsvReader {
   static private final Text text = new Text(CsvReader.class);
   
   private CsvConfig config;
-  private LineNumberReader in;
+  private Reader in;
+  private int lineNumber;
   
   private List<ColConfig> columnList;
   private Map<String, Integer> nameMap;
@@ -95,8 +95,7 @@ public class CsvReader {
   public CsvReader(Reader reader, CsvConfig config) throws IOException, CsvException {
   
     this.config = config;
-    in = new LineNumberReader(reader);
-    in.setLineNumber(1);
+    in = reader;
 
     columnList = config.getColumnList();
     
@@ -150,10 +149,10 @@ public class CsvReader {
     }
   }
   
-  private void initParser() throws CsvException {
+  private void initParser() throws IOException, CsvException {
     
     parser = config.getParser();
-    parser.init(config);
+    parser.init(in, config);
     
     lineFilter = config.getLineFilter();
     errorHandler = new DefaultErrorHandler();
@@ -177,7 +176,7 @@ public class CsvReader {
    */
   public int getLineNumber() {
     
-    return in.getLineNumber();
+    return lineNumber;
   }
   
   /**
@@ -208,12 +207,12 @@ public class CsvReader {
     boolean accepted = false;
     
     while (! accepted) {
-      line = in.readLine();
+      lineNumber++;
+      line = parser.readLine();
       eof = (line == null);
       if (eof) {
         accepted = true;
       } else {
-        parser.setLine(line, in.getLineNumber());
         accepted = (lineFilter == null) ? true : lineFilter.acceptLine(this);
       }
     }

@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 import java.util.Iterator;
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.IteratorException;
 
 class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
 

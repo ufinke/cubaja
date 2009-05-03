@@ -9,6 +9,9 @@ package de.ufinke.cubaja.csv;
  */
 public class DefaultErrorHandler implements ErrorHandler {
 
+  /**
+   * Constructor.
+   */
   public DefaultErrorHandler() {
  
   }

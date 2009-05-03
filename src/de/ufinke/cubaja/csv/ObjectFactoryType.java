@@ -12,7 +12,7 @@ import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {
 
-  // CONSTANT(clazz, isPrimitive, needsClazz, streamMethodName)
+  // CONSTANT(clazz, isPrimitive, needsClazz, methodName, priority)
   BOOLEAN       (Boolean.TYPE    , true , false, "Boolean"      , 19),
   BYTE          (Byte.TYPE       , true , false, "Byte"         , 18),
   SHORT         (Short.TYPE      , true , false, "Short"        , 17),

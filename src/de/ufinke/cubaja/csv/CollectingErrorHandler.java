@@ -3,7 +3,8 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <code>ErrorHandler</code> which collects exceptions.
@@ -13,6 +14,9 @@ public class CollectingErrorHandler implements ErrorHandler {
 
   private List<CsvException> errorList;
   
+  /**
+   * Constructor.
+   */
   public CollectingErrorHandler() {
   
     errorList = new ArrayList<CsvException>();

@@ -24,12 +24,14 @@ class ObjectFactoryManager implements Generator {
     String name;
     ObjectFactoryType type;
     int position;
+    Class<?> clazz;
     
-    SetterEntry(String methodName, ObjectFactoryType parameterType, int position) {
+    SetterEntry(String methodName, ObjectFactoryType parameterType, int position, Class<?> parameterClass) {
       
       this.name = methodName;
       this.type = parameterType;
       this.position = position;
+      this.clazz = parameterClass;
     }
   }
   
@@ -49,6 +51,7 @@ class ObjectFactoryManager implements Generator {
   static private final Type objectType = new Type(Object.class);
   static private final Type voidType = new Type(Void.TYPE);
   static private final Type intType = new Type(Integer.TYPE);
+  static private final Type classType = new Type(Class.class);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
   static private final Type csvReaderType = new Type(CsvReader.class);
   static private final Type csvExceptionType = new Type(CsvException.class);
@@ -80,18 +83,31 @@ class ObjectFactoryManager implements Generator {
   private void generateCode(CodeAttribute code) {
     
     code.newObject(dataClassType);
-    code.duplicate();
+    code.duplicate(); // required for setter or return
     code.invokeSpecial(dataClassType, voidType, "<init>");
     
     for (SetterEntry setter : setterMap.values()) {
+      
+      ObjectFactoryType type = setter.type;
+      Type parmType = type.getType();
+      
       code.duplicate();
+      
       code.loadLocalReference(1);
       code.loadConstant(setter.position);
-      code.invokeVirtual(csvReaderType, setter.type.getType(), setter.type.getReaderMethod(), intType);
-      code.invokeVirtual(dataClassType, voidType, setter.name, setter.type.getType());
+      if (type.needsClazz()) {
+        parmType = new Type(setter.clazz);
+        code.loadConstant(setter.clazz);
+        code.invokeVirtual(csvReaderType, type.getType(), type.getReaderMethod(), intType, classType);
+        code.cast(parmType);
+      } else {
+        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
+      }
+      
+      code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
     }
     
-    code.returnReference();
+    code.returnReference(); // returns duplicated data object
   }  
   
   private Map<String, Integer> createSearchMap(Map<String, Integer> nameMap) {
@@ -129,7 +145,7 @@ class ObjectFactoryManager implements Generator {
               SetterEntry entry = sm.get(methodName);
               
               if (entry == null || type.getPriority() < entry.type.getPriority()) {
-                sm.put(methodName, new SetterEntry(methodName, type, position));
+                sm.put(methodName, new SetterEntry(methodName, type, position, parameterTypes[0]));
               }
             }
           }
