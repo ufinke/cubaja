@@ -29,7 +29,7 @@ class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
     if (! calledHasNext) {
       calledHasNext = true;
       try {
-        hasNext = reader.nextLine();
+        hasNext = reader.nextRecord();
       } catch (Exception e) {
         throw new IteratorException(e);
       }

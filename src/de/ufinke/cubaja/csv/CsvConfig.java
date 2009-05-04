@@ -26,8 +26,8 @@ public class CsvConfig {
 
   private Character separator;
   private Character escapeChar;
-  private LineParser parser;
-  private LineFilter lineFilter;
+  private RecordParser parser;
+  private RecordFilter recordFilter;
 
   private Boolean trim;
   private Character decimalChar;
@@ -47,7 +47,6 @@ public class CsvConfig {
     columnList = new ArrayList<ColConfig>();
     
     ColConfig defaultColumn = new ColConfig();
-    defaultColumn.setName("*undefined*");
     addCol(defaultColumn); // default entry; positions start with 1
   }
 
@@ -139,20 +138,20 @@ public class CsvConfig {
    * Sets the parser which separates columns.
    * @param parser
    */
-  public void setParser(LineParser parser) {
+  public void setParser(RecordParser parser) {
 
     this.parser = parser;
   }
 
   /**
    * Returns the parser.
-   * By default, this is a <code>DefaultLineParser</code>.
+   * By default, this is a <code>DefaultRecordParser</code>.
    * @return parser
    */
-  public LineParser getParser() {
+  public RecordParser getParser() {
 
     if (parser == null) {
-      parser = new DefaultLineParser();
+      parser = new DefaultRecordParser();
     }
     return parser;
   }
@@ -246,13 +245,13 @@ public class CsvConfig {
   }
 
   /**
-   * Returns whether the CSV input has a header line.
+   * Returns whether the CSV input has a header record.
    * This is <code>true</code> when
    * we set the header flag explicitly,
    * or when we define a header property on at least one column.  
    * @return flag
    */
-  public boolean hasHeaderLine() {
+  public boolean hasHeaderRecord() {
 
     if (header == null) {
       setHeader(headerDefined);
@@ -261,7 +260,7 @@ public class CsvConfig {
   }
 
   /**
-   * Signals whether the CSV input has a header line.
+   * Signals whether the CSV input has a header record.
    * @param header
    */
   public void setHeader(Boolean header) {
@@ -270,22 +269,22 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the line filter.
-   * By default, there is no line filter.
-   * @return line filter
+   * Returns the record filter.
+   * By default, there is no filter.
+   * @return record filter
    */
-  public LineFilter getLineFilter() {
+  public RecordFilter getRecordFilter() {
   
-    return lineFilter;
+    return recordFilter;
   }
   
   /**
-   * Sets a line filter.
-   * @param lineFilter
+   * Sets a record filter.
+   * @param recordFilter
    */
-  public void setLineFilter(LineFilter lineFilter) {
+  public void setRecordFilter(RecordFilter recordFilter) {
   
-    this.lineFilter = lineFilter;
+    this.recordFilter = recordFilter;
   }
 
   /**

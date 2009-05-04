@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Line parser.
+ * Record parser.
  * @author Uwe Finke
  */
-public interface LineParser {
+public interface RecordParser {
 
   /**
    * Called during <code>CsvReader</code> initialization.
@@ -21,11 +21,17 @@ public interface LineParser {
   public void init(Reader in, CsvConfig config) throws IOException, CsvException;
 
   /**
-   * Returns next line, or <code>null</code> when EOF.
-   * @return line
+   * Returns next record, or <code>null</code> when EOF.
+   * @return complete record line
    * @throws IOException
    */
-  public String readLine() throws IOException, CsvException;
+  public String readRecord() throws IOException, CsvException;
+  
+  /**
+   * Returns the number of raw lines read so far.
+   * @return line count
+   */
+  public int getLineCount();
   
   /**
    * Returns a column.
@@ -36,9 +42,15 @@ public interface LineParser {
   public String getColumn(int index) throws CsvException;
 
   /**
-   * Returns number of columns in line.
+   * Returns number of columns in record.
    * @return column count
    */
   public int getColumnCount();
+  
+  /**
+   * Returns whether all columns are empty.
+   * @return flag
+   */
+  public boolean isEmptyRecord();
   
 }

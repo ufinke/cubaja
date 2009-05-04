@@ -10,19 +10,19 @@ import java.util.Arrays;
 import de.ufinke.cubaja.util.*;
 
 /**
- * Default <code>LineParser</code> implementation.
+ * Default <code>RecordParser</code> implementation.
  * @author Uwe Finke
  */
-public class DefaultLineParser implements LineParser {
+public class DefaultRecordParser implements RecordParser {
 
-  static private final Text text = new Text(DefaultLineParser.class);
+  static private final Text text = new Text(DefaultRecordParser.class);
   
   private char separator;
   private char escapeChar;
   private boolean escapeDefined;
 
   private LineNumberReader lineReader;  
-  private String line;
+  private String record;
   
   private int count;
   private int[] startArray;
@@ -32,7 +32,7 @@ public class DefaultLineParser implements LineParser {
   /**
    * Constructor.
    */
-  public DefaultLineParser() {
+  public DefaultRecordParser() {
     
     startArray = new int[32];
     endArray = new int[32];
@@ -54,12 +54,12 @@ public class DefaultLineParser implements LineParser {
   }
 
   /**
-   * Reads the next line.
+   * Reads the next record.
    */
-  public String readLine() throws IOException, CsvException {
+  public String readRecord() throws IOException, CsvException {
 
-    line = escapeDefined ? parseEscape() : parseSimple();    
-    return line;
+    record = escapeDefined ? parseEscape() : parseSimple();    
+    return record;
   }
   
   private String parseSimple() throws IOException {
@@ -214,6 +214,27 @@ public class DefaultLineParser implements LineParser {
 
     return count;
   }
+  
+  /**
+   * Returns the number of raw lines.
+   */
+  public int getLineCount() {
+    
+    return lineReader.getLineNumber();
+  }
+  
+  /**
+   * Returns whether all column data have zero length.
+   */
+  public boolean isEmptyRecord() {
+    
+    for (int i = 0; i < count; i++) {
+      if (startArray[i] != endArray[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
 
   /**
    * Returns column content.
@@ -223,7 +244,7 @@ public class DefaultLineParser implements LineParser {
     if (escapeDefined && escapeArray[index]) {
       return removeDoubleEscape(index);
     } else {
-      return line.substring(startArray[index], endArray[index]);
+      return record.substring(startArray[index], endArray[index]);
     }
   }
   
@@ -237,7 +258,7 @@ public class DefaultLineParser implements LineParser {
     
     int i = start;    
     while (i < end) {
-      char c = line.charAt(i);
+      char c = record.charAt(i);
       if (c == esc) {
         i++;
       }

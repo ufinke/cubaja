@@ -17,27 +17,27 @@ import de.ufinke.cubaja.util.Text;
 /**
  * CSV reader.
  * <p>
- * We retrieve lines in a loop calling <code>nextLine</code>
- * until <code>nextLine</code> returns <code>false</code>.
+ * We retrieve record in a loop calling <code>nextRecord</code>
+ * until we receive <code>false</code>.
  * <p>
- * For every line, we can read column contents as the type we need in our application,
- * or we can read an entire line as a data object by using method <code>readObject</code>.
+ * For every record, we can read column contents as the type we need in our application,
+ * or we can create a data object with column data by using method <code>readObject</code>.
  * When the column is empty, the read methods for numeric primitive types
  * return <code>0</code>; read methods for objects types 
  * (except <code>readObject</code>) return <code>null</code>.
  * <p>
  * The position of the first column is 1, not 0.
  * <p>
- * The first line is read automatically if the configurations
- * <code>hasHeaderLine</code> method returns <code>true</code>.
+ * The first record is read automatically if the configurations
+ * <code>hasHeaderRecord</code> method returns <code>true</code>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
  * Despite the automatism, we can retrieve the content of the header
- * line before we call <code>nextLine</code> the first time. 
+ * record before we call <code>nextRecord</code> the first time. 
  * <p>
  * Most methods may throw a <code>CsvException</code>.
  * An exception is thrown if there is an attempt to
- * read any data after a call to <code>nextLine</code>
+ * read any data after a call to <code>nextRecord</code>
  * returned <code>false</code>, or after the reader was closed.
  * @author Uwe Finke
  */
@@ -47,17 +47,17 @@ public class CsvReader {
   
   private CsvConfig config;
   private Reader in;
-  private int lineNumber;
+  private int recordCount;
   
   private List<ColConfig> columnList;
   private Map<String, Integer> nameMap;
-  private LineParser parser;
-  private LineFilter lineFilter;
+  private RecordParser parser;
+  private RecordFilter recordFilter;
   private ErrorHandler errorHandler;
   
   private boolean eof;
   
-  private String line;
+  private String record;
   private int currentIndex;    
   private ColConfig colConfig;
   
@@ -102,22 +102,24 @@ public class CsvReader {
     parser = config.getParser();
     parser.init(in, config);
     
-    lineFilter = config.getLineFilter();
+    recordFilter = config.getRecordFilter();
     errorHandler = new DefaultErrorHandler();
     
-    readHeaderLine();
+    readHeaderRecord();
     initPositions();
   }
   
-  private void readHeaderLine() throws IOException, CsvException {
+  private void readHeaderRecord() throws IOException, CsvException {
     
-    if (! config.hasHeaderLine()) {
+    if (! config.hasHeaderRecord()) {
       return;
     }
     
-    if (! nextLine()) {
+    if (! nextRecord()) {
       return;
     }
+    
+    recordCount--;
     
     String[] headers = readColumns();
     Map<String, Integer> headerMap = new HashMap<String, Integer>();
@@ -129,7 +131,7 @@ public class CsvReader {
       if (col.getPosition() == 0 && col.getHeader() != null) {
         Integer position = headerMap.get(col.getHeader());
         if (position == null) {
-          throw new CsvException(text.get("headerNotFound", col.getHeader()), 1, line);
+          throw new CsvException(text.get("headerNotFound", col.getHeader()), parser.getLineCount(), 0, record);
         }
         col.setInternalPosition(position);
       }
@@ -167,12 +169,24 @@ public class CsvReader {
   }
   
   /**
-   * Returns the number of the current line.
+   * Returns the number of the current record.
+   * This value may differ from the line number
+   * because header records don't count and
+   * regular records may contain line breaks within escaped column data.
+   * @return record number
+   */
+  public int getRecordCount() {
+    
+    return recordCount;
+  }
+  
+  /**
+   * Returns the number of raw lines read so far.
    * @return line number
    */
-  public int getLineNumber() {
+  public int getLineCount() {
     
-    return lineNumber;
+    return parser.getLineCount();
   }
   
   /**
@@ -194,22 +208,22 @@ public class CsvReader {
   }
   
   /**
-   * Retrieves the next line.
-   * @return <code>true</code> when a line was successfully read, <code>false</code> when end of file.
+   * Retrieves the next record.
+   * @return <code>true</code> when a record was successfully read, <code>false</code> when end of file.
    * @throws CsvException
    */
-  public boolean nextLine() throws IOException, CsvException {
+  public boolean nextRecord() throws IOException, CsvException {
     
     boolean accepted = false;
     
     while (! accepted) {
-      lineNumber++;
-      line = parser.readLine();
-      eof = (line == null);
+      recordCount++;
+      record = parser.readRecord();
+      eof = (record == null);
       if (eof) {
         accepted = true;
       } else {
-        accepted = (lineFilter == null) ? true : lineFilter.acceptLine(this);
+        accepted = (recordFilter == null) ? true : recordFilter.acceptRecord(this);
       }
     }
     
@@ -217,28 +231,26 @@ public class CsvReader {
   }
   
   /**
-   * Returns whether the retrieved line is empty.
-   * A line is assumed to be empty
-   * when the line length is less than the number of columns;
-   * that is, the line contains at most separator characters.
+   * Returns whether the retrieved record is empty.
+   * A record is assumed to be empty when all valid column data have zero length.
    * @return flag
    * @throws CsvException
    */
-  public boolean isEmptyLine() throws CsvException {
+  public boolean isEmptyRecord() throws CsvException {
 
     checkEOF();
-    return line.length() < parser.getColumnCount();
+    return parser.isEmptyRecord();
   }
   
   /**
-   * Returns the complete last retrieved line.
-   * @return line
+   * Returns the complete last retrieved record.
+   * @return record
    * @throws CsvException
    */
-  public String getLine() throws CsvException {
+  public String getRecord() throws CsvException {
     
     checkEOF();
-    return line;
+    return record;
   }
   
   /**
@@ -262,12 +274,12 @@ public class CsvReader {
   }
   
   /**
-   * Sets a line filter.
-   * @param lineFilter
+   * Sets a record filter.
+   * @param recordFilter
    */
-  public void setLineFilter(LineFilter lineFilter) {
+  public void setRecordFilter(RecordFilter recordFilter) {
     
-    config.setLineFilter(lineFilter);
+    config.setRecordFilter(recordFilter);
   }
   
   private String getColumn(int index) throws CsvException {
@@ -281,10 +293,6 @@ public class CsvReader {
     int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
     colConfig = columnList.get(configIndex);
     
-    if (colConfig.getEditor() != null) {
-      s = colConfig.getEditor().editColumn(s, colConfig, this);
-    }
-    
     if (colConfig.isTrim()) {
       s = s.trim();
     }
@@ -294,6 +302,10 @@ public class CsvReader {
       for (ReplaceConfig replace : replaceList) {
         s = s.replaceAll(replace.getRegex(), replace.getReplacement());
       }
+    }
+    
+    if (colConfig.getEditor() != null) {
+      s = colConfig.getEditor().editColumn(s, colConfig, this);
     }
     
     return s;
@@ -316,18 +328,12 @@ public class CsvReader {
   
   private void handleParseError(Throwable cause, String value, String type) throws CsvException {
 
-    StringBuilder sb = new StringBuilder(50);
-    sb.append(currentIndex);
-    sb.append(" (");
-    sb.append(colConfig.getName());
-    sb.append(')');
-    
-    CsvException error = new CsvException(text.get("parseError", value, Integer.valueOf(getLineNumber()), sb, type), cause, getLineNumber(), currentIndex, line, value);
+    CsvException error = new CsvException(text.get("parseError", value, type), cause, getLineCount(), getRecordCount(), record, currentIndex, colConfig.getName(), value);
     errorHandler.handleError(error);
   }
   
   /**
-   * Returns all columns of the last retrieved line.
+   * Returns all columns of the last retrieved record.
    * @return array with columns
    * @throws CsvException
    */
@@ -345,7 +351,7 @@ public class CsvReader {
   }
   
   /**
-   * Returns the number of columns in the last retrieved line.
+   * Returns the number of columns in the last retrieved record.
    * @return column count
    * @throws CsvException
    */
@@ -1074,7 +1080,7 @@ public class CsvReader {
   
   /**
    * Returns an <code>Iterable</code> over all data objects.
-   * The underlying <code>Iterator</code> calls <code>nextLine</code>
+   * The underlying <code>Iterator</code> calls <code>nextRecord</code>
    * and <code>readObject</code> until EOF.
    * May be used to process CSV sources with homogeneous structures and high data quality
    * in a <code>for</code> loop. 
