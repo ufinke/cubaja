@@ -12,15 +12,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.util.Text;
 
 /**
  * CSV reader.
  * <p>
- * We retrieve record in a loop calling <code>nextRecord</code>
+ * We retrieve rows in a loop calling <code>nextRow</code>
  * until we receive <code>false</code>.
  * <p>
- * For every record, we can read column contents as the type we need in our application,
+ * For every row, we can read column contents as the type we need in our application,
  * or we can create a data object with column data by using method <code>readObject</code>.
  * When the column is empty, the read methods for numeric primitive types
  * return <code>0</code>; read methods for objects types 
@@ -28,36 +29,36 @@ import de.ufinke.cubaja.util.Text;
  * <p>
  * The position of the first column is 1, not 0.
  * <p>
- * The first record is read automatically if the configurations
- * <code>hasHeaderRecord</code> method returns <code>true</code>.
+ * The first row is read automatically if the configurations
+ * <code>hasHeaderRow</code> method returns <code>true</code>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
  * Despite the automatism, we can retrieve the content of the header
- * record before we call <code>nextRecord</code> the first time. 
+ * row before we call <code>nextRow</code> the first time. 
  * <p>
  * Most methods may throw a <code>CsvException</code>.
  * An exception is thrown if there is an attempt to
- * read any data after a call to <code>nextRecord</code>
+ * read any data after a call to <code>nextRow</code>
  * returned <code>false</code>, or after the reader was closed.
  * @author Uwe Finke
  */
-public class CsvReader {
+public class CsvReader implements ColumnReader {
 
   static private final Text text = new Text(CsvReader.class);
   
   private CsvConfig config;
   private Reader in;
-  private int recordCount;
+  private int rowCount;
   
   private List<ColConfig> columnList;
   private Map<String, Integer> nameMap;
-  private RecordParser parser;
-  private RecordFilter recordFilter;
+  private RowParser parser;
+  private RowFilter rowFilter;
   private ErrorHandler errorHandler;
   
   private boolean eof;
   
-  private String record;
+  private String row;
   private int currentIndex;    
   private ColConfig colConfig;
   
@@ -102,28 +103,28 @@ public class CsvReader {
     parser = config.getParser();
     parser.init(in, config);
     
-    recordFilter = config.getRecordFilter();
+    rowFilter = config.getRowFilter();
     errorHandler = new DefaultErrorHandler();
     
-    readHeaderRecord();
+    readHeaderRow();
     initPositions();
   }
   
-  private void readHeaderRecord() throws IOException, CsvException {
+  private void readHeaderRow() throws IOException, CsvException {
     
-    if (! config.hasHeaderRecord()) {
+    if (! config.hasHeaderRow()) {
       return;
     }
     
-    if (! nextRecord()) {
+    if (! nextRow()) {
       return;
     }
     
-    recordCount--;
+    rowCount--;
     
     String[] headers = readColumns();
     Map<String, Integer> headerMap = new HashMap<String, Integer>();
-    for (int i = headers.length - 1; i >= 0; i--) { // backward because on duplicate headers we prefere the leftmost column
+    for (int i = headers.length - 1; i >= 0; i--) { // backward because on duplicate headers we prefer the leftmost column
       headerMap.put(headers[i], i + 1);
     }
     
@@ -131,7 +132,7 @@ public class CsvReader {
       if (col.getPosition() == 0 && col.getHeader() != null) {
         Integer position = headerMap.get(col.getHeader());
         if (position == null) {
-          throw new CsvException(text.get("headerNotFound", col.getHeader()), parser.getLineCount(), 0, record);
+          throw new CsvException(text.get("headerNotFound", col.getHeader()), parser.getLineCount(), 0, row);
         }
         col.setInternalPosition(position);
       }
@@ -168,16 +169,12 @@ public class CsvReader {
     this.errorHandler = errorHandler;
   }
   
-  /**
-   * Returns the number of the current record.
-   * This value may differ from the line number
-   * because header records don't count and
-   * regular records may contain line breaks within escaped column data.
-   * @return record number
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#getRowCount()
    */
-  public int getRecordCount() {
+  public int getRowCount() {
     
-    return recordCount;
+    return rowCount;
   }
   
   /**
@@ -189,9 +186,8 @@ public class CsvReader {
     return parser.getLineCount();
   }
   
-  /**
-   * Closes the reader.
-   * @throws IOException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#close()
    */
   public void close() throws IOException {
     
@@ -207,23 +203,21 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Retrieves the next record.
-   * @return <code>true</code> when a record was successfully read, <code>false</code> when end of file.
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#nextRow()
    */
-  public boolean nextRecord() throws IOException, CsvException {
+  public boolean nextRow() throws IOException, CsvException {
     
     boolean accepted = false;
     
     while (! accepted) {
-      recordCount++;
-      record = parser.readRecord();
-      eof = (record == null);
+      rowCount++;
+      row = parser.readRow();
+      eof = (row == null);
       if (eof) {
         accepted = true;
       } else {
-        accepted = (recordFilter == null) ? true : recordFilter.acceptRecord(this);
+        accepted = (rowFilter == null) ? true : rowFilter.acceptRow(this);
       }
     }
     
@@ -231,26 +225,26 @@ public class CsvReader {
   }
   
   /**
-   * Returns whether the retrieved record is empty.
-   * A record is assumed to be empty when all valid column data have zero length.
+   * Returns whether the retrieved row is empty.
+   * A row is assumed to be empty when all valid column data have zero length.
    * @return flag
    * @throws CsvException
    */
-  public boolean isEmptyRecord() throws CsvException {
+  public boolean isEmptyRow() throws CsvException {
 
     checkEOF();
-    return parser.isEmptyRecord();
+    return parser.isEmptyRow();
   }
   
   /**
-   * Returns the complete last retrieved record.
-   * @return record
+   * Returns the complete last retrieved row.
+   * @return row
    * @throws CsvException
    */
-  public String getRecord() throws CsvException {
+  public String getRow() throws CsvException {
     
     checkEOF();
-    return record;
+    return row;
   }
   
   /**
@@ -274,12 +268,12 @@ public class CsvReader {
   }
   
   /**
-   * Sets a record filter.
-   * @param recordFilter
+   * Sets a row filter.
+   * @param rowFilter
    */
-  public void setRecordFilter(RecordFilter recordFilter) {
+  public void setRowFilter(RowFilter rowFilter) {
     
-    config.setRecordFilter(recordFilter);
+    config.setRowFilter(rowFilter);
   }
   
   private String getColumn(int index) throws CsvException {
@@ -311,11 +305,8 @@ public class CsvReader {
     return s;
   }
   
-  /**
-   * Returns the position of a named column.
-   * @param columnName
-   * @return column position
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#getColumnPosition(java.lang.String)
    */
   public int getColumnPosition(String columnName) throws CsvException {
     
@@ -328,14 +319,12 @@ public class CsvReader {
   
   private void handleParseError(Throwable cause, String value, String type) throws CsvException {
 
-    CsvException error = new CsvException(text.get("parseError", value, type), cause, getLineCount(), getRecordCount(), record, currentIndex, colConfig.getName(), value);
+    CsvException error = new CsvException(text.get("parseError", value, type), cause, getLineCount(), getRowCount(), row, currentIndex, colConfig.getName(), value);
     errorHandler.handleError(error);
   }
   
-  /**
-   * Returns all columns of the last retrieved record.
-   * @return array with columns
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readColumns()
    */
   public String[] readColumns() throws CsvException {
     
@@ -350,10 +339,8 @@ public class CsvReader {
     return col;
   }
   
-  /**
-   * Returns the number of columns in the last retrieved record.
-   * @return column count
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#getColumnCount()
    */
   public int getColumnCount() throws CsvException {
     
@@ -361,26 +348,16 @@ public class CsvReader {
     return parser.getColumnCount();
   }
   
-  /**
-   * Returns column content as string.
-   * The original content may have been modified according
-   * to the settings in <code>ColConfig</code>.
-   * @param columnName 
-   * @return string
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readString(java.lang.String)
    */
   public String readString(String columnName) throws CsvException {
     
     return readString(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as string.
-   * The original content may have been modified according
-   * to the settings in <code>ColConfig</code>. 
-   * @param columnPosition
-   * @return string
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readString(int)
    */
   public String readString(int columnPosition) throws CsvException {
 
@@ -403,48 +380,32 @@ public class CsvReader {
     return false;
   }
   
-  /**
-   * Returns column content as boolean.
-   * See <code>ColConfig</code> to define the <code>true</code> values.
-   * @param columnName
-   * @return boolean
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBoolean(java.lang.String)
    */
   public boolean readBoolean(String columnName) throws CsvException {
     
     return readBoolean(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as boolean.
-   * See <code>ColConfig</code> to define the <code>true</code> values.
-   * @param columnPosition
-   * @return boolean
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBoolean(int)
    */
   public boolean readBoolean(int columnPosition) throws CsvException {
     
     return getBoolean(getColumn(columnPosition).trim());
   }
   
-  /**
-   * Returns column content as Boolean object.
-   * See <code>ColConfig</code> to define the <code>true</code> values.
-   * @param columnName
-   * @return boolean
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBooleanObject(java.lang.String)
    */
   public Boolean readBooleanObject(String columnName) throws CsvException {
     
     return readBooleanObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Boolean object.
-   * See <code>ColConfig</code> to define the <code>true</code> values.
-   * @param columnPosition
-   * @return boolean
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBooleanObject(int)
    */
   public Boolean readBooleanObject(int columnPosition) throws CsvException {
     
@@ -452,22 +413,16 @@ public class CsvReader {
     return (s.length() == 0) ? null : Boolean.valueOf(getBoolean(s));
   }
   
-  /**
-   * Returns column content as byte.
-   * @param columnName
-   * @return byte
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readByte(java.lang.String)
    */
   public byte readByte(String columnName) throws CsvException {
     
     return readByte(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as byte.
-   * @param columnPosition
-   * @return byte
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readByte(int)
    */
   public byte readByte(int columnPosition) throws CsvException {
     
@@ -483,22 +438,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Byte object.
-   * @param columnName
-   * @return byte
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readByteObject(java.lang.String)
    */
   public Byte readByteObject(String columnName) throws CsvException {
     
     return readByteObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Byte object.
-   * @param columnPosition
-   * @return byte
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readByteObject(int)
    */
   public Byte readByteObject(int columnPosition) throws CsvException {
     
@@ -514,22 +463,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as short.
-   * @param columnName
-   * @return short
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readShort(java.lang.String)
    */
   public short readShort(String columnName) throws CsvException {
     
     return readShort(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as short.
-   * @param columnPosition
-   * @return short
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readShort(int)
    */
   public short readShort(int columnPosition) throws CsvException {
     
@@ -545,22 +488,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Short object.
-   * @param columnName
-   * @return short
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readShortObject(java.lang.String)
    */
   public Short readShortObject(String columnName) throws CsvException {
     
     return readShortObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Short object.
-   * @param columnPosition
-   * @return short
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readShortObject(int)
    */
   public Short readShortObject(int columnPosition) throws CsvException {
     
@@ -576,22 +513,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as char.
-   * @param columnName
-   * @return char
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readChar(java.lang.String)
    */
   public char readChar(String columnName) throws CsvException {
     
     return readChar(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as char.
-   * @param columnPosition
-   * @return char
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readChar(int)
    */
   public char readChar(int columnPosition) throws CsvException {
     
@@ -602,22 +533,16 @@ public class CsvReader {
     return s.charAt(0);
   }
   
-  /**
-   * Returns column content as Character object.
-   * @param columnName
-   * @return char
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readCharObject(java.lang.String)
    */
   public Character readCharObject(String columnName) throws CsvException {
     
     return readCharObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Character object.
-   * @param columnPosition
-   * @return char
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readCharObject(int)
    */
   public Character readCharObject(int columnPosition) throws CsvException {
     
@@ -628,22 +553,16 @@ public class CsvReader {
     return Character.valueOf(s.charAt(0));
   }
   
-  /**
-   * Returns column content as int.
-   * @param columnName
-   * @return int
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readInt(java.lang.String)
    */
   public int readInt(String columnName) throws CsvException {
     
     return readInt(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as int.
-   * @param columnPosition
-   * @return int
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readInt(int)
    */
   public int readInt(int columnPosition) throws CsvException {
     
@@ -659,22 +578,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Integer object.
-   * @param columnName
-   * @return int
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readIntObject(java.lang.String)
    */
   public Integer readIntObject(String columnName) throws CsvException {
     
     return readIntObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Integer object.
-   * @param columnPosition
-   * @return int
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readIntObject(int)
    */
   public Integer readIntObject(int columnPosition) throws CsvException {
     
@@ -690,22 +603,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as long.
-   * @param columnName
-   * @return long
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readLong(java.lang.String)
    */
   public long readLong(String columnName) throws CsvException {
     
     return readLong(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as long.
-   * @param columnPosition
-   * @return long
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readLong(int)
    */
   public long readLong(int columnPosition) throws CsvException {
     
@@ -721,22 +628,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Long object.
-   * @param columnName
-   * @return long
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readLongObject(java.lang.String)
    */
   public Long readLongObject(String columnName) throws CsvException {
     
     return readLongObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Long object.
-   * @param columnPosition
-   * @return long
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readLongObject(int)
    */
   public Long readLongObject(int columnPosition) throws CsvException {
     
@@ -780,22 +681,16 @@ public class CsvReader {
     return sb.toString();
   }
   
-  /**
-   * Returns column content as float.
-   * @param columnName
-   * @return float
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readFloat(java.lang.String)
    */
   public float readFloat(String columnName) throws CsvException {
     
     return readFloat(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as float.
-   * @param columnPosition
-   * @return float
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readFloat(int)
    */
   public float readFloat(int columnPosition) throws CsvException {
     
@@ -811,22 +706,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Float object.
-   * @param columnName
-   * @return float
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readFloatObject(java.lang.String)
    */
   public Float readFloatObject(String columnName) throws CsvException {
     
     return readFloatObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Float object.
-   * @param columnPosition
-   * @return float
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readFloatObject(int)
    */
   public Float readFloatObject(int columnPosition) throws CsvException {
     
@@ -842,22 +731,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as double.
-   * @param columnName
-   * @return double
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDouble(java.lang.String)
    */
   public double readDouble(String columnName) throws CsvException {
     
     return readDouble(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as double.
-   * @param columnPosition
-   * @return double
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDouble(int)
    */
   public double readDouble(int columnPosition) throws CsvException {
     
@@ -873,22 +756,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Double object.
-   * @param columnName
-   * @return double
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDoubleObject(java.lang.String)
    */
   public Double readDoubleObject(String columnName) throws CsvException {
     
     return readDoubleObject(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Double object.
-   * @param columnPosition
-   * @return double
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDoubleObject(int)
    */
   public Double readDoubleObject(int columnPosition) throws CsvException {
     
@@ -904,22 +781,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as BigDecimal.
-   * @param columnName
-   * @return BigDecimal
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBigDecimal(java.lang.String)
    */
   public BigDecimal readBigDecimal(String columnName) throws CsvException {
     
     return readBigDecimal(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as BigDecimal.
-   * @param columnPosition
-   * @return BigDecimal
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBigDecimal(int)
    */
   public BigDecimal readBigDecimal(int columnPosition) throws CsvException {
     
@@ -935,22 +806,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as BigInteger.
-   * @param columnName
-   * @return BigInteger
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBigInteger(java.lang.String)
    */
   public BigInteger readBigInteger(String columnName) throws CsvException {
     
     return readBigInteger(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as BigInteger.
-   * @param columnPosition
-   * @return BigInteger
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readBigInteger(int)
    */
   public BigInteger readBigInteger(int columnPosition) throws CsvException {
     
@@ -966,22 +831,16 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns column content as Date.
-   * @param columnName
-   * @return Date
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDate(java.lang.String)
    */
   public Date readDate(String columnName) throws CsvException {
     
     return readDate(getColumnPosition(columnName));
   }
   
-  /**
-   * Returns column content as Date.
-   * @param columnPosition
-   * @return Date
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readDate(int)
    */
   public Date readDate(int columnPosition) throws CsvException {
     
@@ -997,34 +856,16 @@ public class CsvReader {
     }
   }
 
-  /**
-   * Returns a column content as Enum constant.
-   * If the column content start with a digit, 
-   * the constant is derived using the position of the Enum constant value array.
-   * Otherwise, the reader tries to get the constant by name. A last try 
-   * is done with the constant name in uppercase.
-   * @param <E> Enum type
-   * @param columnName
-   * @param clazz Enum class
-   * @return Enum constant 
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readEnum(java.lang.String, java.lang.Class)
    */
   public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws CsvException {
     
     return readEnum(getColumnPosition(columnName), clazz);
   }
   
-  /**
-   * Returns a column content as Enum constant.
-   * If the column content start with a digit, 
-   * the constant is derived using the position of the Enum constant value array.
-   * Otherwise, the reader tries to get the constant by name. A last try 
-   * is done with the constant name in uppercase.
-   * @param <E> Enum type
-   * @param columnPosition
-   * @param clazz Enum class
-   * @return Enum constant 
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readEnum(int, java.lang.Class)
    */
   public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws CsvException {
     
@@ -1049,24 +890,8 @@ public class CsvReader {
     }
   }
 
-  /**
-   * Returns a data object.
-   * <p>
-   * The data object class must have setter methods corresponding to 
-   * column names. See description of method <code>createMethodName</code> 
-   * of class <code>de.ufinke.cubaja.Util</code> for building method names from
-   * column names.
-   * The setter methods must have a void return type and exactly one parameter
-   * of a type supported by one of the <code>CsvReader</code>s <code>read</code> 
-   * methods.
-   * <p>
-   * Note that for performance reasons
-   * the setter methods are not called by the reflection API but
-   * by an on the fly generated instance of <code>ObjectFactory</code>. 
-   * @param <D> data type
-   * @param clazz
-   * @return data object
-   * @throws CsvException
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readObject(java.lang.Class)
    */
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
@@ -1078,17 +903,10 @@ public class CsvReader {
     }
   }
   
-  /**
-   * Returns an <code>Iterable</code> over all data objects.
-   * The underlying <code>Iterator</code> calls <code>nextRecord</code>
-   * and <code>readObject</code> until EOF.
-   * May be used to process CSV sources with homogeneous structures and high data quality
-   * in a <code>for</code> loop. 
-   * @param <D> data type
-   * @param clazz
-   * @return Iterable
+  /* (non-Javadoc)
+   * @see de.ufinke.cubaja.csv.ColumnReader#readAllRows(java.lang.Class)
    */
-  public <D> Iterable<D> iterator(Class<? extends D> clazz) {
+  public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
     
     return new ObjectIterator<D>(this, clazz);
   }

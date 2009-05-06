@@ -4,16 +4,17 @@
 package de.ufinke.cubaja.csv;
 
 import java.util.Iterator;
+import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.util.IteratorException;
 
 class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
 
-  private CsvReader reader;
+  private ColumnReader reader;
   private Class<? extends D> clazz;
   private boolean calledHasNext;
   private boolean hasNext;
   
-  ObjectIterator(CsvReader reader, Class<? extends D> clazz) {
+  ObjectIterator(ColumnReader reader, Class<? extends D> clazz) {
   
     this.reader = reader;
     this.clazz = clazz;
@@ -29,7 +30,7 @@ class ObjectIterator<D> implements Iterator<D>, Iterable<D> {
     if (! calledHasNext) {
       calledHasNext = true;
       try {
-        hasNext = reader.nextRecord();
+        hasNext = reader.nextRow();
       } catch (Exception e) {
         throw new IteratorException(e);
       }

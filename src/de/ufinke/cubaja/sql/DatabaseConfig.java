@@ -6,7 +6,6 @@ package de.ufinke.cubaja.sql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 import de.ufinke.cubaja.config.Mandatory;
 import de.ufinke.cubaja.util.Text;
@@ -157,6 +156,8 @@ public class DatabaseConfig {
   private String url;
   private String execute;
   private Properties properties;
+  private boolean autoCommit;
+  private boolean log;
 
   /**
    * Constructor.
@@ -164,6 +165,49 @@ public class DatabaseConfig {
   public DatabaseConfig() {
 
     properties = new Properties();
+    autoCommit = false;
+    log = false;
+  }
+  
+  /**
+   * Returns whether activities should be log.
+   * By default, logging is not enabled.
+   * @return log flag
+   */
+  public boolean isLog() {
+  
+    return log;
+  }
+
+  /**
+   * Sets the log flag.
+   * If set, activities like establishing or closing a connection,
+   * commit, rollback and statement creation are logged
+   * on <code>debug</code> level.
+   * @param log
+   */
+  public void setLog(boolean log) {
+  
+    this.log = log;
+  }
+
+  /**
+   * Returns the autoCommit flag.
+   * By default, autoCommit is <code>false</code>.
+   * @return autoCommit flag
+   */
+  public boolean isAutoCommit() {
+  
+    return autoCommit;
+  }
+  
+  /**
+   * Sets the autoCommit flag.
+   * @param autoCommit
+   */
+  public void setAutoCommit(boolean autoCommit) {
+  
+    this.autoCommit = autoCommit;
   }
 
   /**
@@ -251,7 +295,7 @@ public class DatabaseConfig {
 
   /**
    * Sets an SQL statement.
-   * The statement is executed immediately after a connection has been established.
+   * The statement is executed during initialization of a <code>Database</code> instance.
    * Useful to set the current schema, for example.
    * @param execute an SQL statement
    */
@@ -306,11 +350,6 @@ public class DatabaseConfig {
       SQLException ex = new SQLException(message);
       ex.initCause(sqle);
       throw ex;
-    }
-    
-    if (execute != null) {
-      Statement statement = connection.createStatement();
-      statement.execute(execute);
     }
     
     return connection;

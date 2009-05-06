@@ -15,10 +15,10 @@ public class CsvException extends Exception {
   
   private String message;
   private int lineNumber;
-  private int recordNumber;
+  private int rowNumber;
   private int columnNumber;
   private String columnName;
-  private String recordContent;
+  private String rowContent;
   private String columnContent;
 
   private String locationMessage;
@@ -43,64 +43,64 @@ public class CsvException extends Exception {
   }
 
   /**
-   * Constructor with record information.
+   * Constructor with row information.
    * @param message
    * @param lineNumber
-   * @param recordNumber
-   * @param recordContent
+   * @param rowNumber
+   * @param rowContent
    */
-  public CsvException(String message, int lineNumber, int recordNumber, String recordContent) {
+  public CsvException(String message, int lineNumber, int rowNumber, String rowContent) {
 
-    this(message, null, lineNumber, recordNumber, recordContent, 0, null, null);
+    this(message, null, lineNumber, rowNumber, rowContent, 0, null, null);
   }
 
   /**
-   * Constructor with cause and record information.
+   * Constructor with cause and row information.
    * @param message
    * @param cause
    * @param lineNumber
-   * @param recordNumber
-   * @param recordContent
+   * @param rowNumber
+   * @param rowContent
    */
-  public CsvException(String message, Throwable cause, int lineNumber, int recordNumber, String recordContent) {
+  public CsvException(String message, Throwable cause, int lineNumber, int rowNumber, String rowContent) {
 
-    this(message, cause, lineNumber, recordNumber, recordContent, 0, null, null);
+    this(message, cause, lineNumber, rowNumber, rowContent, 0, null, null);
   }
 
   /**
-   * Constructor with record and column information.
+   * Constructor with row and column information.
    * @param message
    * @param lineNumber
-   * @param recordNumber
-   * @param recordContent
+   * @param rowNumber
+   * @param rowContent
    * @param columnNumber
    * @param columnName
    * @param columnContent
    */
-  public CsvException(String message, int lineNumber, int recordNumber, String recordContent, int columnNumber, String columnName, String columnContent) {
+  public CsvException(String message, int lineNumber, int rowNumber, String rowContent, int columnNumber, String columnName, String columnContent) {
 
-    this(message, null, lineNumber, recordNumber, recordContent, columnNumber, columnName, columnContent);
+    this(message, null, lineNumber, rowNumber, rowContent, columnNumber, columnName, columnContent);
   }
 
   /**
-   * Constructor with cause, record and column information.
+   * Constructor with cause, row and column information.
    * @param message
    * @param cause
    * @param lineNumber
-   * @param recordNumber
-   * @param recordContent
+   * @param rowNumber
+   * @param rowContent
    * @param columnNumber
    * @param columnName
    * @param columnContent
    */
-  public CsvException(String message, Throwable cause, int lineNumber, int recordNumber, String recordContent, int columnNumber, String columnName, String columnContent) {
+  public CsvException(String message, Throwable cause, int lineNumber, int rowNumber, String rowContent, int columnNumber, String columnName, String columnContent) {
 
     super(cause);
 
     this.message = message;
     this.lineNumber = lineNumber;
-    this.recordNumber = recordNumber;
-    this.recordContent = recordContent;
+    this.rowNumber = rowNumber;
+    this.rowContent = rowContent;
     this.columnNumber = columnNumber;
     this.columnName = columnName;
     this.columnContent = columnContent;
@@ -125,9 +125,9 @@ public class CsvException extends Exception {
         sb.append(' ');
         sb.append(lineNumber);
         sb.append(", ");
-        sb.append(text.get("constRecord"));
+        sb.append(text.get("constRow"));
         sb.append(' ');
-        sb.append(recordNumber);
+        sb.append(rowNumber);
         if (columnNumber != 0) {
           sb.append(", ");
           sb.append(text.get("constColumn"));
@@ -157,13 +157,13 @@ public class CsvException extends Exception {
   }
   
   /**
-   * Returns the record number where the error occured.
-   * If not applicable, the record number is <code>0</code>.
-   * @return record number
+   * Returns the row number where the error occured.
+   * If not applicable, the row number is <code>0</code>.
+   * @return row number
    */
-  public int getRecordNumber() {
+  public int getRowNumber() {
     
-    return recordNumber;
+    return rowNumber;
   }
 
   /**
@@ -187,13 +187,13 @@ public class CsvException extends Exception {
   }
 
   /**
-   * Returns the complete record in error.
-   * If not applicable, the record is <code>null</code>.
-   * @return record content
+   * Returns the complete row in error.
+   * If not applicable, the row is <code>null</code>.
+   * @return row content
    */
-  public String getRecordContent() {
+  public String getRowContent() {
 
-    return recordContent;
+    return rowContent;
   }
 
   /**

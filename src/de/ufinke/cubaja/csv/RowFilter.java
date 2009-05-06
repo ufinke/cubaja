@@ -3,20 +3,22 @@
 
 package de.ufinke.cubaja.csv;
 
+import de.ufinke.cubaja.io.ColumnReader;
+
 /**
- * Record filter.
+ * Row filter.
  * @author Uwe Finke
  */
-public interface RecordFilter {
+public interface RowFilter {
 
   /**
-   * Signals whether a record should be processed.
+   * Signals whether a row should be processed.
    * A filter is used in
-   * method <code>nextRecord</code> of class <code>CsvReader</code>.
+   * method <code>nextRow</code> of class <code>CsvReader</code>.
    * If the result is <code>false</code>,
-   * the reader reads the next record immediately.
+   * the reader reads the next row immediately.
    * @param reader
    * @return flag
    */
-  public boolean acceptRecord(CsvReader reader);
+  public boolean acceptRow(ColumnReader reader);
 }

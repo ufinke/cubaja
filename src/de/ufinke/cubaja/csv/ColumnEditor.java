@@ -3,6 +3,8 @@
 
 package de.ufinke.cubaja.csv;
 
+import de.ufinke.cubaja.io.ColumnReader;
+
 /**
  * Column content editor.
  * @author Uwe Finke
@@ -17,5 +19,5 @@ public interface ColumnEditor {
    * @return edited column content
    * @throws CsvException
    */
-  public String editColumn(String column, ColConfig colConfig, CsvReader reader) throws CsvException;
+  public String editColumn(String column, ColConfig colConfig, ColumnReader reader) throws CsvException;
 }

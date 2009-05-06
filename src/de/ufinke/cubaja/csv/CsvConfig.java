@@ -26,8 +26,8 @@ public class CsvConfig {
 
   private Character separator;
   private Character escapeChar;
-  private RecordParser parser;
-  private RecordFilter recordFilter;
+  private RowParser parser;
+  private RowFilter rowFilter;
 
   private Boolean trim;
   private Character decimalChar;
@@ -138,20 +138,20 @@ public class CsvConfig {
    * Sets the parser which separates columns.
    * @param parser
    */
-  public void setParser(RecordParser parser) {
+  public void setParser(RowParser parser) {
 
     this.parser = parser;
   }
 
   /**
    * Returns the parser.
-   * By default, this is a <code>DefaultRecordParser</code>.
+   * By default, this is a <code>DefaultRowParser</code>.
    * @return parser
    */
-  public RecordParser getParser() {
+  public RowParser getParser() {
 
     if (parser == null) {
-      parser = new DefaultRecordParser();
+      parser = new DefaultRowParser();
     }
     return parser;
   }
@@ -245,13 +245,13 @@ public class CsvConfig {
   }
 
   /**
-   * Returns whether the CSV input has a header record.
+   * Returns whether the CSV input has a header row.
    * This is <code>true</code> when
    * we set the header flag explicitly,
    * or when we define a header property on at least one column.  
    * @return flag
    */
-  public boolean hasHeaderRecord() {
+  public boolean hasHeaderRow() {
 
     if (header == null) {
       setHeader(headerDefined);
@@ -260,7 +260,7 @@ public class CsvConfig {
   }
 
   /**
-   * Signals whether the CSV input has a header record.
+   * Signals whether the CSV input has a header row.
    * @param header
    */
   public void setHeader(Boolean header) {
@@ -269,22 +269,22 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the record filter.
+   * Returns the row filter.
    * By default, there is no filter.
-   * @return record filter
+   * @return row filter
    */
-  public RecordFilter getRecordFilter() {
+  public RowFilter getRowFilter() {
   
-    return recordFilter;
+    return rowFilter;
   }
   
   /**
-   * Sets a record filter.
-   * @param recordFilter
+   * Sets a row filter.
+   * @param rowFilter
    */
-  public void setRecordFilter(RecordFilter recordFilter) {
+  public void setRowFilter(RowFilter rowFilter) {
   
-    this.recordFilter = recordFilter;
+    this.rowFilter = rowFilter;
   }
 
   /**

@@ -10,19 +10,19 @@ import java.util.Arrays;
 import de.ufinke.cubaja.util.*;
 
 /**
- * Default <code>RecordParser</code> implementation.
+ * Default <code>RowParser</code> implementation.
  * @author Uwe Finke
  */
-public class DefaultRecordParser implements RecordParser {
+public class DefaultRowParser implements RowParser {
 
-  static private final Text text = new Text(DefaultRecordParser.class);
+  static private final Text text = new Text(DefaultRowParser.class);
   
   private char separator;
   private char escapeChar;
   private boolean escapeDefined;
 
   private LineNumberReader lineReader;  
-  private String record;
+  private String row;
   
   private int count;
   private int[] startArray;
@@ -32,7 +32,7 @@ public class DefaultRecordParser implements RecordParser {
   /**
    * Constructor.
    */
-  public DefaultRecordParser() {
+  public DefaultRowParser() {
     
     startArray = new int[32];
     endArray = new int[32];
@@ -53,13 +53,10 @@ public class DefaultRecordParser implements RecordParser {
     lineReader = (in instanceof LineNumberReader) ? (LineNumberReader) in : new LineNumberReader(in);
   }
 
-  /**
-   * Reads the next record.
-   */
-  public String readRecord() throws IOException, CsvException {
+  public String readRow() throws IOException, CsvException {
 
-    record = escapeDefined ? parseEscape() : parseSimple();    
-    return record;
+    row = escapeDefined ? parseEscape() : parseSimple();    
+    return row;
   }
   
   private String parseSimple() throws IOException {
@@ -208,7 +205,7 @@ public class DefaultRecordParser implements RecordParser {
   }
   
   /**
-   * Returns number of columns of current line.
+   * Returns number of columns of current row.
    */
   public int getColumnCount() {
 
@@ -226,7 +223,7 @@ public class DefaultRecordParser implements RecordParser {
   /**
    * Returns whether all column data have zero length.
    */
-  public boolean isEmptyRecord() {
+  public boolean isEmptyRow() {
     
     for (int i = 0; i < count; i++) {
       if (startArray[i] != endArray[i]) {
@@ -244,7 +241,7 @@ public class DefaultRecordParser implements RecordParser {
     if (escapeDefined && escapeArray[index]) {
       return removeDoubleEscape(index);
     } else {
-      return record.substring(startArray[index], endArray[index]);
+      return row.substring(startArray[index], endArray[index]);
     }
   }
   
@@ -258,7 +255,7 @@ public class DefaultRecordParser implements RecordParser {
     
     int i = start;    
     while (i < end) {
-      char c = record.charAt(i);
+      char c = row.charAt(i);
       if (c == esc) {
         i++;
       }
