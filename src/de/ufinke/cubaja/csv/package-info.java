@@ -1,6 +1,8 @@
 /**
  * <p>
  * Package for processing CSV data.
+ * Main class is <code>CsvReader</code>.
+ * A <code>CsvWriter</code> is planned.
  * </p>
  * <p>
  * Copyright (c) 2009, Uwe Finke. All rights reserved.

@@ -1,6 +1,7 @@
 /**
  * <p>
- * Classes concerning input / output.
+ * Classes concerning input / output <i><b>(under construction)</b></i>.
+ * Class <code>FileConfig</code> is ready for use. The API of other classes may be changed.
  * </p>
  * <p>
  * Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
