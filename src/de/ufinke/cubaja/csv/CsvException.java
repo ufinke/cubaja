@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.csv;
 
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.Text;
 
 /**
  * Exception thrown during CSV processing.

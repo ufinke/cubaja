@@ -5,9 +5,12 @@ package de.ufinke.cubaja.sql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.Date;
-import de.ufinke.cubaja.io.*;
-import java.sql.*;
+import de.ufinke.cubaja.io.ColumnReader;
 
 public class Query extends Sql implements ColumnReader {
 

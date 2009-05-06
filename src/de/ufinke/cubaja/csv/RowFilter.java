@@ -3,8 +3,6 @@
 
 package de.ufinke.cubaja.csv;
 
-import de.ufinke.cubaja.io.ColumnReader;
-
 /**
  * Row filter.
  * @author Uwe Finke
@@ -20,5 +18,5 @@ public interface RowFilter {
    * @param reader
    * @return flag
    */
-  public boolean acceptRow(ColumnReader reader);
+  public boolean acceptRow(CsvReader reader);
 }

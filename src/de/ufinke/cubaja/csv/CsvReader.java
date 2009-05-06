@@ -299,7 +299,7 @@ public class CsvReader implements ColumnReader {
     }
     
     if (colConfig.getEditor() != null) {
-      s = colConfig.getEditor().editColumn(s, colConfig, this);
+      s = colConfig.getEditor().editColumn(s, colConfig);
     }
     
     return s;

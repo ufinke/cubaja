@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
 import java.util.Arrays;
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.Text;
 
 /**
  * Default <code>RowParser</code> implementation.

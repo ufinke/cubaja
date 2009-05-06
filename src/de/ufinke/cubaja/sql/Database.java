@@ -3,9 +3,13 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.sql.*;
-import org.apache.commons.logging.*;
-import de.ufinke.cubaja.util.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import de.ufinke.cubaja.util.Text;
 
 public class Database {
 

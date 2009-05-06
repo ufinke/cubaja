@@ -3,8 +3,6 @@
 
 package de.ufinke.cubaja.csv;
 
-import de.ufinke.cubaja.io.ColumnReader;
-
 /**
  * Factory needed internaly for <code>CsvReader.readObject()</code>.
  * @author Uwe Finke
@@ -17,5 +15,5 @@ public interface ObjectFactory {
    * @return data object
    * @throws CsvException
    */
-  public Object createObject(ColumnReader reader) throws CsvException;
+  public Object createObject(CsvReader reader) throws CsvException;
 }

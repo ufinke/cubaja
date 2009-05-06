@@ -3,7 +3,6 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.sql.*;
 
 public class Sql {
 
