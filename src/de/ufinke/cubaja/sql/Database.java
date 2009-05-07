@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.sql;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.commons.logging.Log;
@@ -61,15 +60,18 @@ public class Database {
     }
   }
   
-  void execute(String sql, int... acceptedSqlCodes) throws SQLException {
+  public void execute(Object sql, int... acceptedSqlCodes) throws SQLException {
 
+    String sqlString = sql.toString();
+    
     if (logger != null) {
-      logger.debug(text.get("execute", myId, sql));
+      logger.debug(text.get("execute", myId, sqlString));
     }
     
     try {
       Statement statement = connection.createStatement();
-      statement.execute(sql);
+      statement.execute(sqlString);
+      statement.close();
     } catch (SQLException e) {
       int sqlCode = e.getErrorCode();
       for (int i = 0; i < acceptedSqlCodes.length; i++) {
@@ -81,18 +83,32 @@ public class Database {
     }
   }
   
-  PreparedStatement prepareStatement(String sql) throws SQLException {
+  public Query createQuery(Object sql) throws SQLException {
+
+    String sqlString = sql.toString();
     
     if (logger != null) {
-      logger.debug(text.get("prepare", myId, sql));
+      logger.debug(text.get("prepare", myId, sqlString));
     }
     
-    return connection.prepareStatement(sql);
+    Query query = new Query();
+    String preparedSql = query.prepareString(sqlString);
+    query.setStatement(connection.prepareStatement(preparedSql));
+    return query;
   }
   
-  public Sql createSql() throws SQLException {
+  public Update createUpdate(Object sql) throws SQLException {
     
-    return new Sql(this);
+    String sqlString = sql.toString();
+    
+    if (logger != null) {
+      logger.debug(text.get("prepare", myId, sqlString));
+    }
+
+    Update update = new Update();
+    String preparedSql = update.prepareString(sqlString);
+    update.setStatement(connection.prepareStatement(preparedSql));
+    return update;
   }
   
   public void commit() throws SQLException {

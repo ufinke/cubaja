@@ -5,21 +5,18 @@ package de.ufinke.cubaja.sql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.Date;
 import de.ufinke.cubaja.io.ColumnReader;
 
-public class Query extends Sql implements ColumnReader {
+public class Query extends PreparedSql implements ColumnReader {
 
-  private PreparedStatement statement;
   private ResultSet resultSet;
   
-  Query(Database database) {
+  Query() {
   
-    super(database);
   }
   
   public ResultSetMetaData getMetaData() throws SQLException {
@@ -27,7 +24,13 @@ public class Query extends Sql implements ColumnReader {
     return (resultSet == null) ? null : resultSet.getMetaData();
   }
   
-  public void releaseResult() throws SQLException {
+  public void execute() throws SQLException {
+    
+    closeResultSet();
+    resultSet = statement.executeQuery();
+  }
+  
+  public void closeResultSet() throws SQLException {
     
     if (resultSet != null) {
       resultSet.close();
@@ -37,7 +40,7 @@ public class Query extends Sql implements ColumnReader {
   
   public void close() throws SQLException {
 
-    releaseResult();
+    closeResultSet();
     
     if (statement != null) {
       statement.close();

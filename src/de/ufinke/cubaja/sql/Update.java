@@ -3,10 +3,9 @@
 
 package de.ufinke.cubaja.sql;
 
-public class Update extends Sql {
+public class Update extends PreparedSql {
 
-  Update(Database database) {
+  Update() {
     
-    super(database);
   }
 }

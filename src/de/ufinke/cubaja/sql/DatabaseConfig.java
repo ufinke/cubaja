@@ -29,7 +29,6 @@ import de.ufinke.cubaja.util.Text;
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
- *     <td>x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>url</code></td>
@@ -92,7 +91,6 @@ public class DatabaseConfig {
    *     <td align="center" valign="top">A</td>
    *     <td align="center" valign="top">x</td>
    *     <td align="center" valign="top">x</td>
-   *     <td>x</td>
    *     </tr>
    *   <tr bgcolor="#eeeeff">
    *     <td align="left" valign="top"><code>value</code></td>
