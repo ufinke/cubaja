@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Date;
 import de.ufinke.cubaja.io.ColumnReader;
 
@@ -15,8 +15,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   private ResultSet resultSet;
   
-  Query() {
+  Query(PreparedStatement statement, Sql sql) {
   
+    super(statement, sql);
   }
   
   public ResultSetMetaData getMetaData() throws SQLException {

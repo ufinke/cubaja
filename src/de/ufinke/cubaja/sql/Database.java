@@ -60,55 +60,71 @@ public class Database {
     }
   }
   
-  public void execute(Object sql, int... acceptedSqlCodes) throws SQLException {
+  public void execute(String sql, int... acceptedSqlCodes) throws SQLException {
+  
+    execute(new Sql(sql), acceptedSqlCodes);
+  }
+  
+  public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
-    String sqlString = sql.toString();
-    
-    if (logger != null) {
-      logger.debug(text.get("execute", myId, sqlString));
+    if (sql.hasVariables()) {
+      throw new SQLException(text.get("execVariables"));
     }
     
-    try {
-      Statement statement = connection.createStatement();
-      statement.execute(sqlString);
-      statement.close();
-    } catch (SQLException e) {
-      int sqlCode = e.getErrorCode();
-      for (int i = 0; i < acceptedSqlCodes.length; i++) {
-        if (acceptedSqlCodes[i] == sqlCode) {
-          return;
-        }
+    Statement statement = connection.createStatement();
+
+    for (String stm : sql.getStatements()) {
+      
+      if (logger != null) {
+        logger.debug(text.get("execute", myId, stm));
       }
-      throw e;
+      
+      try {
+        statement.execute(stm);
+      } catch (SQLException e) {
+        int sqlCode = e.getErrorCode();
+        for (int i = 0; i < acceptedSqlCodes.length; i++) {
+          if (acceptedSqlCodes[i] == sqlCode) {
+            return;
+          }
+        }
+        throw e;
+      }
     }
+    
+    statement.close();
   }
   
-  public Query createQuery(Object sql) throws SQLException {
-
-    String sqlString = sql.toString();
+  public Query createQuery(String sql) throws SQLException {
     
-    if (logger != null) {
-      logger.debug(text.get("prepare", myId, sqlString));
-    }
-    
-    Query query = new Query();
-    String preparedSql = query.prepareString(sqlString);
-    query.setStatement(connection.prepareStatement(preparedSql));
-    return query;
+    return createQuery(new Sql(sql));
   }
   
-  public Update createUpdate(Object sql) throws SQLException {
-    
-    String sqlString = sql.toString();
+  public Query createQuery(Sql sql) throws SQLException {
+
+    String stm = sql.getSingleStatement();
     
     if (logger != null) {
-      logger.debug(text.get("prepare", myId, sqlString));
+      logger.debug(text.get("prepare", myId, stm));
     }
+    
+    return new Query(connection.prepareStatement(stm), sql);
+  }
+  
+  public Update createUpdate(String sql) throws SQLException {
+    
+    return createUpdate(new Sql(sql));
+  }
+  
+  public Update createUpdate(Sql sql) throws SQLException {
 
-    Update update = new Update();
-    String preparedSql = update.prepareString(sqlString);
-    update.setStatement(connection.prepareStatement(preparedSql));
-    return update;
+    String stm = sql.getSingleStatement();
+    
+    if (logger != null) {
+      logger.debug(text.get("prepare", myId, stm));
+    }
+    
+    return new Update(connection.prepareStatement(stm), sql);
   }
   
   public void commit() throws SQLException {

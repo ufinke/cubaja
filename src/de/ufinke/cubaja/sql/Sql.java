@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import de.ufinke.cubaja.util.Text;
+import java.sql.*;
 
 public class Sql {
 
@@ -74,10 +75,30 @@ public class Sql {
     return string;
   }
   
-  public List<String> getStatementList() {
+  List<String> getStatements() {
     
     saveStatement();
     return statementList;
+  }
+  
+  String getSingleStatement() throws SQLException {
+    
+    saveStatement();
+    
+    switch (statementList.size()) {
+      case 0:
+        throw new SQLException(text.get("noStatement"));
+      case 1:
+        return statementList.get(0);
+      default:
+        throw new SQLException(text.get("multiStatement"));
+    }
+  }
+  
+  boolean hasVariables() {
+    
+    //TODO
+    return false;
   }
   
   /**

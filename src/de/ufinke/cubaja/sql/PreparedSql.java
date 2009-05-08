@@ -8,19 +8,12 @@ import java.sql.PreparedStatement;
 public class PreparedSql {
 
   protected PreparedStatement statement;
+  protected Sql sql;
   
-  protected PreparedSql() {
+  protected PreparedSql(PreparedStatement statement, Sql sql) {
   
+    this.statement = statement;
+    this.sql = sql;
   }
 
-  String prepareString(String sql) {
-    
-    //TODO
-    return sql;
-  }
-  
-  void setStatement(PreparedStatement statement) {
-    
-    this.statement = statement;
-  }
 }

@@ -3,9 +3,12 @@
 
 package de.ufinke.cubaja.sql;
 
+import java.sql.*;
+
 public class Update extends PreparedSql {
 
-  Update() {
+  Update(PreparedStatement statement, Sql sql) {
     
+    super(statement, sql);
   }
 }
