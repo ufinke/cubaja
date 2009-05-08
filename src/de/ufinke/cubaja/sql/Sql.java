@@ -9,21 +9,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import de.ufinke.cubaja.util.Text;
-import java.sql.*;
 
 public class Sql {
 
   static enum State {    
-    DEFAULT,
-    LITERAL,
-    LINE_COMMENT,
-    LINE_COMMENT_START,
-    BLOCK_COMMENT,
-    BLOCK_COMMENT_START,
-    BLOCK_COMMENT_END
+    DEFAULT            (false),
+    LITERAL            (false),
+    LINE_COMMENT       (false),
+    LINE_COMMENT_START (true),
+    BLOCK_COMMENT      (false),
+    BLOCK_COMMENT_START(true),
+    BLOCK_COMMENT_END  (false),
+    VARIABLE           (false);
+    
+    boolean commentStart;
+    
+    private State(boolean commentStart) {
+      
+      this.commentStart = commentStart;
+    }
   }
   
   static private final Text text = new Text(Sql.class);
@@ -38,11 +47,18 @@ public class Sql {
   private boolean retainBlockComments;
   
   private List<String> statementList;
+  private List<String> variableList;
+  private StringBuilder variable;
   
   public Sql() {
     
     inBuffer = new char[1024];
     outBuffer = new char[1024];
+    
+    statementList = new ArrayList<String>();
+    variableList = new ArrayList<String>();
+    variableList.add("*dummy*"); // position starts with 1
+    
     state = State.DEFAULT;
   }
   
@@ -65,14 +81,41 @@ public class Sql {
   }
   
   /**
-   * Returns the formatted SQL statement.
+   * Returns the parsed SQL.
    */
   public String toString() {
     
     if (string == null) {
-      string = String.valueOf(outBuffer, 0, outLength);
+      
+      StringBuilder sb = new StringBuilder();
+      
+      for (int i = 0; i < statementList.size(); i++) {
+        if (sb.length() > 0) {
+          sb.append("; ");
+        }
+        sb.append(statementList.get(i));
+      }
+      
+      if (outLength > 0) {
+        if (sb.length() > 0) {
+          sb.append("; ");
+        }
+        sb.append(outBuffer, 0, outLength);
+      }
+      
+      string = sb.toString();
     }
+    
     return string;
+  }
+  
+  private void saveStatement() {
+    
+    if (outLength > 0) {
+      statementList.add(String.valueOf(outBuffer, 0, outLength));
+      outLength = 0;
+    }    
+    spacePending = false;
   }
   
   List<String> getStatements() {
@@ -97,8 +140,12 @@ public class Sql {
   
   boolean hasVariables() {
     
-    //TODO
-    return false;
+    return variableList.size() > 1;
+  }
+  
+  List<String> getVariables() {
+    
+    return variableList;
   }
   
   /**
@@ -162,6 +209,106 @@ public class Sql {
     return this;
   }
   
+  public Sql append(Object[] value) {
+
+    if (value == null) {
+      return this;
+    }
+    
+    StringBuilder sb = new StringBuilder(128);
+    
+    for (int i = 0; i < value.length; i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      if (value[i] instanceof Number) {
+        sb.append(value[i].toString());
+      } else {
+        sb.append('\'');
+        sb.append(value[i].toString());
+        sb.append('\'');
+      }
+    }
+    
+    return append(sb.toString());
+  }
+  
+  public Sql append(Collection<?> value) {
+
+    if (value == null) {
+      return this;
+    }
+    
+    return append(value.toArray());
+  }
+  
+  public Sql append(int[] value) {
+    
+    if (value == null) {
+      return this;
+    }
+    
+    StringBuilder sb = new StringBuilder(128);
+    
+    for (int i = 0; i < value.length; i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(value[i]);
+    }
+
+    return append(sb.toString());
+  }
+  
+  /**
+   * Generates SQL code for <code>update</code> statements.
+   * The variables in the list are expanded to 
+   * <code>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</code>.
+   * @param variables
+   */
+  public Sql appendUpdate(String... variables) throws SQLException {
+    
+    StringBuilder sb = new StringBuilder(256);
+    
+    String separator = "set ";
+    for (String variable : variables) {
+      sb.append(separator);
+      sb.append(variable);
+      sb.append(" = :");
+      sb.append(variable);
+      separator = ", ";
+    }
+    
+    return append(sb.toString());
+  }
+  
+  /**
+   * Generates SQL code for <code>insert</code> statements.
+   * The variables in the list are expanded to 
+   * <code>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</code>.
+   * @param variables
+   */
+  public Sql appendInsert(String... variables) throws SQLException {
+
+    StringBuilder sb = new StringBuilder(256);
+    
+    String separator = " (";
+    for (String variable : variables) {
+      sb.append(separator);
+      sb.append(variable);
+      separator = ", ";
+    }
+    separator = ") values (:";
+    for (String variable : variables) {
+      sb.append(separator);
+      sb.append(variable);
+      separator = ", :";
+    }
+    sb.append(") ");
+    
+    return append(sb.toString());
+  }
+  
   private void append(char[] in, int length) {
     
     string = null;
@@ -174,6 +321,31 @@ public class Sql {
       char c = in[i];
       boolean accept = true;
       boolean removeLastChar = false;
+
+      switch (state) {
+        
+        case VARIABLE:
+          if (Character.isJavaIdentifierPart(c)) {
+            variable.append(c);
+          } else {
+            variableList.add(variable.toString());
+            variable = null;
+            state = State.DEFAULT;
+          }
+          break;
+        
+        case LINE_COMMENT_START:
+          if (c != '-') {
+            state = State.DEFAULT;
+          }
+          break;
+          
+        case BLOCK_COMMENT_START:
+          if (c != '*' || retainBlockComments) {
+            state = State.DEFAULT;
+          }
+          break;
+      }
       
       switch (state) {
       
@@ -195,6 +367,11 @@ public class Sql {
               break;
             case '/':
               state = State.BLOCK_COMMENT_START;
+              break;
+            case ':':
+              c = '?';
+              variable = new StringBuilder(32);
+              state = State.VARIABLE;
               break;
             case ';':
               accept = false;
@@ -220,18 +397,9 @@ public class Sql {
           break;
           
         case LINE_COMMENT_START:
-          switch (c) {
-            case '-':
-              state = State.LINE_COMMENT;
-              accept = false;
-              removeLastChar = true;
-              break;
-            case '/':
-              state = State.BLOCK_COMMENT_START;
-              break;
-            default:
-              state = State.DEFAULT;
-          }
+          state = State.LINE_COMMENT;
+          accept = false;
+          removeLastChar = true;
           break;
           
         case BLOCK_COMMENT:
@@ -244,24 +412,10 @@ public class Sql {
           break;
           
         case BLOCK_COMMENT_START:
-          switch (c) {
-            case '*':
-              if (retainBlockComments) {
-                state = State.DEFAULT;
-              } else {
-                state = State.BLOCK_COMMENT;
-                accept = false;
-                removeLastChar = true;
-              }
-              break;
-            case '-':
-              state = State.LINE_COMMENT_START;
-              break;
-            case '/':
-              break;
-            default:
-              state = State.DEFAULT;
-          }
+          state = State.DEFAULT;
+          state = State.BLOCK_COMMENT;
+          accept = false;
+          removeLastChar = true;
           break;
           
         case BLOCK_COMMENT_END:
@@ -275,6 +429,10 @@ public class Sql {
             default:
               state = State.BLOCK_COMMENT;
           }
+          break;
+          
+        case VARIABLE:
+          accept = false;
           break;
       }
       
@@ -313,18 +471,5 @@ public class Sql {
     System.arraycopy(outBuffer, 0, newOut, 0, outBuffer.length);
     outBuffer = newOut;
     return newOut;
-  }
-  
-  private void saveStatement() {
-    
-    if (statementList == null) {
-      statementList = new ArrayList<String>();
-    }
-    
-    if (outLength > 0) {
-      statementList.add(toString());
-      outLength = 0;
-    }    
-    spacePending = false;
   }
 }

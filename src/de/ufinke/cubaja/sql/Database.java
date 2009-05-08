@@ -3,6 +3,8 @@
 
 package de.ufinke.cubaja.sql;
 
+import java.io.IOException;
+import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -65,6 +67,16 @@ public class Database {
     execute(new Sql(sql), acceptedSqlCodes);
   }
   
+  public void execute(Reader reader, int... acceptedSqlCodes) throws IOException, SQLException {
+    
+    execute(new Sql(reader));
+  }
+  
+  public void execute(Class<?> packageClass, String sqlResource, int... acceptedSqlCodes) throws IOException, SQLException {
+    
+    execute(new Sql(packageClass, sqlResource));
+  }
+  
   public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
     if (sql.hasVariables()) {
@@ -100,6 +112,16 @@ public class Database {
     return createQuery(new Sql(sql));
   }
   
+  public Query createQuery(Reader reader) throws IOException, SQLException {
+    
+    return createQuery(new Sql(reader));
+  }
+  
+  public Query createQuery(Class<?> packageClass, String sqlResource) throws IOException, SQLException {
+    
+    return createQuery(new Sql(packageClass, sqlResource));
+  }
+  
   public Query createQuery(Sql sql) throws SQLException {
 
     String stm = sql.getSingleStatement();
@@ -111,9 +133,24 @@ public class Database {
     return new Query(connection.prepareStatement(stm), sql);
   }
   
+  public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
+    
+    return createQuery(sql).select(clazz);
+  }
+  
   public Update createUpdate(String sql) throws SQLException {
     
     return createUpdate(new Sql(sql));
+  }
+  
+  public Update createUpdate(Reader reader) throws IOException, SQLException {
+    
+    return createUpdate(new Sql(reader));
+  }
+  
+  public Update createUpdate(Class<?> packageClass, String sqlResource) throws IOException, SQLException {
+    
+    return createUpdate(new Sql(packageClass, sqlResource));
   }
   
   public Update createUpdate(Sql sql) throws SQLException {

@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
 
 public class Update extends PreparedSql {
 

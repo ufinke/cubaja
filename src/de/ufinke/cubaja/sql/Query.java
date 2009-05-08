@@ -5,30 +5,82 @@ package de.ufinke.cubaja.sql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import de.ufinke.cubaja.io.ColumnReader;
+import de.ufinke.cubaja.util.Text;
 
 public class Query extends PreparedSql implements ColumnReader {
 
+  static private final Text text = new Text(Query.class);
+  
+  static private Set<Integer> enumNumerics = createEnumNumerics();
+  
+  static private Set<Integer> createEnumNumerics() {
+  
+    Set<Integer> set = new HashSet<Integer>();
+    
+    set.add(Types.BIGINT);
+    set.add(Types.DECIMAL);
+    set.add(Types.DOUBLE);
+    set.add(Types.FLOAT);
+    set.add(Types.INTEGER);
+    set.add(Types.NUMERIC);
+    set.add(Types.REAL);
+    set.add(Types.SMALLINT);
+    set.add(Types.TINYINT);
+    
+    return set;
+  }
+  
   private ResultSet resultSet;
+  private ResultSetMetaData metaData;
+  private int rowCount;
+  private Map<String, Integer> columnMap;
   
   Query(PreparedStatement statement, Sql sql) {
   
     super(statement, sql);
   }
   
-  public ResultSetMetaData getMetaData() throws SQLException {
-    
-    return (resultSet == null) ? null : resultSet.getMetaData();
-  }
-  
-  public void execute() throws SQLException {
+  private void execute() throws SQLException {
     
     closeResultSet();
     resultSet = statement.executeQuery();
+    rowCount = 0;
+  }
+  
+  private void checkExec() throws SQLException {
+
+    if (resultSet == null || isChanged()) {
+      execute();
+    }
+  }
+  
+  private void checkRow() throws SQLException {
+    
+    if (resultSet == null) {
+      throw new SQLException(text.get("noRow"));
+    }
+  }
+  
+  public ResultSetMetaData getMetaData() throws SQLException {
+    
+    checkExec();
+    if (metaData == null) {
+      metaData = resultSet.getMetaData();
+    }
+    return metaData;
   }
   
   public void closeResultSet() throws SQLException {
@@ -36,6 +88,7 @@ public class Query extends PreparedSql implements ColumnReader {
     if (resultSet != null) {
       resultSet.close();
       resultSet = null;
+      metaData = null;
     }
   }
   
@@ -48,29 +101,47 @@ public class Query extends PreparedSql implements ColumnReader {
       statement = null;
     }
   }
-
+  
   public int getColumnCount() throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkExec();
+    return getMetaData().getColumnCount();
   }
 
   public int getColumnPosition(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkExec();
+    
+    if (columnMap == null) {
+      columnMap = new HashMap<String, Integer>();
+    }
+    
+    Integer position = columnMap.get(columnName);
+    if (position == null) {
+      position = resultSet.findColumn(columnName);
+      columnMap.put(columnName, position);
+    }
+    return position;
   }
 
   public int getRowCount() {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return rowCount;
   }
 
   public boolean nextRow() throws SQLException {
 
-    // TODO Auto-generated method stub
-    return false;
+    checkExec();
+    
+    boolean hasNext = resultSet.next();
+    
+    if (hasNext) {
+      rowCount++;
+    } else {
+      closeResultSet();
+    }
+    
+    return hasNext;
   }
 
   public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
@@ -81,266 +152,344 @@ public class Query extends PreparedSql implements ColumnReader {
 
   public BigDecimal readBigDecimal(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readBigDecimal(getColumnPosition(columnName));
   }
 
   public BigDecimal readBigDecimal(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    return resultSet.getBigDecimal(columnPosition);
   }
 
   public BigInteger readBigInteger(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readBigInteger(getColumnPosition(columnName));
   }
 
   public BigInteger readBigInteger(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readBigDecimal(columnPosition).toBigInteger();
   }
 
   public boolean readBoolean(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return false;
+    return readBoolean(getColumnPosition(columnName));
   }
 
   public boolean readBoolean(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return false;
+    checkRow();
+    return resultSet.getBoolean(columnPosition);
   }
 
   public Boolean readBooleanObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readBooleanObject(getColumnPosition(columnName));
   }
 
   public Boolean readBooleanObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    boolean result = resultSet.getBoolean(columnPosition);
+    return resultSet.wasNull() ? null : Boolean.valueOf(result);
   }
 
   public byte readByte(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readByte(getColumnPosition(columnName));
   }
 
   public byte readByte(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getByte(columnPosition);
   }
 
   public Byte readByteObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readByteObject(getColumnPosition(columnName));
   }
 
   public Byte readByteObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    byte result = resultSet.getByte(columnPosition);
+    return resultSet.wasNull() ? null : Byte.valueOf(result);
   }
 
   public char readChar(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readChar(getColumnPosition(columnName));
   }
 
   public char readChar(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    String s = readString(columnPosition);
+    if (s == null || s.length() == 0) {
+      return ' ';
+    } else {
+      return s.charAt(0);
+    }
   }
 
   public Character readCharObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readCharObject(getColumnPosition(columnName));
   }
 
   public Character readCharObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    String s = readString(columnPosition);
+    if (s == null || s.length() == 0) {
+      return null;
+    } else {
+      return Character.valueOf(s.charAt(0));
+    }
   }
 
   public String[] readColumns() throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    int colCount = getColumnCount();
+    String[] columns = new String[colCount];
+    
+    int i = 0;
+    while (i < colCount) {      
+      columns[i] = readString(++i);
+    }
+    
+    return columns;
   }
 
   public Date readDate(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readDate(getColumnPosition(columnName));
   }
 
   public Date readDate(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    return resultSet.getDate(columnPosition);
+  }
+
+  public Date readTimestamp(String columnName) throws SQLException {
+
+    return readTimestamp(getColumnPosition(columnName));
+  }
+
+  public Date readTimestamp(int columnPosition) throws SQLException {
+
+    checkRow();
+    return new Date(resultSet.getTimestamp(columnPosition).getTime());
+  }
+
+  public Timestamp readSQLTimestamp(String columnName) throws SQLException {
+
+    return readSQLTimestamp(getColumnPosition(columnName));
+  }
+
+  public Timestamp readSQLTimestamp(int columnPosition) throws SQLException {
+
+    checkRow();
+    return resultSet.getTimestamp(columnPosition);
+  }
+
+  public Time readSQLTime(String columnName) throws SQLException {
+
+    return readSQLTime(getColumnPosition(columnName));
+  }
+
+  public Time readSQLTime(int columnPosition) throws SQLException {
+
+    checkRow();
+    return resultSet.getTime(columnPosition);
   }
 
   public double readDouble(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readDouble(getColumnPosition(columnName));
   }
 
   public double readDouble(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getDouble(columnPosition);
   }
 
   public Double readDoubleObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readDoubleObject(getColumnPosition(columnName));
   }
 
   public Double readDoubleObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    double result = resultSet.getDouble(columnPosition);
+    return resultSet.wasNull() ? null : Double.valueOf(result);
   }
 
   public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readEnum(getColumnPosition(columnName), clazz);
   }
 
   public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    if (enumNumerics.contains(getMetaData().getColumnType(columnPosition))) {
+      return readEnumOrdinal(columnPosition, clazz);
+    } else {
+      return readEnumConstant(columnPosition, clazz);
+    }
+  }
+
+  private <E extends Enum<E>> E readEnumOrdinal(int columnPosition, Class<E> clazz) throws SQLException {
+    
+    int ordinal = readInt(columnPosition);
+    if (resultSet.wasNull()) {
+      return null;
+    }
+    
+    try {
+      return clazz.getEnumConstants()[ordinal];
+    } catch (Exception e) {
+      throw new SQLException(text.get("enumOrdinal", Integer.valueOf(ordinal)));
+    }
+  }
+
+  private <E extends Enum<E>> E readEnumConstant(int columnPosition, Class<E> clazz) throws SQLException {
+    
+    String constant = readString(columnPosition);
+    if (resultSet.wasNull()) {
+      return null;
+    }
+    
+    try {
+      return Enum.valueOf(clazz, constant);
+    } catch (Exception e) {
+      try {
+        return Enum.valueOf(clazz, constant.toUpperCase());
+      } catch (Exception e2) {
+        throw new SQLException(text.get("enumConstant", constant));
+      }
+    }
   }
 
   public float readFloat(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readFloat(getColumnPosition(columnName));
   }
 
   public float readFloat(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getFloat(columnPosition);
   }
 
   public Float readFloatObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readFloatObject(getColumnPosition(columnName));
   }
 
   public Float readFloatObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    float result = resultSet.getFloat(columnPosition);
+    return resultSet.wasNull() ? null : Float.valueOf(result);
   }
 
   public int readInt(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readInt(getColumnPosition(columnName));
   }
 
   public int readInt(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getInt(columnPosition);
   }
 
   public Integer readIntObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readIntObject(getColumnPosition(columnName));
   }
 
   public Integer readIntObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    int result = resultSet.getInt(columnPosition);
+    return resultSet.wasNull() ? null : Integer.valueOf(result);
   }
 
   public long readLong(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readLong(getColumnPosition(columnName));
   }
 
   public long readLong(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getLong(columnPosition);
   }
 
   public Long readLongObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readLongObject(getColumnPosition(columnName));
   }
 
   public Long readLongObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    long result = resultSet.getLong(columnPosition);
+    return resultSet.wasNull() ? null : Long.valueOf(result);
   }
 
   public <D> D readObject(Class<? extends D> clazz) throws SQLException {
 
-    // TODO Auto-generated method stub
+    //TODO
     return null;
   }
 
   public short readShort(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    return readShort(getColumnPosition(columnName));
   }
 
   public short readShort(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return 0;
+    checkRow();
+    return resultSet.getShort(columnPosition);
   }
 
   public Short readShortObject(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readShortObject(getColumnPosition(columnName));
   }
 
   public Short readShortObject(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    short result = resultSet.getShort(columnPosition);
+    return resultSet.wasNull() ? null : Short.valueOf(result);
   }
 
   public String readString(String columnName) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    return readString(getColumnPosition(columnName));
   }
 
   public String readString(int columnPosition) throws SQLException {
 
-    // TODO Auto-generated method stub
-    return null;
+    checkRow();
+    return resultSet.getString(columnPosition);
   }
 
+  public <D> D select(Class<? extends D> clazz) throws SQLException {
+    
+    if (nextRow()) {
+      D result = readObject(clazz);
+      closeResultSet();
+      return result;
+    } else {
+      return null;
+    }
+  }
 }
