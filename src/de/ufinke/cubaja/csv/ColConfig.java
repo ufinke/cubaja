@@ -28,6 +28,7 @@ public class ColConfig {
 
   static private final Text text = new Text(ColConfig.class);
   
+  private boolean dummyColumn;
   private String name;
   private String header;
   private int position;
@@ -45,6 +46,16 @@ public class ColConfig {
    */
   public ColConfig() {
 
+  }
+  
+  ColConfig(boolean dummyColumn) {
+    
+    this.dummyColumn = dummyColumn;
+  }
+  
+  boolean isDummyColumn() {
+    
+    return dummyColumn;
   }
   
   void setCsvConfig(CsvConfig csvConfig) {

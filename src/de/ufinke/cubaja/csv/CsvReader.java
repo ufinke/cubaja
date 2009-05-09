@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
-import de.ufinke.cubaja.io.ColumnReader;
+import de.ufinke.cubaja.io.*;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -152,8 +152,10 @@ public class CsvReader implements ColumnReader {
         col.setInternalPosition(nextPosition);
       }
       nextPosition = col.getPosition() + 1;
-      
-      nameMap.put(col.getName(), col.getPosition());
+
+      if (! col.isDummyColumn()) {
+        nameMap.put(col.getName(), col.getPosition());
+      }      
     }
   }
   
@@ -908,7 +910,7 @@ public class CsvReader implements ColumnReader {
    */
   public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
     
-    return new ObjectIterator<D>(this, clazz);
+    return new RowIterator<D>(this, clazz);
   }
 
 }

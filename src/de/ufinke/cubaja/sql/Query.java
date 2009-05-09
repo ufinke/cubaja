@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import de.ufinke.cubaja.io.ColumnReader;
+import de.ufinke.cubaja.io.*;
 import de.ufinke.cubaja.util.Text;
 
 public class Query extends PreparedSql implements ColumnReader {
@@ -107,19 +107,25 @@ public class Query extends PreparedSql implements ColumnReader {
     checkExec();
     return getMetaData().getColumnCount();
   }
+  
+  private Map<String, Integer> getColumnMap() throws SQLException {
+    
+    if (columnMap == null) {
+      int columnCount = getColumnCount();
+      columnMap = new HashMap<String, Integer>(columnCount << 1);
+      for (int i = 1; i <= columnCount; i++) {
+        columnMap.put(getMetaData().getColumnLabel(i), i);
+      }
+    }
+    
+    return columnMap;
+  }
 
   public int getColumnPosition(String columnName) throws SQLException {
 
-    checkExec();
-    
-    if (columnMap == null) {
-      columnMap = new HashMap<String, Integer>();
-    }
-    
-    Integer position = columnMap.get(columnName);
+    Integer position = getColumnMap().get(columnName);
     if (position == null) {
-      position = resultSet.findColumn(columnName);
-      columnMap.put(columnName, position);
+      throw new SQLException(text.get("columnNotFound", columnName));
     }
     return position;
   }
@@ -146,8 +152,7 @@ public class Query extends PreparedSql implements ColumnReader {
 
   public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
 
-    // TODO Auto-generated method stub
-    return null;
+    return new RowIterator<D>(this, clazz);
   }
 
   public BigDecimal readBigDecimal(String columnName) throws SQLException {
@@ -442,10 +447,18 @@ public class Query extends PreparedSql implements ColumnReader {
     return resultSet.wasNull() ? null : Long.valueOf(result);
   }
 
+  @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws SQLException {
 
-    //TODO
-    return null;
+    try {
+      return (D) ObjectFactoryManager.getFactory(clazz, getColumnMap());
+    } catch (SQLException sqle) {
+      throw sqle;
+    } catch (Exception e) {
+      SQLException ex = new SQLException(text.get("createObject", e.toString()));
+      ex.initCause(e);
+      throw ex;
+    }
   }
 
   public short readShort(String columnName) throws SQLException {
