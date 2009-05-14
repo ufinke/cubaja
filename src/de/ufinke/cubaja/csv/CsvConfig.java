@@ -14,6 +14,109 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Global <code>CsvReader</code> properties.
+ * <p>
+ * XML attributes and subelements:
+ * <blockquote>
+ * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
+ *   <tr bgcolor="#ccccff">
+ *     <th align="left">Name</th>
+ *     <th align="left">Description</th>
+ *     <th align="center">A/E</th>
+ *     <th align="center">M</th>
+ *     <th align="center">U</th>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>file</code></td>
+ *     <td align="left" valign="top">file name</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>charset</code></td>
+ *     <td align="left" valign="top">character set name</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>separator</code></td>
+ *     <td align="left" valign="top">character which separates columns (default: tab [<code>x'09'</code>])</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>escapeChar</code></td>
+ *     <td align="left" valign="top">character which delimits text containing separator characters (default: there is no escape character)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>parser</code></td>
+ *     <td align="left" valign="top">class name of a <code>RowParser</code> implementation (default: <code>DefaultRowParser</code>; can handle separators and escape characters as defined in <code>tools.ietf.org/html/rfc4180</code>)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>trim</code></td>
+ *     <td align="left" valign="top">global trim attribute for column content (default: <code>false</code>)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>decimalChar</code></td>
+ *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: both point and comma are decimalChars)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>datePattern</code></td>
+ *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: depends on locale properties; <code>dd.MM.yyyy</code> for german, <code>yyyy-MM-dd</code> for other locales)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>trueValues</code></td>
+ *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: <code>true,TRUE,1,y,Y,x,X</code> and variants depending on locale properties)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>header</code></td>
+ *     <td align="left" valign="top">flag (<code>true</code> or <code>false</code>) which marks the first row as header row (default: <code>true</code> if at least one column defines a <code>header</code> attribute, <code>false</code> otherwise)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>rowFilter</code></td>
+ *     <td align="left" valign="top">class name of a <code>RowFilter</code> implementation</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>col</code></td>
+ *     <td align="left" valign="top">column definition (see <code>ColConfig</code>)</td>
+ *     <td align="center" valign="top">E</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top"> </td>
+ *     </tr>
+ * </table>
+ * <code>A/E</code>: attribute or subelement
+ * <br/>
+ * <code>M</code>: mandatory
+ * <br/>
+ * <code>U</code>: unique
+ * </blockquote>
+ * </p>
  * @author Uwe Finke
  */
 public class CsvConfig {
