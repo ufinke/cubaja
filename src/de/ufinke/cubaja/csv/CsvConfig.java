@@ -27,7 +27,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>file</code></td>
- *     <td align="left" valign="top">file name</td>
+ *     <td align="left" valign="top">file name; mandatory if <code>CsvReader</code> constructor without <code>Reader</code> parameter is used</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -69,21 +69,21 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>decimalChar</code></td>
- *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: both point and comma are decimalChars)</td>
+ *     <td align="left" valign="top">global character for decimal point; may be a point or a comma (default: both point and comma are decimalChars)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>datePattern</code></td>
- *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: depends on locale properties; <code>dd.MM.yyyy</code> for german, <code>yyyy-MM-dd</code> for other locales)</td>
+ *     <td align="left" valign="top">global date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: depends on locale properties; <code>dd.MM.yyyy</code> for german, <code>yyyy-MM-dd</code> for other locales)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>trueValues</code></td>
- *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: <code>true,TRUE,1,y,Y,x,X</code> and variants depending on locale properties)</td>
+ *     <td align="left" valign="top">comma-separated list of global values which are interpreted as <code>true</code> (default: <code>true,TRUE,1,y,Y,x,X</code> and variants depending on locale properties)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -104,7 +104,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>col</code></td>
- *     <td align="left" valign="top">column definition (see <code>ColConfig</code>)</td>
+ *     <td align="left" valign="top">column definition (see {@link de.ufinke.cubaja.csv.ColConfig ColConfig})</td>
  *     <td align="center" valign="top">E</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top"> </td>
