@@ -56,28 +56,28 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>trim</code></td>
- *     <td align="left" valign="top">trim attribute for column content (default: global <code>trim</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top">trim attribute for column content (default: global <code>trim</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>decimalChar</code></td>
- *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: global <code>decimalChar</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: global <code>decimalChar</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>datePattern</code></td>
- *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: global <code>datePattern</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: global <code>datePattern</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>trueValues</code></td>
- *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: global <code>trueValues</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: global <code>trueValues</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
