@@ -100,6 +100,11 @@ public class FileConfig {
    */
   public void setCharset(String charset) throws ConfigException {
     
+    if (charset == null) {
+      this.charset = null;
+      return;
+    }
+    
     try {      
       this.charset = Charset.forName(charset);
     } catch (UnsupportedCharsetException e) {

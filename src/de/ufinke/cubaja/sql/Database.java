@@ -5,7 +5,7 @@ package de.ufinke.cubaja.sql;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.sql.Connection;
+import java.sql.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.commons.logging.Log;
@@ -24,6 +24,7 @@ public class Database {
   static private final Text text = new Text(Database.class);
   
   private Connection connection;
+  private DatabaseConfig config;
   private Integer myId;
   private Log logger;
   
@@ -38,7 +39,7 @@ public class Database {
   }
   
   public Database(Connection connection, DatabaseConfig config) throws SQLException {
-    
+        
     if (config.isLog()) {
     
       myId = getId();
@@ -54,6 +55,7 @@ public class Database {
     }
     
     this.connection = connection;
+    this.config = config;
     
     connection.setAutoCommit(config.isAutoCommit());
     
@@ -130,7 +132,9 @@ public class Database {
       logger.debug(text.get("prepare", myId, stm));
     }
     
-    return new Query(connection.prepareStatement(stm), sql);
+    PreparedStatement ps = connection.prepareStatement(stm);
+    ps.setFetchSize(config.getFetchSize());
+    return new Query(ps, sql);
   }
   
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {

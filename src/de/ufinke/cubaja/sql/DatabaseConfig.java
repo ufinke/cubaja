@@ -155,6 +155,7 @@ public class DatabaseConfig {
   private String execute;
   private Properties properties;
   private boolean autoCommit;
+  private int fetchSize;
   private boolean log;
 
   /**
@@ -164,6 +165,7 @@ public class DatabaseConfig {
 
     properties = new Properties();
     autoCommit = false;
+    fetchSize = 4096;
     log = false;
   }
   
@@ -206,6 +208,25 @@ public class DatabaseConfig {
   public void setAutoCommit(boolean autoCommit) {
   
     this.autoCommit = autoCommit;
+  }
+
+  /**
+   * Returns the fetchSize for queries.
+   * By default, this configuration class returns <code>4096</code>.
+   * @return fetch size
+   */
+  public int getFetchSize() {
+  
+    return fetchSize;
+  }
+  
+  /**
+   * Sets the fetchSize for queries.
+   * @param fetchSize
+   */
+  public void setFetchSize(int fetchSize) {
+  
+    this.fetchSize = fetchSize;
   }
 
   /**

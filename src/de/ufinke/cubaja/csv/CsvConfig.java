@@ -84,7 +84,9 @@ public class CsvConfig {
       }
       fileConfig = new FileConfig();
       fileConfig.setName(fileName);
-      fileConfig.setCharset(charset);
+      if (charset != null) {
+        fileConfig.setCharset(charset);
+      }
     }
 
     return fileConfig.createReader();
