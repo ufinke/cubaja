@@ -22,6 +22,88 @@ import de.ufinke.cubaja.util.Text;
  * the position is the position
  * of the previously defined column plus one.
  * The position of the first column is 1, not 0.
+ * <p>
+ * XML attributes and subelements:
+ * <blockquote>
+ * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
+ *   <tr bgcolor="#ccccff">
+ *     <th align="left">Name</th>
+ *     <th align="left">Description</th>
+ *     <th align="center">A/E</th>
+ *     <th align="center">M</th>
+ *     <th align="center">U</th>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>name</code></td>
+ *     <td align="left" valign="top">the name of this column</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top">x</td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>header</code></td>
+ *     <td align="left" valign="top">the exact content of this columns header line</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>position</code></td>
+ *     <td align="left" valign="top">the position of this column; the position of the first column is 1 (default: position of the previous column plus one; or - in case the <code>header</code> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>trim</code></td>
+ *     <td align="left" valign="top">trim attribute for column content (default: global <code>trim</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>decimalChar</code></td>
+ *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: global <code>decimalChar</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>datePattern</code></td>
+ *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: global <code>datePattern</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>trueValues</code></td>
+ *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: global <code>trueValues</code> attribute of {@link de.ufinke.cubaja.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>editor</code></td>
+ *     <td align="left" valign="top">class name of a {@link de.ufinke.cubaja.csv.ColumnEditor ColumnEditor} implementation</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>replace</code></td>
+ *     <td align="left" valign="top">replacement constants (see {@link de.ufinke.cubaja.csv.ReplaceConfig ReplaceConfig})</td>
+ *     <td align="center" valign="top">E</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top"> </td>
+ *     </tr>
+ * </table>
+ * <code>A/E</code>: attribute or subelement
+ * <br/>
+ * <code>M</code>: mandatory
+ * <br/>
+ * <code>U</code>: unique
+ * </blockquote>
+ * </p>
  * @author Uwe Finke
  */
 public class ColConfig {

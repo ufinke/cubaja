@@ -13,6 +13,39 @@ import de.ufinke.cubaja.config.Mandatory;
  * For every definition, 
  * the retrieved column content string is 
  * replaced using method <code>replaceAll</code> of class <code>String</code>.
+ * <p>
+ * XML attributes and subelements:
+ * <blockquote>
+ * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
+ *   <tr bgcolor="#ccccff">
+ *     <th align="left">Name</th>
+ *     <th align="left">Description</th>
+ *     <th align="center">A/E</th>
+ *     <th align="center">M</th>
+ *     <th align="center">U</th>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>regex</code></td>
+ *     <td align="left" valign="top">the regular expression</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top">x</td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>replacement</code></td>
+ *     <td align="left" valign="top">the replacement string</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top">x</td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ * </table>
+ * <code>A/E</code>: attribute or subelement
+ * <br/>
+ * <code>M</code>: mandatory
+ * <br/>
+ * <code>U</code>: unique
+ * </blockquote>
+ * </p>
  * @author Uwe Finke
  */
 public class ReplaceConfig {

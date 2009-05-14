@@ -55,7 +55,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>parser</code></td>
- *     <td align="left" valign="top">class name of a <code>RowParser</code> implementation (default: <code>DefaultRowParser</code>; can handle separators and escape characters as defined in <code>tools.ietf.org/html/rfc4180</code>)</td>
+ *     <td align="left" valign="top">class name of a {@link de.ufinke.cubaja.csv.RowParser RowParser} implementation (default: {@link de.ufinke.cubaja.csv.DefaultRowParser DefaultRowParser})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -97,7 +97,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>rowFilter</code></td>
- *     <td align="left" valign="top">class name of a <code>RowFilter</code> implementation</td>
+ *     <td align="left" valign="top">class name of a {@link de.ufinke.cubaja.csv.RowFilter RowFilter} implementation</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
