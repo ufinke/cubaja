@@ -90,7 +90,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>header</code></td>
- *     <td align="left" valign="top">see description of method {@link de.ufinke.cubaja.csv.CsvConfig#setHeader(Boolean) setHeader}</td>
+ *     <td align="left" valign="top">see description of method {@link de.ufinke.cubaja.csv.CsvConfig#setHeader(java.lang.Boolean) setHeader}</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -377,11 +377,12 @@ public class CsvConfig {
    * When we set this attribute to <code>true</code>, the first input row is used
    * to define all (or additional) columns. 
    * The name attribute of the automatically defined columns
-   * is derived from the column content. For the name attribute, all letters are converted
-   * to lower case, and all non-identifier characters are replaced by an underscore.
+   * is derived from the column content. For the name attribute, all non-identifier characters 
+   * (that is, <code>Character.isJavaIdentifierPart</code> returns <code>false</code>
+   * for this character) are replaced by an underscore.
    * The header attribute of those columns is the original column content.
    * If the generated name matches an already existing column name,
-   * this column is not added automaically.
+   * this column is not added automatically.
    * <p>
    * When we set this attribute to <code>false</code>
    * the first row is not processed as header row even if

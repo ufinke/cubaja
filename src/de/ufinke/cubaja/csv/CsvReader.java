@@ -152,11 +152,7 @@ public class CsvReader implements ColumnReader {
     
     for (int i = 0; i < buffer.length; i++) {
       char c = header.charAt(i);
-      if (Character.isJavaIdentifierPart(c)) {
-        buffer[i] = Character.toLowerCase(c);
-      } else {
-        buffer[i] = '_';
-      }
+      buffer[i] = Character.isJavaIdentifierPart(c) ? c : '_';
     }
     
     return String.valueOf(buffer);
