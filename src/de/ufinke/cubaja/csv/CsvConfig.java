@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.io.FileConfig;
 import de.ufinke.cubaja.util.Text;
@@ -90,7 +90,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>header</code></td>
- *     <td align="left" valign="top">flag (<code>true</code> or <code>false</code>) which marks the first row as header row (default: <code>true</code> if at least one column defines a <code>header</code> attribute, <code>false</code> otherwise)</td>
+ *     <td align="left" valign="top">see description of method {@link de.ufinke.cubaja.csv.CsvConfig#setHeader(Boolean) setHeader}</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -140,6 +140,7 @@ public class CsvConfig {
   private Boolean header;
   
   private List<ColConfig> columnList;
+  private Set<String> columnSet;
   private boolean headerDefined;
 
   /**
@@ -350,20 +351,45 @@ public class CsvConfig {
   /**
    * Returns whether the CSV input has a header row.
    * This is <code>true</code> when
-   * we set the header flag explicitly,
-   * or when we define a header property on at least one column.  
+   * we set the header attribute explicitly to <code>true</code>,
+   * or when we define a header property on at least one column
+   * and the header attribute is not set explicitly to <code>false</code>.  
    * @return flag
    */
   public boolean hasHeaderRow() {
 
-    if (header == null) {
-      setHeader(headerDefined);
-    }
-    return header.booleanValue();
+    return (header == null) ? headerDefined : header.booleanValue();
   }
 
   /**
+   * Returns the explicitly set header attribute.
+   * May be <code>null</code> if the attribute has not been set. 
+   * @return header attribute
+   */
+  public Boolean getHeader() {
+    
+    return header;
+  }
+  
+  /**
    * Signals whether the CSV input has a header row.
+   * <p>
+   * When we set this attribute to <code>true</code>, the first input row is used
+   * to define all (or additional) columns. 
+   * The name attribute of the automatically defined columns
+   * is derived from the column content. For the name attribute, all letters are converted
+   * to lower case, and all non-identifier characters are replaced by an underscore.
+   * The header attribute of those columns is the original column content.
+   * If the generated name matches an already existing column name,
+   * this column is not added automaically.
+   * <p>
+   * When we set this attribute to <code>false</code>
+   * the first row is not processed as header row even if
+   * some <code>col</code> definitions contain a <code>header</code> attribute.
+   * <p>
+   * When we don't set this attribute at all,
+   * the first row is considered to be a header row if any <code>col</code> definition
+   * has a <code>header</code> attribute.
    * @param header
    */
   public void setHeader(Boolean header) {
@@ -399,6 +425,27 @@ public class CsvConfig {
     column.setCsvConfig(this);        
     headerDefined |= (column.getHeader() != null);
     columnList.add(column);
+  }
+  
+  void addCol(String name, String header) {
+    
+    if (columnSet == null) {
+      columnSet = new HashSet<String>();
+      for (ColConfig col : columnList) {
+        columnSet.add(col.getName());
+      }
+    }
+    
+    if (columnSet.contains(name)) {
+      return;
+    }
+    
+    ColConfig col = new ColConfig();
+    col.setName(name);
+    col.setHeader(header);
+    addCol(col);
+    
+    columnSet.add(name);
   }
   
   /**

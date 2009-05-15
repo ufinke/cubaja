@@ -123,6 +123,13 @@ public class CsvReader implements ColumnReader {
     rowCount--;
     
     String[] headers = readColumns();
+    
+    if (config.getHeader() != null && config.getHeader().booleanValue()) {
+      for (String header : headers) {
+        config.addCol(createAutoHeaderName(header), header);
+      }
+    }
+    
     Map<String, Integer> headerMap = new HashMap<String, Integer>();
     for (int i = headers.length - 1; i >= 0; i--) { // backward because on duplicate headers we prefer the leftmost column
       headerMap.put(headers[i], i + 1);
@@ -137,6 +144,22 @@ public class CsvReader implements ColumnReader {
         col.setInternalPosition(position);
       }
     }
+  }
+  
+  private String createAutoHeaderName(String header) {
+    
+    char[] buffer = new char[header.length()];
+    
+    for (int i = 0; i < buffer.length; i++) {
+      char c = header.charAt(i);
+      if (Character.isJavaIdentifierPart(c)) {
+        buffer[i] = Character.toLowerCase(c);
+      } else {
+        buffer[i] = '_';
+      }
+    }
+    
+    return String.valueOf(buffer);
   }
   
   private void initPositions() {

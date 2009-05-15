@@ -49,7 +49,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>position</code></td>
- *     <td align="left" valign="top">the position of this column; the position of the first column is 1 (default: position of the previous column plus one; or - in case the <code>header</code> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
+ *     <td align="left" valign="top">the position of this column, starting with <code>1</code> for the first column (default: position of the previous column plus one; or - in case the <code>header</code> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
