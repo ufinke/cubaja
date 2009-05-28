@@ -76,14 +76,14 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>datePattern</code></td>
- *     <td align="left" valign="top">global date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: depends on locale properties; <code>dd.MM.yyyy</code> for german, <code>yyyy-MM-dd</code> for other locales)</td>
+ *     <td align="left" valign="top">global date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: <code>yyyy-MM-dd</code>)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>trueValues</code></td>
- *     <td align="left" valign="top">comma-separated list of global values which are interpreted as <code>true</code> (default: <code>true,TRUE,1,y,Y,x,X</code> and variants depending on locale properties)</td>
+ *     <td align="left" valign="top">comma-separated list of global values which are interpreted as <code>true</code> (default: <code>true</code>)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -296,7 +296,7 @@ public class CsvConfig {
   public SimpleDateFormat getDateFormat() {
 
     if (dateFormat == null) {
-      setDatePattern(text.get("datePattern"));
+      setDatePattern("yyyy-MM-dd");
     }
     return dateFormat;
   }
@@ -334,7 +334,7 @@ public class CsvConfig {
   public String[] getTrueValues() {
 
     if (trueValues == null) {
-      trueValues = text.get("trueValues").split(",");
+      trueValues = new String[] {"true"};
     }
     return trueValues;
   }

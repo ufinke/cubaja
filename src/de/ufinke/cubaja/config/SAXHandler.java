@@ -559,6 +559,18 @@ class SAXHandler extends DefaultHandler2 {
       String value = atts.getValue(i);
       if (name.equals("datePattern")) {
         parameterManager.setDatePattern(value, null);
+      } else if (name.equals("trueValues")) {
+        String[] trueValues = value.split(",");
+        for (int j = 0; j < trueValues.length; j++) {
+          trueValues[i] = trueValues[i].trim();
+        }
+        parameterManager.setTrueValues(trueValues);
+      } else if (name.equals("falseValues")) {
+        String[] falseValues = value.split(",");
+        for (int j = 0; j < falseValues.length; j++) {
+          falseValues[i] = falseValues[i].trim();
+        }
+        parameterManager.setFalseValues(falseValues);
       } else if (name.equals("decimalPoint")) {
         if (value.length() != 1 || (! ".,".contains(value))) {
           throw new ConfigException(text.get("setDecimalPoint", value));

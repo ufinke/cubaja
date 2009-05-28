@@ -127,13 +127,19 @@ class ParameterManager implements ParameterFactoryFinder {
             
       value = value.toLowerCase();
       
-      if (value.equals("true")) {
-        return true;
-      } else if (value.equals("false")) {
-        return false;
-      } else {
-        throw new ConfigException(text.get("parmBoolean"));
+      for (String s : parameterManager.getTrueValues()) {
+        if (s.equals(value)) {
+          return true;
+        }
       }
+      
+      for (String s : parameterManager.getFalseValues()) {
+        if (s.equals(value)) {
+          return false;
+        }
+      }
+      
+      throw new ConfigException(text.get("parmBoolean"));
     }
     
     public boolean isNode() {
@@ -469,6 +475,8 @@ class ParameterManager implements ParameterFactoryFinder {
   private Map<Class<?>, Class<?>> primitivesMap;
   private SimpleDateFormat dateFormat;
   private String dateHint;
+  private String[] trueValues;
+  private String[] falseValues;
   private Character decimalPoint;
 
   ParameterManager() {
@@ -532,6 +540,32 @@ class ParameterManager implements ParameterFactoryFinder {
   String getDateHint() {
     
     return dateHint;
+  }
+  
+  void setTrueValues(String[] trueValues) {
+    
+    this.trueValues = trueValues;
+  }
+  
+  void setFalseValues(String[] falseValues) {
+    
+    this.falseValues = falseValues;
+  }
+  
+  String[] getTrueValues() {
+    
+    if (trueValues == null) {
+      trueValues = new String[] {"true", "yes", "on"};
+    }
+    return trueValues;
+  }
+  
+  String[] getFalseValues() {
+    
+    if (falseValues == null) {
+      falseValues = new String[] {"false", "no", "off"};
+    }
+    return falseValues;
   }
   
   void setDecimalPoint(Character decimalPoint) {

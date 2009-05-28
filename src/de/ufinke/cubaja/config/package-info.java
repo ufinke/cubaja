@@ -120,6 +120,53 @@
  * is discarded but its children are processed as if they had been defined in
  * the root document.
  * </p>
+ * There is another special element named <code>configSettings</code> to set the parsers behaviour.
+ * Possible attributes are
+ * <ol>
+ *   <li>
+ *     <code>datePattern</code>
+ *     <br/>
+ *     The date pattern for parsing date values.
+ *     For a description how to code the pattern see <code>java.text.SimpleDateFormat</code>.
+ *     Default is <code>yyyy-MM-dd</code>.
+ *   </li>
+ *   <li>
+ *     <code>trueValues</code>
+ *     <br/>
+ *     A comma separated list of constants representing the boolean value <code>true</code>.
+ *     Default is <code>true,yes,on</code>.
+ *   </li>
+ *   <li>
+ *     <code>falseValues</code>
+ *     <br/>
+ *     A comma separated list of constants representing the boolean value <code>false</code>.
+ *     Default is <code>false,no,off</code>.
+ *   </li>
+ *   <li>
+ *     <code>decimalPoint</code>
+ *     <br/>
+ *     The decimal point character, which may be a point or a comma.
+ *     By default, both characters are processed as decimal point.
+ *   </li>
+ *   <li>
+ *     <code>processEscape</code>
+ *     <br/>
+ *     Enables or disables processing of escape characters 
+ *     (introduced by backslash, i.e. <code>\n</code> for newline).
+ *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
+ *     processing, other values disable processing.
+ *     By default, processing is enabled.
+ *   </li>
+ *   <li>
+ *     <code>processProperties</code>
+ *     <br/>
+ *     Enables or disables processing of properties
+ *     (that is, replacement of <code>${...}</code> sequences).
+ *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
+ *     processing, other values disable processing.
+ *     By default, processing is enabled.
+ *   </li>
+ * </ol>
  * <p>
  * Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
  * <br/>

@@ -358,6 +358,28 @@ public class Configurator {
     
     setDatePattern(pattern, pattern);
   }
+  
+  /**
+   * Sets constants values for boolean <code>true</code>.
+   * <p/>
+   * Default values are <code>true</code>, <code>yes</code> and <code>on</code>.
+   * @param trueValues The constants representing <code>true</code>
+   */
+  public void setTrueValues(String[] trueValues) {
+    
+    parameterManager.setTrueValues(trueValues);
+  }
+  
+  /**
+   * Sets constants for boolean <code>false</code>.
+   * <p/>
+   * Default values are <code>false</code>, <code>no</code> and <code>off</code>.
+   * @param falseValues The constants representing <code>false</code>.
+   */
+  public void setFalseValues(String[] falseValues) {
+    
+    parameterManager.setFalseValues(falseValues);
+  }
 
   /**
    * Specifies the decimal point character.
