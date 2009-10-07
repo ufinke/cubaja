@@ -110,4 +110,13 @@ enum ObjectFactoryType {
     return parameter;
   }
   
+  static ObjectFactoryType getBuiltin(Class<?> parameterClazz) {
+    
+    ObjectFactoryType type = getType(parameterClazz);
+    if (type != null && (! type.isPrimitive())) {
+      return type;
+    }
+    return null;
+  }
+  
 }

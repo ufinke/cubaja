@@ -375,32 +375,6 @@ public interface ColumnReader {
   public Date readDate(int columnPosition) throws Exception;
 
   /**
-   * Returns a column content as Enum constant.
-   * If the column content start with a digit, 
-   * the constant is derived using the position of the Enum constant value array.
-   * Otherwise, the constant is identified by name.
-   * @param <E> Enum type
-   * @param columnName
-   * @param clazz Enum class
-   * @return Enum constant 
-   * @throws Exception
-   */
-  public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws Exception;
-
-  /**
-   * Returns a column content as Enum constant.
-   * If the column content start with a digit, 
-   * the constant is derived using the position of the Enum constant value array.
-   * Otherwise, the constant is identified by name.
-   * @param <E> Enum type
-   * @param columnPosition
-   * @param clazz Enum class
-   * @return Enum constant 
-   * @throws Exception
-   */
-  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws Exception;
-
-  /**
    * Returns a data object.
    * <p>
    * The data object class must have setter methods corresponding to 

@@ -3,8 +3,6 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.sql.*;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -69,16 +67,6 @@ public class Database {
     execute(new Sql(sql), acceptedSqlCodes);
   }
   
-  public void execute(Reader reader, int... acceptedSqlCodes) throws IOException, SQLException {
-    
-    execute(new Sql(reader));
-  }
-  
-  public void execute(Class<?> packageClass, String sqlResource, int... acceptedSqlCodes) throws IOException, SQLException {
-    
-    execute(new Sql(packageClass, sqlResource));
-  }
-  
   public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
     if (sql.hasVariables()) {
@@ -97,12 +85,19 @@ public class Database {
         statement.execute(stm);
       } catch (SQLException e) {
         int sqlCode = e.getErrorCode();
-        for (int i = 0; i < acceptedSqlCodes.length; i++) {
-          if (acceptedSqlCodes[i] == sqlCode) {
-            return;
-          }
+        boolean accepted = false;
+        int i = 0;
+        while ((! accepted) && (i < acceptedSqlCodes.length)) {
+          accepted = (acceptedSqlCodes[i] == sqlCode);
+          i++;
         }
-        throw e;
+        if (! accepted) {
+          try {
+            statement.close();
+          } catch (SQLException ignore) {
+          }
+          throw e;
+        }
       }
     }
     
@@ -112,16 +107,6 @@ public class Database {
   public Query createQuery(String sql) throws SQLException {
     
     return createQuery(new Sql(sql));
-  }
-  
-  public Query createQuery(Reader reader) throws IOException, SQLException {
-    
-    return createQuery(new Sql(reader));
-  }
-  
-  public Query createQuery(Class<?> packageClass, String sqlResource) throws IOException, SQLException {
-    
-    return createQuery(new Sql(packageClass, sqlResource));
   }
   
   public Query createQuery(Sql sql) throws SQLException {
@@ -145,16 +130,6 @@ public class Database {
   public Update createUpdate(String sql) throws SQLException {
     
     return createUpdate(new Sql(sql));
-  }
-  
-  public Update createUpdate(Reader reader) throws IOException, SQLException {
-    
-    return createUpdate(new Sql(reader));
-  }
-  
-  public Update createUpdate(Class<?> packageClass, String sqlResource) throws IOException, SQLException {
-    
-    return createUpdate(new Sql(packageClass, sqlResource));
   }
   
   public Update createUpdate(Sql sql) throws SQLException {

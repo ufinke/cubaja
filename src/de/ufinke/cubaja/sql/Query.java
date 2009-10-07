@@ -11,12 +11,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.sql.Types;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import de.ufinke.cubaja.io.*;
 import de.ufinke.cubaja.util.Text;
 
@@ -24,27 +21,10 @@ public class Query extends PreparedSql implements ColumnReader {
 
   static private final Text text = new Text(Query.class);
   
-  static private Set<Integer> enumNumerics = createEnumNumerics();
-  
-  static private Set<Integer> createEnumNumerics() {
-  
-    Set<Integer> set = new HashSet<Integer>();
-    
-    set.add(Types.BIGINT);
-    set.add(Types.DECIMAL);
-    set.add(Types.DOUBLE);
-    set.add(Types.FLOAT);
-    set.add(Types.INTEGER);
-    set.add(Types.NUMERIC);
-    set.add(Types.REAL);
-    set.add(Types.SMALLINT);
-    set.add(Types.TINYINT);
-    
-    return set;
-  }
-  
   private ResultSet resultSet;
   private ResultSetMetaData metaData;
+  private Class<?> objectClass;
+  private ObjectFactory objectFactory;
   private int rowCount;
   private Map<String, Integer> columnMap;
   
@@ -332,52 +312,6 @@ public class Query extends PreparedSql implements ColumnReader {
     return resultSet.wasNull() ? null : Double.valueOf(result);
   }
 
-  public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws SQLException {
-
-    return readEnum(getColumnPosition(columnName), clazz);
-  }
-
-  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws SQLException {
-
-    if (enumNumerics.contains(getMetaData().getColumnType(columnPosition))) {
-      return readEnumOrdinal(columnPosition, clazz);
-    } else {
-      return readEnumConstant(columnPosition, clazz);
-    }
-  }
-
-  private <E extends Enum<E>> E readEnumOrdinal(int columnPosition, Class<E> clazz) throws SQLException {
-    
-    int ordinal = readInt(columnPosition);
-    if (resultSet.wasNull()) {
-      return null;
-    }
-    
-    try {
-      return clazz.getEnumConstants()[ordinal];
-    } catch (Exception e) {
-      throw new SQLException(text.get("enumOrdinal", Integer.valueOf(ordinal)));
-    }
-  }
-
-  private <E extends Enum<E>> E readEnumConstant(int columnPosition, Class<E> clazz) throws SQLException {
-    
-    String constant = readString(columnPosition);
-    if (resultSet.wasNull()) {
-      return null;
-    }
-    
-    try {
-      return Enum.valueOf(clazz, constant);
-    } catch (Exception e) {
-      try {
-        return Enum.valueOf(clazz, constant.toUpperCase());
-      } catch (Exception e2) {
-        throw new SQLException(text.get("enumConstant", constant));
-      }
-    }
-  }
-
   public float readFloat(String columnName) throws SQLException {
 
     return readFloat(getColumnPosition(columnName));
@@ -451,7 +385,11 @@ public class Query extends PreparedSql implements ColumnReader {
   public <D> D readObject(Class<? extends D> clazz) throws SQLException {
 
     try {
-      return (D) ObjectFactoryManager.getFactory(clazz, getColumnMap());
+      if (clazz != objectClass) {
+        objectClass = clazz;
+        objectFactory = ObjectFactoryManager.getFactory(clazz, metaData);
+      }
+      return (D) objectFactory.createObject(this);
     } catch (SQLException sqle) {
       throw sqle;
     } catch (Exception e) {

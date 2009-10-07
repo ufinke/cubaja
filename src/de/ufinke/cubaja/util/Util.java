@@ -9,6 +9,8 @@ package de.ufinke.cubaja.util;
  */
 public class Util {
 
+  static private Text text = new Text(Util.class);
+  
   private Util() {
     
   }
@@ -122,6 +124,66 @@ public class Util {
     }
     
     return sb.toString();
+  }
+  
+  /**
+   * Returns the enum constant of the specified enum type with the specified name.
+   * If name is <code>null</code> or has a length of 0, then the result is <code>null</code>.
+   * If name doesn't match an enum constant, there will be a second try with
+   * the uppercase value of name.  
+   * @param <E> the enum type
+   * @param enumType the enum type
+   * @param name the enum name
+   * @return an enum constant
+   * @throws NoSuchEnumException
+   */
+  static public <E extends Enum<E>> E getEnum(Class<E> enumType, String name) throws NoSuchEnumException {
+    
+    if (name == null || name.length() == 0) {
+      return null;
+    }
+    
+    try {
+      try {
+        return Enum.valueOf(enumType, name);
+      } catch (Exception e) {
+        return Enum.valueOf(enumType, name.toUpperCase());
+      }
+    } catch (Exception e) {
+      throw new NoSuchEnumException(text.get("enumName", enumType, name));
+    }
+  }
+  
+  /**
+   * Returns the enum constant of the specified enum type with the specified ordinal number.
+   * If ordinal is <code>-1</code>, then the result is <code>null</code>.
+   * @param <E> the enum type
+   * @param enumType the enum type
+   * @param ordinal the ordinal number
+   * @return an enum constant
+   * @throws NoSuchEnumException
+   */
+  static public <E extends Enum<E>> E getEnum(Class<E> enumType, int ordinal) throws NoSuchEnumException {
+    
+    if (ordinal == -1) {
+      return null;
+    }
+    
+    try {
+      return enumType.getEnumConstants()[ordinal];
+    } catch (Exception e) {
+      throw new NoSuchEnumException(text.get("enumOrdinal", enumType, ordinal));
+    }
+  }
+  
+  /**
+   * Returns the enum ordinal number or <code>-1</code> if the argument is <code>null</code>.
+   * @param enumConstant
+   * @return enum ordinal
+   */
+  static public int getOrdinal(Enum<?> enumConstant) {
+
+    return (enumConstant == null) ? -1 : enumConstant.ordinal();
   }
   
 }

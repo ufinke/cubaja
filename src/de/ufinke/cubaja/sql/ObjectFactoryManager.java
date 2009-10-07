@@ -16,7 +16,7 @@ import de.ufinke.cubaja.cafebabe.Generator;
 import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
 import de.ufinke.cubaja.util.Util;
-import java.sql.SQLException;
+import java.sql.*;
 
 class ObjectFactoryManager implements Generator {
 
@@ -38,12 +38,12 @@ class ObjectFactoryManager implements Generator {
   
   static private final Map<Class<?>, ObjectFactory> factoryMap = new ConcurrentHashMap<Class<?>, ObjectFactory>();
   
-  static ObjectFactory getFactory(Class<?> clazz, Map<String, Integer> nameMap) throws Exception {
+  static ObjectFactory getFactory(Class<?> clazz, ResultSetMetaData metaData) throws Exception {
     
     ObjectFactory factory = factoryMap.get(clazz);
     if (factory == null) {
       String className = Loader.createClassName(ObjectFactoryManager.class, "ObjectFactory", clazz);
-      factory = (ObjectFactory) Loader.createInstance(className, new ObjectFactoryManager(clazz, nameMap));
+      factory = (ObjectFactory) Loader.createInstance(className, new ObjectFactoryManager(clazz, metaData));
       factoryMap.put(clazz, factory);
     }
     return factory;
@@ -58,14 +58,16 @@ class ObjectFactoryManager implements Generator {
   static private final Type sqlExceptionType = new Type(SQLException.class);
 
   private Type dataClassType;
-  private Map<String, Integer> searchMap;
+  private ObjectFactoryType builtin;
   private Map<String, SetterEntry> setterMap;
   
-  private ObjectFactoryManager(Class<?> dataClass, Map<String, Integer> nameMap) {
+  private ObjectFactoryManager(Class<?> dataClass, ResultSetMetaData metaData) {
   
     dataClassType = new Type(dataClass);
-    searchMap = createSearchMap(nameMap);
-    setterMap = createSetterMap(dataClass);
+    builtin = ObjectFactoryType.getBuiltin(dataClass);    
+    if (builtin == null) {
+      setterMap = createSetterMap(dataClass);      
+    }
   }
   
   public GenClass generate(String className) throws Exception {
@@ -75,7 +77,7 @@ class ObjectFactoryManager implements Generator {
     genClass.createDefaultConstructor();
     
     GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "createObject", queryType);
-    method.addException(sqlExceptionType);
+    method.addException(sqlExceptionType);      
     generateCode(method.getCode());    
     
     return genClass;
@@ -86,6 +88,30 @@ class ObjectFactoryManager implements Generator {
     code.newObject(dataClassType);
     code.duplicate(); // required for setter or return
     code.invokeSpecial(dataClassType, voidType, "<init>");
+
+    if (builtin != null) {
+      generateBuiltin(code);
+    } else {
+      generateDataObject(code);
+    }
+    
+    code.returnReference(); // returns duplicated data object
+  }
+  
+  private void generateBuiltin(CodeAttribute code) {
+    
+    code.loadLocalReference(1);
+    code.loadConstant(1);
+    if (builtin.needsClazz()) {
+      code.loadConstant(builtin.getClazz());
+      code.invokeVirtual(queryType, builtin.getType(), builtin.getReaderMethod(), intType, classType);
+      code.cast(dataClassType);
+    } else {
+      code.invokeVirtual(queryType, builtin.getType(), builtin.getReaderMethod(), intType);
+    }
+  }
+  
+  private void generateDataObject(CodeAttribute code) {
     
     for (SetterEntry setter : setterMap.values()) {
       
@@ -107,9 +133,7 @@ class ObjectFactoryManager implements Generator {
       
       code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
     }
-    
-    code.returnReference(); // returns duplicated data object
-  }  
+  }
   
   private Map<String, Integer> createSearchMap(Map<String, Integer> nameMap) {
     

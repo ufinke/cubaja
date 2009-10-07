@@ -878,40 +878,6 @@ public class CsvReader implements ColumnReader {
   }
 
   /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readEnum(java.lang.String, java.lang.Class)
-   */
-  public <E extends Enum<E>> E readEnum(String columnName, Class<E> clazz) throws CsvException {
-    
-    return readEnum(getColumnPosition(columnName), clazz);
-  }
-  
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readEnum(int, java.lang.Class)
-   */
-  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> clazz) throws CsvException {
-    
-    String s = getColumn(columnPosition).trim();
-    if (s.length() == 0) {
-      return null;
-    }
-    try {
-      char c = s.charAt(0);
-      if (c >= 0 && c <= 9) {
-        return clazz.getEnumConstants()[readInt(columnPosition)];
-      } else {
-        try {
-          return Enum.valueOf(clazz, s);
-        } catch (Exception e) {
-          return Enum.valueOf(clazz, s.toUpperCase());
-        }
-      }
-    } catch (Exception e) {
-      handleParseError(e, s, clazz.getName());
-      return null;
-    }
-  }
-
-  /* (non-Javadoc)
    * @see de.ufinke.cubaja.csv.ColumnReader#readObject(java.lang.Class)
    */
   @SuppressWarnings("unchecked")

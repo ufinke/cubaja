@@ -51,7 +51,6 @@ class ObjectFactoryManager implements Generator {
   static private final Type objectType = new Type(Object.class);
   static private final Type voidType = new Type(Void.TYPE);
   static private final Type intType = new Type(Integer.TYPE);
-  static private final Type classType = new Type(Class.class);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
   static private final Type csvReaderType = new Type(CsvReader.class);
   static private final Type csvExceptionType = new Type(CsvException.class);
@@ -95,14 +94,7 @@ class ObjectFactoryManager implements Generator {
       
       code.loadLocalReference(1);
       code.loadConstant(setter.position);
-      if (type.needsClazz()) {
-        parmType = new Type(setter.clazz);
-        code.loadConstant(setter.clazz);
-        code.invokeVirtual(csvReaderType, type.getType(), type.getReaderMethod(), intType, classType);
-        code.cast(parmType);
-      } else {
-        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
-      }
+      code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
       
       code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
     }
