@@ -8,62 +8,37 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.lang.reflect.Constructor;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import de.ufinke.cubaja.util.Text;
 
 public class Loader extends ClassLoader {
 
   static private final String dumpDirectory = System.getProperty(Loader.class.getPackage().getName() + ".dump");
-  static private final Text text = new Text(Loader.class);
+  static private final String classNamePrefix = Loader.class.getPackage() + ".Generated";
   
-  static private final Loader loader = new Loader();
-  static private final Map<String, Generator> generatorMap = new ConcurrentHashMap<String, Generator>(); 
-  
-  static public String createClassName(Class<?> owner, String prefix, Class<?> suffix) {
+  public static Class<?> createClass(Generator generator, Object... nameSuffix) throws ClassNotFoundException {
+    
+    Loader loader = new Loader(generator, nameSuffix);
     
     StringBuilder sb = new StringBuilder(200);
-    sb.append(owner.getPackage().getName());
-    sb.append('.');
-    sb.append(prefix);
-    if (suffix != null) {      
+    sb.append(classNamePrefix);
+    for (int i = 0; i < nameSuffix.length; i++) {
       sb.append('_');
-      sb.append(suffix.getName().replace('.', '_'));
+      Object suffix = nameSuffix[i];
+      if (suffix.getClass() == Class.class) {
+        Class<?> clazz = (Class<?>) suffix;
+        suffix = clazz.getName();
+      }
+      sb.append(suffix.toString().replace('.', '_'));
     }
-    return sb.toString();
+    String className = sb.toString();
+    
+    return loader.loadClass(className);
   }
   
-  static public void defineGenerator(String className, Generator generator) {
-    
-    generatorMap.put(className, generator);
-  }
-
-  static public Object createInstance(String className, Generator generator, Object... constructorArgs) throws Exception {
-    
-    defineGenerator(className, generator);
-    
-    Class<?> clazz = loader.loadClass(className);
-    
-    if (constructorArgs.length == 0) {
-      return clazz.newInstance();
-    }
-    
-    Class<?>[] argClasses = new Class<?>[constructorArgs.length];
-    for (int i = 0; i < constructorArgs.length; i++) {
-      argClasses[i] = constructorArgs[i].getClass();
-    }
-    Constructor<?> constructor = clazz.getConstructor(argClasses);
-    return constructor.newInstance(constructorArgs);
-  }
+  private Generator generator;
   
-  static public ClassLoader getLoader() {
+  private Loader(Generator generator, Object... nameSuffix) {
     
-    return loader;
-  }
-  
-  private Loader() {
-    
+    this.generator = generator;
   }
   
   protected Class<?> findClass(String className) throws ClassNotFoundException {
@@ -76,11 +51,6 @@ public class Loader extends ClassLoader {
   }
   
   private Class<?> doFindClass(String className) throws Exception {
-    
-    Generator generator = generatorMap.get(className);
-    if (generator == null) {
-      throw new CafebabeException(text.get("noGenerator", className));
-    }
     
     GenClass genClass = generator.generate(className);
     

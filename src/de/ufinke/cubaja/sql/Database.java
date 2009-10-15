@@ -3,7 +3,9 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.sql.*;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import org.apache.commons.logging.Log;
@@ -67,6 +69,11 @@ public class Database {
     execute(new Sql(sql), acceptedSqlCodes);
   }
   
+  public void execute(Class<?> packageClass, String sqlResource, int... acceptedSqlCodes) throws SQLException, IOException {
+    
+    execute(new Sql(packageClass, sqlResource), acceptedSqlCodes);
+  }
+  
   public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
     if (sql.hasVariables()) {
@@ -109,6 +116,11 @@ public class Database {
     return createQuery(new Sql(sql));
   }
   
+  public Query createQuery(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
+    
+    return createQuery(new Sql(packageClass, sqlResource));
+  }
+  
   public Query createQuery(Sql sql) throws SQLException {
 
     String stm = sql.getSingleStatement();
@@ -130,6 +142,11 @@ public class Database {
   public Update createUpdate(String sql) throws SQLException {
     
     return createUpdate(new Sql(sql));
+  }
+  
+  public Update createUpdate(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
+    
+    return createUpdate(new Sql(packageClass, sqlResource));
   }
   
   public Update createUpdate(Sql sql) throws SQLException {

@@ -5,16 +5,10 @@ package de.ufinke.cubaja.sql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import de.ufinke.cubaja.io.*;
+import de.ufinke.cubaja.io.ColumnReader;
+import de.ufinke.cubaja.io.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
 public class Query extends PreparedSql implements ColumnReader {
@@ -23,10 +17,8 @@ public class Query extends PreparedSql implements ColumnReader {
   
   private ResultSet resultSet;
   private ResultSetMetaData metaData;
-  private Class<?> objectClass;
-  private ObjectFactory objectFactory;
   private int rowCount;
-  private Map<String, Integer> columnMap;
+  private ObjectFactoryGenerator generator;
   
   Query(PreparedStatement statement, Sql sql) {
   
@@ -88,22 +80,11 @@ public class Query extends PreparedSql implements ColumnReader {
     return getMetaData().getColumnCount();
   }
   
-  private Map<String, Integer> getColumnMap() throws SQLException {
-    
-    if (columnMap == null) {
-      int columnCount = getColumnCount();
-      columnMap = new HashMap<String, Integer>(columnCount << 1);
-      for (int i = 1; i <= columnCount; i++) {
-        columnMap.put(getMetaData().getColumnLabel(i), i);
-      }
-    }
-    
-    return columnMap;
-  }
-
   public int getColumnPosition(String columnName) throws SQLException {
 
-    Integer position = getColumnMap().get(columnName);
+    checkExec();
+    
+    Integer position = resultSet.findColumn(columnName); 
     if (position == null) {
       throw new SQLException(text.get("columnNotFound", columnName));
     }
@@ -384,12 +365,13 @@ public class Query extends PreparedSql implements ColumnReader {
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws SQLException {
 
+    checkRow();
+    
     try {
-      if (clazz != objectClass) {
-        objectClass = clazz;
-        objectFactory = ObjectFactoryManager.getFactory(clazz, metaData);
+      if (generator == null) {
+        generator = new ObjectFactoryGenerator(getMetaData());
       }
-      return (D) objectFactory.createObject(this);
+      return (D) generator.getFactory(clazz).createObject(this);
     } catch (SQLException sqle) {
       throw sqle;
     } catch (Exception e) {

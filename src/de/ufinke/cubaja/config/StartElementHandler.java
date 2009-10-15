@@ -6,21 +6,15 @@ package de.ufinke.cubaja.config;
 import java.util.Map;
 
 /**
- * Gives an element node control over its init and finish events.
+ * Handles start of element processing.
  * @author Uwe Finke
  */
-public interface ManagedElement {
+public interface StartElementHandler {
 
   /**
    * Called immediately after instantiation of this node object.
    * @param sharedMap a map with shared information
    * @throws ConfigException
    */
-  public void init(Map<Object, Object> sharedMap) throws ConfigException;
-  
-  /**
-   * Called after all attributes and sub-elements have been set.
-   * @throws ConfigException
-   */
-  public void finish() throws ConfigException;  
+  public void startElement(Map<Object, Object> sharedMap) throws ConfigException;  
 }

@@ -27,9 +27,11 @@
  * <code>String</code>, <code>java.util.Date</code>, <code>java.math.BigInteger</code>,
  * <code>java.math.BigDecimal</code>, <code>Class</code> and interfaces.
  * Other types with a public parameterless constructor are considered to be element nodes.
- * When we implement the <code>ManagedElement</code> and / or
- * <code>DynamicElement</code> interface for an element node class, the element nodes gain more
- * control over the configuration process.
+ * Those types need not to extend or implement supertypes or interfaces.
+ * But if such a type implements <code>StartElementHandler</code>,
+ * <code>EndElementHandler</code>, <code>ParameterFactoryFinder</code> or
+ * <code>ParameterFactoryProvider</code>, the implemented methods will
+ * be called during the configuration process and we gain more control for special purposes.
  * </p>
  * <p>
  * An attribute value will be passed to the actual element node object
@@ -43,7 +45,7 @@
  * and collected in an array.
  * </p>
  * <p>
- * The application passes an instance of its root element node to
+ * The application passes its root configuration object to
  * the method <code>configure</code> of a <code>Configurator</code> instance.
  * Before doing so, we can customize the <code>Configurator</code>,
  * e.g. by setting the base name of the XML source,

@@ -17,8 +17,10 @@ class ElementProxy {
   private String name;
   private ElementKind kind;
   private Object node;
-  private boolean managedNode;
-  private boolean dynamicNode;
+  private boolean startElement;
+  private boolean endElement;
+  private boolean factoryProvider;
+  private boolean factoryFinder;
   private Map<String, MethodProxy> methodMap;
   private MethodProxy parentMethod;
   private MethodProxy charDataMethod;
@@ -96,11 +98,17 @@ class ElementProxy {
     this.node = node;
     
     for (Class<?> implementedInterface : node.getClass().getInterfaces()) {
-      if (ManagedElement.class.isAssignableFrom(implementedInterface)) {
-        managedNode = true;
+      if (StartElementHandler.class.isAssignableFrom(implementedInterface)) {
+        startElement = true;
       }
-      if (DynamicElement.class.isAssignableFrom(implementedInterface)) {
-        dynamicNode = true;
+      if (EndElementHandler.class.isAssignableFrom(implementedInterface)) {
+        endElement = true;
+      }
+      if (ParameterFactoryProvider.class.isAssignableFrom(implementedInterface)) {
+        factoryProvider = true;
+      }
+      if (ParameterFactoryFinder.class.isAssignableFrom(implementedInterface)) {
+        factoryFinder = true;
       }
     }
     
@@ -113,14 +121,24 @@ class ElementProxy {
     }
   }
   
-  boolean isManagedNode() {
+  boolean isStartElement() {
     
-    return managedNode;
+    return startElement;
   }
   
-  boolean isDynamicNode() {
+  boolean isEndElement() {
     
-    return dynamicNode;
+    return endElement;
+  }
+  
+  boolean isFactoryProvider() {
+    
+    return factoryProvider;
+  }
+  
+  boolean isFactoryFinder() {
+    
+    return factoryFinder;
   }
   
   private void checkMethod(Method method) throws ConfigException {
@@ -161,21 +179,7 @@ class ElementProxy {
   
   MethodProxy findMethod(String methodName) throws ConfigException {
     
-    MethodProxy result = methodMap.get(Util.createMethodName(methodName, null));
-    
-    if (result == null && node != null && dynamicNode) {
-      DynamicElement dynamicNode = (DynamicElement) node;
-      String alternateName = dynamicNode.alternateName(methodName);
-      if (alternateName != null) {        
-        result = methodMap.get(Util.createMethodName(alternateName, null));
-      }
-    }
-    
-    if (result == null) {
-      throw new ConfigException(text.get("unexpectedElement", name));
-    }
-    
-    return result;
+    return methodMap.get(Util.createMethodName(methodName, null));
   }
   
   void setParentMethod(MethodProxy parentMethod) {

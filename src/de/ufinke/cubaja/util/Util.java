@@ -3,6 +3,9 @@
 
 package de.ufinke.cubaja.util;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
+
 /**
  * Miscellaneous utility methods.
  * @author Uwe Finke
@@ -126,6 +129,20 @@ public class Util {
     return sb.toString();
   }
   
+  static public <D> D createInstance(Class<D> clazz, Object... constructorArgs) throws Exception {
+    
+    if (constructorArgs.length == 0) {
+      return clazz.newInstance();
+    }
+    
+    Class<?>[] argClasses = new Class<?>[constructorArgs.length];
+    for (int i = 0; i < constructorArgs.length; i++) {
+      argClasses[i] = constructorArgs[i].getClass();
+    }
+    Constructor<D> constructor = clazz.getConstructor(argClasses);
+    return constructor.newInstance(constructorArgs);
+  }
+  
   /**
    * Returns the enum constant of the specified enum type with the specified name.
    * If name is <code>null</code> or has a length of 0, then the result is <code>null</code>.
@@ -184,6 +201,21 @@ public class Util {
   static public int getOrdinal(Enum<?> enumConstant) {
 
     return (enumConstant == null) ? -1 : enumConstant.ordinal();
+  }
+  
+  /**
+   * Returns the file's path.
+   * Returns the canonical path, or - in case of failure - the absolute path.
+   * @param file
+   * @return path
+   */
+  static public String getPath(File file) {
+    
+    try {
+      return file.getCanonicalPath();
+    } catch (Exception e) {
+      return file.getAbsolutePath();
+    }
   }
   
 }

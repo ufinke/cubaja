@@ -156,6 +156,9 @@ class SAXHandler extends DefaultHandler2 {
     IncludeDefinition definition = includeMap.get(resourceName);
     if (definition == null) {      
       source = loader.loadResource(resourceName);
+      if (source == null) {
+        throw new ConfigException(text.get("resourceNotFound", resourceName));        
+      }
       source.setPublicId(resourceName);
     } else {
       source = new InputSource(new StringReader(definition.toString()));
@@ -355,13 +358,28 @@ class SAXHandler extends DefaultHandler2 {
     Object node = null;
     
     if (element.getKind() == ElementKind.ROOT_NODE) {
+      
       node = rootNode;
-    } else {      
+      
+    } else {
+      
       ElementProxy parentElement = peekElement();
       MethodProxy parentMethod = parentElement.findMethod(element.getName());
+      if (parentMethod == null) {
+        throw new ConfigException(text.get("unexpectedElement", element.getName()));
+      }
       element.setParentMethod(parentMethod);
-      ParameterFactory factory = parameterManager.getFactory(parentMethod.getType());
+      
+      ParameterFactory factory = null;
+      if (parentElement.isFactoryProvider()) {
+        ParameterFactoryProvider provider = (ParameterFactoryProvider) parentElement.getNode();
+        factory = provider.getFactory(element.getName(), parentMethod.getType());
+      }
+      if (factory == null) {
+        factory = parameterManager.getFactory(parentMethod.getType());
+      }
       element.setFactory(factory);
+      
       if (factory.isNode()) {
         try {          
           node = parameterManager.createParameter(factory, element.getName(), parentMethod);
@@ -379,14 +397,14 @@ class SAXHandler extends DefaultHandler2 {
       element.setNode(node);
     }
     
-    if (element.isManagedNode()) {
-      ManagedElement managed = (ManagedElement) node;
-      managed.init(infoMap);
+    if (element.isStartElement()) {
+      StartElementHandler handler = (StartElementHandler) node;
+      handler.startElement(infoMap);
     }
     
-    if (element.isDynamicNode()) {
-      DynamicElement dynamic = (DynamicElement) node;
-      parameterManager.pushParameterFactoryFinder(dynamic.parameterFactoryFinder());
+    if (element.isFactoryFinder()) {
+      ParameterFactoryFinder finder = (ParameterFactoryFinder) node;
+      parameterManager.pushParameterFactoryFinder(finder);
     }
     
     if (atts.getLength() > 0) {      
@@ -404,17 +422,26 @@ class SAXHandler extends DefaultHandler2 {
     
     MethodProxy method = element.findMethod(name);
     if (method == null) {
-      throw new ConfigException(text.get("unexpectedAttribute", name));
+      throw new ConfigException(text.get("unexpectedAttribute", name, element.getName()));
     }
     
     Object parm = null;
     value = resolve(value, false);
+    
     try {
-      ParameterFactory factory = parameterManager.getFactory(method.getType());
+      ParameterFactory factory = null;
+      if (element.isFactoryProvider()) {
+        ParameterFactoryProvider provider = (ParameterFactoryProvider) element.getNode();
+        factory = provider.getFactory(element.getName(), method.getType());
+      }
+      if (factory == null) {
+        factory = parameterManager.getFactory(method.getType());
+      }
       parm = parameterManager.createParameter(factory, value, method);
     } catch (Exception e) {
       throw new ConfigException(text.get("createParameter", value, name, e.getLocalizedMessage()));
     }
+    
     method.invoke(name, element.getNode(), parm);
   }
   
@@ -436,12 +463,12 @@ class SAXHandler extends DefaultHandler2 {
           charDataMethod.invoke(element.getName(), parm, resolve(element.getCharData(), true));
         }
 
-        if (element.isManagedNode()) {
-          ManagedElement managed = (ManagedElement) parm;
-          managed.finish();
+        if (element.isEndElement()) {
+          EndElementHandler handler = (EndElementHandler) parm;
+          handler.endElement();
         }
         
-        if (element.isDynamicNode()) {
+        if (element.isFactoryFinder()) {
           parameterManager.popParameterFactoryFinder();
         }
         

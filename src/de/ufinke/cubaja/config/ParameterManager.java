@@ -518,6 +518,14 @@ class ParameterManager implements ParameterFactoryFinder {
   
   void pushParameterFactoryFinder(ParameterFactoryFinder finder) {
     
+    if (finder == null) {
+      finder = new ParameterFactoryFinder() {
+        public ParameterFactory findFactory(Class<?> clazz) {
+          return null;
+        }
+      };
+    }
+    
     finderStack.push(finder);
   }
   

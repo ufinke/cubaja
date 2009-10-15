@@ -22,8 +22,8 @@ class OutputObjectHandlerFactory implements Generator {
   
   static OutputObjectHandler getHandler(Class<?> dataClass, List<PropertyDescription> propertyList) throws Exception {
     
-    String className = Loader.createClassName(OutputObjectHandlerFactory.class, "OutputObjectHandler", dataClass);
-    return (OutputObjectHandler) Loader.createInstance(className, new OutputObjectHandlerFactory(dataClass, propertyList));
+    Class<?> handlerClass = Loader.createClass(new OutputObjectHandlerFactory(dataClass, propertyList), "OutputObjectHandler", dataClass);
+    return (OutputObjectHandler) handlerClass.newInstance();
   }
   
   private List<PropertyDescription> propertyList;

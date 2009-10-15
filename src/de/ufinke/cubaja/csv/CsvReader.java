@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
-import de.ufinke.cubaja.io.*;
+import de.ufinke.cubaja.io.ColumnReader;
+import de.ufinke.cubaja.io.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -62,6 +63,8 @@ public class CsvReader implements ColumnReader {
   private int currentIndex;    
   private ColConfig colConfig;
   
+  private ObjectFactoryGenerator generator;
+  
   /**
    * Constructor with configuration.
    * When using this constructor,
@@ -78,7 +81,7 @@ public class CsvReader implements ColumnReader {
 
   /**
    * Constructor with implicit default configuration.
-   * With this constructor, we have no defined columns.
+   * With this constructor, we don't have defined columns.
    * @param reader
    * @throws CsvException
    */
@@ -190,9 +193,6 @@ public class CsvReader implements ColumnReader {
     this.errorHandler = errorHandler;
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#getRowCount()
-   */
   public int getRowCount() {
     
     return rowCount;
@@ -207,9 +207,6 @@ public class CsvReader implements ColumnReader {
     return parser.getLineCount();
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#close()
-   */
   public void close() throws IOException {
     
     in.close();
@@ -224,9 +221,6 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#nextRow()
-   */
   public boolean nextRow() throws IOException, CsvException {
     
     boolean accepted = false;
@@ -326,9 +320,6 @@ public class CsvReader implements ColumnReader {
     return s;
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#getColumnPosition(java.lang.String)
-   */
   public int getColumnPosition(String columnName) throws CsvException {
     
     Integer index = nameMap.get(columnName);
@@ -344,9 +335,6 @@ public class CsvReader implements ColumnReader {
     errorHandler.handleError(error);
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readColumns()
-   */
   public String[] readColumns() throws CsvException {
     
     int count = parser.getColumnCount();
@@ -360,26 +348,17 @@ public class CsvReader implements ColumnReader {
     return col;
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#getColumnCount()
-   */
   public int getColumnCount() throws CsvException {
     
     checkEOF();
     return parser.getColumnCount();
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readString(java.lang.String)
-   */
   public String readString(String columnName) throws CsvException {
     
     return readString(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readString(int)
-   */
   public String readString(int columnPosition) throws CsvException {
 
     return getColumn(columnPosition);
@@ -401,50 +380,32 @@ public class CsvReader implements ColumnReader {
     return false;
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBoolean(java.lang.String)
-   */
   public boolean readBoolean(String columnName) throws CsvException {
     
     return readBoolean(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBoolean(int)
-   */
   public boolean readBoolean(int columnPosition) throws CsvException {
     
     return getBoolean(getColumn(columnPosition).trim());
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBooleanObject(java.lang.String)
-   */
   public Boolean readBooleanObject(String columnName) throws CsvException {
     
     return readBooleanObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBooleanObject(int)
-   */
   public Boolean readBooleanObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();    
     return (s.length() == 0) ? null : Boolean.valueOf(getBoolean(s));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readByte(java.lang.String)
-   */
   public byte readByte(String columnName) throws CsvException {
     
     return readByte(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readByte(int)
-   */
   public byte readByte(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -459,17 +420,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readByteObject(java.lang.String)
-   */
   public Byte readByteObject(String columnName) throws CsvException {
     
     return readByteObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readByteObject(int)
-   */
   public Byte readByteObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -484,17 +439,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readShort(java.lang.String)
-   */
   public short readShort(String columnName) throws CsvException {
     
     return readShort(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readShort(int)
-   */
   public short readShort(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -509,17 +458,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readShortObject(java.lang.String)
-   */
   public Short readShortObject(String columnName) throws CsvException {
     
     return readShortObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readShortObject(int)
-   */
   public Short readShortObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -534,17 +477,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readChar(java.lang.String)
-   */
   public char readChar(String columnName) throws CsvException {
     
     return readChar(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readChar(int)
-   */
   public char readChar(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -554,17 +491,11 @@ public class CsvReader implements ColumnReader {
     return s.charAt(0);
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readCharObject(java.lang.String)
-   */
   public Character readCharObject(String columnName) throws CsvException {
     
     return readCharObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readCharObject(int)
-   */
   public Character readCharObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -574,17 +505,11 @@ public class CsvReader implements ColumnReader {
     return Character.valueOf(s.charAt(0));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readInt(java.lang.String)
-   */
   public int readInt(String columnName) throws CsvException {
     
     return readInt(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readInt(int)
-   */
   public int readInt(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -599,17 +524,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readIntObject(java.lang.String)
-   */
   public Integer readIntObject(String columnName) throws CsvException {
     
     return readIntObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readIntObject(int)
-   */
   public Integer readIntObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -624,17 +543,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readLong(java.lang.String)
-   */
   public long readLong(String columnName) throws CsvException {
     
     return readLong(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readLong(int)
-   */
   public long readLong(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -649,17 +562,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readLongObject(java.lang.String)
-   */
   public Long readLongObject(String columnName) throws CsvException {
     
     return readLongObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readLongObject(int)
-   */
   public Long readLongObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -702,17 +609,11 @@ public class CsvReader implements ColumnReader {
     return sb.toString();
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readFloat(java.lang.String)
-   */
   public float readFloat(String columnName) throws CsvException {
     
     return readFloat(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readFloat(int)
-   */
   public float readFloat(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -727,17 +628,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readFloatObject(java.lang.String)
-   */
   public Float readFloatObject(String columnName) throws CsvException {
     
     return readFloatObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readFloatObject(int)
-   */
   public Float readFloatObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -752,17 +647,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDouble(java.lang.String)
-   */
   public double readDouble(String columnName) throws CsvException {
     
     return readDouble(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDouble(int)
-   */
   public double readDouble(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -777,17 +666,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDoubleObject(java.lang.String)
-   */
   public Double readDoubleObject(String columnName) throws CsvException {
     
     return readDoubleObject(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDoubleObject(int)
-   */
   public Double readDoubleObject(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -802,17 +685,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBigDecimal(java.lang.String)
-   */
   public BigDecimal readBigDecimal(String columnName) throws CsvException {
     
     return readBigDecimal(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBigDecimal(int)
-   */
   public BigDecimal readBigDecimal(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -827,17 +704,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBigInteger(java.lang.String)
-   */
   public BigInteger readBigInteger(String columnName) throws CsvException {
     
     return readBigInteger(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readBigInteger(int)
-   */
   public BigInteger readBigInteger(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -852,17 +723,11 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDate(java.lang.String)
-   */
   public Date readDate(String columnName) throws CsvException {
     
     return readDate(getColumnPosition(columnName));
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readDate(int)
-   */
   public Date readDate(int columnPosition) throws CsvException {
     
     String s = getColumn(columnPosition).trim();
@@ -877,22 +742,19 @@ public class CsvReader implements ColumnReader {
     }
   }
 
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readObject(java.lang.Class)
-   */
   @SuppressWarnings("unchecked")
   public <D> D readObject(Class<? extends D> clazz) throws CsvException {
     
     try {
-      return (D) ObjectFactoryManager.getFactory(clazz, nameMap).createObject(this);
+      if (generator == null) {
+        generator = new ObjectFactoryGenerator(nameMap);
+      }
+      return (D) generator.getFactory(clazz).createObject(this);
     } catch (Exception e) {
       throw new CsvException(text.get("readObject", clazz.getName()), e);
     }
   }
   
-  /* (non-Javadoc)
-   * @see de.ufinke.cubaja.csv.ColumnReader#readAllRows(java.lang.Class)
-   */
   public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
     
     return new RowIterator<D>(this, clazz);

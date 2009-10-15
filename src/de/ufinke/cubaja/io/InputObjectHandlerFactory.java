@@ -23,8 +23,8 @@ class InputObjectHandlerFactory implements Generator {
   
   static InputObjectHandler getHandler(Class<?> dataClass, List<PropertyDescription> propertyList) throws Exception {
     
-    String className = Loader.createClassName(InputObjectHandlerFactory.class, "InputObjectHandler", dataClass);
-    return (InputObjectHandler) Loader.createInstance(className, new InputObjectHandlerFactory(dataClass, propertyList));
+    Class<?> handlerClass = Loader.createClass(new InputObjectHandlerFactory(dataClass, propertyList), "InputObjectHandler", dataClass);
+    return (InputObjectHandler) handlerClass.newInstance();
   }
   
   private List<PropertyDescription> propertyList;

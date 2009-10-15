@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.config;
 
 /**
- * Provider of <code>ParameterFactory</code>s for specific parameter types. 
+ * Provider of <code>ParameterFactory</code> instances for special types. 
  * @author Uwe Finke
  */
 public interface ParameterFactoryFinder {

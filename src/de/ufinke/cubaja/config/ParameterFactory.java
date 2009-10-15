@@ -26,7 +26,7 @@ public interface ParameterFactory {
   
   /**
    * Tells whether a parameter is an element node or an attribute only.
-   * Attributes and elements that act as attributes can't have sub-elements;
+   * Attributes and leaf elements can't have sub-elements;
    * their setter and adder methods (if any) aren't used during configuration.
    * @return <code>true</code> if element with sub-elements; <code>false</code> otherwise
    */

@@ -3,7 +3,8 @@
 
 package de.ufinke.cubaja.sql;
 
-import java.sql.*;
+import java.sql.SQLException;
+import de.ufinke.cubaja.csv.CsvException;
 
 /**
  * Factory needed internaly for <code>Query.readObject()</code>.
