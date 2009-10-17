@@ -3,10 +3,22 @@
 
 package de.ufinke.cubaja.sql;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.*;
-import java.util.Date;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Ref;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.io.RowIterator;
 import de.ufinke.cubaja.util.Text;
@@ -226,48 +238,70 @@ public class Query extends PreparedSql implements ColumnReader {
     return columns;
   }
 
-  public Date readDate(String columnName) throws SQLException {
+  public java.sql.Date readSqlDate(String columnName) throws SQLException {
 
-    return readDate(getColumnPosition(columnName));
+    return readSqlDate(getColumnPosition(columnName));
   }
 
-  public Date readDate(int columnPosition) throws SQLException {
+  public java.sql.Date readSqlDate(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getDate(columnPosition);
   }
+  
+  public Timestamp readSqlTimestamp(String columnName) throws SQLException {
 
-  public Date readTimestamp(String columnName) throws SQLException {
-
-    return readTimestamp(getColumnPosition(columnName));
+    return readSqlTimestamp(getColumnPosition(columnName));
   }
 
-  public Date readTimestamp(int columnPosition) throws SQLException {
-
-    checkRow();
-    return new Date(resultSet.getTimestamp(columnPosition).getTime());
-  }
-
-  public Timestamp readSQLTimestamp(String columnName) throws SQLException {
-
-    return readSQLTimestamp(getColumnPosition(columnName));
-  }
-
-  public Timestamp readSQLTimestamp(int columnPosition) throws SQLException {
+  public Timestamp readSqlTimestamp(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getTimestamp(columnPosition);
   }
 
-  public Time readSQLTime(String columnName) throws SQLException {
+  public Time readSqlTime(String columnName) throws SQLException {
 
-    return readSQLTime(getColumnPosition(columnName));
+    return readSqlTime(getColumnPosition(columnName));
   }
 
-  public Time readSQLTime(int columnPosition) throws SQLException {
+  public Time readSqlTime(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getTime(columnPosition);
+  }
+
+  public Date readDate(String columnName) throws SQLException {
+    
+    return readDate(getColumnPosition(columnName));
+  }
+  
+  public Date readDate(int columnPosition) throws SQLException {
+    
+    java.sql.Date date = readSqlDate(columnPosition);
+    return (date == null) ? null : new Date(date.getTime());
+  }
+
+  public Date readTimestamp(String columnName) throws SQLException {
+    
+    return readTimestamp(getColumnPosition(columnName));
+  }
+  
+  public Date readTimestamp(int columnPosition) throws SQLException {
+
+    Timestamp timestamp = readSqlTimestamp(columnPosition);
+    return (timestamp == null) ? null : new Date(timestamp.getTime());
+  }
+
+  public Date readTime(String columnName) throws SQLException {
+    
+    return readTime(getColumnPosition(columnName));
+  }
+  
+  public Date readTime(int columnPosition) throws SQLException {
+
+    Time time = readSqlTime(columnPosition);
+    return (time == null) ? null : new Date(time.getTime());
   }
 
   public double readDouble(String columnName) throws SQLException {
@@ -413,6 +447,106 @@ public class Query extends PreparedSql implements ColumnReader {
 
     checkRow();
     return resultSet.getString(columnPosition);
+  }
+  
+  public byte[] readBytes(String columnName) throws SQLException {
+    
+    return readBytes(getColumnPosition(columnName));
+  }
+  
+  public byte[] readBytes(int columnPosition) throws SQLException {
+    
+    return resultSet.getBytes(columnPosition);
+  }
+
+  public InputStream readAsciiStream(String columnName) throws SQLException {
+    
+    return readAsciiStream(getColumnPosition(columnName));
+  }
+  
+  public InputStream readAsciiStream(int columnPosition) throws SQLException {
+    
+    return resultSet.getAsciiStream(columnPosition);
+  }
+
+  public InputStream readBinaryStream(String columnName) throws SQLException {
+    
+    return readBinaryStream(getColumnPosition(columnName));
+  }
+  
+  public InputStream readBinaryStream(int columnPosition) throws SQLException {
+    
+    return resultSet.getBinaryStream(columnPosition);
+  }
+
+  public Reader readCharacterStream(String columnName) throws SQLException {
+    
+    return readCharacterStream(getColumnPosition(columnName));
+  }
+  
+  public Reader readCharacterStream(int columnPosition) throws SQLException {
+    
+    return resultSet.getCharacterStream(columnPosition);
+  }
+
+  public Blob readBlob(String columnName) throws SQLException {
+    
+    return readBlob(getColumnPosition(columnName));
+  }
+  
+  public Blob readBlob(int columnPosition) throws SQLException {
+    
+    return resultSet.getBlob(columnPosition);
+  }
+
+  public Clob readClob(String columnName) throws SQLException {
+    
+    return readClob(getColumnPosition(columnName));
+  }
+  
+  public Clob readClob(int columnPosition) throws SQLException {
+    
+    return resultSet.getClob(columnPosition);
+  }
+
+  public Array readArray(String columnName) throws SQLException {
+    
+    return readArray(getColumnPosition(columnName));
+  }
+  
+  public Array readArray(int columnPosition) throws SQLException {
+    
+    return resultSet.getArray(columnPosition);
+  }
+
+  public Ref readRef(String columnName) throws SQLException {
+    
+    return readRef(getColumnPosition(columnName));
+  }
+  
+  public Ref readRef(int columnPosition) throws SQLException {
+    
+    return resultSet.getRef(columnPosition);
+  }
+  
+  public URL readURL(String columnName) throws SQLException {
+    
+    return readURL(getColumnPosition(columnName));
+  }
+  
+  public URL readURL(int columnPosition) throws SQLException {
+    
+    return resultSet.getURL(columnPosition);
+  }
+
+  public Object readObject(String columnName) throws SQLException {
+    
+    return readObject(getColumnPosition(columnName));
+  }
+  
+  public Object readObject(int columnPosition) throws SQLException {
+    
+    return resultSet.getObject(columnPosition);
   }
 
   public <D> D select(Class<? extends D> clazz) throws SQLException {

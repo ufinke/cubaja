@@ -3,8 +3,44 @@
 
 package de.ufinke.cubaja.sql;
 
+import static java.sql.Types.ARRAY;
+import static java.sql.Types.BIGINT;
+import static java.sql.Types.BINARY;
+import static java.sql.Types.BIT;
+import static java.sql.Types.BLOB;
+import static java.sql.Types.BOOLEAN;
+import static java.sql.Types.CHAR;
+import static java.sql.Types.CLOB;
+import static java.sql.Types.DATALINK;
+import static java.sql.Types.DATE;
+import static java.sql.Types.DECIMAL;
+import static java.sql.Types.DOUBLE;
+import static java.sql.Types.FLOAT;
+import static java.sql.Types.INTEGER;
+import static java.sql.Types.JAVA_OBJECT;
+import static java.sql.Types.LONGVARBINARY;
+import static java.sql.Types.LONGVARCHAR;
+import static java.sql.Types.NUMERIC;
+import static java.sql.Types.REAL;
+import static java.sql.Types.REF;
+import static java.sql.Types.SMALLINT;
+import static java.sql.Types.STRUCT;
+import static java.sql.Types.TIME;
+import static java.sql.Types.TIMESTAMP;
+import static java.sql.Types.TINYINT;
+import static java.sql.Types.VARBINARY;
+import static java.sql.Types.VARCHAR;
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
+import java.sql.Ref;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,49 +48,343 @@ import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {
 
-  // CONSTANT(clazz, isPrimitive, needsClazz, methodName, priority)
-  BOOLEAN       (Boolean.TYPE    , true , false, "Boolean"      , 19),
-  BYTE          (Byte.TYPE       , true , false, "Byte"         , 18),
-  SHORT         (Short.TYPE      , true , false, "Short"        , 17),
-  CHAR          (Character.TYPE  , true , false, "Char"         , 16),
-  INT           (Integer.TYPE    , true , false, "Int"          , 15),
-  LONG          (Long.TYPE       , true , false, "Long"         , 14),
-  FLOAT         (Float.TYPE      , true , false, "Float"        , 13),
-  DOUBLE        (Double.TYPE     , true , false, "Double"       , 12),
-  BOOLEAN_OBJECT(Boolean.class   , false, false, "BooleanObject", 11),
-  BYTE_OBJECT   (Byte.class      , false, false, "ByteObject"   , 10),
-  SHORT_OBJECT  (Short.class     , false, false, "ShortObject"  ,  9),
-  CHAR_OBJECT   (Character.class , false, false, "CharObject"   ,  8),
-  INT_OBJECT    (Integer.class   , false, false, "IntObject"    ,  7),
-  LONG_OBJECT   (Long.class      , false, false, "LongObject"   ,  6),
-  FLOAT_OBJECT  (Float.class     , false, false, "FloatObject"  ,  5),
-  DOUBLE_OBJECT (Double.class    , false, false, "DoubleObject" ,  4),
-  STRING        (String.class    , false, false, "String"       ,  1),
-  DATE          (Date.class      , false, false, "Date"         , 20),
-  BIG_INTEGER   (BigInteger.class, false, false, "BigInteger"   ,  3),
-  BIG_DECIMAL   (BigDecimal.class, false, false, "BigDecimal"   ,  2),
-  ENUM          (Enum.class      , false, true , "Enum"         , 21);
-  
-  private Class<?> clazz;
+  // CONSTANT(sqlType, setterParameterClass, isPrimitive, queryReadMethodName, priorityWithinSqlType)
+  TINYINT_BYTE_OBJECT       (TINYINT      , Byte.class         , false, "ByteObject"     ,  1),
+  TINYINT_BYTE              (TINYINT      , Byte.TYPE          , true , "Byte"           ,  2),
+  TINYINT_SHORT_OBJECT      (TINYINT      , Short.class        , false, "ShortObject"    ,  3),
+  TINYINT_SHORT             (TINYINT      , Short.TYPE         , true , "Short"          ,  4),
+  TINYINT_INT_OBJECT        (TINYINT      , Integer.class      , false, "IntObject"      ,  5),
+  TINYINT_INT               (TINYINT      , Integer.TYPE       , true , "Int"            ,  6),
+  TINYINT_LONG_OBJECT       (TINYINT      , Long.class         , false, "LongObject"     ,  7),
+  TINYINT_LONG              (TINYINT      , Long.TYPE          , true , "Long"           ,  8),
+  TINYINT_FLOAT_OBJECT      (TINYINT      , Float.class        , false, "FloatObject"    ,  9),
+  TINYINT_FLOAT             (TINYINT      , Float.TYPE         , true , "Float"          , 10),
+  TINYINT_DOUBLE_OBJECT     (TINYINT      , Double.class       , false, "DoubleObject"   , 11),
+  TINYINT_DOUBLE            (TINYINT      , Double.TYPE        , true , "Double"         , 12),
+  TINYINT_BIGINTEGER        (TINYINT      , BigInteger.class   , false, "BigInteger"     , 13),
+  TINYINT_BIGDECIMAL        (TINYINT      , BigDecimal.class   , false, "BigDecimal"     , 14),
+  TINYINT_BOOLEAN_OBJECT    (TINYINT      , Boolean.class      , false, "BooleanObject"  , 15),
+  TINYINT_BOOLEAN           (TINYINT      , Boolean.TYPE       , true , "Boolean"        , 16),
+  TINYINT_STRING            (TINYINT      , String.class       , false, "String"         , 17),
+  TINYINT_OBJECT            (TINYINT      , Object.class       , false, "Object"         , 99),
+  SMALLINT_BYTE_OBJECT      (SMALLINT     , Byte.class         , false, "ByteObject"     ,  1),
+  SMALLINT_BYTE             (SMALLINT     , Byte.TYPE          , true , "Byte"           ,  2),
+  SMALLINT_SHORT_OBJECT     (SMALLINT     , Short.class        , false, "ShortObject"    ,  3),
+  SMALLINT_SHORT            (SMALLINT     , Short.TYPE         , true , "Short"          ,  4),
+  SMALLINT_INT_OBJECT       (SMALLINT     , Integer.class      , false, "IntObject"      ,  5),
+  SMALLINT_INT              (SMALLINT     , Integer.TYPE       , true , "Int"            ,  6),
+  SMALLINT_LONG_OBJECT      (SMALLINT     , Long.class         , false, "LongObject"     ,  7),
+  SMALLINT_LONG             (SMALLINT     , Long.TYPE          , true , "Long"           ,  8),
+  SMALLINT_FLOAT_OBJECT     (SMALLINT     , Float.class        , false, "FloatObject"    ,  9),
+  SMALLINT_FLOAT            (SMALLINT     , Float.TYPE         , true , "Float"          , 10),
+  SMALLINT_DOUBLE_OBJECT    (SMALLINT     , Double.class       , false, "DoubleObject"   , 11),
+  SMALLINT_DOUBLE           (SMALLINT     , Double.TYPE        , true , "Double"         , 12),
+  SMALLINT_BIGINTEGER       (SMALLINT     , BigInteger.class   , false, "BigInteger"     , 13),
+  SMALLINT_BIGDECIMAL       (SMALLINT     , BigDecimal.class   , false, "BigDecimal"     , 14),
+  SMALLINT_BOOLEAN_OBJECT   (SMALLINT     , Boolean.class      , false, "BooleanObject"  , 15),
+  SMALLINT_BOOLEAN          (SMALLINT     , Boolean.TYPE       , true , "Boolean"        , 16),
+  SMALLINT_STRING           (SMALLINT     , String.class       , false, "String"         , 17),
+  SMALLINT_OBJECT           (SMALLINT     , Object.class       , false, "Object"         , 99),
+  INTEGER_BYTE_OBJECT       (INTEGER      , Byte.class         , false, "ByteObject"     ,  1),
+  INTEGER_BYTE              (INTEGER      , Byte.TYPE          , true , "Byte"           ,  2),
+  INTEGER_SHORT_OBJECT      (INTEGER      , Short.class        , false, "ShortObject"    ,  3),
+  INTEGER_SHORT             (INTEGER      , Short.TYPE         , true , "Short"          ,  4),
+  INTEGER_INT_OBJECT        (INTEGER      , Integer.class      , false, "IntObject"      ,  5),
+  INTEGER_INT               (INTEGER      , Integer.TYPE       , true , "Int"            ,  6),
+  INTEGER_LONG_OBJECT       (INTEGER      , Long.class         , false, "LongObject"     ,  7),
+  INTEGER_LONG              (INTEGER      , Long.TYPE          , true , "Long"           ,  8),
+  INTEGER_FLOAT_OBJECT      (INTEGER      , Float.class        , false, "FloatObject"    ,  9),
+  INTEGER_FLOAT             (INTEGER      , Float.TYPE         , true , "Float"          , 10),
+  INTEGER_DOUBLE_OBJECT     (INTEGER      , Double.class       , false, "DoubleObject"   , 11),
+  INTEGER_DOUBLE            (INTEGER      , Double.TYPE        , true , "Double"         , 12),
+  INTEGER_BIGINTEGER        (INTEGER      , BigInteger.class   , false, "BigInteger"     , 13),
+  INTEGER_BIGDECIMAL        (INTEGER      , BigDecimal.class   , false, "BigDecimal"     , 14),
+  INTEGER_BOOLEAN_OBJECT    (INTEGER      , Boolean.class      , false, "BooleanObject"  , 15),
+  INTEGER_BOOLEAN           (INTEGER      , Boolean.TYPE       , true , "Boolean"        , 16),
+  INTEGER_STRING            (INTEGER      , String.class       , false, "String"         , 17),
+  INTEGER_OBJECT            (INTEGER      , Object.class       , false, "Object"         , 99),
+  BIGINT_BYTE_OBJECT        (BIGINT       , Byte.class         , false, "ByteObject"     ,  1),
+  BIGINT_BYTE               (BIGINT       , Byte.TYPE          , true , "Byte"           ,  2),
+  BIGINT_SHORT_OBJECT       (BIGINT       , Short.class        , false, "ShortObject"    ,  3),
+  BIGINT_SHORT              (BIGINT       , Short.TYPE         , true , "Short"          ,  4),
+  BIGINT_INT_OBJECT         (BIGINT       , Integer.class      , false, "IntObject"      ,  5),
+  BIGINT_INT                (BIGINT       , Integer.TYPE       , true , "Int"            ,  6),
+  BIGINT_LONG_OBJECT        (BIGINT       , Long.class         , false, "LongObject"     ,  7),
+  BIGINT_LONG               (BIGINT       , Long.TYPE          , true , "Long"           ,  8),
+  BIGINT_FLOAT_OBJECT       (BIGINT       , Float.class        , false, "FloatObject"    ,  9),
+  BIGINT_FLOAT              (BIGINT       , Float.TYPE         , true , "Float"          , 10),
+  BIGINT_DOUBLE_OBJECT      (BIGINT       , Double.class       , false, "DoubleObject"   , 11),
+  BIGINT_DOUBLE             (BIGINT       , Double.TYPE        , true , "Double"         , 12),
+  BIGINT_BIGINTEGER         (BIGINT       , BigInteger.class   , false, "BigInteger"     , 13),
+  BIGINT_BIGDECIMAL         (BIGINT       , BigDecimal.class   , false, "BigDecimal"     , 14),
+  BIGINT_BOOLEAN_OBJECT     (BIGINT       , Boolean.class      , false, "BooleanObject"  , 15),
+  BIGINT_BOOLEAN            (BIGINT       , Boolean.TYPE       , true , "Boolean"        , 16),
+  BIGINT_STRING             (BIGINT       , String.class       , false, "String"         , 17),
+  BIGINT_OBJECT             (BIGINT       , Object.class       , false, "Object"         , 99),
+  REAL_BYTE_OBJECT          (REAL         , Byte.class         , false, "ByteObject"     ,  1),
+  REAL_BYTE                 (REAL         , Byte.TYPE          , true , "Byte"           ,  2),
+  REAL_SHORT_OBJECT         (REAL         , Short.class        , false, "ShortObject"    ,  3),
+  REAL_SHORT                (REAL         , Short.TYPE         , true , "Short"          ,  4),
+  REAL_INT_OBJECT           (REAL         , Integer.class      , false, "IntObject"      ,  5),
+  REAL_INT                  (REAL         , Integer.TYPE       , true , "Int"            ,  6),
+  REAL_LONG_OBJECT          (REAL         , Long.class         , false, "LongObject"     ,  7),
+  REAL_LONG                 (REAL         , Long.TYPE          , true , "Long"           ,  8),
+  REAL_FLOAT_OBJECT         (REAL         , Float.class        , false, "FloatObject"    ,  9),
+  REAL_FLOAT                (REAL         , Float.TYPE         , true , "Float"          , 10),
+  REAL_DOUBLE_OBJECT        (REAL         , Double.class       , false, "DoubleObject"   , 11),
+  REAL_DOUBLE               (REAL         , Double.TYPE        , true , "Double"         , 12),
+  REAL_BIGINTEGER           (REAL         , BigInteger.class   , false, "BigInteger"     , 13),
+  REAL_BIGDECIMAL           (REAL         , BigDecimal.class   , false, "BigDecimal"     , 14),
+  REAL_BOOLEAN_OBJECT       (REAL         , Boolean.class      , false, "BooleanObject"  , 15),
+  REAL_BOOLEAN              (REAL         , Boolean.TYPE       , true , "Boolean"        , 16),
+  REAL_STRING               (REAL         , String.class       , false, "String"         , 17),
+  REAL_OBJECT               (REAL         , Object.class       , false, "Object"         , 99),
+  FLOAT_BYTE_OBJECT         (FLOAT        , Byte.class         , false, "ByteObject"     ,  1),
+  FLOAT_BYTE                (FLOAT        , Byte.TYPE          , true , "Byte"           ,  2),
+  FLOAT_SHORT_OBJECT        (FLOAT        , Short.class        , false, "ShortObject"    ,  3),
+  FLOAT_SHORT               (FLOAT        , Short.TYPE         , true , "Short"          ,  4),
+  FLOAT_INT_OBJECT          (FLOAT        , Integer.class      , false, "IntObject"      ,  5),
+  FLOAT_INT                 (FLOAT        , Integer.TYPE       , true , "Int"            ,  6),
+  FLOAT_LONG_OBJECT         (FLOAT        , Long.class         , false, "LongObject"     ,  7),
+  FLOAT_LONG                (FLOAT        , Long.TYPE          , true , "Long"           ,  8),
+  FLOAT_FLOAT_OBJECT        (FLOAT        , Float.class        , false, "FloatObject"    ,  9),
+  FLOAT_FLOAT               (FLOAT        , Float.TYPE         , true , "Float"          , 10),
+  FLOAT_DOUBLE_OBJECT       (FLOAT        , Double.class       , false, "DoubleObject"   , 11),
+  FLOAT_DOUBLE              (FLOAT        , Double.TYPE        , true , "Double"         , 12),
+  FLOAT_BIGINTEGER          (FLOAT        , BigInteger.class   , false, "BigInteger"     , 13),
+  FLOAT_BIGDECIMAL          (FLOAT        , BigDecimal.class   , false, "BigDecimal"     , 14),
+  FLOAT_BOOLEAN_OBJECT      (FLOAT        , Boolean.class      , false, "BooleanObject"  , 15),
+  FLOAT_BOOLEAN             (FLOAT        , Boolean.TYPE       , true , "Boolean"        , 16),
+  FLOAT_STRING              (FLOAT        , String.class       , false, "String"         , 17),
+  FLOAT_OBJECT              (FLOAT        , Object.class       , false, "Object"         , 99),
+  DOUBLE_BYTE_OBJECT        (DOUBLE       , Byte.class         , false, "ByteObject"     ,  1),
+  DOUBLE_BYTE               (DOUBLE       , Byte.TYPE          , true , "Byte"           ,  2),
+  DOUBLE_SHORT_OBJECT       (DOUBLE       , Short.class        , false, "ShortObject"    ,  3),
+  DOUBLE_SHORT              (DOUBLE       , Short.TYPE         , true , "Short"          ,  4),
+  DOUBLE_INT_OBJECT         (DOUBLE       , Integer.class      , false, "IntObject"      ,  5),
+  DOUBLE_INT                (DOUBLE       , Integer.TYPE       , true , "Int"            ,  6),
+  DOUBLE_LONG_OBJECT        (DOUBLE       , Long.class         , false, "LongObject"     ,  7),
+  DOUBLE_LONG               (DOUBLE       , Long.TYPE          , true , "Long"           ,  8),
+  DOUBLE_FLOAT_OBJECT       (DOUBLE       , Float.class        , false, "FloatObject"    ,  9),
+  DOUBLE_FLOAT              (DOUBLE       , Float.TYPE         , true , "Float"          , 10),
+  DOUBLE_DOUBLE_OBJECT      (DOUBLE       , Double.class       , false, "DoubleObject"   , 11),
+  DOUBLE_DOUBLE             (DOUBLE       , Double.TYPE        , true , "Double"         , 12),
+  DOUBLE_BIGINTEGER         (DOUBLE       , BigInteger.class   , false, "BigInteger"     , 13),
+  DOUBLE_BIGDECIMAL         (DOUBLE       , BigDecimal.class   , false, "BigDecimal"     , 14),
+  DOUBLE_BOOLEAN_OBJECT     (DOUBLE       , Boolean.class      , false, "BooleanObject"  , 15),
+  DOUBLE_BOOLEAN            (DOUBLE       , Boolean.TYPE       , true , "Boolean"        , 16),
+  DOUBLE_STRING             (DOUBLE       , String.class       , false, "String"         , 17),
+  DOUBLE_OBJECT             (DOUBLE       , Object.class       , false, "Object"         , 99),
+  DECIMAL_BYTE_OBJECT       (DECIMAL      , Byte.class         , false, "ByteObject"     ,  1),
+  DECIMAL_BYTE              (DECIMAL      , Byte.TYPE          , true , "Byte"           ,  2),
+  DECIMAL_SHORT_OBJECT      (DECIMAL      , Short.class        , false, "ShortObject"    ,  3),
+  DECIMAL_SHORT             (DECIMAL      , Short.TYPE         , true , "Short"          ,  4),
+  DECIMAL_INT_OBJECT        (DECIMAL      , Integer.class      , false, "IntObject"      ,  5),
+  DECIMAL_INT               (DECIMAL      , Integer.TYPE       , true , "Int"            ,  6),
+  DECIMAL_LONG_OBJECT       (DECIMAL      , Long.class         , false, "LongObject"     ,  7),
+  DECIMAL_LONG              (DECIMAL      , Long.TYPE          , true , "Long"           ,  8),
+  DECIMAL_FLOAT_OBJECT      (DECIMAL      , Float.class        , false, "FloatObject"    ,  9),
+  DECIMAL_FLOAT             (DECIMAL      , Float.TYPE         , true , "Float"          , 10),
+  DECIMAL_DOUBLE_OBJECT     (DECIMAL      , Double.class       , false, "DoubleObject"   , 11),
+  DECIMAL_DOUBLE            (DECIMAL      , Double.TYPE        , true , "Double"         , 12),
+  DECIMAL_BIGINTEGER        (DECIMAL      , BigInteger.class   , false, "BigInteger"     , 13),
+  DECIMAL_BIGDECIMAL        (DECIMAL      , BigDecimal.class   , false, "BigDecimal"     , 14),
+  DECIMAL_BOOLEAN_OBJECT    (DECIMAL      , Boolean.class      , false, "BooleanObject"  , 15),
+  DECIMAL_BOOLEAN           (DECIMAL      , Boolean.TYPE       , true , "Boolean"        , 16),
+  DECIMAL_STRING            (DECIMAL      , String.class       , false, "String"         , 17),
+  DECIMAL_OBJECT            (DECIMAL      , Object.class       , false, "Object"         , 99),
+  NUMERIC_BYTE_OBJECT       (NUMERIC      , Byte.class         , false, "ByteObject"     ,  1),
+  NUMERIC_BYTE              (NUMERIC      , Byte.TYPE          , true , "Byte"           ,  2),
+  NUMERIC_SHORT_OBJECT      (NUMERIC      , Short.class        , false, "ShortObject"    ,  3),
+  NUMERIC_SHORT             (NUMERIC      , Short.TYPE         , true , "Short"          ,  4),
+  NUMERIC_INT_OBJECT        (NUMERIC      , Integer.class      , false, "IntObject"      ,  5),
+  NUMERIC_INT               (NUMERIC      , Integer.TYPE       , true , "Int"            ,  6),
+  NUMERIC_LONG_OBJECT       (NUMERIC      , Long.class         , false, "LongObject"     ,  7),
+  NUMERIC_LONG              (NUMERIC      , Long.TYPE          , true , "Long"           ,  8),
+  NUMERIC_FLOAT_OBJECT      (NUMERIC      , Float.class        , false, "FloatObject"    ,  9),
+  NUMERIC_FLOAT             (NUMERIC      , Float.TYPE         , true , "Float"          , 10),
+  NUMERIC_DOUBLE_OBJECT     (NUMERIC      , Double.class       , false, "DoubleObject"   , 11),
+  NUMERIC_DOUBLE            (NUMERIC      , Double.TYPE        , true , "Double"         , 12),
+  NUMERIC_BIGINTEGER        (NUMERIC      , BigInteger.class   , false, "BigInteger"     , 13),
+  NUMERIC_BIGDECIMAL        (NUMERIC      , BigDecimal.class   , false, "BigDecimal"     , 14),
+  NUMERIC_BOOLEAN_OBJECT    (NUMERIC      , Boolean.class      , false, "BooleanObject"  , 15),
+  NUMERIC_BOOLEAN           (NUMERIC      , Boolean.TYPE       , true , "Boolean"        , 16),
+  NUMERIC_STRING            (NUMERIC      , String.class       , false, "String"         , 17),
+  NUMERIC_OBJECT            (NUMERIC      , Object.class       , false, "Object"         , 99),
+  BIT_BYTE_OBJECT           (BIT          , Byte.class         , false, "ByteObject"     ,  1),
+  BIT_BYTE                  (BIT          , Byte.TYPE          , true , "Byte"           ,  2),
+  BIT_SHORT_OBJECT          (BIT          , Short.class        , false, "ShortObject"    ,  3),
+  BIT_SHORT                 (BIT          , Short.TYPE         , true , "Short"          ,  4),
+  BIT_INT_OBJECT            (BIT          , Integer.class      , false, "IntObject"      ,  5),
+  BIT_INT                   (BIT          , Integer.TYPE       , true , "Int"            ,  6),
+  BIT_LONG_OBJECT           (BIT          , Long.class         , false, "LongObject"     ,  7),
+  BIT_LONG                  (BIT          , Long.TYPE          , true , "Long"           ,  8),
+  BIT_FLOAT_OBJECT          (BIT          , Float.class        , false, "FloatObject"    ,  9),
+  BIT_FLOAT                 (BIT          , Float.TYPE         , true , "Float"          , 10),
+  BIT_DOUBLE_OBJECT         (BIT          , Double.class       , false, "DoubleObject"   , 11),
+  BIT_DOUBLE                (BIT          , Double.TYPE        , true , "Double"         , 12),
+  BIT_BIGINTEGER            (BIT          , BigInteger.class   , false, "BigInteger"     , 13),
+  BIT_BIGDECIMAL            (BIT          , BigDecimal.class   , false, "BigDecimal"     , 14),
+  BIT_BOOLEAN_OBJECT        (BIT          , Boolean.class      , false, "BooleanObject"  , 15),
+  BIT_BOOLEAN               (BIT          , Boolean.TYPE       , true , "Boolean"        , 16),
+  BIT_STRING                (BIT          , String.class       , false, "String"         , 17),
+  BIT_OBJECT                (BIT          , Object.class       , false, "Object"         , 99),
+  BOOLEAN_BYTE_OBJECT       (BOOLEAN      , Byte.class         , false, "ByteObject"     ,  1),
+  BOOLEAN_BYTE              (BOOLEAN      , Byte.TYPE          , true , "Byte"           ,  2),
+  BOOLEAN_SHORT_OBJECT      (BOOLEAN      , Short.class        , false, "ShortObject"    ,  3),
+  BOOLEAN_SHORT             (BOOLEAN      , Short.TYPE         , true , "Short"          ,  4),
+  BOOLEAN_INT_OBJECT        (BOOLEAN      , Integer.class      , false, "IntObject"      ,  5),
+  BOOLEAN_INT               (BOOLEAN      , Integer.TYPE       , true , "Int"            ,  6),
+  BOOLEAN_LONG_OBJECT       (BOOLEAN      , Long.class         , false, "LongObject"     ,  7),
+  BOOLEAN_LONG              (BOOLEAN      , Long.TYPE          , true , "Long"           ,  8),
+  BOOLEAN_FLOAT_OBJECT      (BOOLEAN      , Float.class        , false, "FloatObject"    ,  9),
+  BOOLEAN_FLOAT             (BOOLEAN      , Float.TYPE         , true , "Float"          , 10),
+  BOOLEAN_DOUBLE_OBJECT     (BOOLEAN      , Double.class       , false, "DoubleObject"   , 11),
+  BOOLEAN_DOUBLE            (BOOLEAN      , Double.TYPE        , true , "Double"         , 12),
+  BOOLEAN_BOOLEAN_OBJECT    (BOOLEAN      , Boolean.class      , false, "BooleanObject"  , 15),
+  BOOLEAN_BOOLEAN           (BOOLEAN      , Boolean.TYPE       , true , "Boolean"        , 16),
+  BOOLEAN_STRING            (BOOLEAN      , String.class       , false, "String"         , 17),
+  CHAR_BYTE_OBJECT          (CHAR         , Byte.class         , false, "ByteObject"     ,  1),
+  CHAR_BYTE                 (CHAR         , Byte.TYPE          , true , "Byte"           ,  2),
+  CHAR_SHORT_OBJECT         (CHAR         , Short.class        , false, "ShortObject"    ,  3),
+  CHAR_SHORT                (CHAR         , Short.TYPE         , true , "Short"          ,  4),
+  CHAR_INT_OBJECT           (CHAR         , Integer.class      , false, "IntObject"      ,  5),
+  CHAR_INT                  (CHAR         , Integer.TYPE       , true , "Int"            ,  6),
+  CHAR_LONG_OBJECT          (CHAR         , Long.class         , false, "LongObject"     ,  7),
+  CHAR_LONG                 (CHAR         , Long.TYPE          , true , "Long"           ,  8),
+  CHAR_FLOAT_OBJECT         (CHAR         , Float.class        , false, "FloatObject"    ,  9),
+  CHAR_FLOAT                (CHAR         , Float.TYPE         , true , "Float"          , 10),
+  CHAR_DOUBLE_OBJECT        (CHAR         , Double.class       , false, "DoubleObject"   , 11),
+  CHAR_DOUBLE               (CHAR         , Double.TYPE        , true , "Double"         , 12),
+  CHAR_BIGINTEGER           (CHAR         , BigInteger.class   , false, "BigInteger"     , 13),
+  CHAR_BIGDECIMAL           (CHAR         , BigDecimal.class   , false, "BigDecimal"     , 14),
+  CHAR_BOOLEAN_OBJECT       (CHAR         , Boolean.class      , false, "BooleanObject"  , 15),
+  CHAR_BOOLEAN              (CHAR         , Boolean.TYPE       , true , "Boolean"        , 16),
+  CHAR_STRING               (CHAR         , String.class       , false, "String"         , 17),
+  CHAR_CHAR_OBJECT          (CHAR         , Character.class    , false, "CharObject"     , 18),
+  CHAR_CHAR                 (CHAR         , Character.TYPE     , true , "Char"           , 19),
+  CHAR_DATE                 (CHAR         , java.sql.Date.class, false, "SqlDate"        , 20),
+  CHAR_TIME                 (CHAR         , Time.class         , false, "SqlTime"        , 21),
+  CHAR_TIMESTAMP            (CHAR         , Timestamp.class    , false, "SqlTimestamp"   , 22),
+  CHAR_UTIL_DATE            (CHAR         , Date.class         , false, "Timestamp"      , 23),
+  CHAR_INPUTSTREAM          (CHAR         , InputStream.class  , false, "AsciiStream"    , 24),
+  CHAR_READER               (CHAR         , Reader.class       , false, "CharacterStream", 25),
+  CHAR_OBJECT               (CHAR         , Object.class       , false, "Object"         , 99),
+  VARCHAR_BYTE_OBJECT       (VARCHAR      , Byte.class         , false, "ByteObject"     ,  1),
+  VARCHAR_BYTE              (VARCHAR      , Byte.TYPE          , true , "Byte"           ,  2),
+  VARCHAR_SHORT_OBJECT      (VARCHAR      , Short.class        , false, "ShortObject"    ,  3),
+  VARCHAR_SHORT             (VARCHAR      , Short.TYPE         , true , "Short"          ,  4),
+  VARCHAR_INT_OBJECT        (VARCHAR      , Integer.class      , false, "IntObject"      ,  5),
+  VARCHAR_INT               (VARCHAR      , Integer.TYPE       , true , "Int"            ,  6),
+  VARCHAR_LONG_OBJECT       (VARCHAR      , Long.class         , false, "LongObject"     ,  7),
+  VARCHAR_LONG              (VARCHAR      , Long.TYPE          , true , "Long"           ,  8),
+  VARCHAR_FLOAT_OBJECT      (VARCHAR      , Float.class        , false, "FloatObject"    ,  9),
+  VARCHAR_FLOAT             (VARCHAR      , Float.TYPE         , true , "Float"          , 10),
+  VARCHAR_DOUBLE_OBJECT     (VARCHAR      , Double.class       , false, "DoubleObject"   , 11),
+  VARCHAR_DOUBLE            (VARCHAR      , Double.TYPE        , true , "Double"         , 12),
+  VARCHAR_BIGINTEGER        (VARCHAR      , BigInteger.class   , false, "BigInteger"     , 13),
+  VARCHAR_BIGDECIMAL        (VARCHAR      , BigDecimal.class   , false, "BigDecimal"     , 14),
+  VARCHAR_BOOLEAN_OBJECT    (VARCHAR      , Boolean.class      , false, "BooleanObject"  , 15),
+  VARCHAR_BOOLEAN           (VARCHAR      , Boolean.TYPE       , true , "Boolean"        , 16),
+  VARCHAR_STRING            (VARCHAR      , String.class       , false, "String"         , 17),
+  VARCHAR_CHAR_OBJECT       (VARCHAR      , Character.class    , false, "CharObject"     , 18),
+  VARCHAR_CHAR              (VARCHAR      , Character.TYPE     , true , "Char"           , 19),
+  VARCHAR_DATE              (VARCHAR      , java.sql.Date.class, false, "SqlDate"        , 20),
+  VARCHAR_TIME              (VARCHAR      , Time.class         , false, "SqlTime"        , 21),
+  VARCHAR_TIMESTAMP         (VARCHAR      , Timestamp.class    , false, "SqlTimestamp"   , 22),
+  VARCHAR_UTIL_DATE         (VARCHAR      , Date.class         , false, "Timestamp"      , 23),
+  VARCHAR_INPUTSTREAM       (VARCHAR      , InputStream.class  , false, "AsciiStream"    , 24),
+  VARCHAR_READER            (VARCHAR      , Reader.class       , false, "CharacterStream", 25),
+  VARCHAR_OBJECT            (VARCHAR      , Object.class       , false, "Object"         , 99),
+  LONGVARCHAR_BYTE_OBJECT   (LONGVARCHAR  , Byte.class         , false, "ByteObject"     ,  1),
+  LONGVARCHAR_BYTE          (LONGVARCHAR  , Byte.TYPE          , true , "Byte"           ,  2),
+  LONGVARCHAR_SHORT_OBJECT  (LONGVARCHAR  , Short.class        , false, "ShortObject"    ,  3),
+  LONGVARCHAR_SHORT         (LONGVARCHAR  , Short.TYPE         , true , "Short"          ,  4),
+  LONGVARCHAR_INT_OBJECT    (LONGVARCHAR  , Integer.class      , false, "IntObject"      ,  5),
+  LONGVARCHAR_INT           (LONGVARCHAR  , Integer.TYPE       , true , "Int"            ,  6),
+  LONGVARCHAR_LONG_OBJECT   (LONGVARCHAR  , Long.class         , false, "LongObject"     ,  7),
+  LONGVARCHAR_LONG          (LONGVARCHAR  , Long.TYPE          , true , "Long"           ,  8),
+  LONGVARCHAR_FLOAT_OBJECT  (LONGVARCHAR  , Float.class        , false, "FloatObject"    ,  9),
+  LONGVARCHAR_FLOAT         (LONGVARCHAR  , Float.TYPE         , true , "Float"          , 10),
+  LONGVARCHAR_DOUBLE_OBJECT (LONGVARCHAR  , Double.class       , false, "DoubleObject"   , 11),
+  LONGVARCHAR_DOUBLE        (LONGVARCHAR  , Double.TYPE        , true , "Double"         , 12),
+  LONGVARCHAR_BIGINTEGER    (LONGVARCHAR  , BigInteger.class   , false, "BigInteger"     , 13),
+  LONGVARCHAR_BIGDECIMAL    (LONGVARCHAR  , BigDecimal.class   , false, "BigDecimal"     , 14),
+  LONGVARCHAR_BOOLEAN_OBJECT(LONGVARCHAR  , Boolean.class      , false, "BooleanObject"  , 15),
+  LONGVARCHAR_BOOLEAN       (LONGVARCHAR  , Boolean.TYPE       , true , "Boolean"        , 16),
+  LONGVARCHAR_STRING        (LONGVARCHAR  , String.class       , false, "String"         , 17),
+  LONGVARCHAR_CHAR_OBJECT   (LONGVARCHAR  , Character.class    , false, "CharObject"     , 18),
+  LONGVARCHAR_CHAR          (LONGVARCHAR  , Character.TYPE     , true , "Char"           , 19),
+  LONGVARCHAR_DATE          (LONGVARCHAR  , java.sql.Date.class, false, "SqlDate"        , 20),
+  LONGVARCHAR_TIME          (LONGVARCHAR  , Time.class         , false, "SqlTime"        , 21),
+  LONGVARCHAR_TIMESTAMP     (LONGVARCHAR  , Timestamp.class    , false, "SqlTimestamp"   , 22),
+  LONGVARCHAR_UTIL_DATE     (LONGVARCHAR  , Date.class         , false, "Timestamp"      , 23),
+  LONGVARCHAR_INPUTSTREAM   (LONGVARCHAR  , InputStream.class  , false, "AsciiStream"    , 24),
+  LONGVARCHAR_READER        (LONGVARCHAR  , Reader.class       , false, "CharacterStream", 25),
+  LONGVARCHAR_OBJECT        (LONGVARCHAR  , Object.class       , false, "Object"         , 99),
+  BINARY_BYTES              (BINARY       , byte[].class       , false, "Bytes"          ,  1),
+  BINARY_INPUTSTREAM        (BINARY       , InputStream.class  , false, "BinaryStream"   , 24),
+  BINARY_READER             (BINARY       , Reader.class       , false, "CharacterStream", 25),
+  BINARY_STRING             (BINARY       , String.class       , false, "String"         , 30),
+  BINARY_OBJECT             (BINARY       , Object.class       , false, "Object"         , 99),
+  VARBINARY_BYTES           (VARBINARY    , byte[].class       , false, "Bytes"          ,  1),
+  VARBINARY_INPUTSTREAM     (VARBINARY    , InputStream.class  , false, "BinaryStream"   , 24),
+  VARBINARY_READER          (VARBINARY    , Reader.class       , false, "CharacterStream", 25),
+  VARBINARY_STRING          (VARBINARY    , String.class       , false, "String"         , 30),
+  VARBINARY_OBJECT          (VARBINARY    , Object.class       , false, "Object"         , 99),
+  LONGVARBINARY_BYTES       (LONGVARBINARY, byte[].class       , false, "Bytes"          ,  1),
+  LONGVARBINARY_INPUTSTREAM (LONGVARBINARY, InputStream.class  , false, "BinaryStream"   , 24),
+  LONGVARBINARY_READER      (LONGVARBINARY, Reader.class       , false, "CharacterStream", 25),
+  LONGVARBINARY_STRING      (LONGVARBINARY, String.class       , false, "String"         , 30),
+  LONGVARBINARY_OBJECT      (LONGVARBINARY, Object.class       , false, "Object"         , 99),
+  DATE_TIMESTAMP            (DATE         , Timestamp.class    , false, "SqlTimestamp"   ,  1),
+  DATE_DATE                 (DATE         , java.sql.Date.class, false, "SqlDate"        ,  2),
+  DATE_UTIL_DATE            (DATE         , Date.class         , false, "Date"           ,  4),
+  DATE_STRING               (DATE         , String.class       , false, "String"         ,  5),
+  DATE_OBJECT               (DATE         , Object.class       , false, "Object"         , 99),
+  TIME_TIMESTAMP            (TIME         , Timestamp.class    , false, "SqlTimestamp"   ,  1),
+  TIME_TIME                 (TIME         , Time.class         , false, "SqlTime"        ,  3),
+  TIME_UTIL_DATE            (TIME         , Date.class         , false, "Time"           ,  4),
+  TIME_STRING               (TIME         , String.class       , false, "String"         ,  5),
+  TIME_OBJECT               (TIME         , Object.class       , false, "Object"         , 99),
+  TIMESTAMP_TIMESTAMP       (TIMESTAMP    , Timestamp.class    , false, "SqlTimestamp"   ,  1),
+  TIMESTAMP_DATE            (TIMESTAMP    , java.sql.Date.class, false, "SqlDate"        ,  2),
+  TIMESTAMP_TIME            (TIMESTAMP    , Time.class         , false, "SqlTime"        ,  3),
+  TIMESTAMP_UTIL_DATE       (TIMESTAMP    , Date.class         , false, "Timestamp"      ,  4),
+  TIMESTAMP_STRING          (TIMESTAMP    , String.class       , false, "String"         ,  5),
+  TIMESTAMP_OBJECT          (TIMESTAMP    , Object.class       , false, "Object"         , 99),
+  CLOB_CLOB                 (CLOB         , Clob.class         , false, "Clob"           ,  1),
+  CLOB_OBJECT               (CLOB         , Object.class       , false, "Object"         , 99),
+  BLOB_BLOB                 (BLOB         , Blob.class         , false, "Blob"           ,  1),
+  BLOB_OBJECT               (BLOB         , Object.class       , false, "Object"         , 99),
+  ARRAY_ARRAY               (ARRAY        , Array.class        , false, "Array"          ,  1),
+  ARRAY_OBJECT              (ARRAY        , Object.class       , false, "Object"         , 99),
+  REF_REF                   (REF          , Ref.class          , false, "Ref"            ,  1),
+  REF_OBJECT                (REF          , Object.class       , false, "Object"         , 99),
+  DATALINK_URL              (DATALINK     , URL.class          , false, "URL"            ,  1),
+  DATALINK_STRING           (DATALINK     , String.class       , false, "String"         ,  2),
+  DATALINK_OBJECT           (DATALINK     , Object.class       , false, "Object"         , 99),
+  STRUCT_OBJECT             (STRUCT       , Object.class       , false, "Object"         ,  1),
+  JAVAOBJECT_OBJECT         (JAVA_OBJECT  , Object.class       , false, "Object"         ,  1);
+
+  private TypeCombination combination;
   private Type type;
   private boolean primitive;
-  private boolean needsClazz;
   private String readerMethod;
   private int priority;
   
-  private ObjectFactoryType(Class<?> clazz, boolean primitive, boolean needsClazz, String method, int priority) {
+  private ObjectFactoryType(int sqlType, Class<?> setterClass, boolean primitive, String method, int priority) {
     
-    this.clazz = clazz;
-    type = new Type(clazz);
+    combination = new TypeCombination(sqlType, setterClass);
+    type = new Type(setterClass);
     this.primitive = primitive;
-    this.needsClazz = needsClazz;
     readerMethod = "read" + method;
     this.priority = priority;
   }
   
-  Class<?> getClazz() {
+  TypeCombination getCombination() {
     
-    return clazz;
+    return combination;
   }
   
   Type getType() {
@@ -72,11 +402,6 @@ enum ObjectFactoryType {
     return primitive;
   }
   
-  boolean needsClazz() {
-    
-    return needsClazz;
-  }
-  
   int getPriority() {
     
     return priority;
@@ -84,39 +409,21 @@ enum ObjectFactoryType {
   
 // --- parameter finder -------------------------------------------------------
   
-  static private final Map<Class<?>, ObjectFactoryType> parameterMap = createParameterMap();
+  static private final Map<TypeCombination, ObjectFactoryType> parameterMap = createParameterMap();
   
-  static private Map<Class<?>, ObjectFactoryType> createParameterMap() {
+  static private Map<TypeCombination, ObjectFactoryType> createParameterMap() {
     
-    Map<Class<?>, ObjectFactoryType> map = new HashMap<Class<?>, ObjectFactoryType>();
+    Map<TypeCombination, ObjectFactoryType> map = new HashMap<TypeCombination, ObjectFactoryType>();
     
     for (ObjectFactoryType type : ObjectFactoryType.values()) {
-      map.put(type.getClazz(), type);
+      map.put(type.getCombination(), type);
     }
     
     return map;
   }
   
-  static ObjectFactoryType getType(Class<?> parameterClazz) {
+  static ObjectFactoryType getType(TypeCombination combination) {
     
-    ObjectFactoryType parameter = parameterMap.get(parameterClazz);
-    
-    if (parameter == null) {
-      if (parameterClazz.isEnum()) {
-        parameter = ObjectFactoryType.ENUM;
-      }
-    }
-    
-    return parameter;
+    return parameterMap.get(combination);
   }
-  
-  static ObjectFactoryType getBuiltin(Class<?> parameterClazz) {
-    
-    ObjectFactoryType type = getType(parameterClazz);
-    if (type != null && (! type.isPrimitive())) {
-      return type;
-    }
-    return null;
-  }
-  
 }

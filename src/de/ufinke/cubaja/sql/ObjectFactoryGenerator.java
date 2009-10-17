@@ -6,6 +6,8 @@ package de.ufinke.cubaja.sql;
 import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_FINAL;
 import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_PUBLIC;
 import java.lang.reflect.Method;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import de.ufinke.cubaja.cafebabe.CodeAttribute;
@@ -15,10 +17,21 @@ import de.ufinke.cubaja.cafebabe.Generator;
 import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
 import de.ufinke.cubaja.util.Util;
-import java.sql.*;
 
 class ObjectFactoryGenerator implements Generator {
 
+  static private class SearchEntry {
+  
+    int position;
+    int sqlType;
+    
+    SearchEntry(int position, int sqlType) {
+      
+      this.position = position;
+      this.sqlType = sqlType;
+    }
+  }
+  
   static private class SetterEntry {
   
     String name;
@@ -43,7 +56,7 @@ class ObjectFactoryGenerator implements Generator {
   static private final Type sqlExceptionType = new Type(SQLException.class);
 
   private Type dataClassType;
-  private Map<String, Integer> searchMap;
+  private Map<String, SearchEntry> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
   private Class<?> lastClass;
@@ -120,10 +133,11 @@ class ObjectFactoryGenerator implements Generator {
     
     int size = metaData.getColumnCount();
     
-    searchMap = new HashMap<String, Integer>(size << 1);
+    searchMap = new HashMap<String, SearchEntry>(size << 1);
     
     for (int i = 1; i <= size; i++) {
-      searchMap.put(Util.createMethodName(metaData.getColumnLabel(i), "set"), i);
+      SearchEntry entry = new SearchEntry(i, metaData.getColumnType(i));
+      searchMap.put(Util.createMethodName(metaData.getColumnLabel(i), "set"), entry);
     }
   }
   
@@ -136,15 +150,17 @@ class ObjectFactoryGenerator implements Generator {
       if (method.getReturnType() == Void.TYPE) {
         
         String methodName = method.getName();
-        Integer position = searchMap.get(methodName);
+        SearchEntry searchEntry = searchMap.get(methodName);
         
-        if (position != null && method.getReturnType() == Void.TYPE) {
+        if (searchEntry != null && method.getReturnType() == Void.TYPE) {
           
+          int position = searchEntry.position;
           Class<?>[] parameterTypes = method.getParameterTypes();
           
           if (parameterTypes.length == 1) {
             
-            ObjectFactoryType type = ObjectFactoryType.getType(parameterTypes[0]);
+            TypeCombination combination = new TypeCombination(searchEntry.sqlType, parameterTypes[0]);
+            ObjectFactoryType type = ObjectFactoryType.getType(combination);
             
             if (type != null) {
               

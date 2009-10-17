@@ -300,6 +300,16 @@ public class PreparedSql {
     setTimestamp(position, new Timestamp(value.getTime()));
   }
 
+  public void setTime(String name, java.util.Date value) throws SQLException {
+    
+    setTime(getVariablePosition(name), value);
+  }
+  
+  public void setTime(int position, java.util.Date value) throws SQLException {
+    
+    setTime(position, new Time(value.getTime()));
+  }
+
   public void setDate(String name, java.sql.Date value) throws SQLException {
     
     setDate(getVariablePosition(name), value);
