@@ -107,7 +107,7 @@ public class CsvException extends Exception {
   }
   
   /**
-   * Returns a message with location information if applicable.
+   * Returns a detailed message with location information.
    */
   public String getMessage() {
     
@@ -144,6 +144,15 @@ public class CsvException extends Exception {
     }
     
     return locationMessage;
+  }
+  
+  /**
+   * Returns the plain message text.
+   * @return message supplied by constructor
+   */
+  public String getMessageText() {
+    
+    return message;
   }
   
   /**

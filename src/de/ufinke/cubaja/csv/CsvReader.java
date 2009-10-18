@@ -256,7 +256,7 @@ public class CsvReader implements ColumnReader {
    * @return row
    * @throws CsvException
    */
-  public String getRow() throws CsvException {
+  public String getPlainRow() throws CsvException {
     
     checkEOF();
     return row;
@@ -743,7 +743,7 @@ public class CsvReader implements ColumnReader {
   }
 
   @SuppressWarnings("unchecked")
-  public <D> D readObject(Class<? extends D> clazz) throws CsvException {
+  public <D> D readRow(Class<? extends D> clazz) throws CsvException {
     
     try {
       if (generator == null) {

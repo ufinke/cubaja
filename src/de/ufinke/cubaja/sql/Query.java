@@ -397,7 +397,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   @SuppressWarnings("unchecked")
-  public <D> D readObject(Class<? extends D> clazz) throws SQLException {
+  public <D> D readRow(Class<? extends D> clazz) throws SQLException {
 
     checkRow();
     
@@ -552,7 +552,7 @@ public class Query extends PreparedSql implements ColumnReader {
   public <D> D select(Class<? extends D> clazz) throws SQLException {
     
     if (nextRow()) {
-      D result = readObject(clazz);
+      D result = readRow(clazz);
       closeResultSet();
       return result;
     } else {

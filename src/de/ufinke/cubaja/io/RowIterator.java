@@ -66,7 +66,7 @@ public class RowIterator<D> implements Iterator<D>, Iterable<D> {
     calledHasNext = false;
 
     try {
-      return reader.readObject(clazz);
+      return reader.readRow(clazz);
     } catch (Exception e) {
       throw new IteratorException(e);
     }

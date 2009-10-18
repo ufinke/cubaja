@@ -389,7 +389,7 @@ public interface ColumnReader {
    * @return data object
    * @throws Exception
    */
-  public <D> D readObject(Class<? extends D> clazz) throws Exception;
+  public <D> D readRow(Class<? extends D> clazz) throws Exception;
 
   /**
    * Returns an <code>Iterable</code> over all rows.
