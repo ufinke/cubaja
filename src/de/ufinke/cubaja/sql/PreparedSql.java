@@ -21,16 +21,18 @@ public class PreparedSql {
   
   protected PreparedStatement statement;
   protected Sql sql;
+  protected DatabaseConfig config;
   
   private int maxPosition;
   private List<String> variableList;
   private Map<String, Integer> variableMap;
   private boolean changed;
   
-  protected PreparedSql(PreparedStatement statement, Sql sql) {
+  protected PreparedSql(PreparedStatement statement, Sql sql, DatabaseConfig config) {
   
     this.statement = statement;
     this.sql = sql;
+    this.config = config;
     
     variableList = sql.getVariables();
     maxPosition = variableList.size() - 1;

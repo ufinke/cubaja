@@ -131,7 +131,7 @@ public class Database {
     
     PreparedStatement ps = connection.prepareStatement(stm);
     ps.setFetchSize(config.getFetchSize());
-    return new Query(ps, sql);
+    return new Query(ps, sql, config);
   }
   
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
@@ -157,7 +157,7 @@ public class Database {
       logger.debug(text.get("prepare", myId, stm));
     }
     
-    return new Update(connection.prepareStatement(stm), sql);
+    return new Update(connection.prepareStatement(stm), sql, config);
   }
   
   public void commit() throws SQLException {

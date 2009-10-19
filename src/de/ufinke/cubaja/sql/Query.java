@@ -32,9 +32,9 @@ public class Query extends PreparedSql implements ColumnReader {
   private int rowCount;
   private ObjectFactoryGenerator generator;
   
-  Query(PreparedStatement statement, Sql sql) {
+  Query(PreparedStatement statement, Sql sql, DatabaseConfig config) {
   
-    super(statement, sql);
+    super(statement, sql, config);
   }
   
   private void execute() throws SQLException {
@@ -403,7 +403,7 @@ public class Query extends PreparedSql implements ColumnReader {
     
     try {
       if (generator == null) {
-        generator = new ObjectFactoryGenerator(getMetaData());
+        generator = new ObjectFactoryGenerator(getMetaData(), config);
       }
       return (D) generator.getFactory(clazz).createObject(this);
     } catch (SQLException sqle) {

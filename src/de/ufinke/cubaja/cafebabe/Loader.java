@@ -16,7 +16,7 @@ public class Loader extends ClassLoader {
   
   public static Class<?> createClass(Generator generator, Object... nameSuffix) throws ClassNotFoundException {
     
-    Loader loader = new Loader(generator, nameSuffix);
+    Loader loader = new Loader(generator.getClass().getClassLoader(), generator, nameSuffix);
     
     StringBuilder sb = new StringBuilder(200);
     sb.append(classNamePrefix);
@@ -36,8 +36,9 @@ public class Loader extends ClassLoader {
   
   private Generator generator;
   
-  private Loader(Generator generator, Object... nameSuffix) {
+  private Loader(ClassLoader parentLoader, Generator generator, Object... nameSuffix) {
     
+    super(parentLoader);
     this.generator = generator;
   }
   

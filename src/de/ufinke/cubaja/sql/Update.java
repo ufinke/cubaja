@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 
 public class Update extends PreparedSql {
 
-  Update(PreparedStatement statement, Sql sql) {
+  Update(PreparedStatement statement, Sql sql, DatabaseConfig config) {
     
-    super(statement, sql);
+    super(statement, sql, config);
   }
 }

@@ -16,19 +16,24 @@ import de.ufinke.cubaja.cafebabe.GenMethod;
 import de.ufinke.cubaja.cafebabe.Generator;
 import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
-import de.ufinke.cubaja.util.Util;
+import de.ufinke.cubaja.util.*;
+import org.apache.commons.logging.*;
 
 class ObjectFactoryGenerator implements Generator {
 
   static private class SearchEntry {
   
+    String name;
     int position;
     int sqlType;
+    boolean setterFound;
     
-    SearchEntry(int position, int sqlType) {
+    SearchEntry(String name, int position, int sqlType) {
       
+      this.name = name;
       this.position = position;
       this.sqlType = sqlType;
+      setterFound = false;
     }
   }
   
@@ -48,6 +53,8 @@ class ObjectFactoryGenerator implements Generator {
     }
   }
   
+  static private final Text text = new Text(ObjectFactoryGenerator.class);
+  
   static private final Type objectType = new Type(Object.class);
   static private final Type voidType = new Type(Void.TYPE);
   static private final Type intType = new Type(Integer.TYPE);
@@ -61,9 +68,12 @@ class ObjectFactoryGenerator implements Generator {
   private Map<Class<?>, ObjectFactory> factoryMap;
   private Class<?> lastClass;
   private ObjectFactory lastFactory;
+  private DatabaseConfig config;
+  private Log logger;
   
-  ObjectFactoryGenerator(ResultSetMetaData metaData) throws SQLException {
+  ObjectFactoryGenerator(ResultSetMetaData metaData, DatabaseConfig config) throws SQLException {
   
+    this.config = config;
     createSearchMap(metaData);
     factoryMap = new HashMap<Class<?>, ObjectFactory>();
   }
@@ -136,8 +146,9 @@ class ObjectFactoryGenerator implements Generator {
     searchMap = new HashMap<String, SearchEntry>(size << 1);
     
     for (int i = 1; i <= size; i++) {
-      SearchEntry entry = new SearchEntry(i, metaData.getColumnType(i));
-      searchMap.put(Util.createMethodName(metaData.getColumnLabel(i), "set"), entry);
+      String name = metaData.getColumnName(i).toLowerCase();
+      SearchEntry entry = new SearchEntry(name, i, metaData.getColumnType(i));
+      searchMap.put(Util.createMethodName(name, "set"), entry);
     }
   }
   
@@ -174,5 +185,21 @@ class ObjectFactoryGenerator implements Generator {
         }
       }
     }
+    
+    if (config.isLog()) {
+      for (SearchEntry entry : searchMap.values()) {
+        if (! entry.setterFound) {
+          getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
+        }
+      }
+    }
+  }
+  
+  private Log getLogger() {
+    
+    if (logger == null) {
+      logger = LogFactory.getLog(ObjectFactoryGenerator.class);
+    }
+    return logger;
   }
 }

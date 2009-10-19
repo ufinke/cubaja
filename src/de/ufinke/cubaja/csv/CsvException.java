@@ -150,7 +150,7 @@ public class CsvException extends Exception {
    * Returns the plain message text.
    * @return message supplied by constructor
    */
-  public String getMessageText() {
+  public String getPlainMessage() {
     
     return message;
   }
