@@ -179,6 +179,7 @@ class ObjectFactoryGenerator implements Generator {
               
               if (entry == null || type.getPriority() < entry.type.getPriority()) {
                 setterMap.put(methodName, new SetterEntry(methodName, type, position, parameterTypes[0]));
+                searchEntry.setterFound = true;
               }
             }
           }
