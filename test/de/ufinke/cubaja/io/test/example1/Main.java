@@ -1,8 +1,10 @@
 package de.ufinke.cubaja.io.test.example1;
 
-import de.ufinke.cubaja.io.*;
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Date;
+import de.ufinke.cubaja.io.BinaryInputStream;
+import de.ufinke.cubaja.io.BinaryOutputStream;
 
 public class Main {
 

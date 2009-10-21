@@ -10,14 +10,16 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.cafebabe.CodeAttribute;
 import de.ufinke.cubaja.cafebabe.GenClass;
 import de.ufinke.cubaja.cafebabe.GenMethod;
 import de.ufinke.cubaja.cafebabe.Generator;
 import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
-import de.ufinke.cubaja.util.*;
-import org.apache.commons.logging.*;
+import de.ufinke.cubaja.util.Text;
+import de.ufinke.cubaja.util.Util;
 
 class ObjectFactoryGenerator implements Generator {
 

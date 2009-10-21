@@ -1,6 +1,7 @@
 package de.ufinke.cubaja.sort.test.example1;
 
-import de.ufinke.cubaja.sort.*;
+import de.ufinke.cubaja.sort.NaturalComparator;
+import de.ufinke.cubaja.sort.Sorter;
 
 public class Main {
 

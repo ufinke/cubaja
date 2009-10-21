@@ -1,6 +1,6 @@
 package de.ufinke.cubaja.io.test.example1;
 
-import java.util.*;
+import java.util.Date;
 
 public class Data {
 

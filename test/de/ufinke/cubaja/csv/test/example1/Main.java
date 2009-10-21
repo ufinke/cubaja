@@ -1,7 +1,7 @@
 package de.ufinke.cubaja.csv.test.example1;
 
-import de.ufinke.cubaja.config.*;
-import de.ufinke.cubaja.csv.*;
+import de.ufinke.cubaja.config.Configurator;
+import de.ufinke.cubaja.csv.CsvReader;
 
 public class Main {
 

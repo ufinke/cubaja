@@ -1,6 +1,7 @@
 package de.ufinke.cubaja.io.test.example1;
 
-import de.ufinke.cubaja.io.*;
+import de.ufinke.cubaja.io.BinaryInputStream;
+import de.ufinke.cubaja.io.InputObjectHandler;
 
 public class DataInputObjectHandler implements InputObjectHandler {
 

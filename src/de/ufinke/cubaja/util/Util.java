@@ -5,6 +5,9 @@ package de.ufinke.cubaja.util;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Miscellaneous utility methods.
@@ -216,6 +219,18 @@ public class Util {
     } catch (Exception e) {
       return file.getAbsolutePath();
     }
+  }
+  
+  /**
+   * Returns a <code>Date</code> without time components.
+   * @param date
+   * @return date
+   */
+  static Date stripTime(Date date) {
+    
+    Calendar in = Calendar.getInstance();
+    in.setTime(date);
+    return new GregorianCalendar(in.get(Calendar.YEAR), in.get(Calendar.MONTH), in.get(Calendar.DAY_OF_MONTH)).getTime();
   }
   
 }
