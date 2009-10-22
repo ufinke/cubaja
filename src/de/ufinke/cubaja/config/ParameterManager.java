@@ -374,9 +374,10 @@ class ParameterManager implements ParameterFactoryFinder {
       Pattern pattern = null;
       int i = 0;
       while (pattern == null && i < annotations.length) {
-        if (annotations[i].getClass() == Pattern.class) {
+        if (Pattern.class.isAssignableFrom(annotations[i].getClass())) {
           pattern = (Pattern) annotations[i];
         }
+        i++;
       }
       
       if (pattern != null) {

@@ -88,10 +88,15 @@ public class DefaultRowParser implements RowParser {
       i++;
       
       if (i == start.length) {
-        int newCapacity = start.length << 1;
-        startArray = Arrays.copyOf(start, newCapacity);
-        endArray = Arrays.copyOf(end, newCapacity);
-        escapeArray = Arrays.copyOf(escapeArray, newCapacity);
+        int oldCapacity = start.length;
+        int newCapacity = oldCapacity << 1;
+        startArray = new int[newCapacity];
+        System.arraycopy(start, 0, startArray, 0, oldCapacity);
+        endArray = new int[newCapacity];
+        System.arraycopy(end, 0, endArray, 0, oldCapacity);
+        escapeArray = new boolean[newCapacity];
+        boolean[] escape = escapeArray;
+        System.arraycopy(escape, 0, escapeArray, 0, oldCapacity);
         start = startArray;
         end = endArray;
       }
