@@ -6,8 +6,8 @@ package de.ufinke.cubaja.util;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
+import java.text.*;
 
 /**
  * Miscellaneous utility methods.
@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 public class Util {
 
   static private Text text = new Text(Util.class);
+  static private Map<Integer, Weekday> weekdayMap;
   
   private Util() {
     
@@ -41,6 +42,50 @@ public class Util {
       return 1;
     }
     return a.compareTo(b);
+  }
+  
+  /**
+   * Returns the maximum value.
+   * A <code>null</code> value is less than any other value.
+   * If the paramter list is empty, the result is <code>null</code>.
+   * @param <D> data type
+   * @param comparables
+   * @return the maximum value
+   */
+  static public <D extends Comparable<? super D>> D max(D... comparables) {
+    
+    D max = null;
+    
+    for (int i = 0; i < comparables.length; i++) {
+      D element = comparables[i];
+      if (max.compareTo(element) < 0) {
+        max = element;
+      }
+    }
+    
+    return max;
+  }
+  
+  /**
+   * Returns the minimum value.
+   * A <code>null</code> value is less than any other value.
+   * If the paramter list is empty, the result is <code>null</code>.
+   * @param <D> data type
+   * @param comparables
+   * @return the minimum value
+   */
+  static public <D extends Comparable<? super D>> D min(D... comparables) {
+    
+    D min = null;
+    
+    for (int i = 0; i < comparables.length; i++) {
+      D element = comparables[i];
+      if (min.compareTo(element) > 0) {
+        min = element;
+      }
+    }
+    
+    return min;
   }
   
   /**
@@ -132,6 +177,16 @@ public class Util {
     return sb.toString();
   }
   
+  /**
+   * Creates an instance of a class.
+   * If the list of constructor argument parameters is not empty,
+   * this method uses the reflection API to instantiate an object.
+   * @param <D> class type
+   * @param clazz
+   * @param constructorArgs
+   * @return object
+   * @throws Exception
+   */
   static public <D> D createInstance(Class<D> clazz, Object... constructorArgs) throws Exception {
     
     if (constructorArgs.length == 0) {
@@ -226,11 +281,54 @@ public class Util {
    * @param date
    * @return date
    */
-  static Date stripTime(Date date) {
+  static public Date stripTime(Date date) {
     
-    Calendar in = Calendar.getInstance();
-    in.setTime(date);
-    return new GregorianCalendar(in.get(Calendar.YEAR), in.get(Calendar.MONTH), in.get(Calendar.DAY_OF_MONTH)).getTime();
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
   }
   
+  /**
+   * Formats a date as <code>yyyy-MM-dd</code>.
+   * @param date
+   * @return formatted date
+   */
+  static public String formatDate(Date date) {
+    
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    return sdf.format(date);
+  }
+
+  /**
+   * Returns a date's weekday.
+   * @param date
+   * @return weekday
+   */
+  static public Weekday getWeekday(Date date) {
+    
+    if (weekdayMap == null) {
+      createWeekdayMap();
+    }
+    
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    return weekdayMap.get(cal.get(Calendar.DAY_OF_WEEK));
+  }
+  
+  static private synchronized void createWeekdayMap() {
+    
+    if (weekdayMap != null) {
+      return;
+    }
+    
+    weekdayMap = new HashMap<Integer, Weekday>(16);
+    
+    for (Weekday weekday : Weekday.values()) {
+      weekdayMap.put(weekday.getCalendarConstant(), weekday);
+    }
+  }
 }

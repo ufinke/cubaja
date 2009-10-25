@@ -6,7 +6,7 @@ package de.ufinke.cubaja.util;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
-import static java.util.Calendar.YEAR;
+import static java.util.Calendar.*;
 import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,19 +51,19 @@ public class HolidayCalendar {
     for (HolidayConfig.HolidayEntryConfig entry : config.getEntryList()) {
       switch (entry.getType()) {
         case DATE:
-          addDate(year, set, entry);
+          addDate(cal, year, set, entry);
           break;
         case FIX:
-          addFix(year, set, entry);
+          addFix(cal, year, set, entry);
           break;
         case WEEKDAY:
-          addWeekday(year, set, entry);
+          addWeekday(cal, year, set, entry);
           break;
         case EASTER:
           if (easter == null) {
             easter = computeEaster(year);
           }
-          addEaster(easter, set, entry);
+          addEaster(cal, easter, set, entry);
           break;
       }
     }
@@ -71,14 +71,13 @@ public class HolidayCalendar {
     return set;
   }
   
-  private void addDate(int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
+  private void addDate(Calendar cal, int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.DateConfig config = (HolidayConfig.DateConfig) entry;
     if (! isValid(config.getDate(), entry)) {
       return;
     }
     
-    Calendar cal = Calendar.getInstance();
     cal.setTime(config.getDate());
     if (year != cal.get(YEAR)) {
       return;
@@ -86,11 +85,10 @@ public class HolidayCalendar {
     set.set(cal.get(DAY_OF_YEAR));
   }
   
-  private void addFix(int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
+  private void addFix(Calendar cal, int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.FixConfig config = (HolidayConfig.FixConfig) entry;
     
-    Calendar cal = Calendar.getInstance();
     cal.clear();
     cal.set(YEAR, year);
     cal.set(MONTH, config.getMonth() - 1);
@@ -101,15 +99,15 @@ public class HolidayCalendar {
       return;
     }
     
-    set.set(cal.get(DAY_OF_MONTH));
+    set.set(cal.get(DAY_OF_YEAR));
   }
   
-  private void addWeekday(int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
+  private void addWeekday(Calendar cal, int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
-    HolidayConfig.WeekdayConfig config = (HolidayConfig.WeekdayConfig) entry;
+    HolidayConfig.WeekdayConfig config = (HolidayConfig.WeekdayConfig) entry;    
   }
   
-  private void addEaster(Calendar easter, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
+  private void addEaster(Calendar cal, Calendar easter, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.EasterConfig config = (HolidayConfig.EasterConfig) entry;
   }

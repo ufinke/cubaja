@@ -3,17 +3,31 @@
 
 package de.ufinke.cubaja.util;
 
+import java.util.*;
+
 /**
  * Weekday definitions.
  * @author Uwe Finke
  */
 public enum Weekday {
 
-  SUNDAY,
-  MONDAY,
-  TUESDAY,
-  WEDNESDAY,
-  THURSDAY,
-  FRIDAY,
-  SATURDAY
+  SUNDAY   (Calendar.SUNDAY),
+  MONDAY   (Calendar.MONDAY),
+  TUESDAY  (Calendar.TUESDAY),
+  WEDNESDAY(Calendar.WEDNESDAY),
+  THURSDAY (Calendar.THURSDAY),
+  FRIDAY   (Calendar.FRIDAY),
+  SATURDAY (Calendar.SATURDAY);
+  
+  private int calendarConstant;
+  
+  private Weekday(int calendarConstant) {
+    
+  }
+  
+  public int getCalendarConstant() {
+    
+    return calendarConstant;
+  }
+  
 }
