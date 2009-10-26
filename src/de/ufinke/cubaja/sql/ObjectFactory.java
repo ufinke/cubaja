@@ -15,7 +15,7 @@ public interface ObjectFactory {
    * Creates a data object.
    * @param query
    * @return data object
-   * @throws CsvException
+   * @throws SQLException
    */
   public Object createObject(Query query) throws SQLException;
 }

@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.util;
 
-import java.util.*;
+import java.util.Calendar;
 
 /**
  * Weekday definitions.

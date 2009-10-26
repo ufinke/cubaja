@@ -5,9 +5,11 @@ package de.ufinke.cubaja.util;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.*;
-import java.text.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Miscellaneous utility methods.
@@ -301,6 +303,25 @@ public class Util {
     
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     return sdf.format(date);
+  }
+  
+  /**
+   * Creates a <code>Date</code> object from year, month and day.
+   * Note that, in contrary to <code>java.util.Calendar</code>,
+   * january is month <code>1</code>.
+   * @param year
+   * @param month
+   * @param dayOfMonth
+   * @return date
+   */
+  static public Date createDate(int year, int month, int dayOfMonth) {
+    
+    Calendar cal = Calendar.getInstance();
+    cal.clear();
+    cal.set(Calendar.YEAR, year);
+    cal.set(Calendar.MONTH, month - 1);
+    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    return cal.getTime();
   }
 
   /**

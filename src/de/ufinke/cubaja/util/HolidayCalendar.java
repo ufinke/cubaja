@@ -6,7 +6,7 @@ package de.ufinke.cubaja.util;
 import static java.util.Calendar.DAY_OF_MONTH;
 import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
-import static java.util.Calendar.*;
+import static java.util.Calendar.YEAR;
 import java.util.BitSet;
 import java.util.Calendar;
 import java.util.Date;

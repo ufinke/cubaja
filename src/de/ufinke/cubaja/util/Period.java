@@ -5,6 +5,7 @@ package de.ufinke.cubaja.util;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Period {
 
@@ -46,8 +47,8 @@ public class Period {
     return new Period(start, end);
   }
   
-  private Date start;
-  private Date end;
+  Date start;
+  Date end;
   
   public Period(Date start, Date end) {
   
@@ -71,21 +72,88 @@ public class Period {
     return end;
   }
   
-  public Period nextMonth() {
+  public Period addMonth(int count) {
     
     Calendar cal = Calendar.getInstance();
     
     cal.setTime(start);
-    cal.add(Calendar.MONTH, 1);
+    cal.add(Calendar.MONTH, count);
     Date start = cal.getTime();
     
     cal.setTime(end);
     cal.add(Calendar.DATE, 1);
-    cal.add(Calendar.MONTH, 1);
+    cal.add(Calendar.MONTH, count);
     cal.add(Calendar.DATE, -1);
     Date end = cal.getTime();
     
     return new Period(start, end);
+  }
+  
+  public Period addYear(int count) {
+    
+    Calendar cal = Calendar.getInstance();
+    
+    cal.setTime(start);
+    cal.add(Calendar.YEAR, count);
+    Date start = cal.getTime();
+    
+    cal.setTime(end);
+    cal.add(Calendar.DATE, 1);
+    cal.add(Calendar.YEAR, count);
+    cal.add(Calendar.DATE, -1);
+    Date end = cal.getTime();
+    
+    return new Period(start, end);
+  }
+  
+  public Iterable<Date> iterateDays(final int step) {
+    
+    return new Iterable<Date>() {
+
+      public Iterator<Date> iterator() {
+
+        return new Iterator<Date>() {
+          
+          private Calendar cal = initCal();
+          private Date nextDate;
+
+          private Calendar initCal() {
+          
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(start);
+            
+            if (Util.compare(start, end) <= 0) {
+              nextDate = start;
+            }
+            
+            return cal;
+          }
+          
+          public boolean hasNext() {
+
+            return nextDate != null;
+          }
+
+          public Date next() {
+
+            Date result = nextDate;
+            
+            cal.add(Calendar.DATE, step);
+            nextDate = cal.getTime();
+            if (nextDate.compareTo(end) > 0) {
+              nextDate = null;
+            }
+            
+            return result;
+          }
+
+          public void remove() throws UnsupportedOperationException {
+            
+            throw new UnsupportedOperationException();
+          }          
+        };
+      }
+    };
   }
   
 }
