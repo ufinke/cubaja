@@ -456,6 +456,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public byte[] readBytes(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getBytes(columnPosition);
   }
 
@@ -466,6 +467,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public InputStream readAsciiStream(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getAsciiStream(columnPosition);
   }
 
@@ -476,6 +478,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public InputStream readBinaryStream(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getBinaryStream(columnPosition);
   }
 
@@ -486,6 +489,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Reader readCharacterStream(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getCharacterStream(columnPosition);
   }
 
@@ -496,6 +500,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Blob readBlob(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getBlob(columnPosition);
   }
 
@@ -506,6 +511,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Clob readClob(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getClob(columnPosition);
   }
 
@@ -516,6 +522,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Array readArray(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getArray(columnPosition);
   }
 
@@ -526,6 +533,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Ref readRef(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getRef(columnPosition);
   }
   
@@ -536,6 +544,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public URL readURL(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getURL(columnPosition);
   }
 
@@ -546,6 +555,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   public Object readObject(int columnPosition) throws SQLException {
     
+    checkRow();
     return resultSet.getObject(columnPosition);
   }
 
