@@ -45,6 +45,7 @@ public class Sql {
   private State state;
   private boolean spacePending;
   private boolean retainBlockComments;
+  private char literalChar;
   
   private List<String> statementList;
   private List<String> variableList;
@@ -360,6 +361,7 @@ public class Sql {
               break;
             case '\'':
             case '\"':
+              literalChar = c;
               state = State.LITERAL;
               break;
             case '-':
@@ -383,7 +385,9 @@ public class Sql {
           break;
           
         case LITERAL:
-          state = State.DEFAULT;
+          if (literalChar == c) {
+            state = State.DEFAULT;
+          }
           break;
           
         case LINE_COMMENT:

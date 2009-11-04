@@ -6,7 +6,6 @@ package de.ufinke.cubaja.csv;
 import java.io.IOException;
 import java.io.LineNumberReader;
 import java.io.Reader;
-import java.util.Arrays;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -88,15 +87,7 @@ public class DefaultRowParser implements RowParser {
       i++;
       
       if (i == start.length) {
-        int oldCapacity = start.length;
-        int newCapacity = oldCapacity << 1;
-        startArray = new int[newCapacity];
-        System.arraycopy(start, 0, startArray, 0, oldCapacity);
-        endArray = new int[newCapacity];
-        System.arraycopy(end, 0, endArray, 0, oldCapacity);
-        escapeArray = new boolean[newCapacity];
-        boolean[] escape = escapeArray;
-        System.arraycopy(escape, 0, escapeArray, 0, oldCapacity);
+        enlargeArrays();
         start = startArray;
         end = endArray;
       }
@@ -142,10 +133,7 @@ public class DefaultRowParser implements RowParser {
       i++;
       
       if (i == start.length) {
-        int newCapacity = start.length << 1;
-        startArray = Arrays.copyOf(start, newCapacity);
-        endArray = Arrays.copyOf(end, newCapacity);
-        escapeArray = Arrays.copyOf(escapeArray, newCapacity);
+        enlargeArrays();
         start = startArray;
         end = endArray;
         doubleEscape = escapeArray;
@@ -274,6 +262,24 @@ public class DefaultRowParser implements RowParser {
     }
     
     return sb.toString();
+  }
+  
+  private void enlargeArrays() {
+    
+    int oldCapacity = startArray.length;
+    int newCapacity = oldCapacity << 1;
+    
+    int[] newStartArray = new int[newCapacity];
+    System.arraycopy(startArray, 0, newStartArray, 0, oldCapacity);
+    startArray = newStartArray;
+    
+    int[] newEndArray = new int[newCapacity];
+    System.arraycopy(endArray, 0, newEndArray, 0, oldCapacity);
+    endArray = newEndArray;
+    
+    boolean[] newEscapeArray = new boolean[newCapacity];
+    System.arraycopy(escapeArray, 0, newEscapeArray, 0, oldCapacity);
+    escapeArray = newEscapeArray;
   }
 
 }

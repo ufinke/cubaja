@@ -106,11 +106,10 @@ public final class Matcher<K> implements Iterable<K> {
         for (InternalMatchSource<?, K> source : sourceList) {
           if (source.hasMore()) {
             K currentKey = source.getCurrentKey();
-            if (currentKey != null) {
-              if ((! hasMatchKey) || comparator.compare(currentKey, matchKey) < 0) {
-                matchKey = currentKey;
-              }
+            if ((! hasMatchKey) || comparator.compare(currentKey, matchKey) < 0) {
+              matchKey = currentKey;
             }
+            hasMatchKey = true;
           }
         }
         

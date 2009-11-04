@@ -11,7 +11,6 @@ import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
@@ -271,37 +270,37 @@ public class Query extends PreparedSql implements ColumnReader {
     return resultSet.getTime(columnPosition);
   }
 
-  public Date readDate(String columnName) throws SQLException {
+  public java.util.Date readDate(String columnName) throws SQLException {
     
     return readDate(getColumnPosition(columnName));
   }
   
-  public Date readDate(int columnPosition) throws SQLException {
+  public java.util.Date readDate(int columnPosition) throws SQLException {
     
     java.sql.Date date = readSqlDate(columnPosition);
-    return (date == null) ? null : new Date(date.getTime());
+    return (date == null) ? null : new java.util.Date(date.getTime());
   }
 
-  public Date readTimestamp(String columnName) throws SQLException {
+  public java.util.Date readTimestamp(String columnName) throws SQLException {
     
     return readTimestamp(getColumnPosition(columnName));
   }
   
-  public Date readTimestamp(int columnPosition) throws SQLException {
+  public java.util.Date readTimestamp(int columnPosition) throws SQLException {
 
     Timestamp timestamp = readSqlTimestamp(columnPosition);
-    return (timestamp == null) ? null : new Date(timestamp.getTime());
+    return (timestamp == null) ? null : new java.util.Date(timestamp.getTime());
   }
 
-  public Date readTime(String columnName) throws SQLException {
+  public java.util.Date readTime(String columnName) throws SQLException {
     
     return readTime(getColumnPosition(columnName));
   }
   
-  public Date readTime(int columnPosition) throws SQLException {
+  public java.util.Date readTime(int columnPosition) throws SQLException {
 
     Time time = readSqlTime(columnPosition);
-    return (time == null) ? null : new Date(time.getTime());
+    return (time == null) ? null : new java.util.Date(time.getTime());
   }
 
   public double readDouble(String columnName) throws SQLException {
