@@ -64,6 +64,8 @@ public class CsvReader implements ColumnReader {
   private ColConfig colConfig;
   
   private ObjectFactoryGenerator generator;
+  private Class<?> dataClass;
+  private ObjectFactory objectFactory;
   
   /**
    * Constructor with configuration.
@@ -746,10 +748,14 @@ public class CsvReader implements ColumnReader {
   public <D> D readRow(Class<? extends D> clazz) throws CsvException {
     
     try {
-      if (generator == null) {
-        generator = new ObjectFactoryGenerator(nameMap);
+      if (dataClass != clazz) {
+        if (generator == null) {
+          generator = new ObjectFactoryGenerator(nameMap);
+        }
+        objectFactory = generator.getFactory(clazz);
+        dataClass = clazz;
       }
-      return (D) generator.getFactory(clazz).createObject(this);
+      return (D) objectFactory.createObject(this);
     } catch (Exception e) {
       throw new CsvException(text.get("readObject", clazz.getName()), e);
     }

@@ -29,7 +29,10 @@ public class Query extends PreparedSql implements ColumnReader {
   private ResultSet resultSet;
   private ResultSetMetaData metaData;
   private int rowCount;
+  
   private ObjectFactoryGenerator generator;
+  private Class<?> dataClass;
+  private ObjectFactory objectFactory; 
   
   Query(PreparedStatement statement, Sql sql, DatabaseConfig config) {
   
@@ -120,11 +123,6 @@ public class Query extends PreparedSql implements ColumnReader {
     }
     
     return hasNext;
-  }
-
-  public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
-
-    return new RowIterator<D>(this, clazz);
   }
 
   public BigDecimal readBigDecimal(String columnName) throws SQLException {
@@ -222,19 +220,6 @@ public class Query extends PreparedSql implements ColumnReader {
     } else {
       return Character.valueOf(s.charAt(0));
     }
-  }
-
-  public String[] readColumns() throws SQLException {
-
-    int colCount = getColumnCount();
-    String[] columns = new String[colCount];
-    
-    int i = 0;
-    while (i < colCount) {      
-      columns[i] = readString(++i);
-    }
-    
-    return columns;
   }
 
   public java.sql.Date readSqlDate(String columnName) throws SQLException {
@@ -395,25 +380,6 @@ public class Query extends PreparedSql implements ColumnReader {
     return resultSet.wasNull() ? null : Long.valueOf(result);
   }
 
-  @SuppressWarnings("unchecked")
-  public <D> D readRow(Class<? extends D> clazz) throws SQLException {
-
-    checkRow();
-    
-    try {
-      if (generator == null) {
-        generator = new ObjectFactoryGenerator(getMetaData(), config);
-      }
-      return (D) generator.getFactory(clazz).createObject(this);
-    } catch (SQLException sqle) {
-      throw sqle;
-    } catch (Exception e) {
-      SQLException ex = new SQLException(text.get("createObject", e.toString()));
-      ex.initCause(e);
-      throw ex;
-    }
-  }
-
   public short readShort(String columnName) throws SQLException {
 
     return readShort(getColumnPosition(columnName));
@@ -556,6 +522,47 @@ public class Query extends PreparedSql implements ColumnReader {
     
     checkRow();
     return resultSet.getObject(columnPosition);
+  }
+
+  public String[] readColumns() throws SQLException {
+
+    int colCount = getColumnCount();
+    String[] columns = new String[colCount];
+    
+    int i = 0;
+    while (i < colCount) {      
+      columns[i] = readString(++i);
+    }
+    
+    return columns;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <D> D readRow(Class<? extends D> clazz) throws SQLException {
+
+    checkRow();
+    
+    try {
+      if (dataClass != clazz) {
+        if (generator == null) {
+          generator = new ObjectFactoryGenerator(getMetaData(), config);
+        }
+        objectFactory = generator.getFactory(clazz);
+        dataClass = clazz;
+      }
+      return (D) objectFactory.createObject(this);
+    } catch (SQLException sqle) {
+      throw sqle;
+    } catch (Exception e) {
+      SQLException ex = new SQLException(text.get("createObject", e.toString()));
+      ex.initCause(e);
+      throw ex;
+    }
+  }
+
+  public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
+
+    return new RowIterator<D>(this, clazz);
   }
 
   public <D> D select(Class<? extends D> clazz) throws SQLException {

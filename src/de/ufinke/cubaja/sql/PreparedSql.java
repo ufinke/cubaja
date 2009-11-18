@@ -23,7 +23,6 @@ public class PreparedSql {
   protected Sql sql;
   protected DatabaseConfig config;
   
-  private int maxPosition;
   private List<String> variableList;
   private Map<String, Integer> variableMap;
   private boolean changed;
@@ -35,7 +34,6 @@ public class PreparedSql {
     this.config = config;
     
     variableList = sql.getVariables();
-    maxPosition = variableList.size() - 1;
   }
   
   public int getVariablePosition(String name) throws SQLException {
@@ -54,14 +52,6 @@ public class PreparedSql {
     return position;
   }
   
-  private void changeVariable(int position) throws SQLException {
-    
-    if (position < 1 || position > maxPosition) {
-      throw new SQLException(text.get("variablePosition", Integer.valueOf(position)));
-    }
-    changed = true;
-  }
-  
   protected boolean isChanged() {
     
     return changed;
@@ -74,7 +64,7 @@ public class PreparedSql {
   
   public void setBoolean(int position, boolean value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setBoolean(position, value);
   }
 
@@ -85,7 +75,7 @@ public class PreparedSql {
   
   public void setBoolean(int position, Boolean value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.BOOLEAN);
     } else {
@@ -100,7 +90,7 @@ public class PreparedSql {
   
   public void setByte(int position, byte value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setByte(position, value);
   }
 
@@ -111,7 +101,7 @@ public class PreparedSql {
   
   public void setByte(int position, Byte value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.TINYINT);
     } else {
@@ -126,7 +116,7 @@ public class PreparedSql {
   
   public void setShort(int position, short value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setShort(position, value);
   }
 
@@ -137,7 +127,7 @@ public class PreparedSql {
   
   public void setShort(int position, Short value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.SMALLINT);
     } else {
@@ -152,7 +142,7 @@ public class PreparedSql {
   
   public void setInt(int position, int value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setInt(position, value);
   }
 
@@ -163,7 +153,7 @@ public class PreparedSql {
   
   public void setInt(int position, Integer value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.INTEGER);
     } else {
@@ -178,7 +168,7 @@ public class PreparedSql {
   
   public void setLong(int position, long value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setLong(position, value);
   }
 
@@ -189,7 +179,7 @@ public class PreparedSql {
   
   public void setLong(int position, Long value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.BIGINT);
     } else {
@@ -204,7 +194,7 @@ public class PreparedSql {
   
   public void setFloat(int position, float value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setFloat(position, value);
   }
 
@@ -215,7 +205,7 @@ public class PreparedSql {
   
   public void setFloat(int position, Float value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.REAL);
     } else {
@@ -230,7 +220,7 @@ public class PreparedSql {
   
   public void setDouble(int position, double value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setDouble(position, value);
   }
 
@@ -241,7 +231,7 @@ public class PreparedSql {
   
   public void setDouble(int position, Double value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     if (value == null) {
       statement.setNull(position, Types.DOUBLE);
     } else {
@@ -256,7 +246,7 @@ public class PreparedSql {
   
   public void setBigDecimal(int position, BigDecimal value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setBigDecimal(position, value);
   }
 
@@ -267,7 +257,7 @@ public class PreparedSql {
   
   public void setBigInteger(int position, BigInteger value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setBigDecimal(position, new BigDecimal(value));
   }
 
@@ -278,7 +268,7 @@ public class PreparedSql {
   
   public void setString(int position, String value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setString(position, value);
   }
 
@@ -319,7 +309,7 @@ public class PreparedSql {
   
   public void setDate(int position, java.sql.Date value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setDate(position, value);
   }
 
@@ -330,7 +320,7 @@ public class PreparedSql {
   
   public void setTimestamp(int position, Timestamp value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setTimestamp(position, value);
   }
 
@@ -341,8 +331,13 @@ public class PreparedSql {
   
   public void setTime(int position, Time value) throws SQLException {
     
-    changeVariable(position);
+    changed = true;
     statement.setTime(position, value);
+  }
+  
+  public void setVariables(Object dataObject) throws Exception {
+    
+    //TODO
   }
 
 }
