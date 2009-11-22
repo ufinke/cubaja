@@ -68,8 +68,6 @@ class ObjectFactoryGenerator implements Generator {
   private Map<String, SearchEntry> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
-  private Class<?> lastClass;
-  private ObjectFactory lastFactory;
   private DatabaseConfig config;
   private Log logger;
   
@@ -81,28 +79,22 @@ class ObjectFactoryGenerator implements Generator {
   }
   
   ObjectFactory getFactory(Class<?> dataClass) throws Exception {
-    
-    if (lastClass == dataClass) {
-      return lastFactory;
-    }
-    
-    lastClass = dataClass;
-    
-    lastFactory = factoryMap.get(lastClass);
-    if (lastFactory != null) {
-      return lastFactory;
+
+    ObjectFactory factory = factoryMap.get(dataClass);
+    if (factory != null) {
+      return factory;
     }
     
     dataClassType = new Type(dataClass);
     createSetterMap(dataClass);
     
     Class<?> factoryClass = Loader.createClass(this, "QueryObjectFactory", dataClass);
-    lastFactory = (ObjectFactory) factoryClass.newInstance();
-    factoryMap.put(dataClass, lastFactory);
+    factory = (ObjectFactory) factoryClass.newInstance();
+    factoryMap.put(dataClass, factory);
     
     setterMap = null;
     
-    return lastFactory;
+    return factory;
   }
   
   public GenClass generate(String className) throws Exception {

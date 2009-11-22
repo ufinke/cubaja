@@ -80,7 +80,7 @@ enum ObjectFactoryType {
   
   static private Map<Class<?>, ObjectFactoryType> createParameterMap() {
     
-    Map<Class<?>, ObjectFactoryType> map = new HashMap<Class<?>, ObjectFactoryType>();
+    Map<Class<?>, ObjectFactoryType> map = new HashMap<Class<?>, ObjectFactoryType>(32);
     
     for (ObjectFactoryType type : ObjectFactoryType.values()) {
       map.put(type.getClazz(), type);

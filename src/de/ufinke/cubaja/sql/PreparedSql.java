@@ -5,7 +5,12 @@ package de.ufinke.cubaja.sql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URL;
+import java.sql.Array;
+import java.sql.Blob;
+import java.sql.Clob;
 import java.sql.PreparedStatement;
+import java.sql.Ref;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -26,6 +31,10 @@ public class PreparedSql {
   private List<String> variableList;
   private Map<String, Integer> variableMap;
   private boolean changed;
+  
+  private Class<?> dataClass;
+  private VariableSetter variableSetter;
+  private VariableSetterGenerator generator;
   
   protected PreparedSql(PreparedStatement statement, Sql sql, DatabaseConfig config) {
   
@@ -106,6 +115,31 @@ public class PreparedSql {
       statement.setNull(position, Types.TINYINT);
     } else {
       statement.setByte(position, value);
+    }
+  }
+  
+  public void setCharacter(String name, char value) throws SQLException {
+    
+    setCharacter(getVariablePosition(name), value);
+  }
+  
+  public void setCharacter(int position, char value) throws SQLException {
+    
+    setString(position, String.valueOf(value));
+  }
+  
+  public void setCharacter(String name, Character value) throws SQLException {
+    
+    setCharacter(getVariablePosition(name), value);
+  }
+  
+  public void setCharacter(int position, Character value) throws SQLException {
+    
+    changed = true;
+    if (value == null) {
+      statement.setNull(position, Types.CHAR);
+    } else {
+      statement.setString(position, String.valueOf(value));
     }
   }
 
@@ -335,9 +369,85 @@ public class PreparedSql {
     statement.setTime(position, value);
   }
   
+  public void setArray(String name, Array value) throws SQLException {
+    
+    setArray(getVariablePosition(name), value);
+  }
+  
+  public void setArray(int position, Array value) throws SQLException {
+    
+    changed = true;
+    statement.setArray(position, value);
+  }
+  
+  public void setBlob(String name, Blob value) throws SQLException {
+    
+    setBlob(getVariablePosition(name), value);
+  }
+  
+  public void setBlob(int position, Blob value) throws SQLException {
+    
+    changed = true;
+    statement.setBlob(position, value);
+  }
+  
+  public void setClob(String name, Clob value) throws SQLException {
+    
+    setClob(getVariablePosition(name), value);
+  }
+  
+  public void setClob(int position, Clob value) throws SQLException {
+    
+    changed = true;
+    statement.setClob(position, value);
+  }
+  
+  public void setObject(String name, Object value) throws SQLException {
+    
+    setObject(getVariablePosition(name), value);
+  }
+  
+  public void setObject(int position, Object value) throws SQLException {
+    
+    changed = true;
+    statement.setObject(position, value);
+  }
+  
+  public void setRef(String name, Ref value) throws SQLException {
+    
+    setRef(getVariablePosition(name), value);
+  }
+  
+  public void setRef(int position, Ref value) throws SQLException {
+    
+    changed = true;
+    statement.setRef(position, value);
+  }
+  
+  public void setURL(String name, URL value) throws SQLException {
+    
+    setURL(getVariablePosition(name), value);
+  }
+  
+  public void setURL(int position, URL value) throws SQLException {
+    
+    changed = true;
+    statement.setURL(position, value);
+  }
+  
   public void setVariables(Object dataObject) throws Exception {
     
-    //TODO
+    Class<?> clazz = dataObject.getClass();
+    
+    if (dataClass != clazz) {
+      dataClass = clazz;
+      if (generator == null) {
+        generator = new VariableSetterGenerator(variableList);
+      }
+      variableSetter = generator.getSetter(clazz);
+    }
+    
+    variableSetter.setVariables(this, dataObject);
   }
 
 }

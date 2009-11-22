@@ -14,7 +14,7 @@ class TypeCombination {
     this.sqlType = sqlType;
     this.setterClass = setterClass;
     
-    hashCode = sqlType << 16 + setterClass.hashCode();
+    hashCode = (sqlType << 16) + setterClass.hashCode();
   }
   
   public boolean equals(Object o) {
