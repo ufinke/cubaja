@@ -156,6 +156,7 @@ public class DatabaseConfig {
   private Properties properties;
   private boolean autoCommit;
   private int fetchSize;
+  private int batchSize;
   private boolean log;
 
   /**
@@ -165,7 +166,8 @@ public class DatabaseConfig {
 
     properties = new Properties();
     autoCommit = false;
-    fetchSize = 4096;
+    fetchSize = 4095;
+    batchSize = 8191;
     log = false;
   }
   
@@ -227,6 +229,25 @@ public class DatabaseConfig {
   public void setFetchSize(int fetchSize) {
   
     this.fetchSize = fetchSize;
+  }
+  
+  /**
+   * Returns the batchSize for updates.
+   * By default, this configuration class returns <code>8191</code>.
+   * @return batch size
+   */
+  public int getBatchSize() {
+    
+    return batchSize;
+  }
+  
+  /**
+   * Sets th batchSize for updates.
+   * @param batchSize
+   */
+  public void setBatchSize(int batchSize) {
+    
+    this.batchSize = batchSize;
   }
 
   /**
