@@ -13,7 +13,7 @@ public interface SortAlgorithm {
 
   public Object[] sort(Object[] array, int size);
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator);
   
   public double memoryFactor();

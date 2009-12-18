@@ -15,7 +15,7 @@ public class Quicksort implements SortAlgorithm {
   static private final int INSERTION_THRESHOLD = 7;
   
   private Random random;
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private Comparator comparator;
   
   /**
@@ -31,7 +31,7 @@ public class Quicksort implements SortAlgorithm {
     return 1;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator) {
     
     this.comparator = comparator;

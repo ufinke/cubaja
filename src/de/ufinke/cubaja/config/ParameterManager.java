@@ -34,7 +34,7 @@ class ParameterManager implements ParameterFactoryFinder {
   
   static class EnumFactory implements ParameterFactory {
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public Object createParameter(String value, Class<?> type, Annotation[] annotations) throws Exception {
 
       value = value.trim();

@@ -44,14 +44,12 @@ class ObjectFactoryGenerator implements Generator {
     String name;
     ObjectFactoryType type;
     int position;
-    Class<?> clazz;
     
-    SetterEntry(String methodName, ObjectFactoryType parameterType, int position, Class<?> parameterClass) {
+    SetterEntry(String methodName, ObjectFactoryType parameterType, int position) {
       
       this.name = methodName;
       this.type = parameterType;
       this.position = position;
-      this.clazz = parameterClass;
     }
   }
   
@@ -172,7 +170,7 @@ class ObjectFactoryGenerator implements Generator {
               SetterEntry entry = setterMap.get(methodName);
               
               if (entry == null || type.getPriority() < entry.type.getPriority()) {
-                setterMap.put(methodName, new SetterEntry(methodName, type, position, parameterTypes[0]));
+                setterMap.put(methodName, new SetterEntry(methodName, type, position));
                 searchEntry.setterFound = true;
               }
             }

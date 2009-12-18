@@ -3,7 +3,9 @@
 
 package de.ufinke.cubaja.util;
 
+import static java.util.Calendar.DATE;
 import static java.util.Calendar.DAY_OF_MONTH;
+import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.DAY_OF_YEAR;
 import static java.util.Calendar.MONTH;
 import static java.util.Calendar.YEAR;
@@ -74,14 +76,16 @@ public class HolidayCalendar {
   private void addDate(Calendar cal, int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.DateConfig config = (HolidayConfig.DateConfig) entry;
-    if (! isValid(config.getDate(), entry)) {
-      return;
-    }
     
     cal.setTime(config.getDate());
+    
     if (year != cal.get(YEAR)) {
       return;
     }
+    if (! isValid(cal, entry)) {
+      return;
+    }
+        
     set.set(cal.get(DAY_OF_YEAR));
   }
   
@@ -94,8 +98,7 @@ public class HolidayCalendar {
     cal.set(MONTH, config.getMonth() - 1);
     cal.set(DAY_OF_MONTH, config.getDay());
     
-    Date date = cal.getTime();
-    if (! isValid(date, entry)) {
+    if (! isValid(cal, entry)) {
       return;
     }
     
@@ -105,17 +108,62 @@ public class HolidayCalendar {
   private void addWeekday(Calendar cal, int year, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.WeekdayConfig config = (HolidayConfig.WeekdayConfig) entry;    
+    
+    cal.clear();
+    cal.set(YEAR, year);
+    cal.set(MONTH, 0);
+    cal.set(DAY_OF_MONTH, 1);
+    if (entry.getValidFrom() != null) {
+      if (Util.compare(entry.getValidFrom(), cal.getTime()) > 0) {
+        cal.setTime(entry.getValidFrom());
+      }
+    }
+    
+    Calendar limit = Calendar.getInstance();
+    cal.set(YEAR, year);
+    cal.set(MONTH, 11);
+    cal.set(DAY_OF_MONTH, 31);
+    if (entry.getValidTo() != null) {
+      if (Util.compare(entry.getValidTo(), limit.getTime()) < 0) {
+        limit.setTime(entry.getValidTo());
+      }
+    }
+    
+    while (cal.compareTo(limit) <= 0) {
+      int dayOfWeek = cal.get(DAY_OF_WEEK);
+      for (Weekday weekday : config.getDays()) {
+        if (weekday.getCalendarConstant() == dayOfWeek) {
+          set.set(cal.get(DAY_OF_YEAR));
+        }
+      }
+      cal.add(DATE, 1);
+    }
   }
   
   private void addEaster(Calendar cal, Calendar easter, BitSet set, HolidayConfig.HolidayEntryConfig entry) {
     
     HolidayConfig.EasterConfig config = (HolidayConfig.EasterConfig) entry;
+    
+    cal.clear();
+    cal.set(YEAR, easter.get(YEAR));
+    cal.set(MONTH, easter.get(MONTH));
+    cal.set(DAY_OF_MONTH, easter.get(DAY_OF_MONTH));
+    cal.add(DATE, config.getOffset());
+    
+    if (! isValid(cal, entry)) {
+      return;
+    }
+    
+    set.set(cal.get(DAY_OF_YEAR));
   }
   
-  private boolean isValid(Date date, HolidayConfig.HolidayEntryConfig entry) {
+  private boolean isValid(Calendar cal, HolidayConfig.HolidayEntryConfig entry) {
+    
+    Date date = null;
     
     Date from = entry.getValidFrom();
     if (from != null) {
+      date = cal.getTime();
       if (Util.compare(from, date) > 0) {
         return false;
       }
@@ -123,6 +171,9 @@ public class HolidayCalendar {
     
     Date to = entry.getValidTo();
     if (to != null) {
+      if (date == null) {
+        date = cal.getTime();
+      }
       if (Util.compare(to, date) < 0) {
         return false;
       }

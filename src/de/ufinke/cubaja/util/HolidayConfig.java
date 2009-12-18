@@ -89,22 +89,22 @@ public class HolidayConfig {
 
   static public class WeekdayConfig extends HolidayEntryConfig {
 
-    private Weekday day;
+    private Weekday[] days;
 
     public WeekdayConfig() {
 
       super(Type.WEEKDAY);
     }
 
-    public Weekday getDay() {
+    public Weekday[] getDays() {
 
-      return day;
+      return days;
     }
 
     @Mandatory
-    public void setDay(Weekday day) {
+    public void setDays(Weekday[] days) {
 
-      this.day = day;
+      this.days = days;
     }
   }
 

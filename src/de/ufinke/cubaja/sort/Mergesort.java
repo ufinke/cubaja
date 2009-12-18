@@ -14,7 +14,7 @@ public class Mergesort implements SortAlgorithm {
 
   private Object[] entries;
   private Object[] temp;
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   private Comparator comparator;
   
   /**
@@ -29,7 +29,7 @@ public class Mergesort implements SortAlgorithm {
     return 2;
   }
   
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator) {
     
     this.comparator = comparator;
