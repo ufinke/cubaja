@@ -64,7 +64,7 @@ public class CodeAttribute implements Generatable {
   
   private void checkMaxLocals(int index) {
     
-    maxLocals = Math.max(maxLocals, index);
+    maxLocals = Math.max(maxLocals, index + 1);
   }
   
   private void incrementStack(int increment) {

@@ -81,7 +81,7 @@ class VariableSetterGenerator implements Generator {
   
   private void createList (Class<?> dataClass) {
     
-    List<ListEntry> list = new ArrayList<ListEntry>();
+    list = new ArrayList<ListEntry>();
     
     for (Method method : dataClass.getMethods()) {
       if (method.getParameterTypes().length == 0) {
