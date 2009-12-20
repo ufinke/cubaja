@@ -114,7 +114,7 @@ public class Database {
   }
   
   /**
-   * Executes SQL provided in a resource immediately.
+   * Executes SQL provided as resource immediately.
    * <p>
    * The SQL must be written in a separate file within a java source package
    * (usually the package where the class which uses the SQL belongs to).
@@ -194,16 +194,45 @@ public class Database {
     statement.close();
   }
   
+  /**
+   * Creates a <code>Query</code> instance with SQL provided as string.
+   * @param sql
+   * @return Query
+   * @throws SQLException
+   */
   public Query createQuery(String sql) throws SQLException {
     
     return createQuery(new Sql(sql));
   }
   
+  /**
+   * Creates a <code>Query</code> instance with SQL provided as resource.
+   * <p>
+   * The SQL must be written in a separate file within a java source package
+   * (usually the package where the class which uses the SQL belongs to).
+   * We have to specify a class within that package as parameter. 
+   * This may be any class, but usually it will be the class which uses
+   * the SQL.
+   * The file name's extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
+   * plain file name without extension and without path.
+   * @param packageClass
+   * @param sqlResource
+   * @return Query
+   * @throws SQLException
+   * @throws IOException
+   */
   public Query createQuery(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
     
     return createQuery(new Sql(packageClass, sqlResource));
   }
   
+  /**
+   * Creates a <code>Query</code> instance with SQL provided as <code>Sql</code> object.
+   * @param sql
+   * @return Query
+   * @throws SQLException
+   */
   public Query createQuery(Sql sql) throws SQLException {
 
     String stm = sql.getSingleStatement();
@@ -217,21 +246,62 @@ public class Database {
     return new Query(ps, sql, config);
   }
   
+  /**
+   * Returns a single result object from a query.
+   * @param <D>
+   * @param sql
+   * @param clazz Class of result object
+   * @return result object
+   * @throws SQLException
+   */
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
     
     return createQuery(sql).select(clazz);
   }
   
+  /**
+   * Creates an <code>Update</code> instance with SQL provided as string.
+   * The SQL statement may be either <code>insert</code>, <code>update</code>
+   * or <code>delete</code>.
+   * @param sql
+   * @return Update
+   * @throws SQLException
+   */
   public Update createUpdate(String sql) throws SQLException {
     
     return createUpdate(new Sql(sql));
   }
   
+  /**
+   * Creates an <code>Update</code> instance with SQL provided as resource.
+   * The SQL statement may be either <code>insert</code>, <code>update</code>
+   * or <code>delete</code>.
+   * <p>
+   * The SQL must be written in a separate file within a java source package
+   * (usually the package where the class which uses the SQL belongs to).
+   * We have to specify a class within that package as parameter. 
+   * This may be any class, but usually it will be the class which uses
+   * the SQL.
+   * The file name's extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
+   * plain file name without extension and without path.
+   * @param packageClass
+   * @param sqlResource
+   * @return Update
+   * @throws SQLException
+   * @throws IOException
+   */
   public Update createUpdate(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
     
     return createUpdate(new Sql(packageClass, sqlResource));
   }
   
+  /**
+   * Creates an <code>Update</code> instance with SQL provided as <code>Sql</code> object.
+   * @param sql
+   * @return Update
+   * @throws SQLException
+   */
   public Update createUpdate(Sql sql) throws SQLException {
 
     String stm = sql.getSingleStatement();
