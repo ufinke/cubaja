@@ -12,6 +12,20 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Wrapper for a database connection.
+ * <p>
+ * If not specified otherwise by configuration,
+ * autocommit is <code>false</code>.
+ * This is different from default JDBC behaviour.
+ * <p>
+ * If we specify <code>log='true'</code> 
+ * in the configuration, statements will be logged
+ * using the Apache CommonsLogging framework.
+ * In the log message, each <code>Database</code>
+ * instance has a unique id number.
+ * @author Uwe Finke
+ */
 public class Database {
 
   static private int id = 0;
@@ -28,16 +42,32 @@ public class Database {
   private Integer myId;
   private Log logger;
   
+  /**
+   * Uses existing connection with default configuration attributes.
+   * @param connection
+   * @throws SQLException
+   */
   public Database(Connection connection) throws SQLException {
 
     this(connection, new DatabaseConfig());
   }
   
+  /**
+   * Connects to a database using configuration attributes.
+   * @param config
+   * @throws SQLException
+   */
   public Database(DatabaseConfig config) throws SQLException {
     
     this(config.createConnection(), config);
   }
   
+  /**
+   * Uses existing connection with specific configuration attributes.
+   * @param connection
+   * @param config
+   * @throws SQLException
+   */
   public Database(Connection connection, DatabaseConfig config) throws SQLException {
         
     if (config.isLog()) {
@@ -63,17 +93,70 @@ public class Database {
       execute(config.getExecute());
     }
   }
-  
+
+  /**
+   * Executes SQL provided as string immediately.
+   * <p>
+   * There may be more than one SQL statement; each
+   * statement separated by semicolon.
+   * <p>
+   * You may optionally specify any number of SQL codes which are expected
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
+   * The SQL codes are vendor specific. 
+   * @param sql
+   * @param acceptedSqlCodes
+   * @throws SQLException
+   */
   public void execute(String sql, int... acceptedSqlCodes) throws SQLException {
   
     execute(new Sql(sql), acceptedSqlCodes);
   }
   
+  /**
+   * Executes SQL provided in a resource immediately.
+   * <p>
+   * The SQL must be written in a separate file within a java source package
+   * (usually the package where the class which uses the SQL belongs to).
+   * We have to specify a class within that package as parameter. 
+   * This may be any class, but usually it will be the class which uses
+   * the SQL.
+   * The file name's extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
+   * plain file name without extension and without path.
+   * <p>
+   * There may be more than one SQL statement; each
+   * statement separated by semicolon.
+   * <p>
+   * You may optionally specify any number of SQL codes which are expected
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
+   * The SQL codes are vendor specific. 
+   * @param packageClass
+   * @param sqlResource
+   * @param acceptedSqlCodes
+   * @throws SQLException
+   * @throws IOException
+   */
   public void execute(Class<?> packageClass, String sqlResource, int... acceptedSqlCodes) throws SQLException, IOException {
     
     execute(new Sql(packageClass, sqlResource), acceptedSqlCodes);
   }
   
+  /**
+   * Executes SQL provided as <code>Sql</code> instance immediately.
+   * <p>
+   * There may be more than one SQL statement; each
+   * statement separated by semicolon.
+   * <p>
+   * You may optionally specify any number of SQL codes which are expected
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
+   * The SQL codes are vendor specific. 
+   * @param sql
+   * @param acceptedSqlCodes
+   * @throws SQLException
+   */
   public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
     if (sql.hasVariables()) {
@@ -160,6 +243,10 @@ public class Database {
     return new Update(connection.prepareStatement(stm), sql, config);
   }
   
+  /**
+   * Executes a commit.
+   * @throws SQLException
+   */
   public void commit() throws SQLException {
     
     if (logger != null) {
@@ -169,6 +256,10 @@ public class Database {
     connection.commit();
   }
   
+  /**
+   * Exceutes a rollback.
+   * @throws SQLException
+   */
   public void rollback() throws SQLException {
     
     if (logger != null) {
@@ -178,6 +269,10 @@ public class Database {
     connection.rollback();
   }
   
+  /**
+   * Closes the connection.
+   * @throws SQLException
+   */
   public void close() throws SQLException {
 
     if (logger != null) {
