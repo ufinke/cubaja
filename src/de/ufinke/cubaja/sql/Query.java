@@ -22,6 +22,11 @@ import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.io.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Wrapper for <code>select</code> statements and result sets.
+ * An instance is created by an appropriate <code>Database</code> method.
+ * @author Uwe Finke
+ */
 public class Query extends PreparedSql implements ColumnReader {
 
   static private final Text text = new Text(Query.class);
@@ -60,6 +65,11 @@ public class Query extends PreparedSql implements ColumnReader {
     }
   }
   
+  /**
+   * Returns the result set's meta data.
+   * @return meta data
+   * @throws SQLException
+   */
   public ResultSetMetaData getMetaData() throws SQLException {
     
     checkExec();
@@ -69,6 +79,10 @@ public class Query extends PreparedSql implements ColumnReader {
     return metaData;
   }
   
+  /**
+   * Closes the result set.
+   * @throws SQLException
+   */
   public void closeResultSet() throws SQLException {
     
     if (resultSet != null) {
@@ -78,6 +92,9 @@ public class Query extends PreparedSql implements ColumnReader {
     }
   }
   
+  /**
+   * Closes the result set and the statement.
+   */
   public void close() throws SQLException {
 
     closeResultSet();
@@ -110,6 +127,10 @@ public class Query extends PreparedSql implements ColumnReader {
     return rowCount;
   }
 
+  /**
+   * Fetches the next row.
+   * The result set is closed automatically when the last row had been retrieved.
+   */
   public boolean nextRow() throws SQLException {
 
     checkExec();
@@ -222,66 +243,138 @@ public class Query extends PreparedSql implements ColumnReader {
     }
   }
 
+  /**
+   * Reads a date column identified by name as <code>java.sql.Date</code>.
+   * @param columnName
+   * @return Date
+   * @throws SQLException
+   */
   public java.sql.Date readSqlDate(String columnName) throws SQLException {
 
     return readSqlDate(getColumnPosition(columnName));
   }
 
+  /**
+   * Reads a date column identified by position as <code>java.sql.Date</code>.
+   * @param columnPosition
+   * @return Date
+   * @throws SQLException
+   */
   public java.sql.Date readSqlDate(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getDate(columnPosition);
   }
   
+  /**
+   * Reads a timestamp column identified by name as <code>Timestamp</code>.
+   * @param columnName
+   * @return Timestamp
+   * @throws SQLException
+   */
   public Timestamp readSqlTimestamp(String columnName) throws SQLException {
 
     return readSqlTimestamp(getColumnPosition(columnName));
   }
 
+  /**
+   * Reads a timestamp column identified by position as <code>Timestamp</code>.
+   * @param columnPosition
+   * @return Timestamp
+   * @throws SQLException
+   */
   public Timestamp readSqlTimestamp(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getTimestamp(columnPosition);
   }
 
+  /**
+   * Reads a time column identified by name as <code>Time</code>.
+   * @param columnName
+   * @return Time
+   * @throws SQLException
+   */
   public Time readSqlTime(String columnName) throws SQLException {
 
     return readSqlTime(getColumnPosition(columnName));
   }
 
+  /**
+   * Reads a time column identified by position as <code>Time</code>.
+   * @param columnPosition
+   * @return
+   * @throws SQLException
+   */
   public Time readSqlTime(int columnPosition) throws SQLException {
 
     checkRow();
     return resultSet.getTime(columnPosition);
   }
 
+  /**
+   * Reads a date column identified by name as <code>java.util.Date</code>.
+   * @param columnName
+   * @return Date
+   * @throws SQLException
+   */
   public java.util.Date readDate(String columnName) throws SQLException {
     
     return readDate(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a date column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition
+   * @return Date
+   * @throws SQLException
+   */
   public java.util.Date readDate(int columnPosition) throws SQLException {
     
     java.sql.Date date = readSqlDate(columnPosition);
     return (date == null) ? null : new java.util.Date(date.getTime());
   }
 
+  /**
+   * Reads a timestamp column identified by name as <code>java.util.Date</code>.
+   * @param columnName
+   * @return Timestamp
+   * @throws SQLException
+   */
   public java.util.Date readTimestamp(String columnName) throws SQLException {
     
     return readTimestamp(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a timestamp column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition
+   * @return Timestamp
+   * @throws SQLException
+   */
   public java.util.Date readTimestamp(int columnPosition) throws SQLException {
 
     Timestamp timestamp = readSqlTimestamp(columnPosition);
     return (timestamp == null) ? null : new java.util.Date(timestamp.getTime());
   }
 
+  /**
+   * Reads a time column identified by name as <code>java.util.Date</code>.
+   * @param columnName
+   * @return Time
+   * @throws SQLException
+   */
   public java.util.Date readTime(String columnName) throws SQLException {
     
     return readTime(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a time column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition
+   * @return
+   * @throws SQLException
+   */
   public java.util.Date readTime(int columnPosition) throws SQLException {
 
     Time time = readSqlTime(columnPosition);
@@ -414,110 +507,230 @@ public class Query extends PreparedSql implements ColumnReader {
     return resultSet.getString(columnPosition);
   }
   
+  /**
+   * Reads a byte array column identified by name.
+   * @param columnName
+   * @return byte array
+   * @throws SQLException
+   */
   public byte[] readBytes(String columnName) throws SQLException {
     
     return readBytes(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a byte array column identified by position.
+   * @param columnPosition
+   * @return byte array
+   * @throws SQLException
+   */
   public byte[] readBytes(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getBytes(columnPosition);
   }
 
+  /**
+   * Reads a ASCII column identified by name. 
+   * @param columnName
+   * @return input stream
+   * @throws SQLException
+   */
   public InputStream readAsciiStream(String columnName) throws SQLException {
     
     return readAsciiStream(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a ASCII column identified by position.
+   * @param columnPosition
+   * @return input stream
+   * @throws SQLException
+   */
   public InputStream readAsciiStream(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getAsciiStream(columnPosition);
   }
 
+  /**
+   * Reads a binary column identified by name.
+   * @param columnName
+   * @return input stream
+   * @throws SQLException
+   */
   public InputStream readBinaryStream(String columnName) throws SQLException {
     
     return readBinaryStream(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a binary column identified by position.
+   * @param columnPosition
+   * @return input stream
+   * @throws SQLException
+   */
   public InputStream readBinaryStream(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getBinaryStream(columnPosition);
   }
 
+  /**
+   * Reads a character stream column identified by name.
+   * @param columnName
+   * @return reader
+   * @throws SQLException
+   */
   public Reader readCharacterStream(String columnName) throws SQLException {
     
     return readCharacterStream(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a character stream column identified by position.
+   * @param columnPosition
+   * @return reader
+   * @throws SQLException
+   */
   public Reader readCharacterStream(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getCharacterStream(columnPosition);
   }
 
+  /**
+   * Reads a BLOB column identified by name.
+   * @param columnName
+   * @return blob
+   * @throws SQLException
+   */
   public Blob readBlob(String columnName) throws SQLException {
     
     return readBlob(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a BLOB column identified by position.
+   * @param columnPosition
+   * @return blob
+   * @throws SQLException
+   */
   public Blob readBlob(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getBlob(columnPosition);
   }
 
+  /**
+   * Reads a CLOB column identified by name.
+   * @param columnName
+   * @return clob
+   * @throws SQLException
+   */
   public Clob readClob(String columnName) throws SQLException {
     
     return readClob(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a CLOB column identified by position.
+   * @param columnPosition
+   * @return clob
+   * @throws SQLException
+   */
   public Clob readClob(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getClob(columnPosition);
   }
 
+  /**
+   * Reads an array column identified by name.
+   * @param columnName
+   * @return array
+   * @throws SQLException
+   */
   public Array readArray(String columnName) throws SQLException {
     
     return readArray(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads an array column identified by position.
+   * @param columnPosition
+   * @return array
+   * @throws SQLException
+   */
   public Array readArray(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getArray(columnPosition);
   }
 
+  /**
+   * Reads a Ref column identified by name.
+   * @param columnName
+   * @return ref
+   * @throws SQLException
+   */
   public Ref readRef(String columnName) throws SQLException {
     
     return readRef(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a Ref column identified by position.
+   * @param columnPosition
+   * @return ref
+   * @throws SQLException
+   */
   public Ref readRef(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getRef(columnPosition);
   }
   
+  /**
+   * Reads a URL column identified by name.
+   * @param columnName
+   * @return URL
+   * @throws SQLException
+   */
   public URL readURL(String columnName) throws SQLException {
     
     return readURL(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads a URL column identified by position.
+   * @param columnPosition
+   * @return URL
+   * @throws SQLException
+   */
   public URL readURL(int columnPosition) throws SQLException {
     
     checkRow();
     return resultSet.getURL(columnPosition);
   }
 
+  /**
+   * Reads a object column identified by name.
+   * @param columnName
+   * @return object
+   * @throws SQLException
+   */
   public Object readObject(String columnName) throws SQLException {
     
     return readObject(getColumnPosition(columnName));
   }
   
+  /**
+   * Reads an object column identified by position.
+   * @param columnPosition
+   * @return object
+   * @throws SQLException
+   */
   public Object readObject(int columnPosition) throws SQLException {
     
     checkRow();
@@ -565,6 +778,13 @@ public class Query extends PreparedSql implements ColumnReader {
     return new RowIterator<D>(this, clazz);
   }
 
+  /**
+   * Reads a single row and closes the result set.
+   * @param <D>
+   * @param clazz the data object's class
+   * @return data object
+   * @throws SQLException
+   */
   public <D> D select(Class<? extends D> clazz) throws SQLException {
     
     if (nextRow()) {

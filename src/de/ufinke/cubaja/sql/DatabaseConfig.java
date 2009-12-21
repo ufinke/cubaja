@@ -52,11 +52,46 @@ import de.ufinke.cubaja.util.Text;
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>excecute</code></td>
+ *     <td align="left" valign="top">statement that should be executed immediately after a <code>Database</code> instance has been created (e.g. to set the default schema)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>property</code></td>
  *     <td align="left" valign="top">any property; see <code>DatabaseConfig.PropertyConfig</code></td>
  *     <td align="center" valign="top">E</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top"> </td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>autoCommit</code></td>
+ *     <td align="left" valign="top">set to <code>true</code> when a commit should follow each single statement automatically (as native JDBC connections do); default is <code>false</code> (as database systems with transaction capabilities do)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>log</code></td>
+ *     <td align="left" valign="top">set to <code>true</code> when actions should be logged; default is <code>false</code></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>fetchSize</code></td>
+ *     <td align="left" valign="top">number of result rows fetched in a single block operation; default is <code>4095</code> (some database systems ignore this value and set an optimum fetchSize automatically)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>batchSize</code></td>
+ *     <td align="left" valign="top">maximum number of native <code>addBatch</code> operations; default is <code>8191</code> (an <code>Update</code> instance calls <code>executeBatch</code> automatically when this limit is reached)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
  *     </tr>
  * </table>
  * <code>A/E</code>: attribute or subelement

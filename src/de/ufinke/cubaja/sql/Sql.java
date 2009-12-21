@@ -15,6 +15,13 @@ import java.util.Collection;
 import java.util.List;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Collector and interpreter of SQL text.
+ * The various <code>append</code> methods keep track 
+ * of line breaks, separators and comments.
+ * The result is an executable SQL.
+ * @author Uwe Finke
+ */
 public class Sql {
 
   static enum State {    
@@ -51,6 +58,9 @@ public class Sql {
   private List<String> variableList;
   private StringBuilder variable;
   
+  /**
+   * Default constructor.
+   */
   public Sql() {
     
     inBuffer = new char[1024];
@@ -63,18 +73,42 @@ public class Sql {
     state = State.DEFAULT;
   }
   
+  /**
+   * Constructor with initial SQL text.
+   * @param sql
+   */
   public Sql(String sql) {
     
     this();
     append(sql);
   }
   
+  /**
+   * Constructor which reads initial SQL text from a reader.
+   * @param reader
+   * @throws IOException
+   */
   public Sql(Reader reader) throws IOException {
     
     this();
     append(reader);
   }
   
+  /**
+   * Constructor which reads initial SQL text from a resource.
+   * <p>
+   * The SQL must be written in a separate file within a java source package
+   * (usually the package where the class which uses the SQL belongs to).
+   * We have to specify a class within that package as parameter. 
+   * This may be any class, but usually it will be the class which uses
+   * the SQL.
+   * The file name's extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
+   * plain file name without extension and without path.
+   * @param packageClass
+   * @param sqlResource
+   * @throws IOException
+   */
   public Sql(Class<?> packageClass, String sqlResource) throws IOException {
     
     this();
@@ -161,6 +195,11 @@ public class Sql {
     return this;
   }
   
+  /**
+   * Appends a line.
+   * @param line
+   * @return this
+   */
   public Sql append(String line) {
     
     if (line == null) {
@@ -178,6 +217,12 @@ public class Sql {
     return this;
   }
   
+  /**
+   * Appends lines from a reader.
+   * @param reader
+   * @return this
+   * @throws IOException
+   */
   public Sql append(Reader reader) throws IOException {
 
     int length = reader.read(inBuffer);
@@ -189,6 +234,22 @@ public class Sql {
     return this;
   }
   
+  /**
+   * Appends lines from a resource.
+   * <p>
+   * The SQL must be written in a separate file within a java source package
+   * (usually the package where the class which uses the SQL belongs to).
+   * We have to specify a class within that package as parameter. 
+   * This may be any class, but usually it will be the class which uses
+   * the SQL.
+   * The file name's extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
+   * plain file name without extension and without path.
+   * @param packageClass
+   * @param sqlResource
+   * @return this
+   * @throws IOException
+   */
   public Sql append(Class<?> packageClass, String sqlResource) throws IOException {
     
     InputStream stream = packageClass.getResourceAsStream(sqlResource + ".sql");
@@ -210,7 +271,17 @@ public class Sql {
     return this;
   }
   
-  public Sql append(Object[] value) {
+  /**
+   * Appends a list of values separated by comma.
+   * If an object type is not a subtype of <code>Number</code>,
+   * the value will be enclosed by apostrophs.
+   * <p>
+   * Useful for <code>IN</code> predicates.
+   * The parantheses are not generated automatically.
+   * @param value
+   * @return this
+   */
+  public Sql appendList(Object[] value) {
 
     if (value == null) {
       return this;
@@ -234,15 +305,33 @@ public class Sql {
     return append(sb.toString());
   }
   
-  public Sql append(Collection<?> value) {
+  /**
+   * Appends a list of values separated by comma.
+   * If an object type is not a subtype of <code>Number</code>,
+   * the value will be enclosed by apostrophs.
+   * <p>
+   * Useful for <code>IN</code> predicates.
+   * The parantheses are not generated automatically.
+   * @param value
+   * @return this
+   */
+  public Sql appendList(Collection<?> value) {
 
     if (value == null) {
       return this;
     }
     
-    return append(value.toArray());
+    return appendList(value.toArray());
   }
   
+  /**
+   * Appends a list of integer values separated by comma.
+   * <p>
+   * Useful for <code>IN</code> predicates.
+   * The parantheses are not generated automatically.
+   * @param value
+   * @return this
+   */
   public Sql append(int[] value) {
     
     if (value == null) {
@@ -266,6 +355,7 @@ public class Sql {
    * The variables in the list are expanded to 
    * <code>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</code>.
    * @param variables
+   * @return this
    */
   public Sql appendUpdate(String... variables) throws SQLException {
     
@@ -288,6 +378,7 @@ public class Sql {
    * The variables in the list are expanded to 
    * <code>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</code>.
    * @param variables
+   * @return this
    */
   public Sql appendInsert(String... variables) throws SQLException {
 
