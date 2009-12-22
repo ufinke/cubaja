@@ -184,7 +184,9 @@ public class Sql {
   }
   
   /**
-   * Sets flag wether to retain block comments.
+   * Sets flag whether to retain block comments.
+   * You need this method to pass optimizer hints
+   * to an Oracle database (Oracle camouflages hints as comments). 
    * Default behavior is to remove comments.
    * @param retainBlockComments
    * @return this
