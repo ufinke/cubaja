@@ -68,7 +68,7 @@ public class CsvReader implements ColumnReader {
   /**
    * Constructor with configuration.
    * When using this constructor,
-   * we have to set the configurations file property.
+   * we have to set the configuration's file property.
    * @param config
    * @throws IOException
    * @throws ConfigException

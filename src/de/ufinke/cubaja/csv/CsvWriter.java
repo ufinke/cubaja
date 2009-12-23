@@ -12,6 +12,10 @@ import java.util.List;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.util.Util;
 
+/**
+ * CSV writer.
+ * @author Uwe Finke
+ */
 public class CsvWriter {
 
   private Writer out;
@@ -23,16 +27,37 @@ public class CsvWriter {
   
   private int rowCount;
   
+  /**
+   * Constructor with configuration.
+   * When using this constructor,
+   * we have to set the configuration's file property.
+   * @param config
+   * @throws IOException
+   * @throws ConfigException
+   * @throws CsvException
+   */
   public CsvWriter(CsvConfig config) throws ConfigException, IOException, CsvException {
     
     this(config.createWriter(), config);
   }
   
+  /**
+   * Constructor with implicit default configuration.
+   * With this constructor, we don't have defined columns.
+   * @param writer
+   * @throws CsvException
+   */
   public CsvWriter(Writer writer) throws IOException, CsvException {
     
     this(writer, new CsvConfig());
   }
   
+  /**
+   * Constructor with writer and configuration.
+   * @param writer
+   * @param config
+   * @throws CsvException
+   */
   public CsvWriter(Writer writer, CsvConfig config) throws IOException, CsvException {
   
     out = writer;
@@ -66,23 +91,42 @@ public class CsvWriter {
     rowCount--;
   }
   
+  /**
+   * Closes the underlaying stream.
+   * @throws IOException
+   */
   public void close() throws IOException {
     
     out.close();
     out = null;
   }
   
+  /**
+   * Advances to next row.
+   * @throws IOException
+   * @throws CsvException
+   */
   public void nextRow() throws IOException, CsvException {
     
     buffer.writeRow(formatter);
     rowCount++;
   }
   
+  /**
+   * Returns the number of rows written so far.
+   * @return row count
+   */
   public int getRowCount() {
     
     return rowCount;
   }
   
+  /**
+   * Returns the position of a named column.
+   * @param columnName
+   * @return position
+   * @throws CsvException
+   */
   public int getColumnPosition(String columnName) throws CsvException {
 
     return config.getColumnPosition(columnName);
@@ -114,11 +158,25 @@ public class CsvWriter {
     writeBuffer(position, "");
   }
   
+  /**
+   * Fills column identified by name with a <code>String</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, String value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
   
+  /**
+   * Fills column identified by position with a <code>String</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, String value) throws IOException, CsvException {
 
     setColConfig(position);
@@ -138,22 +196,50 @@ public class CsvWriter {
     writeBuffer(position, value ? colConfig.getTrueValue() : colConfig.getFalseValue());
   }
 
+  /**
+   * Fills column identified by name with a <code>boolean</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, boolean value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>boolean</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, boolean value) throws IOException, CsvException {
     
     setColConfig(position);
     set(position, value);
   }
 
+  /**
+   * Fills column identified by name with a <code>Boolean</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Boolean value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Boolean</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Boolean value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -169,22 +255,50 @@ public class CsvWriter {
     writeBuffer(position, String.valueOf(value));
   }
 
+  /**
+   * Fills column identified by name with a <code>char</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, char value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>char</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, char value) throws IOException, CsvException {
     
     setColConfig(position);
     set(position, value);
   }
 
+  /**
+   * Fills column identified by name with a <code>Character</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Character value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Character</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Character value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -200,22 +314,108 @@ public class CsvWriter {
     writeBuffer(position, Integer.toString(value));
   }
 
+  /**
+   * Fills column identified by name with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, int value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, int value) throws IOException, CsvException {
     
     setColConfig(position);
     set(position, value);
   }
 
+  /**
+   * Fills column identified by name with a <code>Byte</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, Byte value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+
+  /**
+   * Fills column identified by position with a <code>Byte</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, Byte value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    if (value == null) {
+      writeNull(position);
+    } else {
+      set(position, value);
+    }
+  }
+  
+  /**
+   * Fills column identified by name with a <code>Short</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, Short value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+
+  /**
+   * Fills column identified by position with a <code>Short</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, Short value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    if (value == null) {
+      writeNull(position);
+    } else {
+      set(position, value);
+    }
+  }
+  
+  /**
+   * Fills column identified by name with an <code>Integer</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Integer value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with an <code>Integer</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Integer value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -231,22 +431,50 @@ public class CsvWriter {
     writeBuffer(position, Long.toString(value));
   }
 
+  /**
+   * Fills column identified by name with a <code>long</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, long value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>long</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, long value) throws IOException, CsvException {
     
     setColConfig(position);
     set(position, value);
   }
 
+  /**
+   * Fills column identified by name with a <code>Long</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Long value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Long</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Long value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -262,22 +490,50 @@ public class CsvWriter {
     writeBuffer(position, Util.format(value, colConfig.getScale(), colConfig.getDecimalChar(), colConfig.isTrim()));
   }
 
+  /**
+   * Fills column identified by name with a <code>double</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, double value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>double</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, double value) throws IOException, CsvException {
     
     setColConfig(position);
     set(position, value);
   }
 
+  /**
+   * Fills column identified by name with a <code>Double</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Double value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Double</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Double value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -288,11 +544,25 @@ public class CsvWriter {
     }
   }
   
+  /**
+   * Fills column identified by name with a <code>Float</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Float value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Float</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Float value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -303,11 +573,25 @@ public class CsvWriter {
     }
   }
   
+  /**
+   * Fills column identified by name with a <code>BigDecimal</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, BigDecimal value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>BigDecimal</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, BigDecimal value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -318,11 +602,25 @@ public class CsvWriter {
     }
   }
   
+  /**
+   * Fills column identified by name with a <code>BigInteger</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, BigInteger value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>BigInteger</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, BigInteger value) throws IOException, CsvException {
     
     setColConfig(position);
@@ -333,11 +631,25 @@ public class CsvWriter {
     }
   }
   
+  /**
+   * Fills column identified by name with a <code>Date</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(String columnName, Date value) throws IOException, CsvException {
     
     write(getColumnPosition(columnName), value);
   }
 
+  /**
+   * Fills column identified by position with a <code>Date</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
   public void write(int position, Date value) throws IOException, CsvException {
     
     setColConfig(position);
