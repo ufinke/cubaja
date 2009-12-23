@@ -87,6 +87,14 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
+ * <td align="left" valign="top"><code>scale</code></td>
+ * <td align="left" valign="top">number of fractional digits for decimal numbers
+ * (default: 2)</td>
+ * <td align="center" valign="top">A</td>
+ * <td align="center" valign="top"></td>
+ * <td align="center" valign="top">x</td>
+ * </tr>
+ * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><code>datePattern</code></td>
  * <td align="left" valign="top">global date format pattern as described in
  * <code>java.text.SimpleDateFormat</code> (default: <code>yyyy-MM-dd</code>)</td>
@@ -95,9 +103,17 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>trueValues</code></td>
- * <td align="left" valign="top">comma-separated list of global values which are
- * interpreted as <code>true</code> (default: <code>true</code>)</td>
+ * <td align="left" valign="top"><code>trueValue</code></td>
+ * <td align="left" valign="top">values representing boolean <code>true</code>
+ * (default: <code>true</code>)</td>
+ * <td align="center" valign="top">A</td>
+ * <td align="center" valign="top"></td>
+ * <td align="center" valign="top">x</td>
+ * </tr>
+ * <tr bgcolor="#eeeeff">
+ * <td align="left" valign="top"><code>falseValue</code></td>
+ * <td align="left" valign="top">values representing boolean <code>false</code>
+ * (default: <code>false</code>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
@@ -122,16 +138,17 @@ import de.ufinke.cubaja.util.Text;
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><code>formatter</code></td>
  * <td align="left" valign="top">class name of a
- * {@link de.ufinke.cubaja.csv.RowFormatter RowFormatter} implementation (default:
- * {@link de.ufinke.cubaja.csv.DefaultRowFormatter DefaultRowFormatter})</td>
+ * {@link de.ufinke.cubaja.csv.RowFormatter RowFormatter} implementation
+ * (default: {@link de.ufinke.cubaja.csv.DefaultRowFormatter
+ * DefaultRowFormatter})</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><code>rowSeparator</code></td>
- * <td align="left" valign="top">separator between rows (lines) used by <code>CsvWriter</code>
- * (default: platform dependent JVM default)</td>
+ * <td align="left" valign="top">separator between rows (lines) used by
+ * <code>CsvWriter</code> (default: platform dependent JVM default)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
@@ -168,7 +185,9 @@ public class CsvConfig {
   private Boolean trim;
   private Character decimalChar;
   private SimpleDateFormat dateFormat;
-  private String[] trueValues;
+  private String trueValue;
+  private String falseValue;
+  private Integer scale;
 
   private Boolean header;
 
@@ -190,15 +209,15 @@ public class CsvConfig {
   }
 
   void initPositions() {
-    
+
     nameMap = new HashMap<String, Integer>();
-    
+
     boolean mustRearrange = false;
-    
+
     int nextPosition = 0; // first list entry is dummy / default
-    
+
     for (ColConfig col : columnList) {
-      
+
       int colPosition = col.getPosition();
       if (colPosition == 0) {
         col.setInternalPosition(nextPosition);
@@ -206,30 +225,30 @@ public class CsvConfig {
         mustRearrange = true;
       }
       nextPosition = col.getPosition() + 1;
-      
-      if (! col.isDummyColumn()) {
+
+      if (!col.isDummyColumn()) {
         nameMap.put(col.getName(), col.getPosition());
-      }      
+      }
     }
-    
+
     if (mustRearrange) {
       rearrange();
     }
-    
+
     columnSet = null;
   }
-  
+
   private void rearrange() {
-    
+
     Map<Integer, ColConfig> map = new HashMap<Integer, ColConfig>();
-    
+
     for (ColConfig col : columnList) {
       map.put(col.getPosition(), col);
     }
-    
+
     List<Integer> posList = new ArrayList<Integer>(map.keySet());
     Collections.sort(posList);
-    
+
     List<ColConfig> newList = new ArrayList<ColConfig>();
     int expected = 0;
     for (int key : posList) {
@@ -239,37 +258,57 @@ public class CsvConfig {
       }
       newList.add(columnList.get(key));
     }
-    
+
     columnList.clear();
     columnList.addAll(newList);
   }
-  
-  ColConfig getColConfig(int index) {
-    
+
+  /**
+   * Returns a column configuration for a column identified by name.
+   * 
+   * @param columnName
+   * @return column config
+   * @throws CsvException
+   */
+  public ColConfig getColConfig(String columnName) throws CsvException {
+
+    return getColConfig(getColumnPosition(columnName));
+  }
+
+  /**
+   * Returns a column configuration for a column identified by position.
+   * 
+   * @param index
+   * @return column config
+   */
+  public ColConfig getColConfig(int index) {
+
     int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
     return columnList.get(configIndex);
   }
-  
+
   Map<String, Integer> getNameMap() {
-    
+
     return nameMap;
   }
 
   /**
    * Returns the position of a column identified by name.
+   * 
    * @param columnName
    * @return position
-   * @throws CsvException if name doesn't exist
+   * @throws CsvException
+   *         if name doesn't exist
    */
   public int getColumnPosition(String columnName) throws CsvException {
-    
+
     Integer index = nameMap.get(columnName);
     if (index == null) {
       throw new CsvException(text.get("undefinedName", columnName));
     }
-    return index; 
+    return index;
   }
-  
+
   /**
    * Sets the file name.
    * 
@@ -315,7 +354,7 @@ public class CsvConfig {
 
     return fileConfig.createReader();
   }
-  
+
   /**
    * Creates a <code>Writer</code>. This method is called by the
    * <code>CsvWriter</code> constructor without a <code>Writer</code> parameter.
@@ -327,7 +366,7 @@ public class CsvConfig {
    * @throws ConfigException
    */
   public Writer createWriter() throws IOException, ConfigException {
-    
+
     if (fileConfig == null) {
       if (fileName == null) {
         throw new ConfigException(text.get("noFileName"));
@@ -483,30 +522,6 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the global constants representing the boolean value
-   * <code>true</code>. They depend on the localized package properties.
-   * 
-   * @return trueValues
-   */
-  public String[] getTrueValues() {
-
-    if (trueValues == null) {
-      trueValues = new String[] {"true"};
-    }
-    return trueValues;
-  }
-
-  /**
-   * Sets the constants representing the boolean value <code>true</code>.
-   * 
-   * @param trueValues
-   */
-  public void setTrueValues(String[] trueValues) {
-
-    this.trueValues = trueValues;
-  }
-
-  /**
    * Returns whether the CSV input has a header row. This is <code>true</code>
    * when we set the header attribute explicitly to <code>true</code>, or when
    * we define a header property on at least one column and the header attribute
@@ -612,6 +627,7 @@ public class CsvConfig {
 
   /**
    * Returns the list of defined columns.
+   * 
    * @return list
    */
   public List<ColConfig> getColumnList() {
@@ -645,6 +661,7 @@ public class CsvConfig {
 
   /**
    * Returns the row separator needed for <code>CsvWriter</code>.
+   * 
    * @return
    */
   public String getRowSeparator() {
@@ -656,14 +673,84 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the row separator needed for <code>CsvWriter</code>.
-   * Default is the platform dependent separator returned by
+   * Sets the row separator needed for <code>CsvWriter</code>. Default is the
+   * platform dependent separator returned by
    * <code>System.getProperty("line.separator")</code>.
+   * 
    * @param rowSeparator
    */
   public void setRowSeparator(String rowSeparator) {
 
     this.rowSeparator = rowSeparator;
+  }
+
+  /**
+   * Retrieves the representation of boolean value <code>true</code>.
+   * 
+   * @return true value
+   */
+  public String getTrueValue() {
+
+    if (trueValue == null) {
+      trueValue = "true";
+    }
+    return trueValue;
+  }
+
+  /**
+   * Sets the representation of boolean value <code>true</code>. Default is
+   * <code>true</code>.
+   * 
+   * @param trueValue
+   */
+  public void setTrueValue(String trueValue) {
+
+    this.trueValue = trueValue;
+  }
+
+  /**
+   * Retrieves the representation of boolean value <code>false</code>.
+   * 
+   * @return false value
+   */
+  public String getFalseValue() {
+
+    if (falseValue == null) {
+      falseValue = "false";
+    }
+    return falseValue;
+  }
+
+  /**
+   * Sets the representation of boolean value <code>false</code>.
+   * 
+   * @param falseValue
+   */
+  public void setFalseValue(String falseValue) {
+
+    this.falseValue = falseValue;
+  }
+
+  /**
+   * Returns the number of fractional digits for decimal numbers.
+   * @return scale
+   */
+  public Integer getScale() {
+
+    if (scale == null) {
+      scale = new Integer(2);
+    }
+    return scale;
+  }
+
+  /**
+   * Sets the number of fractional digits for decimal numbers.
+   * Default is <code>2</code>.
+   * @param scale
+   */
+  public void setScale(Integer scale) {
+
+    this.scale = scale;
   }
 
 }

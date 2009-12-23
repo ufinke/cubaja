@@ -69,6 +69,13 @@ import de.ufinke.cubaja.util.Text;
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>scale</code></td>
+ *     <td align="left" valign="top">number of fractional digits for decimal numbers (default: global <code>scale</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><code>datePattern</code></td>
  *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: global <code>datePattern</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
@@ -76,8 +83,15 @@ import de.ufinke.cubaja.util.Text;
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>trueValues</code></td>
- *     <td align="left" valign="top">comma-separated list of values which are interpreted as <code>true</code> (default: global <code>trueValues</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><code>trueValue</code></td>
+ *     <td align="left" valign="top">value representing boolean value <code>true</code> (default: global <code>trueValue</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><code>falseValue</code></td>
+ *     <td align="left" valign="top">value representing boolean value <code>false</code> (default: global <code>falseValue</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -116,8 +130,10 @@ public class ColConfig {
   private int position;
   private Boolean trim;
   private Character decimalChar;
+  private Integer scale;
   private SimpleDateFormat dateFormat;
-  private String[] trueValues;
+  private String trueValue;
+  private String falseValue;
   private ColumnEditor editor;
   private List<ReplaceConfig> replaceList;
   
@@ -288,26 +304,49 @@ public class ColConfig {
   }
   
   /**
-   * Returns the constants representing the boolean value <code>true</code>.
+   * Returns the constant representing the boolean value <code>true</code>.
    * If not specified,
-   * we get the global constants from <code>CsvConfig</code>.
-   * @return true values
+   * we get the global constant from <code>CsvConfig</code>.
+   * @return true value
    */
-  public String[] getTrueValues() {
+  public String getTrueValue() {
 
-    if (trueValues == null) {
-      trueValues = csvConfig.getTrueValues();
+    if (trueValue == null) {
+      trueValue = csvConfig.getTrueValue();
     }
-    return trueValues;
+    return trueValue;
   }
 
   /**
-   * Sets the constants representing the boolean value <code>true</code>.
-   * @param trueValues
+   * Sets the constant representing the boolean value <code>true</code>.
+   * @param trueValue
    */
-  public void setTrueValues(String[] trueValues) {
+  public void setTrueValue(String trueValue) {
   
-    this.trueValues = trueValues;
+    this.trueValue = trueValue;
+  }
+
+  /**
+   * Returns the constant representing the boolean value <code>false</code>.
+   * If not specified,
+   * we get the global constant from <code>CsvConfig</code>.
+   * @return false value
+   */
+  public String getFalseValue() {
+
+    if (falseValue == null) {
+      falseValue = csvConfig.getFalseValue();
+    }
+    return falseValue;
+  }
+
+  /**
+   * Sets the constant representing the boolean value <code>false</code>.
+   * @param trueValue
+   */
+  public void setFalseValue(String falseValue) {
+  
+    this.falseValue = falseValue;
   }
 
   /**
@@ -350,4 +389,27 @@ public class ColConfig {
     
     return replaceList;
   }
+  
+  /**
+   * Returns the number of fractional digits for decimal numbers.
+   * @return scale
+   */
+  public Integer getScale() {
+
+    if (scale == null) {
+      scale = csvConfig.getScale();
+    }
+    return scale;
+  }
+
+  /**
+   * Sets the number of fractional digits for decimal numbers.
+   * Default is <code>2</code>.
+   * @param scale
+   */
+  public void setScale(Integer scale) {
+
+    this.scale = scale;
+  }
+
 }

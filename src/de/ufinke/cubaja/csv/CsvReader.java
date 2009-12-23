@@ -339,18 +339,7 @@ public class CsvReader implements ColumnReader {
   
   private boolean getBoolean(String s) {
     
-    String[] values = colConfig.getTrueValues();
-    if (values == null) {
-      return false;
-    }
-    
-    int limit = values.length;
-    for (int i = 0; i < limit; i++) {
-      if (values[i].equals(s)) {
-        return true;
-      }
-    }
-    return false;
+    return colConfig.getTrueValue().equals(s);
   }
   
   public boolean readBoolean(String columnName) throws CsvException {

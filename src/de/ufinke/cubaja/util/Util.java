@@ -1,10 +1,13 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,6 +22,29 @@ public class Util {
 
   static private Text text = new Text(Util.class);
   static private Map<Integer, Weekday> weekdayMap;
+  
+  static private double P_FACTOR[] = new double[] {
+    1.0,
+    10.0,
+    100.0,
+    1000.0,
+    10000.0,
+    100000.0,
+    1000000.0,
+    10000000.0,
+    100000000.0,
+    1000000000.0,
+    10000000000.0,
+    100000000000.0,
+    1000000000000.0,
+    10000000000000.0,
+    100000000000000.0,
+    1000000000000000.0,
+    10000000000000000.0,
+    100000000000000000.0
+  };
+  static private double MAX_DOUBLE = Long.MAX_VALUE;
+  static private MathContext MATH_CONTEXT = new MathContext(64, RoundingMode.HALF_UP);
   
   private Util() {
     
@@ -351,5 +377,131 @@ public class Util {
     for (Weekday weekday : Weekday.values()) {
       weekdayMap.put(weekday.getCalendarConstant(), weekday);
     }
+  }
+  
+  /**
+   * Formats a <code>BigDecimal</code> to plain text.
+   * @param value
+   * @param scale number of fraction digits
+   * @param decimalChar the character representing the decimal point
+   * @param trim if <code>true</code>, trailing zeroes in the fractional part are removed
+   * @return formatted string
+   */
+  static public String format(BigDecimal value, int scale, char decimalChar, boolean trim) {
+    
+    if (value == null) {
+      return "";
+    }
+    
+    if (value.scale() != scale) {
+      value = value.setScale(scale, RoundingMode.HALF_UP);
+    }
+    
+    String sValue = value.toPlainString();
+    
+    if (value.scale() <= 0) {
+      return sValue;
+    }
+    
+    if (trim) {
+      int length = sValue.length();
+      while (sValue.charAt(length - 1) == '0') {
+        length--;
+      }
+      if (sValue.charAt(length - 1) == '.') {
+        return sValue.substring(0, length - 1);
+      }
+      sValue = sValue.substring(0, length);
+    }
+    
+    if (decimalChar != '.') {
+      sValue = sValue.replace('.', decimalChar);
+    }
+    
+    return sValue;
+  }
+  
+  /**
+   * Formats a <code>double</code> value with a limited number of fraction digits.
+   * @param value
+   * @param scale number of fraction digits
+   * @param decimalChar the character representing the decimal point
+   * @param trim if <code>true</code>, trailing zeroes in the fractional part are removed
+   * @return formatted string
+   */
+  static public String format(double value, int scale, char decimalChar, boolean trim) {
+    
+    if (value == 0.0) {
+      return "0";
+    }
+    
+    if (Double.isInfinite(value)) {
+      return "";
+    }
+    if (Double.isNaN(value)) {
+      return "";
+    }
+    if (scale < 0) {
+      throw new IllegalArgumentException(text.get("doubleScaleMin", scale));
+    }
+    if (scale > 17) {
+      throw new IllegalArgumentException(text.get("doubleScaleMax", scale));
+    }
+
+    boolean isNegative = value < 0;
+    double rValue = (isNegative ? value * -1 : value) * P_FACTOR[scale] + 0.5; 
+    
+    if (rValue > MAX_DOUBLE) {
+      return format(new BigDecimal(value, MATH_CONTEXT), scale, decimalChar, trim);
+    }
+        
+    String s = Long.toString((long) rValue);
+    int sLen = s.length();
+    int sPos = 0;
+    
+    StringBuilder sb = new StringBuilder(24);
+    
+    if (isNegative) {
+      sb.append('-');
+    }
+    
+    if (scale == 0) {
+      sb.append(s);
+      return sb.toString();
+    }
+    
+    int integerLength = sLen - scale;
+    
+    if (integerLength <= 0) {
+      sb.append('0');
+    } else {
+      while (sPos < integerLength) {
+        sb.append(s.charAt(sPos++));
+      }
+    }
+    
+    sb.append(decimalChar);
+    
+    while (integerLength < 0) {
+      sb.append('0');
+      integerLength++;
+    }
+    
+    while (sPos < sLen) {
+      sb.append(s.charAt(sPos++));
+    }
+    
+    if (! trim) {
+      return sb.toString();
+    }
+    
+    int end = sb.length() - 1;
+    while (sb.charAt(end) == '0') {
+      end--;
+    }
+    if (sb.charAt(end) == decimalChar) {
+      end--;
+    }
+    return sb.substring(0, end + 1);
   }
 }
