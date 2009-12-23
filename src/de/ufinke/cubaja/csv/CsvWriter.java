@@ -5,19 +5,13 @@ package de.ufinke.cubaja.csv;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
-import de.ufinke.cubaja.util.Text;
 
 public class CsvWriter {
 
-  static private Text text = new Text(CsvWriter.class);
-  
   private Writer out;
-  private List<ColConfig> columnList;
-  private Map<String, Integer> nameMap;
+  private CsvConfig config;
   private RowFormatter formatter;
   private ColumnBuffer buffer;
   private ColConfig colConfig;
@@ -35,42 +29,23 @@ public class CsvWriter {
   public CsvWriter(Writer writer, CsvConfig config) throws IOException, CsvException {
   
     out = writer;
+    this.config = config;
     
-    columnList = config.getColumnList();
-    
-    initPositions();
+    config.initPositions();
     
     formatter = config.getFormatter();
     formatter.init(out, config);
-    buffer = new ColumnBuffer(columnList.size());
+    buffer = new ColumnBuffer(config.getColumnList().size());
     
     if (config.hasHeaderRow()) {
       writeHeaderRow();
     }
   }
   
-  private void initPositions() {
-    
-    nameMap = new HashMap<String, Integer>();
-    
-    int nextPosition = 0; // first list entry is dummy / default
-    
-    for (ColConfig col : columnList) {
-      
-      int colPosition = col.getPosition();
-      if (colPosition == 0) {
-        col.setInternalPosition(nextPosition);
-      }
-      nextPosition = col.getPosition() + 1;
-
-      if (! col.isDummyColumn()) {
-        nameMap.put(col.getName(), col.getPosition());
-      }      
-    }
-  }
-  
   private void writeHeaderRow() throws IOException, CsvException {
 
+    List<ColConfig> columnList = config.getColumnList();
+    
     for (int i = 1; i < columnList.size(); i++) {
       ColConfig col = columnList.get(i);
       String header = col.getHeader();
@@ -87,18 +62,13 @@ public class CsvWriter {
   }
   
   public int getColumnPosition(String columnName) throws CsvException {
-    
-    Integer index = nameMap.get(columnName);
-    if (index == null) {
-      throw new CsvException(text.get("undefinedName", columnName));
-    }
-    return index; 
+
+    return config.getColumnPosition(columnName);
   }
   
   private void setColConfig(int position) {
     
-    int configIndex = (position < 1 || position >= columnList.size()) ? 0 : position;
-    colConfig = columnList.get(configIndex);
+    colConfig = config.getColConfig(position);
   }
   
   private void writeBuffer(int position, String value) throws CsvException {

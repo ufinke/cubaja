@@ -8,8 +8,11 @@ import java.io.Reader;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.io.FileConfig;
@@ -173,6 +176,7 @@ public class CsvConfig {
   private String rowSeparator;
 
   private List<ColConfig> columnList;
+  private Map<String, Integer> nameMap;
   private Set<String> columnSet;
   private boolean headerDefined;
 
@@ -185,6 +189,87 @@ public class CsvConfig {
     addCol(new ColConfig(true)); // dummy column; positions start with 1
   }
 
+  void initPositions() {
+    
+    nameMap = new HashMap<String, Integer>();
+    
+    boolean mustRearrange = false;
+    
+    int nextPosition = 0; // first list entry is dummy / default
+    
+    for (ColConfig col : columnList) {
+      
+      int colPosition = col.getPosition();
+      if (colPosition == 0) {
+        col.setInternalPosition(nextPosition);
+      } else if (colPosition != nextPosition) {
+        mustRearrange = true;
+      }
+      nextPosition = col.getPosition() + 1;
+      
+      if (! col.isDummyColumn()) {
+        nameMap.put(col.getName(), col.getPosition());
+      }      
+    }
+    
+    if (mustRearrange) {
+      rearrange();
+    }
+    
+    columnSet = null;
+  }
+  
+  private void rearrange() {
+    
+    Map<Integer, ColConfig> map = new HashMap<Integer, ColConfig>();
+    
+    for (ColConfig col : columnList) {
+      map.put(col.getPosition(), col);
+    }
+    
+    List<Integer> posList = new ArrayList<Integer>(map.keySet());
+    Collections.sort(posList);
+    
+    List<ColConfig> newList = new ArrayList<ColConfig>();
+    int expected = 0;
+    for (int key : posList) {
+      while (expected < key) {
+        newList.add(columnList.get(0));
+        expected++;
+      }
+      newList.add(columnList.get(key));
+    }
+    
+    columnList.clear();
+    columnList.addAll(newList);
+  }
+  
+  ColConfig getColConfig(int index) {
+    
+    int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
+    return columnList.get(configIndex);
+  }
+  
+  Map<String, Integer> getNameMap() {
+    
+    return nameMap;
+  }
+
+  /**
+   * Returns the position of a column identified by name.
+   * @param columnName
+   * @return position
+   * @throws CsvException if name doesn't exist
+   */
+  public int getColumnPosition(String columnName) throws CsvException {
+    
+    Integer index = nameMap.get(columnName);
+    if (index == null) {
+      throw new CsvException(text.get("undefinedName", columnName));
+    }
+    return index; 
+  }
+  
   /**
    * Sets the file name.
    * 
@@ -527,7 +612,6 @@ public class CsvConfig {
 
   /**
    * Returns the list of defined columns.
-   * 
    * @return list
    */
   public List<ColConfig> getColumnList() {

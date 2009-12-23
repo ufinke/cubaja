@@ -51,8 +51,6 @@ public class CsvReader implements ColumnReader {
   private Reader in;
   private int rowCount;
   
-  private List<ColConfig> columnList;
-  private Map<String, Integer> nameMap;
   private RowParser parser;
   private RowFilter rowFilter;
   private ErrorHandler errorHandler;
@@ -102,8 +100,6 @@ public class CsvReader implements ColumnReader {
   
     this.config = config;
     in = reader;
-
-    columnList = config.getColumnList();
     
     parser = config.getParser();
     parser.init(in, config);
@@ -112,7 +108,7 @@ public class CsvReader implements ColumnReader {
     errorHandler = new DefaultErrorHandler();
     
     readHeaderRow();
-    initPositions();
+    config.initPositions();
   }
   
   private void readHeaderRow() throws IOException, CsvException {
@@ -140,7 +136,7 @@ public class CsvReader implements ColumnReader {
       headerMap.put(headers[i], i + 1);
     }
     
-    for (ColConfig col : columnList) {
+    for (ColConfig col : config.getColumnList()) {
       if (col.getPosition() == 0 && col.getHeader() != null) {
         Integer position = headerMap.get(col.getHeader());
         if (position == null) {
@@ -161,26 +157,6 @@ public class CsvReader implements ColumnReader {
     }
     
     return String.valueOf(buffer);
-  }
-  
-  private void initPositions() {
-    
-    nameMap = new HashMap<String, Integer>();
-    
-    int nextPosition = 0; // first list entry is dummy / default
-    
-    for (ColConfig col : columnList) {
-      
-      int colPosition = col.getPosition();
-      if (colPosition == 0) {
-        col.setInternalPosition(nextPosition);
-      }
-      nextPosition = col.getPosition() + 1;
-
-      if (! col.isDummyColumn()) {
-        nameMap.put(col.getName(), col.getPosition());
-      }      
-    }
   }
   
   /**
@@ -281,7 +257,7 @@ public class CsvReader implements ColumnReader {
    */
   public void setColumnEditor(int columnPosition, ColumnEditor editor) {
     
-    columnList.get(columnPosition).setEditor(editor);
+    config.getColConfig(columnPosition).setEditor(editor);
   }
   
   /**
@@ -301,8 +277,7 @@ public class CsvReader implements ColumnReader {
     
     String s = (index < 1 || index > parser.getColumnCount()) ? "" : parser.getColumn(index);
     
-    int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
-    colConfig = columnList.get(configIndex);
+    colConfig = config.getColConfig(index);
     
     if (colConfig.isTrim()) {
       s = s.trim();
@@ -323,12 +298,8 @@ public class CsvReader implements ColumnReader {
   }
   
   public int getColumnPosition(String columnName) throws CsvException {
-    
-    Integer index = nameMap.get(columnName);
-    if (index == null) {
-      throw new CsvException(text.get("undefinedName", columnName));
-    }
-    return index; 
+
+    return config.getColumnPosition(columnName);
   }
   
   private void handleParseError(Throwable cause, String value, String type) throws CsvException {
@@ -750,7 +721,7 @@ public class CsvReader implements ColumnReader {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectFactoryGenerator(nameMap);
+          generator = new ObjectFactoryGenerator(config.getNameMap());
         }
         objectFactory = generator.getFactory(clazz);
         dataClass = clazz;
