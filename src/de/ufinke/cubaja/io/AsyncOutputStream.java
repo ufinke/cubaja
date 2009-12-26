@@ -43,7 +43,7 @@ public class AsyncOutputStream extends FilterOutputStream {
       return buffer;
     }
     
-    int getOffest() {
+    int getOffset() {
       
       return offset;
     }
@@ -64,7 +64,7 @@ public class AsyncOutputStream extends FilterOutputStream {
   private boolean closed;
   
   private int bufferSize;
-  private byte[] buffer;
+  private volatile byte[] buffer;
   private byte[] secondBuffer;
   private int bufferPosition;
   
@@ -107,7 +107,7 @@ public class AsyncOutputStream extends FilterOutputStream {
 
       int length = task.getLength();
       if (length > 0) {        
-        out.write(task.getBuffer(), task.getOffest(), length);
+        out.write(task.getBuffer(), task.getOffset(), length);
       }
       
       switch (task.getAction()) {
@@ -208,13 +208,10 @@ public class AsyncOutputStream extends FilterOutputStream {
 
     while (length > 0) {
       int chunkLength = Math.min(length, bufferSize - bufferPosition);
-      if (chunkLength == bufferSize) {
-        writeBuffer(buf, offset, chunkLength, Action.WRITE);
-      } else {
-        System.arraycopy(buf, offset, buffer, bufferPosition, chunkLength);
-        if (bufferPosition == bufferSize) {
-          switchBuffer(Action.WRITE);
-        }
+      System.arraycopy(buf, offset, buffer, bufferPosition, chunkLength);
+      bufferPosition += chunkLength;
+      if (bufferPosition == bufferSize) {
+        switchBuffer(Action.WRITE);
       }
       offset += chunkLength;
       length -= chunkLength;
@@ -238,7 +235,7 @@ public class AsyncOutputStream extends FilterOutputStream {
 
     closed = true;
     
-    writeBuffer(buffer, 0, bufferPosition, Action.CLOSE);
+    switchBuffer(Action.CLOSE);
     takeFuture();
     executorService.shutdown();
     

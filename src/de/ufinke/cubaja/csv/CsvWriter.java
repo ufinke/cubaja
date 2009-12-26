@@ -10,6 +10,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import de.ufinke.cubaja.config.ConfigException;
+import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
 /**
@@ -18,12 +19,18 @@ import de.ufinke.cubaja.util.Util;
  */
 public class CsvWriter {
 
+  static private Text text = new Text(CsvWriter.class);
+  
   private Writer out;
   private CsvConfig config;
   
   private RowFormatter formatter;
   private ColumnBuffer buffer;
   private ColConfig colConfig;
+  
+  private ObjectWriterGenerator generator;
+  private Class<?> dataClass;
+  private ObjectWriter objectWriter;
   
   private int rowCount;
   
@@ -315,6 +322,56 @@ public class CsvWriter {
   }
 
   /**
+   * Fills column identified by name with a <code>byte</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, byte value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+
+  /**
+   * Fills column identified by position with a <code>byte</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, byte value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    set(position, value);
+  }
+
+  /**
+   * Fills column identified by name with an <code>short</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, short value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+
+  /**
+   * Fills column identified by position with a <code>short</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, short value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    set(position, value);
+  }
+
+  /**
    * Fills column identified by name with an <code>int</code> (or <code>byte</code> or <code>short</code>).
    * @param columnName
    * @param value
@@ -516,6 +573,31 @@ public class CsvWriter {
   }
 
   /**
+   * Fills column identified by name with a <code>float</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, float value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+
+  /**
+   * Fills column identified by position with a <code>float</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, float value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    set(position, value);
+  }
+
+  /**
    * Fills column identified by name with a <code>Double</code>.
    * @param columnName
    * @param value
@@ -660,4 +742,26 @@ public class CsvWriter {
     }
   }
   
+  /**
+   * Fills columns from getter methods of data object.
+   * @param dataObject
+   * @throws CsvException
+   */
+  public void writeObject(Object dataObject) throws CsvException {
+    
+    Class<?> clazz = dataObject.getClass();
+    
+    try {
+      if (dataClass != clazz) {
+        if (generator == null) {
+          generator = new ObjectWriterGenerator(config.getNameMap());
+        }
+        objectWriter = generator.getWriter(clazz);
+        dataClass = clazz;
+      }
+      objectWriter.writeObject(this, dataObject);
+    } catch (Exception e) {
+      throw new CsvException(text.get("writeObject", clazz.getName()), e);
+    }
+  }
 }
