@@ -26,11 +26,6 @@ public class Quicksort implements SortAlgorithm {
    random = new Random();
   }
   
-  public double memoryFactor() {
-    
-    return 1;
-  }
-  
   @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator) {
     

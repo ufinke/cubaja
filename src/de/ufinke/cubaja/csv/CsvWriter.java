@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.List;
 import de.ufinke.cubaja.config.ConfigException;
@@ -28,7 +27,6 @@ public class CsvWriter {
   private RowFormatter formatter;
   private ColumnBuffer buffer;
   private ColConfig colConfig;
-  private Character defaultDecimalChar;
   
   private ObjectWriterGenerator generator;
   private Class<?> dataClass;
@@ -546,14 +544,7 @@ public class CsvWriter {
   
   private void set(int position, double value) throws IOException, CsvException {
     
-    Character decimalChar = colConfig.getDecimalChar();
-    if (decimalChar == null) {
-      if (defaultDecimalChar == null) {
-        defaultDecimalChar = new DecimalFormatSymbols().getDecimalSeparator();
-      }
-      decimalChar = defaultDecimalChar;
-    }
-    
+    Character decimalChar = colConfig.getWriterDecimalChar();    
     writeBuffer(position, Util.format(value, colConfig.getScale(), decimalChar, colConfig.isTrim()));
   }
 

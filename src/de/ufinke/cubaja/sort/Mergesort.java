@@ -24,11 +24,6 @@ public class Mergesort implements SortAlgorithm {
     
   }
   
-  public double memoryFactor() {
-    
-    return 2;
-  }
-  
   @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator) {
     

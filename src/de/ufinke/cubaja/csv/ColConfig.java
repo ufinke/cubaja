@@ -262,6 +262,14 @@ public class ColConfig {
     }
     return decimalChar;
   }
+  
+  Character getWriterDecimalChar() {
+    
+    if (decimalChar == null) {
+      return csvConfig.getWriterDecimalChar();
+    }
+    return decimalChar;
+  }
 
   /**
    * Sets the decimal point character.

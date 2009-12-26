@@ -3,9 +3,10 @@
 
 package de.ufinke.cubaja.sort;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
-class SortIterator<D> implements Iterator<D> {
+class SortIterator<D extends Serializable> implements Iterator<D> {
 
   private Sorter<D> sorter;
   

@@ -6,6 +6,7 @@ package de.ufinke.cubaja.csv;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -184,6 +185,7 @@ public class CsvConfig {
 
   private Boolean trim;
   private Character decimalChar;
+  private Character writerDecimalChar;
   private SimpleDateFormat dateFormat;
   private String trueValue;
   private String falseValue;
@@ -459,6 +461,18 @@ public class CsvConfig {
   public Character getDecimalChar() {
 
     return decimalChar;
+  }
+  
+  Character getWriterDecimalChar() {
+    
+    if (writerDecimalChar == null) {
+      if (decimalChar == null) {
+        writerDecimalChar = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+      } else {
+        writerDecimalChar = decimalChar;
+      }
+    }
+    return writerDecimalChar;
   }
 
   /**

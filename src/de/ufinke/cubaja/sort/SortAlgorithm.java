@@ -11,10 +11,18 @@ import java.util.Comparator;
  */
 public interface SortAlgorithm {
 
+  /**
+   * Sorts an array of objects.
+   * @param array
+   * @param size
+   * @return sorted array
+   */
   public Object[] sort(Object[] array, int size);
   
+  /**
+   * Sets the comparator.
+   * @param comparator
+   */
   @SuppressWarnings("rawtypes")
   public void setComparator(Comparator comparator);
-  
-  public double memoryFactor();
 }
