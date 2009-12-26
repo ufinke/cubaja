@@ -83,7 +83,7 @@ class ObjectWriterGenerator implements Generator {
     
     genClass.createDefaultConstructor();
     
-    GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "writeObject", csvWriterType, objectType);
+    GenMethod method = genClass.createMethod(ACC_PUBLIC, voidType, "writeObject", csvWriterType, objectType);
     method.addException(exceptionType);
     generateCode(method.getCode());    
     
