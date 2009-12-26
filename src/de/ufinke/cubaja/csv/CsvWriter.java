@@ -99,11 +99,12 @@ public class CsvWriter {
   }
   
   /**
-   * Closes the underlaying stream.
+   * Closes the underlaying writer.
    * @throws IOException
    */
-  public void close() throws IOException {
+  public void close() throws IOException, CsvException {
     
+    formatter.finish();
     out.close();
     out = null;
   }

@@ -303,7 +303,7 @@ public class Query extends PreparedSql implements ColumnReader {
   /**
    * Reads a time column identified by position as <code>Time</code>.
    * @param columnPosition
-   * @return
+   * @return Time
    * @throws SQLException
    */
   public Time readSqlTime(int columnPosition) throws SQLException {
@@ -372,7 +372,7 @@ public class Query extends PreparedSql implements ColumnReader {
   /**
    * Reads a time column identified by position as <code>java.util.Date</code>.
    * @param columnPosition
-   * @return
+   * @return java.util.Date
    * @throws SQLException
    */
   public java.util.Date readTime(int columnPosition) throws SQLException {

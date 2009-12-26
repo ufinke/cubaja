@@ -676,7 +676,7 @@ public class CsvConfig {
   /**
    * Returns the row separator needed for <code>CsvWriter</code>.
    * 
-   * @return
+   * @return row separator character(s)
    */
   public String getRowSeparator() {
 

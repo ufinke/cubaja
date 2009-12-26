@@ -164,6 +164,7 @@ public class FileConfig {
    * Creates an output stream.
    * All parent directories which do not already exist
    * will be allocated automatically.
+   * The stream is buffered.
    * @return an <code>OutputStream</code>
    * @throws IOException
    */
@@ -177,6 +178,7 @@ public class FileConfig {
    * All parent directories which do not already exist
    * will be allocated automatically.
    * Uses the <code>getCharset</code> method.
+   * The writer and the underlaying stream are buffered.
    * @return a <code>Writer</code>
    * @throws IOException
    */
@@ -187,6 +189,7 @@ public class FileConfig {
   
   /**
    * Creates an input stream.
+   * The stream is buffered.
    * @return an <code>InputStream</code>
    * @throws IOException
    */
@@ -198,6 +201,7 @@ public class FileConfig {
   /**
    * Creates a reader.
    * Uses the <code>getCharset</code> method.
+   * The reader and the underlaying stream are buffered.
    * @return a <code>Reader</code>
    * @throws IOException
    */

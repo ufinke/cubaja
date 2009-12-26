@@ -350,7 +350,7 @@ public class ColConfig {
 
   /**
    * Sets the constant representing the boolean value <code>false</code>.
-   * @param trueValue
+   * @param falseValue
    */
   public void setFalseValue(String falseValue) {
   

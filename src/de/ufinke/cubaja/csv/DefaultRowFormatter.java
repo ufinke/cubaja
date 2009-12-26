@@ -83,4 +83,8 @@ public class DefaultRowFormatter implements RowFormatter {
     
     writer.write(escapeChar);
   }
+  
+  public void finish() {
+    
+  }
 }

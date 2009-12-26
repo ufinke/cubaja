@@ -36,4 +36,12 @@ public interface RowFormatter {
    * @throws CsvException
    */
   public void writeColumn(String content) throws IOException, CsvException;
+  
+  /**
+   * Cleanup hook.
+   * Note that the writer will be closed by <code>CsvWriter</code>.
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void finish() throws IOException, CsvException;
 }
