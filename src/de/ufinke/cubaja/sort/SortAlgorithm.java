@@ -14,10 +14,9 @@ public interface SortAlgorithm {
   /**
    * Sorts an array of objects.
    * @param array
-   * @param size
    * @return sorted array
    */
-  public Object[] sort(Object[] array, int size);
+  public void sort(SortArray array);
   
   /**
    * Sets the comparator.

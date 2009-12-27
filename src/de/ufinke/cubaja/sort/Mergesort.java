@@ -30,18 +30,20 @@ public class Mergesort implements SortAlgorithm {
     this.comparator = comparator;
   }
   
-  public Object[] sort(Object[] entries, int size) {
+  public void sort(SortArray array) {
 
+    int size = array.getSize();
+    
     if (size == 0) {
-      return entries;
+      return;
     }
     
-    this.entries = entries;
+    entries = array.getArray();
     
     temp = new Object[size];
     mergesort(0, size - 1);
     
-    return entries;
+    array.setArray(temp);
   }
   
   @SuppressWarnings("unchecked")

@@ -32,11 +32,9 @@ public class Quicksort implements SortAlgorithm {
     this.comparator = comparator;
   }
   
-  public Object[] sort(Object[] array, int size) {
-  
-   sort(array, 0, size - 1);
-   
-   return array;
+  public void sort(SortArray array) {
+
+   sort(array.getArray(), 0, array.getSize() - 1);
   }
   
   @SuppressWarnings("unchecked")

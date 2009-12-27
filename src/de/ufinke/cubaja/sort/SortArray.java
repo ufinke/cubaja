@@ -3,40 +3,62 @@
 
 package de.ufinke.cubaja.sort;
 
-class SortArray {
+public class SortArray {
 
   private Object[] array;
   private int size;
   
-  SortArray(int capacity) {
+  public SortArray(int capacity) {
     
     array = new Object[capacity];
   }
+  
+  public SortArray(Object[] array) {
+    
+    this.array = array;
+    size = array.length;
+  }
+  
+  public SortArray(Object[] array, int size) {
+    
+    this.array = array;
+    this.size = size;
+  }
 
-  void enlarge(int newCapacity) {
+  public void enlarge(int newCapacity) {
   
     Object[] newArray = new Object[newCapacity];
     System.arraycopy(array, 0, newArray, 0, size);
     array = newArray;
   }
   
-  boolean isFull() {
+  public void clear() {
+    
+    size = 0;
+  }
+  
+  public boolean isFull() {
     
     return size == array.length;
   }
   
-  void add(Object element) {
+  public void add(Object element) {
     
     array[size++] = element;
   }
   
-  int getSize() {
+  public int getSize() {
     
     return size;
   }
   
-  Object[] getArray() {
+  public Object[] getArray() {
     
     return array;
+  }
+  
+  public void setArray(Object[] array) {
+    
+    this.array = array;
   }
 }

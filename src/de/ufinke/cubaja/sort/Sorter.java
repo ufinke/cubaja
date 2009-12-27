@@ -10,11 +10,15 @@ import java.util.Comparator;
 import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import de.ufinke.cubaja.util.IteratorException;
 import de.ufinke.cubaja.util.Text;
 
 public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private Text text = new Text(Sorter.class);
+  
+  static final int BLOCK_SIZE = 256 * 1024;
+  static private final int CALC_RECORD_COUNT = 1000;
 
   private Log logger;
   private SortConfig config;
@@ -24,6 +28,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private boolean isRetrieveState;
   
   private SortArray array;
+  private int writtenRuns;
+  private IOManager ioManager;
   
   public Sorter(Comparator<? super D> comparator) {
     
@@ -42,7 +48,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     algorithm = config.getAlgorithm();
     algorithm.setComparator(comparator);
     
-    array = new SortArray(config.isCalculated() ? config.getRecordsPerRun() : 1000);
+    array = new SortArray(config.isCalculated() ? config.getRecordsPerRun() : CALC_RECORD_COUNT);
   }
   
   public void add(D element) throws Exception {
@@ -51,62 +57,92 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       throw new IllegalStateException(text.get("illegalAdd"));
     }
     
-    array.add(element);
-    
     if (array.isFull()) {
-      if (! config.isCalculated()) {
+      if (config.isCalculated()) {
+        writeRun();
+      } else {
         calculateSizes();
         if (array.isFull()) {
-          writeArray();
+          writeRun();
         }
-      } else {
-        writeArray();
       }
     }
+    
+    array.add(element);
   }
   
-  private void writeArray() throws Exception {
+  private void writeRun() throws Exception {
     
+    if (array.getSize() == 0) {
+      return;
+    }
+    
+    algorithm.sort(array);
+    
+    if (writtenRuns == 0) {
+      ioManager = new IOManager(config);
+    }
+    
+    array = ioManager.writeRun(array);
+    
+    writtenRuns++;
   }
   
   private void calculateSizes() throws Exception {
 
-    ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+    ByteArrayOutputStream bos = new ByteArrayOutputStream(CALC_RECORD_COUNT * 100);
     ObjectOutputStream oos = new ObjectOutputStream(bos);
     for (Object object : array.getArray()) {
       oos.writeObject(object);
     }
     oos.close();
     
-    long bytesPerRecord = bos.size() / 1000;
+    int bytesPerRecord = bos.size() / CALC_RECORD_COUNT;
     long memory = Runtime.getRuntime().maxMemory() / 4;
     
-    long recordsPerBlock = 1024 * 256 / bytesPerRecord;
     if (config.getRecordsPerBlock() == 0) {
+      long recordsPerBlock = BLOCK_SIZE / bytesPerRecord;
       config.setRecordsPerBlock((int) recordsPerBlock);
     }
     
-    long recordsPerRun = memory / bytesPerRecord;
-    if (recordsPerRun > Integer.MAX_VALUE) {
-      recordsPerRun = Integer.MAX_VALUE;
-    }
     if (config.getRecordsPerRun() == 0) {
-      config.setRecordsPerRun((int) recordsPerRun);
-      if (config.getRecordsPerRun() > 1000) {
-        array.enlarge(config.getRecordsPerRun());
+      long recordsPerRun = memory / bytesPerRecord;
+      if (recordsPerRun > Integer.MAX_VALUE) {
+        recordsPerRun = Integer.MAX_VALUE;
       }
+      config.setRecordsPerRun((int) recordsPerRun);
+    } else { // check blocks per run
+      config.setRecordsPerRun(config.getRecordsPerRun());
+    }
+    
+    if (config.getRecordsPerRun() > CALC_RECORD_COUNT) {
+      array.enlarge(config.getRecordsPerRun());
     }
     
     if (config.isLog()) {
-      logger.debug(text.get("calcSizes", recordsPerRun, recordsPerBlock));
+      logger.debug(text.get("calcSizes", config.getRecordsPerRun(), config.getRecordsPerBlock()));
     }
   }
   
   public Iterator<D> iterator() {
 
-    isRetrieveState = true;
-
+    try {
+      startRetrieve();
+    } catch (Exception e) {
+      throw new IteratorException(e);
+    }
+    
     return null;
+  }
+  
+  private void startRetrieve() throws Exception {
+    
+    isRetrieveState = true;
+        
+    if (writtenRuns > 0) {
+      writeRun();
+      ioManager.finishWriteRuns();
+    }
   }
   
 }

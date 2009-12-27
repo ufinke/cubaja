@@ -33,6 +33,9 @@ public class SortConfig {
 
   public String getWorkDirectory() {
 
+    if (workDirectory == null) {
+      workDirectory = System.getProperty("java.io.tmpdir");
+    }
     return workDirectory;
   }
 
@@ -44,7 +47,7 @@ public class SortConfig {
   public String getFilePrefix() {
 
     if (filePrefix == null) {
-      filePrefix = "sort_";
+      filePrefix = "sort";
     }
     return filePrefix;
   }
