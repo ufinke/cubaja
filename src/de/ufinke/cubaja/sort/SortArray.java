@@ -8,10 +8,16 @@ class SortArray {
   private Object[] array;
   private int size;
   
-  SortArray(Object[] array, int size) {
+  SortArray(int capacity) {
     
-    this.array = array;
-    this.size = size;
+    array = new Object[capacity];
+  }
+
+  void enlarge(int newCapacity) {
+  
+    Object[] newArray = new Object[newCapacity];
+    System.arraycopy(array, 0, newArray, 0, size);
+    array = newArray;
   }
   
   boolean isFull() {
