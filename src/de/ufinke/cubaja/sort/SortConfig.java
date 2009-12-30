@@ -7,16 +7,18 @@ public class SortConfig {
 
   private int recordsPerRun;
   private int recordsPerBlock;
+  
   private boolean compress;
-  private boolean log;
-  private boolean logDetails;
   private SortAlgorithm algorithm;
+  
+  private boolean log;
+  
   private String workDirectory;
   private String filePrefix;
 
   public SortConfig() {
 
-  }
+  }  
 
   public SortAlgorithm getAlgorithm() {
 
@@ -64,12 +66,6 @@ public class SortConfig {
 
   public void setRecordsPerRun(int recordsPerRun) {
 
-    if (recordsPerRun < 1000) {
-      recordsPerRun = 1000;
-    }
-    if (recordsPerBlock > (recordsPerRun / 2)) {
-      recordsPerBlock = recordsPerRun / 2;
-    }
     this.recordsPerRun = recordsPerRun;
   }
 
@@ -80,17 +76,9 @@ public class SortConfig {
 
   public void setRecordsPerBlock(int recordsPerBlock) {
 
-    if (recordsPerBlock < 500) {
-      recordsPerBlock = 500;
-    }
     this.recordsPerBlock = recordsPerBlock;
   }
   
-  boolean isCalculated() {
-    
-    return (recordsPerRun > 0) && (recordsPerBlock > 0);
-  }
-
   public boolean isCompress() {
 
     return compress;
@@ -111,14 +99,4 @@ public class SortConfig {
     this.log = log;
   }
 
-  public boolean isLogDetails() {
-
-    return logDetails;
-  }
-
-  public void setLogDetails(boolean logDetails) {
-
-    this.logDetails = logDetails;
-    log = log || logDetails;
-  }
 }

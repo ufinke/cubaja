@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 public class Stopwatch {
 
   static private Log logger = LogFactory.getLog(Stopwatch.class);
+  static private Text text = new Text(Stopwatch.class);
   
   private long startMillis;
   private String message;
@@ -41,7 +42,8 @@ public class Stopwatch {
     
     StringBuilder sb = new StringBuilder(message.length() + 8);
     sb.append(message);
-    sb.append(" - start");
+    sb.append(" - ");
+    sb.append(text.get("stopwatchStart"));
     logger.debug(sb);
   }
   
@@ -60,7 +62,9 @@ public class Stopwatch {
     if (message != null) {
       StringBuilder sb = new StringBuilder(message.length() + 48);
       sb.append(message);
-      sb.append(" - end (elapsed: ");
+      sb.append(" - ");
+      sb.append(text.get("stopwatchEnd"));
+      sb.append(' ');
       sb.append(format(elapsed));
       sb.append(')');
       logger.debug(sb);

@@ -11,20 +11,22 @@ import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.IteratorException;
+import de.ufinke.cubaja.util.Stopwatch;
 import de.ufinke.cubaja.util.Text;
 
 public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private Text text = new Text(Sorter.class);
-  
-  static final int BLOCK_SIZE = 256 * 1024;
-  static private final int CALC_RECORD_COUNT = 1000;
+  static private Log logger = LogFactory.getLog(Sorter.class);
 
-  private Log logger;
+  private Info info;
   private SortConfig config;
+  private Stopwatch stopwatch;
+  
   private Comparator<? super D> comparator;
   private SortAlgorithm algorithm;
   
+  private boolean isCalculated;
   private boolean isRetrieveState;
   
   private SortArray array;
@@ -40,15 +42,18 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
     this.comparator = comparator;
     this.config = config;
+
+    info = new Info();
+    info.setConfig(config);
     
     if (config.isLog()) {
-      logger = LogFactory.getLog(Sorter.class);
+      stopwatch = new Stopwatch(text.get("stopSort", info.id()));
     }
     
     algorithm = config.getAlgorithm();
     algorithm.setComparator(comparator);
     
-    array = new SortArray(config.isCalculated() ? config.getRecordsPerRun() : CALC_RECORD_COUNT);
+    array = new SortArray(Info.PROBE_SIZE);
   }
   
   public void add(D element) throws Exception {
@@ -58,7 +63,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     
     if (array.isFull()) {
-      if (config.isCalculated()) {
+      if (isCalculated) {
         writeRun();
       } else {
         calculateSizes();
@@ -77,10 +82,15 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       return;
     }
     
+    Stopwatch watch = new Stopwatch();
     algorithm.sort(array);
+    if (config.isLog()) {
+      long elapsed = watch.elapsedMillis();
+      logger.trace(text.get("arraySorted", info.id(), array.getSize(), elapsed));
+    }
     
     if (writtenRuns == 0) {
-      ioManager = new IOManager(config);
+      ioManager = new IOManager(info);
     }
     
     array = ioManager.writeRun(array);
@@ -90,38 +100,20 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private void calculateSizes() throws Exception {
 
-    ByteArrayOutputStream bos = new ByteArrayOutputStream(CALC_RECORD_COUNT * 100);
+    ByteArrayOutputStream bos = new ByteArrayOutputStream(Info.BYTES_PER_BLOCK);
     ObjectOutputStream oos = new ObjectOutputStream(bos);
     for (Object object : array.getArray()) {
       oos.writeObject(object);
     }
     oos.close();
     
-    int bytesPerRecord = bos.size() / CALC_RECORD_COUNT;
-    long memory = Runtime.getRuntime().maxMemory() / 4;
+    info.calculateSizes(bos.size());
     
-    if (config.getRecordsPerBlock() == 0) {
-      long recordsPerBlock = BLOCK_SIZE / bytesPerRecord;
-      config.setRecordsPerBlock((int) recordsPerBlock);
+    if (info.getRunSize() > Info.PROBE_SIZE) {
+      array.enlarge(info.getRunSize());
     }
     
-    if (config.getRecordsPerRun() == 0) {
-      long recordsPerRun = memory / bytesPerRecord;
-      if (recordsPerRun > Integer.MAX_VALUE) {
-        recordsPerRun = Integer.MAX_VALUE;
-      }
-      config.setRecordsPerRun((int) recordsPerRun);
-    } else { // check blocks per run
-      config.setRecordsPerRun(config.getRecordsPerRun());
-    }
-    
-    if (config.getRecordsPerRun() > CALC_RECORD_COUNT) {
-      array.enlarge(config.getRecordsPerRun());
-    }
-    
-    if (config.isLog()) {
-      logger.debug(text.get("calcSizes", config.getRecordsPerRun(), config.getRecordsPerBlock()));
-    }
+    isCalculated = true;
   }
   
   public Iterator<D> iterator() {
@@ -142,6 +134,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     if (writtenRuns > 0) {
       writeRun();
       ioManager.finishWriteRuns();
+      if (config.isLog()) {
+        stopwatch.elapsedMillis();
+      }
     }
   }
   
