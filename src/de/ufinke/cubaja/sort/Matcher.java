@@ -91,7 +91,6 @@ public final class Matcher<K> implements Iterable<K> {
 
       private K matchKey;
       private boolean hasMatchKey;
-      private boolean hasOldKey;
       private boolean tested;
       
       public final boolean hasNext() {
@@ -100,7 +99,6 @@ public final class Matcher<K> implements Iterable<K> {
           source.skipUnusedData();
         }
         
-        K oldKey = matchKey;
         hasMatchKey = false;
         
         for (InternalMatchSource<?, K> source : sourceList) {
@@ -117,17 +115,6 @@ public final class Matcher<K> implements Iterable<K> {
           source.setMatchKey(matchKey);
         }
         
-        if (hasOldKey && hasMatchKey && comparator.compare(matchKey, oldKey) <= 0) {
-          int number = 0;
-          for (InternalMatchSource<?, K> source : sourceList) {
-            if (source.isMatching()) {
-              throw new OutOfSequenceException(text.get("outOfSequence", number, matchKey, new Integer(source.getRecordCount())));
-            }
-            number++;
-          }
-        }
-        
-        hasOldKey = true;
         tested = true;
         
         return hasMatchKey;
