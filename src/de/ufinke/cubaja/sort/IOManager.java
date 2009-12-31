@@ -20,7 +20,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.zip.DeflaterOutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import de.ufinke.cubaja.io.OutputBuffer;
+import de.ufinke.cubaja.io.RandomAccessBuffer;
 import de.ufinke.cubaja.util.Stopwatch;
 import de.ufinke.cubaja.util.Text;
 
@@ -40,10 +40,9 @@ class IOManager {
   private SynchronousQueue<SortArray> writeQueue;
   private Callable<SortArray> writeRunCallable;
   private Future<SortArray> writeRunFuture;
-  private OutputBuffer outBuffer;
+  private RandomAccessBuffer outBuffer;
   
-  private List<Run> runList;
-  private long currentFilePointer;
+  private List<Long> runList;
   
   public IOManager(Info info) throws Exception {
     
@@ -54,14 +53,14 @@ class IOManager {
     
     executor = Executors.newSingleThreadExecutor();
     
-    runList = new ArrayList<Run>();
+    runList = new ArrayList<Long>();
     writeQueue = new SynchronousQueue<SortArray>();
     writeRunCallable = new Callable<SortArray>() {
       public SortArray call() throws Exception {
         return backgroundWriteRun();
       }
     };
-    outBuffer = new OutputBuffer(Info.BYTES_PER_BLOCK);
+    outBuffer = new RandomAccessBuffer(Info.BYTES_PER_BLOCK, 1000);
   }
   
   protected void finalize() {
@@ -124,17 +123,15 @@ class IOManager {
     SortArray array = writeQueue.take();
     
     Stopwatch watch = new Stopwatch();
-    
-    Run run = new Run();
+
+    runList.add(raf.getFilePointer());
     
     int startIndex = 0;
     while (startIndex < array.getSize()) {
       int endIndex = Math.min(startIndex + info.getBlockSize(), array.getSize());
-      run.addBlock(writeBlock(array, startIndex, endIndex));
+      writeBlock(array, startIndex, endIndex);
       startIndex = endIndex;
     }
-    
-    runList.add(run);
     
     if (config.isLog()) {
       long elapsed = watch.elapsedMillis();
@@ -145,12 +142,12 @@ class IOManager {
     return array;
   }
   
-  private Block writeBlock(SortArray array, int start, int end) throws Exception {
+  private void writeBlock(SortArray array, int start, int end) throws Exception {
+
+    outBuffer.reset();
+    outBuffer.setPosition(4);
     
-    Block block = new Block();
-    block.setStartPosition(currentFilePointer);
-    
-    OutputStream stream = outBuffer;
+    OutputStream stream = outBuffer.getOutputStream();
     if (config.isCompress()) {
       stream = new BufferedOutputStream(new DeflaterOutputStream(stream));
     }
@@ -163,14 +160,11 @@ class IOManager {
     }
     
     out.close();
+    
+    outBuffer.setPosition(0);
+    outBuffer.writeInt(outBuffer.size());
+    
     outBuffer.writeTo(raf);
-    
-    currentFilePointer = raf.getFilePointer();
-    block.setEndPosition(currentFilePointer);
-    
-    outBuffer.reset();
-    
-    return block;
   }
   
   public void finishWriteRuns() throws Exception {
