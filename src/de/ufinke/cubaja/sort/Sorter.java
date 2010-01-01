@@ -6,7 +6,8 @@ package de.ufinke.cubaja.sort;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Comparator;
+import java.util.Iterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.IteratorException;
@@ -30,7 +31,6 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private SortArray array;
   private long count;
-  private int writtenRuns;
   private IOManager ioManager;
   
   public Sorter(Comparator<? super D> comparator) {
@@ -85,13 +85,11 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     sortArray();
     
-    if (writtenRuns == 0) {
+    if (ioManager == null) {
       ioManager = new IOManager(info);
     }
     
     array = ioManager.writeRun(array);
-    
-    writtenRuns++;
   }
   
   private void sortArray() {
@@ -130,26 +128,12 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     isRetrieveState = true;
     
     try {
-      startRetrieve();
-      if (writtenRuns == 0) {
-        return createSimpleIterator();
-      } else {
-        return createMergeIterator(); 
-      }
+      return (ioManager == null) ? createSimpleIterator() : createMergeIterator(); 
     } catch (Exception e) {
       throw new IteratorException(e);
     }
   }
   
-  private void startRetrieve() throws Exception {
-        
-    if (writtenRuns > 0) {
-      if (config.isLog()) {
-        stopwatch.elapsedMillis();
-      }
-    }
-  }
-
   private Iterator<D> createSimpleIterator() {
     
     sortArray();
@@ -211,7 +195,16 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     };
   }
   
-  void close() {
+  void close() throws IteratorException {
+
+    if (ioManager != null) {
+      try {
+        ioManager.close();
+      } catch (Exception e) {
+        throw new IteratorException(e);
+      }
+      ioManager = null;
+    }
     
     if (config.isLog()) {
       long time = stopwatch.elapsedMillis();

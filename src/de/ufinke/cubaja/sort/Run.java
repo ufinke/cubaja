@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.*;
+import java.util.Iterator;
 
 class Run implements Iterator<Object>, Iterable<Object>  {
 

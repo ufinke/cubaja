@@ -77,15 +77,10 @@ class IOManager {
       executor.shutdown();
     }
     
-    if (raf == null) {
-      return;
-    }
-    
-    raf.close();
-    //file.delete();
-    
-    raf = null; 
-    file = null;
+    if (raf != null) {
+      raf.close();
+      file.delete();
+    }    
   }
   
   private void open() throws Exception {
@@ -171,7 +166,6 @@ class IOManager {
   public List<Run> getRuns() throws Exception {
     
     writeRunFuture.get();
-    close();
     
     //TODO
     return null;

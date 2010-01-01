@@ -3,7 +3,8 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class SortArray implements Iterator<Object> {
 
