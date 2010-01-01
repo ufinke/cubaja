@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
@@ -14,6 +14,26 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+/**
+ * Flexible byte array buffer.
+ * Functions similar to <code>java.io.RandomAccessFile</code>;
+ * an alternative to <code>ByteArrayOutputStream</code>
+ * and <code>ByteArrayInputStream</code> 
+ * when more flexibility is required. 
+ * <p>
+ * The buffer is backed by an automatically growing byte array.
+ * The position is the current offset within the buffer
+ * where the next write operation inserts data or the next
+ * read operation reads data from. The position increments 
+ * automatically when reading or writing.
+ * The size is the maximum count of filled bytes within the buffer; 
+ * it may be lesser than it's capacity.
+ * The size is set automatically during write operations
+ * according to the resulting position.
+ * Read operations never can read beyond the size. If such happens,
+ * an EOFException is thrown.
+ * @author Uwe Finke
+ */
 public class RandomAccessBuffer implements DataInput, DataOutput {
 
   static private class Output extends OutputStream {
@@ -58,8 +78,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   static private final int DEFAULT_CAPACITY = 4096;
   
+  /**
+   * Byte buffer.
+   */
   protected byte[] buffer;
-  protected int position;
+  private int position;
   
   private int capacity;
   private int growthCapacity;
@@ -68,6 +91,10 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   private Input inputStream;
   private Output outputStream;
   
+  /**
+   * Default constructor with default capacity.
+   * Default initial and additional capacity are both <code>4096</code> bytes.
+   */
   public RandomAccessBuffer() {
     
     capacity = DEFAULT_CAPACITY;
@@ -75,6 +102,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     buffer = new byte[capacity]; 
   }
   
+  /**
+   * Constructor with specified capacity.
+   * @param initialCapacity initial capacity
+   * @param growthCapacity additional capacity when buffer must grow
+   */
   public RandomAccessBuffer(int initialCapacity, int growthCapacity) {
     
     capacity = initialCapacity;
@@ -82,12 +114,22 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     buffer = new byte[capacity];
   }
 
+  /**
+   * Sets position and size to <code>0</code>.
+   */
   public void reset() {
     
     position = 0;
     size = 0;
   }
   
+  /**
+   * Sets new position.
+   * Capacity and size are adjusted if required.
+   * If the new position exceeds the previous size,
+   * the buffer may contain uninitialized bytes.
+   * @param position
+   */
   public void setPosition(int position) {
     
     this.position = position;
@@ -99,16 +141,73 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     }
   }
   
+  /**
+   * Retrieves the current position.
+   * @return
+   */
   public int getPosition() {
     
     return position;
   }
   
+  /**
+   * Retrieves the current size.
+   * The buffer's size is determined by the highest reached position.
+   * There are some methods which reset the size to zero.
+   * @return
+   */
   public int size() {
     
     return size;
   }
   
+  /**
+   * Retrieves the current capacity.
+   * The capacity is the amount of allocated, but not necessarily filled, bytes.
+   * @return
+   */
+  public int capacity() {
+    
+    return capacity;
+  }
+  
+  /**
+   * Cuts the contents and sets position and size.
+   * It is expected to be <code>0 <= from <= to <= size</code>.
+   * If <code>from = 0</code>, then size and position are both set to the <code>to</code> value.
+   * If <code>from > 0</code>, then all bytes between from (inclusive) and to (exclusive) 
+   * are copied to the buffer's beginning; size and position are set to the amount of copied
+   * bytes.
+   * @param from
+   * @param to
+   */
+  public void cut(int from, int to) {
+    
+    if (from < 0 || to < from || to > size) {
+      throw new IllegalArgumentException("from=" + from + ", to=" + to + ", size=" + size + " (expected 0 <= from <= to <= size)");
+    }
+    
+    if (from == 0) {
+      size = to;
+      position = to;
+      return;
+    }
+
+    int len = to - from;
+    int offset = from;
+    
+    for (int i = 0; i < len; i++) {
+      buffer[i] = buffer[offset++];
+    }
+    
+    size = len;
+    position = len;
+  }
+  
+  /**
+   * Copies the buffer's content up to the current size to a byte array.
+   * @return
+   */
   public byte[] toByteArray() {
     
     byte[] copy = new byte[size];
@@ -116,6 +215,12 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return copy;
   }
   
+  /**
+   * Ensures buffer capacity and calculates new position and size values.
+   * @param bytesToWrite
+   * @return new position
+   * @throws IOException
+   */
   protected int newWritePosition(int bytesToWrite) throws IOException {
     
     int newPosition = position + bytesToWrite;
@@ -137,6 +242,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     buffer = newBuffer;
   }
   
+  /**
+   * Returns an <code>OutputStream</code> which writes into this buffer.
+   * Needed for <code>FilterOutputStream</code>s.
+   * @return output stream
+   */
   public OutputStream getOutputStream() {
     
     if (outputStream == null) {
@@ -145,16 +255,6 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return outputStream;
   }
   
-  public void writeTo(OutputStream out) throws IOException {
-    
-    out.write(buffer, 0, size);
-  }
-
-  public void writeTo(DataOutput out) throws IOException {
-    
-    out.write(buffer, 0, size);
-  }
-
   public void write(int b) throws IOException {
 
     int pos = newWritePosition(1);
@@ -266,7 +366,13 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     dos.writeUTF(s);
     dos.flush();
   }
-  
+
+  /**
+   * Checks buffer size and calculates new position for read operations.
+   * @param bytesToRead
+   * @return new position
+   * @throws IOException
+   */
   protected int newReadPosition(int bytesToRead) throws IOException {
     
     int newPosition = position + bytesToRead;
@@ -276,6 +382,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return newPosition;
   }
   
+  /**
+   * Returns an <code>InputStream</code> which reads from this buffer.
+   * Needed for <code>FilterInputStream</code>.
+   * @return input stream
+   */
   public InputStream getInputStream() {
     
     if (inputStream == null) {
@@ -284,6 +395,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return inputStream;
   }
   
+  /**
+   * Reads one byte as <code>InputStream</code> would do.
+   * @return one byte
+   * @throws IOException
+   */
   public int read() throws IOException {
     
     if (position == size) {
@@ -292,6 +408,16 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return buffer[position++] & 0xFF;
   }
   
+  /**
+   * Reads an array of bytes as <code>InputStream</code> would do.
+   * Reads at most up to the current size; therefore the returned
+   * value may be less than the requested length.
+   * @param b byte array to fill
+   * @param off start offset within byte array
+   * @param len maximum number of bytes to transfer
+   * @return number of bytes read, <code>-1</code> if the position had reached the current size
+   * @throws IOException
+   */
   public int read(byte[] b, int off, int len) throws IOException {
   
     if (position == size) {
@@ -303,7 +429,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = position + copySize;
     return copySize;
   }
-
+  
   public void readFully(byte[] b) throws IOException {
 
     readFully(b, 0, b.length);
@@ -348,8 +474,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newReadPosition(2);
     int pos = position;
-    int result = buffer[pos++] << 8;
-    result |= (buffer[pos++] & 0xFF);
+    int result =  buffer[pos++] << 8
+               | (buffer[pos++] & 0xFF);
     position = pos;
     return (short) result;
   }
@@ -358,8 +484,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newReadPosition(2);
     int pos = position;
-    int result = (buffer[pos++] & 0xFF) << 8;
-    result |= (buffer[pos++] & 0xFF);
+    int result = (buffer[pos++] & 0xFF) << 8
+               | (buffer[pos++] & 0xFF);
     position = pos;
     return result;
   }
@@ -373,10 +499,10 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newReadPosition(4);
     int pos = position;
-    int result = buffer[pos++] << 24;
-    result |= (buffer[pos++] & 0xFF) << 16;
-    result |= (buffer[pos++] & 0xFF) << 8;
-    result |= (buffer[pos++] & 0xFF);
+    int result =  buffer[pos++]         << 24
+               | (buffer[pos++] & 0xFF) << 16
+               | (buffer[pos++] & 0xFF) << 8
+               | (buffer[pos++] & 0xFF);
     position = pos;
     return result;
   }
@@ -385,14 +511,14 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newReadPosition(8);
     int pos = position;
-    int high = buffer[pos++] << 24;
-    high |= (buffer[pos++] & 0xFF) << 16;
-    high |= (buffer[pos++] & 0xFF) << 8;
-    high |= (buffer[pos++] & 0xFF);
-    int low = buffer[pos++] << 24;
-    low |= (buffer[pos++] & 0xFF) << 16;
-    low |= (buffer[pos++] & 0xFF) << 8;
-    low |= (buffer[pos++] & 0xFF);
+    int high =  buffer[pos++]         << 24
+             | (buffer[pos++] & 0xFF) << 16
+             | (buffer[pos++] & 0xFF) << 8
+             | (buffer[pos++] & 0xFF);
+    int low  =  buffer[pos++]         << 24
+             | (buffer[pos++] & 0xFF) << 16
+             | (buffer[pos++] & 0xFF) << 8
+             | (buffer[pos++] & 0xFF);
     long result = low;
     result |= (high << 32);
     position = pos;
@@ -420,4 +546,104 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     DataInputStream d = new DataInputStream(getInputStream());
     return d.readUTF();
   }
+  
+  /**
+   * Copies the content up to the current size to a stream and resets this buffer.
+   * @param out
+   * @throws IOException
+   */
+  public void drainTo(OutputStream out) throws IOException {
+    
+    out.write(buffer, 0, size);
+    reset();
+  }
+
+  /**
+   * Copies the content up to the current size to a data output and resets this buffer.
+   * @param out
+   * @throws IOException
+   */
+  public void drainTo(DataOutput out) throws IOException {
+    
+    out.write(buffer, 0, size);
+    reset();
+  }
+  
+  /**
+   * Copies the content starting at current position to a stream without resetting this buffer.
+   * @param out
+   * @param len
+   * @throws IOException
+   */
+  public void transferTo(OutputStream out, int len) throws IOException {
+    
+    int pos = newReadPosition(len);
+    out.write(buffer, position, len);
+    position = pos;
+  }
+
+  /**
+   * Copies the content starting at current position to a data output without resetting this buffer.
+   * @param out
+   * @param len
+   * @throws IOException
+   */
+  public void transferTo(DataOutput out, int len) throws IOException {
+    
+    int pos = newReadPosition(len);
+    out.write(buffer, position, len);
+    position = pos;
+  }
+
+  /**
+   * Reads up to <code>len</code> bytes from a stream into this buffer.
+   * The starting position within this buffer is it's current position.
+   * The stream's <code>read(byte[] b, int off, int len)</code> method
+   * is called repeatedly until all bytes requested with the 
+   * <code>len</code> parameter are read or a <code>-1</code> is returned from the stream.
+   * @param in
+   * @param len
+   * @return number of bytes which had effectively been read
+   * @throws IOException
+   */
+  public int transferFrom(InputStream in, int len) throws IOException {
+
+    int minCapacity = position + len;
+    if (minCapacity > capacity) {
+      grow(minCapacity);
+    }
+    
+    int totalBytesTransferred = 0;
+    
+    while (len > 0) {
+      int bytesTransferred = in.read(buffer, position, len);
+      if (bytesTransferred == -1) {
+        len = 0;
+      } else {
+        totalBytesTransferred += bytesTransferred;
+        position += bytesTransferred;
+        len -= bytesTransferred;
+      }
+    }
+    
+    if (position > size) {
+      size = position;
+    }
+    
+    return totalBytesTransferred;
+  }
+  
+  /**
+   * Reads exactly <code>len</code> bytes from a data input into this buffer.
+   * @param in
+   * @param len
+   * @throws IOException
+   */
+  public void transferFrom(DataInput in, int len) throws IOException {
+
+    int pos = newWritePosition(len);
+    in.readFully(buffer, position, len);
+    position = pos;
+  }
+
 }
