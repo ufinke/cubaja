@@ -6,8 +6,7 @@ package de.ufinke.cubaja.sort;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Iterator;
+import java.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.IteratorException;
@@ -30,6 +29,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private boolean isRetrieveState;
   
   private SortArray array;
+  private long count;
   private int writtenRuns;
   private IOManager ioManager;
   
@@ -47,7 +47,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     info.setConfig(config);
     
     if (config.isLog()) {
-      stopwatch = new Stopwatch(text.get("stopSort", info.id()));
+      stopwatch = new Stopwatch();
+      logger.debug(text.get("sortOpen", info.id()));
     }
     
     algorithm = config.getAlgorithm();
@@ -82,12 +83,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       return;
     }
     
-    Stopwatch watch = new Stopwatch();
-    algorithm.sort(array);
-    if (config.isLog()) {
-      long elapsed = watch.elapsedMillis();
-      logger.trace(text.get("arraySorted", info.id(), array.getSize(), elapsed));
-    }
+    sortArray();
     
     if (writtenRuns == 0) {
       ioManager = new IOManager(info);
@@ -96,6 +92,19 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     array = ioManager.writeRun(array);
     
     writtenRuns++;
+  }
+  
+  private void sortArray() {
+    
+    Stopwatch watch = new Stopwatch();
+    
+    algorithm.sort(array);    
+    count += array.getSize();
+    
+    if (config.isLog()) {
+      long elapsed = watch.elapsedMillis();
+      logger.trace(text.get("arraySorted", info.id(), array.getSize(), elapsed));
+    }
   }
   
   private void calculateSizes() throws Exception {
@@ -118,26 +127,95 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   public Iterator<D> iterator() {
 
+    isRetrieveState = true;
+    
     try {
       startRetrieve();
+      if (writtenRuns == 0) {
+        return createSimpleIterator();
+      } else {
+        return createMergeIterator(); 
+      }
     } catch (Exception e) {
       throw new IteratorException(e);
     }
-    
-    return null;
   }
   
   private void startRetrieve() throws Exception {
-    
-    isRetrieveState = true;
         
     if (writtenRuns > 0) {
-      writeRun();
-      ioManager.finishWriteRuns();
       if (config.isLog()) {
         stopwatch.elapsedMillis();
       }
     }
   }
+
+  private Iterator<D> createSimpleIterator() {
+    
+    sortArray();
+    
+    final SortArray localArray = array;
+    
+    return new Iterator<D>() {
+
+      public boolean hasNext() {
+
+        boolean result = localArray.hasNext();
+        if (! result) {
+          close();
+        }
+        return result;
+      }
+
+      @SuppressWarnings("unchecked")
+      public D next() {
+
+        return (D) localArray.next();
+      }
+
+      public void remove() {
+
+        throw new UnsupportedOperationException();
+      }
+    };
+  }
   
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private Iterator<D> createMergeIterator() throws Exception {
+    
+    writeRun();
+
+    Merger merger = new Merger(comparator, ioManager.getRuns());
+    final Iterator<Object> mergeIterator = merger.iterator();
+    
+    return new Iterator<D>() {
+
+      public boolean hasNext() {
+
+        boolean result = mergeIterator.hasNext();
+        if (! result) {
+          close();
+        }
+        return result;
+      }
+
+      public D next() {
+
+        return (D) mergeIterator.next();
+      }
+
+      public void remove() {
+
+        throw new UnsupportedOperationException();
+      }      
+    };
+  }
+  
+  void close() {
+    
+    if (config.isLog()) {
+      long time = stopwatch.elapsedMillis();
+      logger.debug(text.get("sortClose", info.id(), count, stopwatch.format(time)));
+    }
+  }
 }

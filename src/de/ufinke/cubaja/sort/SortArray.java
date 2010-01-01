@@ -3,10 +3,13 @@
 
 package de.ufinke.cubaja.sort;
 
-public class SortArray {
+import java.util.*;
+
+public class SortArray implements Iterator<Object> {
 
   private Object[] array;
   private int size;
+  private int position;
   
   public SortArray(int capacity) {
     
@@ -60,5 +63,26 @@ public class SortArray {
   public void setArray(Object[] array) {
     
     this.array = array;
+  }
+
+  public boolean hasNext() {
+
+    return position < size;
+  }
+
+  public Object next() {
+
+    if (hasNext()) {
+      Object result = array[position];
+      array[position++] = null;
+      return result;
+    } else {
+      throw new NoSuchElementException();
+    }
+  }
+
+  public void remove() {
+
+    throw new UnsupportedOperationException();
   }
 }

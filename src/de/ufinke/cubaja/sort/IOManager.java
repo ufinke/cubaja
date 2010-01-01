@@ -133,6 +133,8 @@ class IOManager {
       startIndex = endIndex;
     }
     
+    raf.writeInt(0);
+    
     if (config.isLog()) {
       long elapsed = watch.elapsedMillis();
       logger.trace(text.get("runWritten", info.id(), array.getSize(), elapsed, runList.size()));
@@ -144,7 +146,6 @@ class IOManager {
   
   private void writeBlock(SortArray array, int start, int end) throws Exception {
 
-    outBuffer.reset();
     outBuffer.setPosition(4);
     
     OutputStream stream = outBuffer.getOutputStream();
@@ -164,12 +165,15 @@ class IOManager {
     outBuffer.setPosition(0);
     outBuffer.writeInt(outBuffer.size());
     
-    outBuffer.writeTo(raf);
+    outBuffer.drainTo(raf);
   }
   
-  public void finishWriteRuns() throws Exception {
+  public List<Run> getRuns() throws Exception {
     
     writeRunFuture.get();
     close();
+    
+    //TODO
+    return null;
   }
 }
