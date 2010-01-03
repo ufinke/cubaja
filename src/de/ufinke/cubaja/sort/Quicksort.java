@@ -1,5 +1,5 @@
-//Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
-//Subject to BSD License. See "license.txt" distributed with this package.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
 
@@ -32,9 +32,9 @@ public class Quicksort implements SortAlgorithm {
     this.comparator = comparator;
   }
   
-  public void sort(SortArray array) {
+  public void sort(Object[] array, int size) {
 
-   sort(array.getArray(), 0, array.getSize() - 1);
+   sort(array, 0, size - 1);
   }
   
   @SuppressWarnings("unchecked")

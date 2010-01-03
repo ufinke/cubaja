@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -30,20 +30,19 @@ public class Mergesort implements SortAlgorithm {
     this.comparator = comparator;
   }
   
-  public void sort(SortArray array) {
+  public void sort(Object[] array, int size) {
 
-    int size = array.getSize();
-    
     if (size == 0) {
       return;
     }
     
-    entries = array.getArray();
+    entries = array;
     
-    temp = new Object[size];
+    if (temp == null && temp.length < size) {
+      temp = new Object[size];
+    }
+    
     mergesort(0, size - 1);
-    
-    array.setArray(temp);
   }
   
   @SuppressWarnings("unchecked")

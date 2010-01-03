@@ -1,16 +1,12 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
-public class SortArray implements Iterator<Object> {
+class SortArray {
 
   private Object[] array;
   private int size;
-  private int position;
   
   public SortArray(int capacity) {
     
@@ -23,12 +19,6 @@ public class SortArray implements Iterator<Object> {
     size = array.length;
   }
   
-  public SortArray(Object[] array, int size) {
-    
-    this.array = array;
-    this.size = size;
-  }
-
   public void enlarge(int newCapacity) {
   
     Object[] newArray = new Object[newCapacity];
@@ -60,30 +50,5 @@ public class SortArray implements Iterator<Object> {
     
     return array;
   }
-  
-  public void setArray(Object[] array) {
-    
-    this.array = array;
-  }
 
-  public boolean hasNext() {
-
-    return position < size;
-  }
-
-  public Object next() {
-
-    if (hasNext()) {
-      Object result = array[position];
-      array[position++] = null;
-      return result;
-    } else {
-      throw new NoSuchElementException();
-    }
-  }
-
-  public void remove() {
-
-    throw new UnsupportedOperationException();
-  }
 }

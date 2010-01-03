@@ -4,31 +4,51 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
+import de.ufinke.cubaja.util.IteratorException;
 
 class Run implements Iterator<Object>, Iterable<Object>  {
 
-  private SortArray array;
+  private Info info;
+  private Block block;
+  private Object[] array;
+  private int size;
+  private int position;
   
-  private long nextBlockPosition;
-  private int nextBlockLength;
-  
-  public Run(Info info) {
+  public Run(Info info, Block block) {
     
+    this.info = info;
+    this.block = block;
+    
+    initArray();
+  }
+  
+  private void initArray() {
+    
+    SortArray sortArray = block.getArray();
+    array = sortArray.getArray();
+    size = sortArray.getSize();
+    position = 0;
   }
 
   public boolean hasNext() {
     
-    return array.hasNext() || nextBlockLength > 0;
+    return position < size || block.getNextBlockLength() > 0;
   }
 
   public Object next() {
 
-    if (array.hasNext()) {
-      return array.next();
+    if (position >= size) {
+      try {
+        block = info.getBlockQueue().take();
+      } catch (Exception e) {
+        throw new IteratorException(e);
+      }
+      initArray();
     }
     
-    //TODO next array
-    return null;
+    Object result = array[position];
+    array[position++] = null;
+    return result;
   }
 
   public void remove() {

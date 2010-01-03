@@ -1,8 +1,9 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
 
+import java.util.concurrent.BlockingQueue;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
@@ -28,6 +29,8 @@ class Info {
   private SortConfig config;
   private int runSize;
   private int blockSize;
+  private int maxMergeRuns;
+  private BlockingQueue<Block> blockQueue;
   
   public Info() {
     
@@ -81,6 +84,8 @@ class Info {
       blockSize = runSize / 2;
     }
     
+    maxMergeRuns = runSize / blockSize;
+    
     if (config.isLog()) {
       logger.debug(text.get("calcSizes", id, text.get("calcConfig"), recordsPerRun, recordsPerBlock));
       logger.debug(text.get("calcSizes", id, text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize));
@@ -96,5 +101,20 @@ class Info {
   public int getBlockSize() {
   
     return blockSize;
+  }
+  
+  public int getMaxMergeRuns() {
+    
+    return maxMergeRuns;
+  }
+  
+  public BlockingQueue<Block> getBlockQueue() {
+  
+    return blockQueue;
+  }
+
+  public void setBlockQueue(BlockingQueue<Block> blockQueue) {
+  
+    this.blockQueue = blockQueue;
   }
 }

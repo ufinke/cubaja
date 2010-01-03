@@ -3,8 +3,11 @@
 
 package de.ufinke.cubaja.sort;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.RandomAccessFile;
@@ -18,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.io.RandomAccessBuffer;
@@ -34,15 +38,14 @@ class IOManager {
   
   private File file;
   private RandomAccessFile raf;
+  private RandomAccessBuffer buffer;
     
   private ExecutorService executor;
   
   private SynchronousQueue<SortArray> writeQueue;
   private Callable<SortArray> writeRunCallable;
   private Future<SortArray> writeRunFuture;
-  private RandomAccessBuffer outBuffer;
-  
-  private List<Long> runList;
+  private List<Long> runPositions;
   
   public IOManager(Info info) throws Exception {
     
@@ -50,17 +53,17 @@ class IOManager {
     config = info.getConfig();
     
     open();
+    buffer = new RandomAccessBuffer(Info.BYTES_PER_BLOCK, 1000);
     
     executor = Executors.newSingleThreadExecutor();
     
-    runList = new ArrayList<Long>();
+    runPositions = new ArrayList<Long>();
     writeQueue = new SynchronousQueue<SortArray>();
     writeRunCallable = new Callable<SortArray>() {
       public SortArray call() throws Exception {
         return backgroundWriteRun();
       }
     };
-    outBuffer = new RandomAccessBuffer(Info.BYTES_PER_BLOCK, 1000);
   }
   
   protected void finalize() {
@@ -119,7 +122,7 @@ class IOManager {
     
     Stopwatch watch = new Stopwatch();
 
-    runList.add(raf.getFilePointer());
+    runPositions.add(raf.getFilePointer());
     
     int startIndex = 0;
     while (startIndex < array.getSize()) {
@@ -132,7 +135,7 @@ class IOManager {
     
     if (config.isLog()) {
       long elapsed = watch.elapsedMillis();
-      logger.trace(text.get("runWritten", info.id(), array.getSize(), elapsed, runList.size()));
+      logger.trace(text.get("runWritten", info.id(), array.getSize(), elapsed, runPositions.size()));
     }
     
     array.clear();    
@@ -141,14 +144,15 @@ class IOManager {
   
   private void writeBlock(SortArray array, int start, int end) throws Exception {
 
-    outBuffer.setPosition(4);
+    buffer.setPosition(4);
     
-    OutputStream stream = outBuffer.getOutputStream();
+    OutputStream stream = buffer.getOutputStream();
     if (config.isCompress()) {
       stream = new BufferedOutputStream(new DeflaterOutputStream(stream));
     }
     ObjectOutputStream out = new ObjectOutputStream(stream);
     
+    out.writeInt(end - start);
     Object[] object = array.getArray();
     for (int i = start; i < end; i++) {
       out.writeObject(object[i]);
@@ -157,17 +161,65 @@ class IOManager {
     
     out.close();
     
-    outBuffer.setPosition(0);
-    outBuffer.writeInt(outBuffer.size());
+    buffer.setPosition(0);
+    buffer.writeInt(buffer.size());
     
-    outBuffer.drainTo(raf);
+    buffer.drainTo(raf);
   }
   
   public List<Run> getRuns() throws Exception {
     
     writeRunFuture.get();
+
+    List<Run> runList = new ArrayList<Run>(runPositions.size());
     
-    //TODO
-    return null;
+    SortArray initialArray = new SortArray(0);
+    
+    for (Long position : runPositions) {
+      Block block = new Block();
+      block.setArray(initialArray);
+      block.setNextBlockPosition(position + 4);
+      block.setNextBlockLength(getBlockLength(position));
+      Run run = new Run(info, block);
+      runList.add(run);
+    }
+    
+    return runList;
+  }
+  
+  private int getBlockLength(long position) throws Exception {
+    
+    raf.seek(position);
+    return raf.readInt();
+  }
+  
+  private Block readBlock(long position, int length) throws Exception {
+    
+    Block block = new Block();
+    block.setNextBlockPosition(position + length);
+    
+    buffer.reset();
+    raf.seek(position);
+    buffer.transferFrom(raf, length);
+    
+    int blockEnd = length - 4;
+    buffer.setPosition(blockEnd);
+    block.setNextBlockLength(buffer.readInt());
+    buffer.cut(0, blockEnd);
+    
+    InputStream stream = buffer.getInputStream();
+    if (config.isCompress()) {
+      stream = new BufferedInputStream(new InflaterInputStream(stream));
+    }
+    ObjectInputStream in = new ObjectInputStream(stream);
+
+    int size = in.readInt();
+    SortArray array = new SortArray(in.readInt());
+    for (int i = 0; i < size; i++) {
+      array.add(in.readObject());
+    }
+    block.setArray(array);
+                                 
+    return block;
   }
 }

@@ -96,7 +96,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     Stopwatch watch = new Stopwatch();
     
-    algorithm.sort(array);    
+    algorithm.sort(array.getArray(), array.getSize());    
     count += array.getSize();
     
     if (config.isLog()) {
@@ -138,13 +138,16 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     sortArray();
     
-    final SortArray localArray = array;
+    final Object[] localArray = array.getArray();
+    final int size = array.getSize();
     
     return new Iterator<D>() {
 
+      private int position;
+      
       public boolean hasNext() {
 
-        boolean result = localArray.hasNext();
+        boolean result = position < size;
         if (! result) {
           close();
         }
@@ -154,7 +157,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       @SuppressWarnings("unchecked")
       public D next() {
 
-        return (D) localArray.next();
+        return (D) localArray[position++];
       }
 
       public void remove() {
