@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -13,8 +13,11 @@ import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,6 +49,8 @@ class IOManager {
   private Callable<SortArray> writeRunCallable;
   private Future<SortArray> writeRunFuture;
   private List<Long> runPositions;
+  private BlockingQueue<SortArray> readQueue;
+  private Future<Object> readRunFuture;
   
   public IOManager(Info info) throws Exception {
     
@@ -75,6 +80,8 @@ class IOManager {
   }
   
   public void close() throws Exception {
+    
+    readRunFuture.get();
     
     if (executor != null) {
       executor.shutdown();
@@ -167,24 +174,64 @@ class IOManager {
     buffer.drainTo(raf);
   }
   
-  public List<Run> getRuns() throws Exception {
+  public List<SortArray> getRuns() throws Exception {
     
     writeRunFuture.get();
 
-    List<Run> runList = new ArrayList<Run>(runPositions.size());
+    int runs = runPositions.size();
+    int capacity = runs + runs / 2;
+    readQueue = new ArrayBlockingQueue<SortArray>(capacity);
     
-    SortArray initialArray = new SortArray(0);
+    Callable<Object> readCallable = new Callable<Object>() {
+      public Object call() throws Exception {
+        return backgroundRead();
+      }
+    };
+    readRunFuture = executor.submit(readCallable);
     
-    for (Long position : runPositions) {
-      Block block = new Block();
-      block.setArray(initialArray);
-      block.setNextBlockPosition(position + 4);
-      block.setNextBlockLength(getBlockLength(position));
-      Run run = new Run(info, block);
+    List<SortArray> runList = new ArrayList<SortArray>(runs);
+    for (int i = 0; i < runs; i++) {
+      SortArray run = new SortArray(readQueue);
       runList.add(run);
     }
     
     return runList;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  Object backgroundRead() throws Exception {
+    
+    final Comparator comparator = info.getComparator();
+    
+    Comparator<Run> runComparator = new Comparator<Run>() {
+    
+      @SuppressWarnings("unchecked")
+      public int compare(Run a, Run b) {
+        
+        if (a.isFirstBlock()) {
+          return -1;
+        }
+        if (b.isFirstBlock()) {
+          return 1;
+        }
+        return comparator.compare(a.getLastObject(), b.getLastObject());
+      }
+    };
+    
+    List<Iterable<Run>> runList = new ArrayList<Iterable<Run>>(runPositions.size());
+    for (Long position : runPositions) {
+      Run run = new Run();
+      run.setNextBlockPosition(position + 4);
+      run.setNextBlockLength(getBlockLength(position));
+      runList.add(run);
+    }
+    Merger<Run> merger = new Merger<Run>(runComparator, runList);
+    
+    for (Run selectedRun : merger) {
+      readBlock(selectedRun);
+    }
+    
+    return new Object();
   }
   
   private int getBlockLength(long position) throws Exception {
@@ -193,20 +240,21 @@ class IOManager {
     return raf.readInt();
   }
   
-  private Block readBlock(long position, int length) throws Exception {
+  private void readBlock(Run run) throws Exception {
     
-    Block block = new Block();
-    block.setNextBlockPosition(position + length);
+    long blockPosition = run.getNextBlockPosition();
+    int blockLength = run.getNextBlockLength();
     
     buffer.reset();
-    raf.seek(position);
-    buffer.transferFrom(raf, length);
+    raf.seek(blockPosition);
+    buffer.transferFrom(raf, blockLength);
     
-    int blockEnd = length - 4;
+    int blockEnd = blockLength - 4;
     buffer.setPosition(blockEnd);
-    block.setNextBlockLength(buffer.readInt());
-    buffer.cut(0, blockEnd);
+    run.setNextBlockLength(buffer.readInt());
+    run.setNextBlockPosition(blockPosition + blockLength);
     
+    buffer.cut(0, blockEnd);
     InputStream stream = buffer.getInputStream();
     if (config.isCompress()) {
       stream = new BufferedInputStream(new InflaterInputStream(stream));
@@ -218,8 +266,6 @@ class IOManager {
     for (int i = 0; i < size; i++) {
       array.add(in.readObject());
     }
-    block.setArray(array);
-                                 
-    return block;
+    readQueue.put(array);
   }
 }

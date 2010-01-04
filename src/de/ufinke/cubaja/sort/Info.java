@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.BlockingQueue;
+import java.util.Comparator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
@@ -30,7 +30,8 @@ class Info {
   private int runSize;
   private int blockSize;
   private int maxMergeRuns;
-  private BlockingQueue<Block> blockQueue;
+  @SuppressWarnings("rawtypes")
+  private Comparator comparator;
   
   public Info() {
     
@@ -107,14 +108,16 @@ class Info {
     
     return maxMergeRuns;
   }
-  
-  public BlockingQueue<Block> getBlockQueue() {
-  
-    return blockQueue;
-  }
 
-  public void setBlockQueue(BlockingQueue<Block> blockQueue) {
+  @SuppressWarnings("rawtypes")
+  public Comparator getComparator() {
   
-    this.blockQueue = blockQueue;
+    return comparator;
   }
+  
+  @SuppressWarnings("rawtypes")
+  public void setComparator(Comparator comparator) {
+  
+    this.comparator = comparator;
+  }  
 }

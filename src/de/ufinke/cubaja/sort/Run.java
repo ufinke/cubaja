@@ -4,51 +4,63 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
-import de.ufinke.cubaja.util.IteratorException;
 
-class Run implements Iterator<Object>, Iterable<Object>  {
+class Run implements Iterator<Run>, Iterable<Run> {
 
-  private Info info;
-  private Block block;
-  private Object[] array;
-  private int size;
-  private int position;
-  
-  public Run(Info info, Block block) {
-    
-    this.info = info;
-    this.block = block;
-    
-    initArray();
+  private long nextBlockPosition;
+  private int nextBlockLength;
+  private Object lastObject;
+  private boolean firstBlock;
+
+  public Run() {
+
+    firstBlock = true;
+  }
+
+  public void setLastObject(Object lastObject) {
+
+    this.lastObject = lastObject;
+    firstBlock = false;
   }
   
-  private void initArray() {
+  public Object getLastObject() {
     
-    SortArray sortArray = block.getArray();
-    array = sortArray.getArray();
-    size = sortArray.getSize();
-    position = 0;
+    return lastObject;
+  }
+  
+  public boolean isFirstBlock() {
+    
+    return firstBlock;
+  }
+
+  public long getNextBlockPosition() {
+
+    return nextBlockPosition;
+  }
+
+  public void setNextBlockPosition(long nextBlockPosition) {
+
+    this.nextBlockPosition = nextBlockPosition;
+  }
+
+  public int getNextBlockLength() {
+
+    return nextBlockLength;
+  }
+
+  public void setNextBlockLength(int nextBlockLength) {
+
+    this.nextBlockLength = nextBlockLength;
   }
 
   public boolean hasNext() {
-    
-    return position < size || block.getNextBlockLength() > 0;
+
+    return nextBlockLength > 0;
   }
 
-  public Object next() {
+  public Run next() {
 
-    if (position >= size) {
-      try {
-        block = info.getBlockQueue().take();
-      } catch (Exception e) {
-        throw new IteratorException(e);
-      }
-      initArray();
-    }
-    
-    Object result = array[position];
-    array[position++] = null;
-    return result;
+    return this;
   }
 
   public void remove() {
@@ -56,7 +68,7 @@ class Run implements Iterator<Object>, Iterable<Object>  {
     throw new UnsupportedOperationException();
   }
   
-  public Iterator<Object> iterator() {
+  public Iterator<Run> iterator() {
     
     return this;
   }

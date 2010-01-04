@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -45,6 +45,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
     info = new Info();
     info.setConfig(config);
+    info.setComparator(comparator);
     
     if (config.isLog()) {
       stopwatch = new Stopwatch();
@@ -128,58 +129,22 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     isRetrieveState = true;
     
     try {
-      return (ioManager == null) ? createSimpleIterator() : createMergeIterator(); 
+      return createIterator(); 
     } catch (Exception e) {
       throw new IteratorException(e);
     }
   }
   
-  private Iterator<D> createSimpleIterator() {
+  @SuppressWarnings({"unchecked"})
+  private Iterator<D> createIterator() throws Exception {
     
-    sortArray();
-    
-    final Object[] localArray = array.getArray();
-    final int size = array.getSize();
-    
-    return new Iterator<D>() {
-
-      private int position;
-      
-      public boolean hasNext() {
-
-        boolean result = position < size;
-        if (! result) {
-          close();
-        }
-        return result;
-      }
-
-      @SuppressWarnings("unchecked")
-      public D next() {
-
-        return (D) localArray[position++];
-      }
-
-      public void remove() {
-
-        throw new UnsupportedOperationException();
-      }
-    };
-  }
-  
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  private Iterator<D> createMergeIterator() throws Exception {
-    
-    writeRun();
-
-    Merger merger = new Merger(comparator, ioManager.getRuns());
-    final Iterator<Object> mergeIterator = merger.iterator();
+    final Iterator<Object> source = (ioManager == null) ? getSimpleIterator() : getMergeIterator();
     
     return new Iterator<D>() {
 
       public boolean hasNext() {
 
-        boolean result = mergeIterator.hasNext();
+        boolean result = source.hasNext();
         if (! result) {
           close();
         }
@@ -188,7 +153,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
       public D next() {
 
-        return (D) mergeIterator.next();
+        return (D) source.next();
       }
 
       public void remove() {
@@ -196,6 +161,19 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
         throw new UnsupportedOperationException();
       }      
     };
+  }
+  
+  private Iterator<Object> getSimpleIterator() {
+    
+    sortArray();
+    return array;
+  }
+  
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private Iterator<Object> getMergeIterator() throws Exception {
+    
+    writeRun();
+    return new Merger(comparator, ioManager.getRuns()).iterator();
   }
   
   void close() throws IteratorException {
