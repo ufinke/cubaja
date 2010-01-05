@@ -5,15 +5,21 @@ package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.IteratorException;
 
-class SortArray implements Iterator<Object> {
+class SortArray implements Iterator<Object>, Iterable<Object> {
 
+  static private Log logger = LogFactory.getLog(SortArray.class);
+  
   private Object[] array;
   private int size;
   private int position;
   private boolean followUp;
   private BlockingQueue<SortArray> queue;
+  private Info info;
+  private int blockCount;
   
   public SortArray(int capacity) {
     
@@ -63,6 +69,14 @@ class SortArray implements Iterator<Object> {
     
     return array;
   }
+  
+  public Object getLastEntry() {
+    
+    if (size == 0) {
+      return null;
+    }
+    return array[size - 1];
+  }
 
   public void setFollowUp(boolean followUp) {
     
@@ -72,6 +86,16 @@ class SortArray implements Iterator<Object> {
   public boolean hasFollowUp() {
     
     return followUp;
+  }
+  
+  public void setInfo(Info info) {
+    
+    this.info = info;
+  }
+  
+  public void setBlockCount(int blockCount) {
+    
+    this.blockCount = blockCount;
   }
 
   public boolean hasNext() {
@@ -84,6 +108,9 @@ class SortArray implements Iterator<Object> {
     if (position == size) {
       try {
         SortArray nextArray = queue.take();
+        if (nextArray.info.getConfig().isLog()) {
+          logger.trace("consuming block " + nextArray.blockCount);
+        }
         array = nextArray.getArray();
         size = nextArray.getSize();
         position = 0;
@@ -101,5 +128,10 @@ class SortArray implements Iterator<Object> {
   public void remove() {
 
     throw new UnsupportedOperationException();
+  }
+  
+  public Iterator<Object> iterator() {
+    
+    return this;
   }
 }

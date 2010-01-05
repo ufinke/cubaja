@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -28,6 +29,7 @@ import java.util.zip.InflaterInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.io.RandomAccessBuffer;
+import de.ufinke.cubaja.util.IteratorException;
 import de.ufinke.cubaja.util.Stopwatch;
 import de.ufinke.cubaja.util.Text;
 
@@ -35,6 +37,94 @@ class IOManager {
 
   static private Log logger = LogFactory.getLog(IOManager.class);
   static private Text text = new Text(IOManager.class);
+  
+  static private class Run implements Iterator<RunCompareInfo>, Iterable<RunCompareInfo> {
+
+    private IOManager ioManager;
+    private long nextBlockPosition;
+    private int nextBlockLength;
+    private Object lastObject;
+    private boolean firstBlock;
+
+    Run(IOManager ioManager) {
+
+      this.ioManager = ioManager;
+      firstBlock = true;
+    }
+
+    public void setLastObject(Object lastObject) {
+
+      this.lastObject = lastObject;
+      firstBlock = false;
+    }
+    
+    public long getNextBlockPosition() {
+
+      return nextBlockPosition;
+    }
+
+    public void setNextBlockPosition(long nextBlockPosition) {
+
+      this.nextBlockPosition = nextBlockPosition;
+    }
+
+    public int getNextBlockLength() {
+
+      return nextBlockLength;
+    }
+
+    public void setNextBlockLength(int nextBlockLength) {
+
+      this.nextBlockLength = nextBlockLength;
+    }
+
+    public boolean hasNext() {
+
+      return nextBlockLength > 0;
+    }
+
+    public RunCompareInfo next() {
+
+      try {
+        ioManager.readBlock(this);
+      } catch (Exception e) {
+        throw new IteratorException(e);
+      } 
+      return new RunCompareInfo(lastObject, firstBlock);
+    }
+
+    public void remove() {
+
+      throw new UnsupportedOperationException();
+    }
+    
+    public Iterator<RunCompareInfo> iterator() {
+      
+      return this;
+    }
+  }
+  
+  static private class RunCompareInfo {
+
+    private Object object;
+    private boolean firstBlock;
+    
+    public RunCompareInfo(Object object, boolean firstBlock) {
+    
+      this.object = object;
+      this.firstBlock = firstBlock;
+    }
+    
+    public Object getObject() {
+    
+      return object;
+    }
+
+    public boolean isFirstBlock() {
+    
+      return firstBlock;
+    }
+  }
   
   private Info info;
   private SortConfig config;
@@ -51,6 +141,7 @@ class IOManager {
   private List<Long> runPositions;
   private BlockingQueue<SortArray> readQueue;
   private Future<Object> readRunFuture;
+  private int blockCount;
   
   public IOManager(Info info) throws Exception {
     
@@ -178,8 +269,12 @@ class IOManager {
     
     writeRunFuture.get();
 
+    if (config.isLog()) {
+      logger.debug(text.get("sortSwitch", info.id()));
+    }
+    
     int runs = runPositions.size();
-    int capacity = runs + runs / 2;
+    int capacity = runs / 2 + 2;
     readQueue = new ArrayBlockingQueue<SortArray>(capacity);
     
     Callable<Object> readCallable = new Callable<Object>() {
@@ -203,10 +298,10 @@ class IOManager {
     
     final Comparator comparator = info.getComparator();
     
-    Comparator<Run> runComparator = new Comparator<Run>() {
+    Comparator<RunCompareInfo> runComparator = new Comparator<RunCompareInfo>() {
     
       @SuppressWarnings("unchecked")
-      public int compare(Run a, Run b) {
+      public int compare(RunCompareInfo a, RunCompareInfo b) {
         
         if (a.isFirstBlock()) {
           return -1;
@@ -214,21 +309,22 @@ class IOManager {
         if (b.isFirstBlock()) {
           return 1;
         }
-        return comparator.compare(a.getLastObject(), b.getLastObject());
+        return comparator.compare(a.getObject(), b.getObject());
       }
     };
     
-    List<Iterable<Run>> runList = new ArrayList<Iterable<Run>>(runPositions.size());
+    List<Iterable<RunCompareInfo>> runList = new ArrayList<Iterable<RunCompareInfo>>(runPositions.size());
     for (Long position : runPositions) {
-      Run run = new Run();
+      Run run = new Run(this);
       run.setNextBlockPosition(position + 4);
       run.setNextBlockLength(getBlockLength(position));
       runList.add(run);
     }
-    Merger<Run> merger = new Merger<Run>(runComparator, runList);
-    
-    for (Run selectedRun : merger) {
-      readBlock(selectedRun);
+    Merger<RunCompareInfo> merger = new Merger<RunCompareInfo>(runComparator, runList);
+
+    Iterator<RunCompareInfo> iterator = merger.iterator();
+    while (iterator.hasNext()) {      
+      iterator.next();
     }
     
     return new Object();
@@ -240,21 +336,26 @@ class IOManager {
     return raf.readInt();
   }
   
-  private void readBlock(Run run) throws Exception {
+  void readBlock(Run run) throws Exception {
     
     long blockPosition = run.getNextBlockPosition();
     int blockLength = run.getNextBlockLength();
+    if (config.isLog()) {
+      blockCount++;
+      logger.trace("reading block " + blockCount + " at position " + blockPosition + " with length " + blockLength);
+    }
+    long nextPosition = blockPosition + blockLength;
     
-    buffer.reset();
     raf.seek(blockPosition);
+    buffer.reset();
     buffer.transferFrom(raf, blockLength);
     
     int blockEnd = blockLength - 4;
     buffer.setPosition(blockEnd);
-    run.setNextBlockLength(buffer.readInt());
-    run.setNextBlockPosition(blockPosition + blockLength);
-    
+    int nextLength = buffer.readInt();
     buffer.cut(0, blockEnd);
+    
+    buffer.setPosition(0);
     InputStream stream = buffer.getInputStream();
     if (config.isCompress()) {
       stream = new BufferedInputStream(new InflaterInputStream(stream));
@@ -262,10 +363,17 @@ class IOManager {
     ObjectInputStream in = new ObjectInputStream(stream);
 
     int size = in.readInt();
-    SortArray array = new SortArray(in.readInt());
+    SortArray array = new SortArray(size);
     for (int i = 0; i < size; i++) {
       array.add(in.readObject());
     }
+    array.setFollowUp(nextLength > 0);
+    array.setInfo(info);
+    array.setBlockCount(blockCount);
     readQueue.put(array);
+    
+    run.setNextBlockPosition(nextPosition);
+    run.setNextBlockLength(nextLength);
+    run.setLastObject(array.getLastEntry());
   }
 }
