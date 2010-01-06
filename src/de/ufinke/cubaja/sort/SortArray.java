@@ -5,21 +5,15 @@ package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.IteratorException;
 
 class SortArray implements Iterator<Object>, Iterable<Object> {
 
-  static private Log logger = LogFactory.getLog(SortArray.class);
-  
   private Object[] array;
   private int size;
   private int position;
   private boolean followUp;
   private BlockingQueue<SortArray> queue;
-  private Info info;
-  private int blockCount;
   
   public SortArray(int capacity) {
     
@@ -88,16 +82,6 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     return followUp;
   }
   
-  public void setInfo(Info info) {
-    
-    this.info = info;
-  }
-  
-  public void setBlockCount(int blockCount) {
-    
-    this.blockCount = blockCount;
-  }
-
   public boolean hasNext() {
 
     return position < size || followUp;
@@ -108,9 +92,6 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     if (position == size) {
       try {
         SortArray nextArray = queue.take();
-        if (nextArray.info.getConfig().isLog()) {
-          logger.trace("consuming block " + nextArray.blockCount);
-        }
         array = nextArray.getArray();
         size = nextArray.getSize();
         position = 0;

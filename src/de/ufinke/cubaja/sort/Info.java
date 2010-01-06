@@ -10,12 +10,11 @@ import de.ufinke.cubaja.util.Text;
 
 class Info {
 
-  static final int BYTES_PER_BLOCK = 1024 * 256;
+  static final int BYTES_PER_BLOCK = 1024 * 72;
   static final int PROBE_SIZE = 1000;
   static final int MINIMUM_RUN_SIZE = 1000;
   
   static private Text text = new Text(Sorter.class);
-  static private Log logger = LogFactory.getLog(Sorter.class);
   
   static private int id = 0;
   
@@ -25,6 +24,8 @@ class Info {
   }
 
   private int myId;
+  private String logPrefix;
+  private Log logger;
   
   private SortConfig config;
   private int runSize;
@@ -51,15 +52,44 @@ class Info {
   public void setConfig(SortConfig config) {
   
     this.config = config;
+    
+    if (config.isLog()) {
+      logger = LogFactory.getLog(Sorter.class);
+      logPrefix = "Sort#" + myId + ": ";
+    }
   }
+  
+  public boolean isTrace() {
+    
+    return logger != null && logger.isTraceEnabled();
+  }
+  
+  public boolean isDebug() {
+    
+    return logger != null && logger.isDebugEnabled();
+  }
+  
+  public void trace(String key, Object... parm) {
+    
+    if (isTrace()) {
+      logger.trace(logPrefix + text.get(key, parm));
+    }
+  }
+  
+  public void debug(String key, Object... parm) {
 
+    if (isDebug()) {
+      logger.debug(logPrefix + text.get(key, parm));
+    }
+  }
+  
   public void calculateSizes(int bufferSize) {
 
     int recordsPerRun = config.getRecordsPerRun();
     int recordsPerBlock = config.getRecordsPerBlock();
     
-    long availableMemory = Runtime.getRuntime().maxMemory() / 4;
-    long calculatedRunSize = availableMemory * PROBE_SIZE / bufferSize;
+    long availableMemory = Runtime.getRuntime().maxMemory() / 6;
+    long calculatedRunSize = Math.min(availableMemory * PROBE_SIZE / bufferSize, 250000);
     if (calculatedRunSize > Integer.MAX_VALUE) {
       calculatedRunSize = Integer.MAX_VALUE;
     }
@@ -88,9 +118,9 @@ class Info {
     maxMergeRuns = runSize / blockSize;
     
     if (config.isLog()) {
-      logger.debug(text.get("calcSizes", id, text.get("calcConfig"), recordsPerRun, recordsPerBlock));
-      logger.debug(text.get("calcSizes", id, text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize));
-      logger.debug(text.get("calcSizes", id, text.get("calcEffective"), runSize, blockSize));
+      debug("calcSizes", id, text.get("calcConfig"), recordsPerRun, recordsPerBlock);
+      debug("calcSizes", id, text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize);
+      debug("calcSizes", id, text.get("calcEffective"), runSize, blockSize);
     }
   }
 

@@ -8,8 +8,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.Timer;
+import java.util.TimerTask;
 import de.ufinke.cubaja.util.IteratorException;
 import de.ufinke.cubaja.util.Stopwatch;
 import de.ufinke.cubaja.util.Text;
@@ -17,10 +17,8 @@ import de.ufinke.cubaja.util.Text;
 public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private Text text = new Text(Sorter.class);
-  static private Log logger = LogFactory.getLog(Sorter.class);
-
-  private Info info;
-  private SortConfig config;
+  
+  Info info;
   private Stopwatch stopwatch;
   
   private Comparator<? super D> comparator;
@@ -30,8 +28,11 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private boolean isRetrieveState;
   
   private SortArray array;
-  private long count;
   private IOManager ioManager;
+  
+  long putCount;
+  long getCount;
+  private Timer timer;
   
   public Sorter(Comparator<? super D> comparator) {
     
@@ -41,15 +42,17 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
   
     this.comparator = comparator;
-    this.config = config;
 
     info = new Info();
     info.setConfig(config);
     info.setComparator(comparator);
     
-    if (config.isLog()) {
+    if (info.isDebug()) {
       stopwatch = new Stopwatch();
-      logger.debug(text.get("sortOpen", info.id()));
+      info.debug("sortOpen");
+      if (info.isTrace()) {
+        createTimer(createPutTimerTask());
+      }
     }
     
     algorithm = config.getAlgorithm();
@@ -76,6 +79,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     
     array.add(element);
+    putCount++;
   }
   
   private void writeRun() throws Exception {
@@ -95,15 +99,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private void sortArray() {
     
-    Stopwatch watch = new Stopwatch();
-    
     algorithm.sort(array.getArray(), array.getSize());    
-    count += array.getSize();
-    
-    if (config.isLog()) {
-      long elapsed = watch.elapsedMillis();
-      logger.trace(text.get("arraySorted", info.id(), array.getSize(), elapsed));
-    }
   }
   
   private void calculateSizes() throws Exception {
@@ -127,6 +123,10 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   public Iterator<D> iterator() {
 
     isRetrieveState = true;
+
+    if (info.isTrace()) {
+      timer.cancel();
+    }
     
     try {
       return createIterator(); 
@@ -153,6 +153,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
       public D next() {
 
+        getCount++;
         return (D) source.next();
       }
 
@@ -166,6 +167,14 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private Iterator<Object> getSimpleIterator() {
     
     sortArray();
+    
+    if (info.isDebug()) {
+      info.debug("sortSwitch", putCount, 0 , 0);
+      if (info.isTrace()) {
+        createTimer(createGetTimerTask());
+      }
+    }
+    
     return array;
   }
   
@@ -173,6 +182,15 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private Iterator<Object> getMergeIterator() throws Exception {
     
     writeRun();
+    ioManager.finishWrite();
+    
+    if (info.isDebug()) {
+      info.debug("sortSwitch", putCount, ioManager.getRunCount(), ioManager.getFileSize());
+      if (info.isTrace()) {
+        createTimer(createGetTimerTask());
+      }
+    }
+    
     return new Merger(comparator, ioManager.getRuns()).iterator();
   }
   
@@ -187,9 +205,37 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       ioManager = null;
     }
     
-    if (config.isLog()) {
+    if (info.isDebug()) {
+      if (info.isTrace()) {
+        timer.cancel();
+      }
       long time = stopwatch.elapsedMillis();
-      logger.debug(text.get("sortClose", info.id(), count, stopwatch.format(time)));
+      info.debug("sortClose", getCount, stopwatch.format(time));
     }
+  }
+  
+  private TimerTask createPutTimerTask() {
+    
+    return new TimerTask() {
+      public void run() {
+        info.trace("sortPut", putCount);
+      }
+    };
+  }
+  
+  private TimerTask createGetTimerTask() {
+    
+    return new TimerTask() {
+      public void run() {
+        info.trace("sortGet", getCount);
+      }
+    };
+  }
+
+  private void createTimer(TimerTask task) {
+    
+    long millis = info.getConfig().getLogInterval() * 1000;
+    timer = new Timer();
+    timer.schedule(task, millis, millis);
   }
 }

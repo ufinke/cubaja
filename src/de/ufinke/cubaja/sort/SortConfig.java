@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -12,6 +12,7 @@ public class SortConfig {
   private SortAlgorithm algorithm;
   
   private boolean log;
+  private int logInterval;
   
   private String workDirectory;
   private String filePrefix;
@@ -97,6 +98,19 @@ public class SortConfig {
   public void setLog(boolean log) {
 
     this.log = log;
+  }
+
+  public int getLogInterval() {
+
+    if (logInterval == 0) {
+      logInterval = 60;
+    }
+    return logInterval;
+  }
+  
+  public void setLogInterval(int logInterval) {
+  
+    this.logInterval = logInterval;
   }
 
 }

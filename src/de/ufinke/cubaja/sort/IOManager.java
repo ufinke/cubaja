@@ -26,18 +26,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.io.RandomAccessBuffer;
 import de.ufinke.cubaja.util.IteratorException;
-import de.ufinke.cubaja.util.Stopwatch;
-import de.ufinke.cubaja.util.Text;
 
 class IOManager {
 
-  static private Log logger = LogFactory.getLog(IOManager.class);
-  static private Text text = new Text(IOManager.class);
-  
   static private class Run implements Iterator<RunCompareInfo>, Iterable<RunCompareInfo> {
 
     private IOManager ioManager;
@@ -141,7 +134,6 @@ class IOManager {
   private List<Long> runPositions;
   private BlockingQueue<SortArray> readQueue;
   private Future<Object> readRunFuture;
-  private int blockCount;
   
   public IOManager(Info info) throws Exception {
     
@@ -218,8 +210,6 @@ class IOManager {
     
     SortArray array = writeQueue.take();
     
-    Stopwatch watch = new Stopwatch();
-
     runPositions.add(raf.getFilePointer());
     
     int startIndex = 0;
@@ -230,11 +220,6 @@ class IOManager {
     }
     
     raf.writeInt(0);
-    
-    if (config.isLog()) {
-      long elapsed = watch.elapsedMillis();
-      logger.trace(text.get("runWritten", info.id(), array.getSize(), elapsed, runPositions.size()));
-    }
     
     array.clear();    
     return array;
@@ -265,16 +250,25 @@ class IOManager {
     buffer.drainTo(raf);
   }
   
-  public List<SortArray> getRuns() throws Exception {
+  public void finishWrite() throws Exception {
     
     writeRunFuture.get();
-
-    if (config.isLog()) {
-      logger.debug(text.get("sortSwitch", info.id()));
-    }
+  }
+  
+  public int getRunCount() {
     
+    return runPositions.size();
+  }
+  
+  public long getFileSize() throws Exception {
+    
+    return raf.getFilePointer();
+  }
+  
+  public List<SortArray> getRuns() throws Exception {
+
     int runs = runPositions.size();
-    int capacity = runs / 2 + 2;
+    int capacity = Math.max(runs / 2, 2);
     readQueue = new ArrayBlockingQueue<SortArray>(capacity);
     
     Callable<Object> readCallable = new Callable<Object>() {
@@ -340,10 +334,6 @@ class IOManager {
     
     long blockPosition = run.getNextBlockPosition();
     int blockLength = run.getNextBlockLength();
-    if (config.isLog()) {
-      blockCount++;
-      logger.trace("reading block " + blockCount + " at position " + blockPosition + " with length " + blockLength);
-    }
     long nextPosition = blockPosition + blockLength;
     
     raf.seek(blockPosition);
@@ -368,8 +358,6 @@ class IOManager {
       array.add(in.readObject());
     }
     array.setFollowUp(nextLength > 0);
-    array.setInfo(info);
-    array.setBlockCount(blockCount);
     readQueue.put(array);
     
     run.setNextBlockPosition(nextPosition);
