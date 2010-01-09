@@ -87,8 +87,11 @@ class Info {
 
     int recordsPerRun = config.getRecordsPerRun();
     int recordsPerBlock = config.getRecordsPerBlock();
+    int runsPerMerge = config.getRunsPerMerge();
     
-    long availableMemory = Runtime.getRuntime().maxMemory() / 6;
+    long maxMemory = Runtime.getRuntime().maxMemory();
+    
+    long availableMemory = maxMemory / 6;
     long calculatedRunSize = Math.min(availableMemory * PROBE_SIZE / bufferSize, 250000);
     if (calculatedRunSize > Integer.MAX_VALUE) {
       calculatedRunSize = Integer.MAX_VALUE;
@@ -115,12 +118,23 @@ class Info {
       blockSize = runSize / 2;
     }
     
-    maxMergeRuns = runSize / blockSize;
+    long calculatedMaxMergeRuns = maxMemory / 3 * blockSize / PROBE_SIZE / bufferSize;
+    if (calculatedMaxMergeRuns > Integer.MAX_VALUE) {
+      calculatedMaxMergeRuns = Integer.MAX_VALUE;
+    }
+    if (runsPerMerge > 0) {
+      maxMergeRuns = runsPerMerge;
+    } else {
+      maxMergeRuns = (int) calculatedMaxMergeRuns;
+    }
+    if (maxMergeRuns < 2) {
+      maxMergeRuns = 2;
+    }
     
     if (config.isLog()) {
-      debug("calcSizes", id, text.get("calcConfig"), recordsPerRun, recordsPerBlock);
-      debug("calcSizes", id, text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize);
-      debug("calcSizes", id, text.get("calcEffective"), runSize, blockSize);
+      debug("calcSizes", text.get("calcConfig"), recordsPerRun, recordsPerBlock, runsPerMerge);
+      debug("calcSizes", text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize, calculatedMaxMergeRuns);
+      debug("calcSizes", text.get("calcEffective"), runSize, blockSize, maxMergeRuns);
     }
   }
 

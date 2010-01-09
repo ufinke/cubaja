@@ -9,11 +9,14 @@ import de.ufinke.cubaja.util.IteratorException;
 
 class SortArray implements Iterator<Object>, Iterable<Object> {
 
+  static int id = 0;
+  
   private Object[] array;
   private int size;
   private int position;
   private boolean followUp;
   private BlockingQueue<SortArray> queue;
+  private int myId;
   
   public SortArray(int capacity) {
     
@@ -30,6 +33,7 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     
     this.queue = queue;
     followUp = true;
+    myId = ++id;
   }
   
   public void enlarge(int newCapacity) {
@@ -88,7 +92,7 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
   }
 
   public Object next() {
-
+    
     if (position == size) {
       try {
         SortArray nextArray = queue.take();
@@ -96,6 +100,7 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
         size = nextArray.getSize();
         position = 0;
         followUp = nextArray.followUp;
+        System.out.println("array " + myId + ": " + getLastEntry());
       } catch (Exception e) {
         throw new IteratorException(e);
       }
@@ -105,7 +110,7 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     array[position++] = null;
     return result;
   }
-
+  
   public void remove() {
 
     throw new UnsupportedOperationException();

@@ -7,6 +7,7 @@ public class SortConfig {
 
   private int recordsPerRun;
   private int recordsPerBlock;
+  private int runsPerMerge;
   
   private boolean compress;
   private SortAlgorithm algorithm;
@@ -80,6 +81,16 @@ public class SortConfig {
     this.recordsPerBlock = recordsPerBlock;
   }
   
+  public int getRunsPerMerge() {
+  
+    return runsPerMerge;
+  }
+  
+  public void setRunsPerMerge(int runsPerMerge) {
+  
+    this.runsPerMerge = runsPerMerge;
+  }
+
   public boolean isCompress() {
 
     return compress;
