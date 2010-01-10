@@ -4,8 +4,6 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
-import java.util.concurrent.BlockingQueue;
-import de.ufinke.cubaja.util.IteratorException;
 
 class SortArray implements Iterator<Object>, Iterable<Object> {
 
@@ -14,9 +12,6 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
   private Object[] array;
   private int size;
   private int position;
-  private boolean followUp;
-  private BlockingQueue<SortArray> queue;
-  private int myId;
   
   public SortArray(int capacity) {
     
@@ -27,13 +22,6 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     
     this.array = array;
     size = array.length;
-  }
-  
-  public SortArray(BlockingQueue<SortArray> queue) {
-    
-    this.queue = queue;
-    followUp = true;
-    myId = ++id;
   }
   
   public void enlarge(int newCapacity) {
@@ -68,43 +56,12 @@ class SortArray implements Iterator<Object>, Iterable<Object> {
     return array;
   }
   
-  public Object getLastEntry() {
-    
-    if (size == 0) {
-      return null;
-    }
-    return array[size - 1];
-  }
-
-  public void setFollowUp(boolean followUp) {
-    
-    this.followUp = followUp;
-  }
-  
-  public boolean hasFollowUp() {
-    
-    return followUp;
-  }
-  
   public boolean hasNext() {
 
-    return position < size || followUp;
+    return position < size;
   }
 
   public Object next() {
-    
-    if (position == size) {
-      try {
-        SortArray nextArray = queue.take();
-        array = nextArray.getArray();
-        size = nextArray.getSize();
-        position = 0;
-        followUp = nextArray.followUp;
-        System.out.println("array " + myId + ": " + getLastEntry());
-      } catch (Exception e) {
-        throw new IteratorException(e);
-      }
-    }
     
     Object result = array[position];
     array[position++] = null;

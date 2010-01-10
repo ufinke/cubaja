@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
@@ -27,21 +27,26 @@ class Info {
   private String logPrefix;
   private Log logger;
   
+  private AtomicInteger sync;
   private SortConfig config;
   private int runSize;
   private int blockSize;
   private int maxMergeRuns;
-  @SuppressWarnings("rawtypes")
-  private Comparator comparator;
   
   public Info() {
     
     myId = getId();
+    sync = new AtomicInteger();
   }
   
   public int id() {
     
     return myId;
+  }
+  
+  public void sync() {
+    
+    sync.incrementAndGet();
   }
     
   public SortConfig getConfig() {
@@ -152,16 +157,4 @@ class Info {
     
     return maxMergeRuns;
   }
-
-  @SuppressWarnings("rawtypes")
-  public Comparator getComparator() {
-  
-    return comparator;
-  }
-  
-  @SuppressWarnings("rawtypes")
-  public void setComparator(Comparator comparator) {
-  
-    this.comparator = comparator;
-  }  
 }

@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.atomic.AtomicLong;
 import de.ufinke.cubaja.util.IteratorException;
 import de.ufinke.cubaja.util.Stopwatch;
 import de.ufinke.cubaja.util.Text;
@@ -18,7 +19,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private Text text = new Text(Sorter.class);
   
-  Info info;
+  volatile Info info;
   private Stopwatch stopwatch;
   
   private Comparator<? super D> comparator;
@@ -27,11 +28,11 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private boolean isCalculated;
   private boolean isRetrieveState;
   
-  private SortArray array;
+  private volatile SortArray array;
   private IOManager ioManager;
   
-  long putCount;
-  long getCount;
+  AtomicLong putCount;
+  AtomicLong getCount;
   private Timer timer;
   
   public Sorter(Comparator<? super D> comparator) {
@@ -45,7 +46,6 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
     info = new Info();
     info.setConfig(config);
-    info.setComparator(comparator);
     
     if (info.isDebug()) {
       stopwatch = new Stopwatch();
@@ -59,6 +59,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     algorithm.setComparator(comparator);
     
     array = new SortArray(Info.PROBE_SIZE);
+    
+    putCount = new AtomicLong();
+    getCount = new AtomicLong();
   }
   
   public void add(D element) throws Exception {
@@ -79,7 +82,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     
     array.add(element);
-    putCount++;
+    putCount.incrementAndGet();
   }
   
   private void writeRun() throws Exception {
@@ -94,7 +97,11 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       ioManager = new IOManager(info);
     }
     
+    info.sync();
+    
     array = ioManager.writeRun(array);
+    
+    info.sync();
   }
   
   private void sortArray() {
@@ -153,7 +160,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
       public D next() {
 
-        getCount++;
+        getCount.incrementAndGet();
         return (D) source.next();
       }
 
@@ -181,6 +188,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   @SuppressWarnings({"unchecked", "rawtypes"})
   private Iterator<Object> getMergeIterator() throws Exception {
     
+    info.sync();
+    
     writeRun();
     ioManager.finishWrite();
     
@@ -191,7 +200,11 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
       }
     }
     
-    return new Merger(comparator, ioManager.getRuns()).iterator();
+    Iterator<Object> merger = new Merger(comparator, ioManager.getRuns()).iterator();
+    
+    info.sync();
+    
+    return merger;
   }
   
   void close() throws IteratorException {
@@ -218,7 +231,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     return new TimerTask() {
       public void run() {
-        info.trace("sortPut", putCount);
+        info.trace("sortPut", putCount.get());
       }
     };
   }
@@ -227,7 +240,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     return new TimerTask() {
       public void run() {
-        info.trace("sortGet", getCount);
+        info.trace("sortGet", getCount.get());
       }
     };
   }
