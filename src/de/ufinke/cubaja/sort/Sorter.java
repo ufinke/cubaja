@@ -82,7 +82,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     
     array.add(element);
-    putCount.incrementAndGet();
+    //putCount.incrementAndGet();
   }
   
   private void writeRun() throws Exception {
@@ -160,7 +160,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
       public D next() {
 
-        getCount.incrementAndGet();
+        //getCount.incrementAndGet();
         return (D) source.next();
       }
 

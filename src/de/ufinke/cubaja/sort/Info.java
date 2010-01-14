@@ -3,16 +3,19 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
+import java.util.*;
 
 class Info {
 
-  static final int BYTES_PER_BLOCK = 1024 * 72;
-  static final int PROBE_SIZE = 1000;
-  static final int MINIMUM_RUN_SIZE = 1000;
+  static private final int DEFAULT_RUN_SIZE = 1024 * 128;
+  static private final int MINIMUM_RUN_SIZE = 1024;
+  static private final int MAX_ARRAY_SIZE = 1024 * 16;
+  static private final int DEFAULT_BLOCK_SIZE = 1024 * 32;
+  static private final int MINIMUM_BLOCK_SIZE = 1024 * 8;
   
   static private Text text = new Text(Sorter.class);
   
@@ -27,16 +30,22 @@ class Info {
   private String logPrefix;
   private Log logger;
   
-  private AtomicInteger sync;
   private SortConfig config;
+  @SuppressWarnings("rawtypes")
+  private Comparator comparator;
+  
   private int runSize;
+  private int arraySize;
+  private int arrayCount;
   private int blockSize;
-  private int maxMergeRuns;
+  
+  private volatile Throwable error;
+  
+  private BlockingQueue<Request> sortQueue;
   
   public Info() {
     
     myId = getId();
-    sync = new AtomicInteger();
   }
   
   public int id() {
@@ -44,11 +53,6 @@ class Info {
     return myId;
   }
   
-  public void sync() {
-    
-    sync.incrementAndGet();
-  }
-    
   public SortConfig getConfig() {
   
     return config;
@@ -62,6 +66,48 @@ class Info {
       logger = LogFactory.getLog(Sorter.class);
       logPrefix = "Sort#" + myId + ": ";
     }
+    
+    blockSize = config.getBlockSize();
+    if (blockSize == 0) {
+      blockSize = DEFAULT_BLOCK_SIZE;
+    }
+    if (blockSize < MINIMUM_BLOCK_SIZE) {
+      blockSize = MINIMUM_BLOCK_SIZE;
+    }
+    
+    runSize = config.getRunSize();
+    if (runSize == 0) {
+      runSize = DEFAULT_RUN_SIZE;
+    }
+    if (runSize < MINIMUM_RUN_SIZE) {
+      runSize = MINIMUM_RUN_SIZE;
+    }
+    
+    arrayCount = 1;
+    arraySize = runSize;
+    while (arraySize > MAX_ARRAY_SIZE) {
+      arraySize = arraySize >> 1;
+      arrayCount = arrayCount << 1;
+    }
+    
+    int queueCapacity = (arraySize >> 1) + (arraySize >> 2);
+    if (queueCapacity == 0) {
+      queueCapacity = 1;
+    }
+    
+    sortQueue = new ArrayBlockingQueue<Request>(queueCapacity);
+  }
+  
+  @SuppressWarnings("rawtypes")
+  public Comparator getComparator() {
+    
+    return comparator;
+  }
+  
+  @SuppressWarnings("rawtypes")
+  public void setComparator(Comparator comparator) {
+    
+    this.comparator = comparator;
   }
   
   public boolean isTrace() {
@@ -88,73 +134,28 @@ class Info {
     }
   }
   
-  public void calculateSizes(int bufferSize) {
-
-    int recordsPerRun = config.getRecordsPerRun();
-    int recordsPerBlock = config.getRecordsPerBlock();
-    int runsPerMerge = config.getRunsPerMerge();
+  public void setError(Throwable error) {
     
-    long maxMemory = Runtime.getRuntime().maxMemory();
-    
-    long availableMemory = maxMemory / 6;
-    long calculatedRunSize = Math.min(availableMemory * PROBE_SIZE / bufferSize, 250000);
-    if (calculatedRunSize > Integer.MAX_VALUE) {
-      calculatedRunSize = Integer.MAX_VALUE;
-    }
-    if (recordsPerRun > 0) {
-      runSize = recordsPerRun;
-    } else {
-      runSize = (int) calculatedRunSize;
-    }
-    if (runSize < MINIMUM_RUN_SIZE) {
-      runSize = MINIMUM_RUN_SIZE;
-    }
-    
-    int calculatedBlockSize = BYTES_PER_BLOCK * PROBE_SIZE / bufferSize;
-    if (recordsPerBlock > 0) {
-      blockSize = recordsPerBlock;
-    } else {
-      blockSize = calculatedBlockSize;
-    }
-    if (blockSize < (MINIMUM_RUN_SIZE / 2)) {
-      blockSize = MINIMUM_RUN_SIZE / 2;
-    }
-    if (blockSize > (runSize / 2)) {
-      blockSize = runSize / 2;
-    }
-    
-    long calculatedMaxMergeRuns = maxMemory / 3 * blockSize / PROBE_SIZE / bufferSize;
-    if (calculatedMaxMergeRuns > Integer.MAX_VALUE) {
-      calculatedMaxMergeRuns = Integer.MAX_VALUE;
-    }
-    if (runsPerMerge > 0) {
-      maxMergeRuns = runsPerMerge;
-    } else {
-      maxMergeRuns = (int) calculatedMaxMergeRuns;
-    }
-    if (maxMergeRuns < 2) {
-      maxMergeRuns = 2;
-    }
-    
-    if (config.isLog()) {
-      debug("calcSizes", text.get("calcConfig"), recordsPerRun, recordsPerBlock, runsPerMerge);
-      debug("calcSizes", text.get("calcRecommend"), calculatedRunSize, calculatedBlockSize, calculatedMaxMergeRuns);
-      debug("calcSizes", text.get("calcEffective"), runSize, blockSize, maxMergeRuns);
+    if (this.error == null) {
+      if (logger != null) {
+        logger.error(text.get("sorterException"), error);
+      }
+      this.error = error;
     }
   }
-
-  public int getRunSize() {
   
-    return runSize;
-  }
-  
-  public int getBlockSize() {
-  
-    return blockSize;
-  }
-  
-  public int getMaxMergeRuns() {
+  public boolean hasError() {
     
-    return maxMergeRuns;
+    return error != null;
+  }
+  
+  public Throwable getError() {
+    
+    return error;
+  }
+  
+  public BlockingQueue<Request> getSortQueue() {
+    
+    return sortQueue;
   }
 }

@@ -5,11 +5,8 @@ package de.ufinke.cubaja.sort;
 
 public class SortConfig {
 
-  private int recordsPerRun;
-  private int recordsPerBlock;
-  private int runsPerMerge;
-  
-  private boolean compress;
+  private int runSize;
+  private int blockSize;
   private SortAlgorithm algorithm;
   
   private boolean log;
@@ -61,46 +58,6 @@ public class SortConfig {
     this.filePrefix = filePrefix;
   }
 
-  public int getRecordsPerRun() {
-
-    return recordsPerRun;
-  }
-
-  public void setRecordsPerRun(int recordsPerRun) {
-
-    this.recordsPerRun = recordsPerRun;
-  }
-
-  public int getRecordsPerBlock() {
-
-    return recordsPerBlock;
-  }
-
-  public void setRecordsPerBlock(int recordsPerBlock) {
-
-    this.recordsPerBlock = recordsPerBlock;
-  }
-  
-  public int getRunsPerMerge() {
-  
-    return runsPerMerge;
-  }
-  
-  public void setRunsPerMerge(int runsPerMerge) {
-  
-    this.runsPerMerge = runsPerMerge;
-  }
-
-  public boolean isCompress() {
-
-    return compress;
-  }
-
-  public void setCompress(boolean compress) {
-
-    this.compress = compress;
-  }
-
   public boolean isLog() {
 
     return log;
@@ -122,6 +79,26 @@ public class SortConfig {
   public void setLogInterval(int logInterval) {
   
     this.logInterval = logInterval;
+  }
+
+  public int getRunSize() {
+  
+    return runSize;
+  }
+  
+  public void setRunSize(int runSize) {
+  
+    this.runSize = runSize;
+  }
+  
+  public int getBlockSize() {
+  
+    return blockSize;
+  }
+
+  public void setBlockSize(int blockSize) {
+  
+    this.blockSize = blockSize;
   }
 
 }
