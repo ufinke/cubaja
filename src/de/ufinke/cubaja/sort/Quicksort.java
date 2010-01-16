@@ -14,7 +14,7 @@ public class Quicksort implements SortAlgorithm {
 
   static private final int INSERTION_THRESHOLD = 7;
   
-  private Random random;
+  private final Random random;
   @SuppressWarnings("rawtypes")
   private Comparator comparator;
   
@@ -27,19 +27,21 @@ public class Quicksort implements SortAlgorithm {
   }
   
   @SuppressWarnings("rawtypes")
-  public void setComparator(Comparator comparator) {
+  public void setComparator(final Comparator comparator) {
     
     this.comparator = comparator;
   }
   
-  public void sort(Object[] array, int size) {
+  public void sort(final Object[] array, final int size) {
 
    sort(array, 0, size - 1);
   }
   
-  @SuppressWarnings("unchecked")
-  private void sort(Object[] array, int left, int right) {
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private void sort(final Object[] array, int left, int right) {
   
+   final Comparator comparator = this.comparator;
+   
    while (right > left) {
      
      if ((right - left) <= INSERTION_THRESHOLD) {
@@ -83,14 +85,16 @@ public class Quicksort implements SortAlgorithm {
    
   }
   
-  @SuppressWarnings("unchecked")
-  private void insertionSort(Object[] array, int left, int right) {
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  private void insertionSort(final Object[] array, final int left, final int right) {
+   
+   final Comparator comparator = this.comparator;
    
    int j;
    int i = left + 1;
    
    while (i <= right) {
-     Object temp = array[i];
+     final Object temp = array[i];
      j = i - 1;
      while (j >= left && comparator.compare(temp, array[j]) < 0) {
        array[j + 1] = array[j];
@@ -101,15 +105,15 @@ public class Quicksort implements SortAlgorithm {
    }
   }
   
-  private void findBestPivot(Object[] array, int left, int right) {
+  private void findBestPivot(final Object[] array, final int left, final int right) {
   
-   int median = left + random.nextInt(right - left + 1);
+   final int median = left + random.nextInt(right - left + 1);
    swap(array, right, median);
   }
   
-  private void swap(Object[] array, int a, int b) {
+  private void swap(final Object[] array, final int a, final int b) {
    
-   Object temp = array[a];
+   final Object temp = array[a];
    array[a] = array[b];
    array[b] = temp;
   }

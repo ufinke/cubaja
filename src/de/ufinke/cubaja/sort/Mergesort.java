@@ -25,12 +25,12 @@ public class Mergesort implements SortAlgorithm {
   }
   
   @SuppressWarnings("rawtypes")
-  public void setComparator(Comparator comparator) {
+  public void setComparator(final Comparator comparator) {
     
     this.comparator = comparator;
   }
   
-  public void sort(Object[] array, int size) {
+  public void sort(final Object[] array, final int size) {
 
     if (size == 0) {
       return;
@@ -46,7 +46,11 @@ public class Mergesort implements SortAlgorithm {
   }
   
   @SuppressWarnings("unchecked")
-  private void mergesort(int left, int right) {
+  private void mergesort(final int left, final int right) {
+    
+    
+    final Object[] entries = this.entries;
+    final Object[] temp = this.temp;
     
     if (right <= left) {
       return;
@@ -61,7 +65,7 @@ public class Mergesort implements SortAlgorithm {
       return;
     }
     
-    int middle = (left + right) / 2;
+    final int middle = (left + right) / 2;
     
     mergesort(left, middle);
     mergesort(middle + 1, right);

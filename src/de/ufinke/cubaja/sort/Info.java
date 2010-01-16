@@ -9,15 +9,17 @@ import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
 import java.util.*;
 
-class Info {
+final class Info {
 
   static private final int DEFAULT_RUN_SIZE = 1024 * 128;
   static private final int MINIMUM_RUN_SIZE = 1024;
   static private final int MAX_ARRAY_SIZE = 1024 * 16;
-  static private final int DEFAULT_BLOCK_SIZE = 1024 * 32;
-  static private final int MINIMUM_BLOCK_SIZE = 1024 * 8;
+  // ObjectOutputStream drains after buffer of 1K is filled; 
+  // resulting block to disk is 31K <= block <= 32K
+  static private final int DEFAULT_BLOCK_SIZE = 1024 * 31; 
+  static private final int MINIMUM_BLOCK_SIZE = 1024 * 7;
   
-  static private Text text = new Text(Sorter.class);
+  static private final Text text = new Text(Sorter.class);
   
   static private int id = 0;
   
@@ -48,17 +50,17 @@ class Info {
     myId = getId();
   }
   
-  public int id() {
+  public final int id() {
     
     return myId;
   }
   
-  public SortConfig getConfig() {
+  public final SortConfig getConfig() {
   
     return config;
   }
 
-  public void setConfig(SortConfig config) {
+  public final void setConfig(SortConfig config) {
   
     this.config = config;
     
@@ -90,71 +92,70 @@ class Info {
       arrayCount = arrayCount << 1;
     }
     
-    int queueCapacity = (arraySize >> 1) + (arraySize >> 2);
-    if (queueCapacity == 0) {
-      queueCapacity = 1;
-    }
+    int queueCapacity = (arraySize >> 1) + (arraySize >> 4) + 1;
     
     sortQueue = new ArrayBlockingQueue<Request>(queueCapacity);
   }
   
   @SuppressWarnings("rawtypes")
-  public Comparator getComparator() {
+  public final Comparator getComparator() {
     
     return comparator;
   }
   
   @SuppressWarnings("rawtypes")
-  public void setComparator(Comparator comparator) {
+  public final void setComparator(Comparator comparator) {
     
     this.comparator = comparator;
   }
   
-  public boolean isTrace() {
+  public final boolean isTrace() {
     
+    final Log logger = this.logger;
     return logger != null && logger.isTraceEnabled();
   }
   
-  public boolean isDebug() {
+  public final boolean isDebug() {
     
+    final Log logger = this.logger;
     return logger != null && logger.isDebugEnabled();
   }
   
-  public void trace(String key, Object... parm) {
+  public final void trace(String key, Object... parm) {
     
     if (isTrace()) {
       logger.trace(logPrefix + text.get(key, parm));
     }
   }
   
-  public void debug(String key, Object... parm) {
+  public final void debug(String key, Object... parm) {
 
     if (isDebug()) {
       logger.debug(logPrefix + text.get(key, parm));
     }
   }
   
-  public void setError(Throwable error) {
+  public final void setError(Throwable error) {
     
     if (this.error == null) {
       if (logger != null) {
-        logger.error(text.get("sorterException"), error);
+        logger.error(logPrefix + text.get("sorterException"), error);
       }
       this.error = error;
     }
   }
   
-  public boolean hasError() {
+  public final boolean hasError() {
     
     return error != null;
   }
   
-  public Throwable getError() {
+  public final Throwable getError() {
     
     return error;
   }
   
-  public BlockingQueue<Request> getSortQueue() {
+  public final BlockingQueue<Request> getSortQueue() {
     
     return sortQueue;
   }

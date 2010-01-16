@@ -7,11 +7,14 @@ import java.util.concurrent.*;
 
 class SortThread extends Thread {
 
-  private Info info;
+  private final Info info;
+  private final SortAlgorithm algorithm;
   private boolean loop;
   
   public SortThread(Info info) {
     
+    this.info = info;
+    algorithm = info.getConfig().getAlgorithm();
   }
   
   public void run() {
@@ -37,8 +40,18 @@ class SortThread extends Thread {
     }
   }
   
-  private void handleRequest(Request request) throws Exception {
+  private void handleRequest(final Request request) throws Exception {
     
+    switch (request.getType()) {
+      case SORT_ARRAY:
+        sortArray((SortArray) request.getData());
+        break;
+    }
+  }
+  
+  private void sortArray(final SortArray sortArray) {
+
+    algorithm.sort(sortArray.getArray(), sortArray.getSize());
   }
   
   private void testError() {
