@@ -3,59 +3,46 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.Iterator;
-import java.util.concurrent.CountDownLatch;
-import de.ufinke.cubaja.util.IteratorException;
+import java.util.*;
+import java.util.concurrent.*;
 
-class Run implements Iterable<Object>, Iterator<Object> {
+final class Run implements Iterable<Object>, Iterator<Object> {
 
-  private SortManager info;
-  private IOManager ioManager;
+  private final SortManager manager;
 
-  private long blockPosition;
-  private int blockLength;
-
-  private Object[] currentArray;
-  private int currentSize;
-  private int cursor;
-
-  private Object[] nextArray;
-  private int nextSize;
-  private boolean hasNextBlock;
-
+  private volatile long blockPosition;
+  private volatile int blockLength;
+  private volatile boolean hasNextBlock;
+  private volatile SortArray nextArray;
   private volatile CountDownLatch latch;
+  
+  private Object[] array;
+  private int size;
+  private int position;
 
-  public Run(SortManager info, IOManager ioManager, long blockPosition, int blockLength) throws Exception {
+  public Run(SortManager manager, long blockPosition, int blockLength) throws Exception {
 
-    this.info = info;
-    this.ioManager = ioManager;
+    this.manager = manager;
     this.blockPosition = blockPosition;
     this.blockLength = blockLength;
-
-    currentArray = new Object[info.getBlockSize()];
-    nextArray = new Object[info.getBlockSize()];
-
-    requestNextBlock();
   }
 
   public boolean hasNext() {
 
-    return cursor < currentSize || hasNextBlock;
+    return position < size || hasNextBlock;
   }
 
   public Object next() {
 
-    if (cursor == currentSize) {
+    if (position == size) {
       try {
         switchBlock();
       } catch (Exception e) {
-        throw new IteratorException(e);
+        throw new SorterException(e);
       }
     }
 
-    Object result = currentArray[cursor];
-    currentArray[cursor++] = null;
-    return result;
+    return array[position++];
   }
 
   public void remove() {
@@ -70,29 +57,34 @@ class Run implements Iterable<Object>, Iterator<Object> {
 
   private void switchBlock() throws Exception {
 
-    latch.await();
+    boolean ready = false;
+    while (! ready) {
+      ready = latch.await(1, TimeUnit.SECONDS) || manager.hasError();
+    }
 
-    info.sync();
-    
-    Object[] temp = currentArray;
-    currentArray = nextArray;
-    nextArray = temp;
-
-    currentSize = nextSize;
-    cursor = 0;
-    
-    info.sync();
+    array = nextArray.getArray();
+    size = nextArray.getSize();
+    position = 0;
+    nextArray = null;
     
     requestNextBlock();
   }
 
-  private void requestNextBlock() throws Exception {
+  public void requestNextBlock() throws Exception {
 
     hasNextBlock = (blockLength > 0);
     
-    if (hasNextBlock) {
-      latch = new CountDownLatch(1);
-      ioManager.requestNextBlock(this);
+    if (! hasNextBlock) {
+      return;
+    }
+    
+    latch = new CountDownLatch(1);
+    
+    final BlockingQueue<Request> queue = manager.getFileQueue();
+    final Request request = new Request(RequestType.READ_BLOCK, this);
+    boolean written = false;
+    while (! written) {
+      written = queue.offer(request, 1, TimeUnit.SECONDS) || manager.hasError();
     }
   }
   
@@ -121,13 +113,8 @@ class Run implements Iterable<Object>, Iterator<Object> {
     this.blockLength = blockLength;
   }
 
-  public Object[] getNextArray() {
-
-    return nextArray;
-  }
-
-  public void setNextSize(int nextSize) {
-
-    this.nextSize = nextSize;
+  public void setNextArray(SortArray nextArray) {
+    
+    this.nextArray = nextArray;
   }
 }

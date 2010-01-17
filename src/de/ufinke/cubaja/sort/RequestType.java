@@ -11,5 +11,7 @@ enum RequestType {
   RESULT,
   SORT_ARRAY,
   WRITE_BLOCKS,
+  READ_BLOCK,
+  BEGIN_RUN,
   END_RUN
 }

@@ -139,7 +139,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private Iterator<Object> getQueueIterator() {
 
     writeRequest(new Request(RequestType.SWITCH_STATE));
-    return new QueueIterator(manager);
+    return new ResultQueueIterator(manager);
   }
   
   void close() {

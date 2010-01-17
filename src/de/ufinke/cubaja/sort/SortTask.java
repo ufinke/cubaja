@@ -101,6 +101,7 @@ final class SortTask implements Runnable {
     final Merger merger = new Merger(manager.getComparator(), arrayList);
     final BlockingQueue<Request> queue = manager.getFileQueue();
     
+    writeQueue(queue, new Request(RequestType.BEGIN_RUN));
     mergeToQueue(merger, queue, RequestType.WRITE_BLOCKS);
     writeQueue(queue, new Request(RequestType.END_RUN));
   }
@@ -108,7 +109,7 @@ final class SortTask implements Runnable {
   @SuppressWarnings("rawtypes")
   private void mergeToQueue(final Merger merger, final BlockingQueue<Request> queue, final RequestType type) throws Exception {
 
-    final int queueSize = manager.getQueueSize();    
+    final int queueSize = manager.getArraySize();    
     final Iterator iterator = merger.iterator();
     
     Object[] array = new Object[queueSize];

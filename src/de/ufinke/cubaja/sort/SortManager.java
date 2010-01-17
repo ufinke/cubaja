@@ -18,7 +18,6 @@ final class SortManager {
   // resulting block to disk is 31K <= block <= 32K
   static private final int DEFAULT_BLOCK_SIZE = 1024 * 31;
   static private final int MINIMUM_BLOCK_SIZE = 1024 * 7;
-  static private final int DEFAULT_QUEUE_SIZE = 1024;
 
   static private final Text text = new Text(Sorter.class);
 
@@ -43,7 +42,6 @@ final class SortManager {
   private final int arraySize;
   private final int arrayCount;
   private final int blockSize;
-  private final int queueSize;
 
   private final ExecutorService executor;
   private final BlockingQueue<Request> sortQueue;
@@ -100,8 +98,6 @@ final class SortManager {
     this.arrayCount = arrayCount;
     this.arraySize = arraySize;
     
-    this.queueSize = DEFAULT_QUEUE_SIZE;
-
     int queueCapacity = (arrayCount >> 1) + (arrayCount >> 4) + 1;
     sortQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     fileQueue = new ArrayBlockingQueue<Request>(queueCapacity);
@@ -199,11 +195,6 @@ final class SortManager {
     return blockSize;
   }
   
-  public int getQueueSize() {
-    
-    return queueSize;
-  }
-
   public BlockingQueue<Request> getSortQueue() {
 
     return sortQueue;

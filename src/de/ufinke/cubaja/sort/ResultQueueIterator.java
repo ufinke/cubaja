@@ -6,7 +6,7 @@ package de.ufinke.cubaja.sort;
 import java.util.concurrent.*;
 import java.util.*;
 
-final class QueueIterator implements Iterator<Object>, Iterable<Object> {
+final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
 
   private final SortManager manager;
   private final BlockingQueue<Request> queue;
@@ -16,7 +16,7 @@ final class QueueIterator implements Iterator<Object>, Iterable<Object> {
   private int position;
   private boolean endOfData;
   
-  public QueueIterator(SortManager manager) {
+  public ResultQueueIterator(SortManager manager) {
   
     this.manager = manager;
     queue = manager.getResultQueue();
@@ -70,7 +70,7 @@ final class QueueIterator implements Iterator<Object>, Iterable<Object> {
     
     switch (request.getType()) {
       
-      case SORT_ARRAY:
+      case RESULT:
         SortArray data = (SortArray) request.getData();
         array = data.getArray();
         size = data.getSize();
