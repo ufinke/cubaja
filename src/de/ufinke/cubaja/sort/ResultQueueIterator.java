@@ -4,7 +4,6 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -41,10 +40,7 @@ final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
 
   public Object next() {
 
-    if (hasNext()) {
-      return array[position++];
-    }
-    throw new NoSuchElementException();
+    return array[position++];
   }
 
   public void remove() {

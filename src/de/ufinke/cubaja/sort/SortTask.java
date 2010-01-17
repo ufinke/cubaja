@@ -93,7 +93,7 @@ final class SortTask implements Runnable {
   }
     
   private void mergeFromArrayList() throws Exception {
-    
+
     mergeResult(arrayList);
   }
   
@@ -123,6 +123,7 @@ final class SortTask implements Runnable {
 
     if (! fileTaskStarted) {
       manager.submit(new FileTask(manager));
+      fileTaskStarted = true;
     }    
     
     final Merger merger = new Merger(manager.getComparator(), arrayList);
@@ -138,7 +139,7 @@ final class SortTask implements Runnable {
   @SuppressWarnings("rawtypes")
   private void mergeToQueue(final Merger merger, final BlockingQueue<Request> queue, final RequestType type) throws Exception {
 
-    final int queueSize = manager.getArraySize();    
+    final int queueSize = manager.getArraySize();  
     final Iterator iterator = merger.iterator();
     
     Object[] array = new Object[queueSize];

@@ -14,7 +14,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private enum State {
     PUT,
-    GET
+    GET,
+    CLOSED
   }
   
   static private final Text text = new Text(Sorter.class);
@@ -48,7 +49,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   public void add(D element) throws SorterException, IllegalStateException {
   
     if (state != State.PUT) {
-      throw new IllegalStateException(text.get("illegalAdd"));
+      throw new IllegalStateException(text.get("illegalState", state));
     }
 
     if (size == array.length) {
@@ -67,6 +68,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
     if (! sortTaskStarted) {
       manager.submit(new SortTask(manager));
+      sortTaskStarted = true;
     }
     
     writeRequest(new Request(RequestType.SORT_ARRAY, new SortArray(array, size)));
@@ -89,6 +91,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   public Iterator<D> iterator() throws SorterException {
 
+    if (state != State.PUT) {
+      throw new IllegalStateException(text.get("illegalState", state));
+    }
     state = State.GET;
 
     try {
@@ -130,6 +135,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private Iterator<Object> getSimpleIterator() {
 
+    manager.addPutCount(size);
     manager.getAlgorithm().sort(array, size);
     return new SortArray(array, size);
   }
@@ -149,6 +155,12 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   void close() {
 
+    if (state == State.CLOSED) {
+      return;
+    }
+    
+    state = State.CLOSED;
+    manager.checkError();
     array = null;
     writeRequest(new Request(RequestType.CLOSE));
     manager.close();

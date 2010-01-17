@@ -121,9 +121,9 @@ final class SortManager {
     if (isDebug()) {
       putCount = new AtomicLong();
       getCount = new AtomicLong();
-      logger.debug(text.get("sortOpen", runSize, blockSize, algorithm.getClass().getName()));
+      debug("sortOpen", runSize, blockSize, algorithm.getClass().getName());
       if (isTrace()) {
-        initTimer(logger, "sortPut", putCount);
+        initTimer(logger, logPrefix, "sortPut", putCount);
       }
     }
   }
@@ -248,7 +248,7 @@ final class SortManager {
       if (isTrace()) {
         timer.cancel();
       }
-      logger.debug(text.get("sortClose", getCount.get(), stopwatch.format(stopwatch.elapsedMillis())));
+      debug("sortClose", stopwatch.format(stopwatch.elapsedMillis()));
     }
   }
   
@@ -269,21 +269,21 @@ final class SortManager {
   public void switchState() {
     
     if (isDebug()) {
-      logger.debug(text.get("sortSwitch", putCount.get()));
+      debug("sortSwitch", putCount.get(), stopwatch.format(stopwatch.elapsedMillis()));
       if (isTrace()) {
         timer.cancel();
-        initTimer(logger, "sortGet", getCount);
+        initTimer(logger, logPrefix, "sortGet", getCount);
       }
     }
   }
   
-  private void initTimer(final Log logger, final String key, final AtomicLong counter) {
+  private void initTimer(final Log logger, final String prefix, final String key, final AtomicLong counter) {
     
     TimerTask task = new TimerTask() {
     
       public void run() {
 
-        logger.trace(text.get(key, counter.get()));
+        logger.trace(prefix + text.get(key, counter.get()));
       }
     };
     
