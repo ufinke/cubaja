@@ -14,9 +14,12 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import de.ufinke.cubaja.io.RandomAccessBuffer;
+import de.ufinke.cubaja.util.Text;
 
 final class FileTask implements Runnable {
 
+  static private final Text text = new Text(FileTask.class);
+  
   private final SortManager manager;
   private final File file;
   private final RandomAccessFile raf;
@@ -180,6 +183,10 @@ final class FileTask implements Runnable {
   
   private void switchState() throws Exception {
     
+    if (manager.isDebug()) {
+      manager.debug(text.get("sortFile", runList.size(), raf.getFilePointer()));
+    }
+    
     final BlockingQueue<Request> queue = manager.getSortQueue();
     final Request request = new Request(RequestType.INIT_RUN_MERGE, runList);
     
@@ -223,10 +230,9 @@ final class FileTask implements Runnable {
   
   private void close() throws Exception {
     
-    if (raf != null) {
-      raf.close();
-      file.delete();
-    }    
+    raf.close();
+    file.delete();
+    loop = false;
   }
   
 }

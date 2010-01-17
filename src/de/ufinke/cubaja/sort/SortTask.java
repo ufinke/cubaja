@@ -70,6 +70,10 @@ final class SortTask implements Runnable {
       case INIT_RUN_MERGE:
         initRunMerge((List<Run>) request.getData());
         break;
+        
+      case CLOSE:
+        close();
+        break;
     }
   }
   
@@ -84,6 +88,7 @@ final class SortTask implements Runnable {
     for (Run run : runList) {
       run.requestNextBlock();
     }
+    
     mergeResult(runList);
   }
     
@@ -126,6 +131,8 @@ final class SortTask implements Runnable {
     writeQueue(queue, new Request(RequestType.BEGIN_RUN));
     mergeToQueue(merger, queue, RequestType.WRITE_BLOCKS);
     writeQueue(queue, new Request(RequestType.END_RUN));
+    
+    arrayList.clear();
   }
   
   @SuppressWarnings("rawtypes")
@@ -148,7 +155,20 @@ final class SortTask implements Runnable {
       array[size++] = iterator.next();
     }
     
+    if (size > 0) {
+      writeQueue(queue, new Request(type, new SortArray(array, size)));
+    }
+    
     arrayList.clear();
+  }
+  
+  private void close() throws Exception {
+
+    if (fileTaskStarted) {
+      writeQueue(manager.getFileQueue(), new Request(RequestType.CLOSE));
+    }
+    
+    loop = false;
   }
   
   private void writeQueue(final BlockingQueue<Request> queue, final Request request) throws Exception {

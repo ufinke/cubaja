@@ -288,7 +288,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newWritePosition(2);
     int pos = position;
-    buffer[pos++] = (byte) (v >> 8);
+    buffer[pos++] = (byte) (v >>> 8);
     buffer[pos++] = (byte) v;
     position = pos;
   }
@@ -302,9 +302,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newWritePosition(4);
     int pos = position;
-    buffer[pos++] = (byte) (v >> 24);
-    buffer[pos++] = (byte) (v >> 16);
-    buffer[pos++] = (byte) (v >> 8);
+    buffer[pos++] = (byte) (v >>> 24);
+    buffer[pos++] = (byte) (v >>> 16);
+    buffer[pos++] = (byte) (v >>> 8);
     buffer[pos++] = (byte) v;
     position = pos;
   }
@@ -313,15 +313,15 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
     newWritePosition(8);
     int pos = position;
-    int n = (int) (v >> 32);
-    buffer[pos++] = (byte) (n >> 24);
-    buffer[pos++] = (byte) (n >> 16);
-    buffer[pos++] = (byte) (n >> 8);
+    int n = (int) (v >>> 32);
+    buffer[pos++] = (byte) (n >>> 24);
+    buffer[pos++] = (byte) (n >>> 16);
+    buffer[pos++] = (byte) (n >>> 8);
     buffer[pos++] = (byte) n;
     n = (int) v;
-    buffer[pos++] = (byte) (n >> 24);
-    buffer[pos++] = (byte) (n >> 16);
-    buffer[pos++] = (byte) (n >> 8);
+    buffer[pos++] = (byte) (n >>> 24);
+    buffer[pos++] = (byte) (n >>> 16);
+    buffer[pos++] = (byte) (n >>> 8);
     buffer[pos++] = (byte) n;
     position = pos;
   }
@@ -354,7 +354,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     int pos = position;
     for (int i = 0; i < len; i++) {
       int c = s.charAt(i);
-      buffer[pos++] = (byte) (c >> 8);
+      buffer[pos++] = (byte) (c >>> 8);
       buffer[pos++] = (byte) c;
     }
     position = pos;

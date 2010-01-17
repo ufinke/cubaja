@@ -4,10 +4,13 @@
 package de.ufinke.cubaja.sort;
 
 import java.util.Comparator;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Stopwatch;
@@ -23,7 +26,7 @@ final class SortManager {
   static private final int DEFAULT_BLOCK_SIZE = 1024 * 31;
   static private final int MINIMUM_BLOCK_SIZE = 1024 * 7;
 
-  static private final Text text = new Text(Sorter.class);
+  static final Text text = new Text(Sorter.class);
 
   static private int id = 0;
 
@@ -35,6 +38,7 @@ final class SortManager {
   private final int myId;
   private final String logPrefix;
   private final Log logger;
+  private final int logInterval;
   private final Stopwatch stopwatch;
 
   private final SortConfig config;
@@ -51,6 +55,10 @@ final class SortManager {
   private final BlockingQueue<Request> sortQueue;
   private final BlockingQueue<Request> fileQueue;
   private final BlockingQueue<Request> mainQueue;
+  
+  private AtomicLong putCount;
+  private AtomicLong getCount;
+  private Timer timer;
 
   private volatile Throwable error;
 
@@ -71,6 +79,7 @@ final class SortManager {
       logPrefix = null;
       stopwatch = null;
     }
+    logInterval = config.getLogInterval() * 1000;
 
     algorithm = config.getAlgorithm();
     algorithm.setComparator(comparator);
@@ -106,8 +115,17 @@ final class SortManager {
     sortQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     fileQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     mainQueue = new ArrayBlockingQueue<Request>(queueCapacity);
-    
+        
     executor = Executors.newCachedThreadPool();
+    
+    if (isDebug()) {
+      putCount = new AtomicLong();
+      getCount = new AtomicLong();
+      logger.debug(text.get("sortOpen", runSize, blockSize, algorithm.getClass().getName()));
+      if (isTrace()) {
+        initTimer(logger, "sortPut", putCount);
+      }
+    }
   }
 
   public int id() {
@@ -159,12 +177,17 @@ final class SortManager {
 
   public void setError(Throwable error) {
 
-    if (this.error == null) {
-      if (logger != null) {
-        logger.error(logPrefix + text.get("sorterException"), error);
-      }
-      this.error = error;
+    if (this.error != null) {
+      return;
     }
+    
+    this.error = error;
+    
+    if (logger != null) {
+      logger.error(logPrefix + text.get("sorterException"), error);
+    }
+    
+    executor.shutdownNow();
   }
   
   public boolean hasError() {
@@ -214,11 +237,6 @@ final class SortManager {
     return mainQueue;
   }
 
-  public Stopwatch getStopwatch() {
-    
-    return stopwatch;
-  }
-  
   public void submit(Runnable task) {
     
     executor.submit(task);
@@ -226,6 +244,51 @@ final class SortManager {
   
   public void close() {
     
-    executor.shutdownNow();
+    if (isDebug()) {
+      if (isTrace()) {
+        timer.cancel();
+      }
+      logger.debug(text.get("sortClose", getCount.get(), stopwatch.format(stopwatch.elapsedMillis())));
+    }
   }
+  
+  public void addPutCount(int count) {
+    
+    if (isDebug()) {
+      putCount.getAndAdd(count);
+    }
+  }
+  
+  public void addGetCount(int count) {
+    
+    if (isDebug()) {
+      getCount.getAndAdd(count);
+    }
+  }
+  
+  public void switchState() {
+    
+    if (isDebug()) {
+      logger.debug(text.get("sortSwitch", putCount.get()));
+      if (isTrace()) {
+        timer.cancel();
+        initTimer(logger, "sortGet", getCount);
+      }
+    }
+  }
+  
+  private void initTimer(final Log logger, final String key, final AtomicLong counter) {
+    
+    TimerTask task = new TimerTask() {
+    
+      public void run() {
+
+        logger.trace(text.get(key, counter.get()));
+      }
+    };
+    
+    timer = new Timer();
+    timer.schedule(task, logInterval, logInterval);
+  }
+  
 }

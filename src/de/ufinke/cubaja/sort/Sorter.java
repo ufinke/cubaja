@@ -34,12 +34,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
   
-    manager = new SortManager(config, comparator);
-    
-    if (manager.isDebug()) {
-      manager.debug("sortOpen");
-    }    
-    
+    manager = new SortManager(config, comparator);    
     state = State.PUT;
     allocateArray();
   }
@@ -75,6 +70,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     
     writeRequest(new Request(RequestType.SORT_ARRAY, new SortArray(array, size)));
+    manager.addPutCount(size);
   }
   
   private void writeRequest(Request request) {
@@ -107,6 +103,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     final Iterator<Object> source = (sortTaskStarted) ? getQueueIterator() : getSimpleIterator();
     
+    manager.switchState();
+    
     return new Iterator<D>() {
 
       public boolean hasNext() {
@@ -138,12 +136,21 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private Iterator<Object> getQueueIterator() {
 
+    writeArray();
+    array = null;
     writeRequest(new Request(RequestType.SWITCH_STATE));
     return new ResultQueueIterator(manager);
   }
   
-  void close() {
+  public void abort() {
     
+    close();
+  }
+  
+  void close() {
+
+    array = null;
+    writeRequest(new Request(RequestType.CLOSE));
     manager.close();
   }
 

@@ -78,6 +78,7 @@ final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
         size = data.getSize();
         position = 0;
         endOfData = false;
+        manager.addGetCount(size);
         break;
         
       case END_OF_DATA:
