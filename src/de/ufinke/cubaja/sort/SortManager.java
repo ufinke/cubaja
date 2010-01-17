@@ -3,11 +3,15 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.*;
+import java.util.Comparator;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import de.ufinke.cubaja.util.*;
-import java.util.*;
+import de.ufinke.cubaja.util.Stopwatch;
+import de.ufinke.cubaja.util.Text;
 
 final class SortManager {
 
@@ -46,7 +50,7 @@ final class SortManager {
   private final ExecutorService executor;
   private final BlockingQueue<Request> sortQueue;
   private final BlockingQueue<Request> fileQueue;
-  private final BlockingQueue<Request> resultQueue;
+  private final BlockingQueue<Request> mainQueue;
 
   private volatile Throwable error;
 
@@ -101,7 +105,7 @@ final class SortManager {
     int queueCapacity = (arrayCount >> 1) + (arrayCount >> 4) + 1;
     sortQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     fileQueue = new ArrayBlockingQueue<Request>(queueCapacity);
-    resultQueue = new ArrayBlockingQueue<Request>(queueCapacity);
+    mainQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     
     executor = Executors.newCachedThreadPool();
   }
@@ -205,9 +209,9 @@ final class SortManager {
     return fileQueue;
   }
   
-  public BlockingQueue<Request> getResultQueue() {
+  public BlockingQueue<Request> getMainQueue() {
     
-    return resultQueue;
+    return mainQueue;
   }
 
   public Stopwatch getStopwatch() {

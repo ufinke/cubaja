@@ -3,16 +3,16 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.DeflaterOutputStream;
 import de.ufinke.cubaja.io.RandomAccessBuffer;
 
 final class FileTask implements Runnable {
@@ -26,6 +26,7 @@ final class FileTask implements Runnable {
   private boolean loop;
 
   private int blockCount;
+  private int objectCount;
   private ObjectOutputStream out;
 
   public FileTask(SortManager manager) throws Exception {
@@ -55,6 +56,14 @@ final class FileTask implements Runnable {
     
     buffer = new RandomAccessBuffer(manager.getBlockSize() + 1024, 1024);
     runList = new ArrayList<Run>();
+  }
+  
+  protected void finalize() {
+    
+    try {
+      close();
+    } catch (Exception e) {        
+    }
   }
   
   public void run() {
@@ -89,12 +98,24 @@ final class FileTask implements Runnable {
         beginRun();
         break;
         
+      case WRITE_BLOCKS:
+        writeBlocks((SortArray) request.getData());
+        break;
+        
       case END_RUN:
         endRun();
         break;
         
-      case WRITE_BLOCKS:
-        writeBlocks((SortArray) request.getData());
+      case SWITCH_STATE:
+        switchState();
+        break;
+        
+      case READ_BLOCK:
+        readBlock((Run) request.getData());
+        break;
+        
+      case CLOSE:
+        close();
         break;
     }
   }
@@ -123,7 +144,15 @@ final class FileTask implements Runnable {
         initBlock();
       }
       out.writeObject(array[position++]);
+      objectCount++;
     }
+  }
+  
+  private void initBlock() throws Exception {
+    
+    objectCount = 0;
+    buffer.setPosition(8);
+    out = new ObjectOutputStream(buffer.getOutputStream());
   }
   
   private void finishBlock(boolean lastBlock) throws Exception {
@@ -138,6 +167,7 @@ final class FileTask implements Runnable {
     
     buffer.setPosition(0);
     buffer.writeInt(len);
+    buffer.writeInt(objectCount);
     
     if (lastBlock) {
       buffer.writeInt(0);
@@ -148,10 +178,55 @@ final class FileTask implements Runnable {
     blockCount++;
   }
   
-  private void initBlock() throws Exception {
+  private void switchState() throws Exception {
     
-    buffer.setPosition(4);
-    out = new ObjectOutputStream(buffer.getOutputStream());
+    final BlockingQueue<Request> queue = manager.getSortQueue();
+    final Request request = new Request(RequestType.INIT_RUN_MERGE, runList);
+    
+    boolean written = false;
+    while ((! written) && loop) {
+      written = queue.offer(request, 1, TimeUnit.SECONDS);
+      if (manager.hasError()) {
+        loop = false;
+      }
+    }    
+  }
+  
+  private void readBlock(Run run) throws Exception {
+    
+    final long blockPosition = run.getBlockPosition();
+    final int blockLength = run.getBlockLength();
+    
+    run.setBlockPosition(blockPosition + blockLength);
+    
+    raf.seek(blockPosition);
+    buffer.reset();
+    buffer.transferFrom(raf, blockLength);
+    
+    int blockEnd = blockLength - 4;
+    buffer.setPosition(blockEnd);
+    run.setBlockLength(buffer.readInt());
+    buffer.cut(0, blockEnd);
+    buffer.setPosition(0);
+    
+    ObjectInputStream in = new ObjectInputStream(buffer.getInputStream());
+
+    final int size = in.readInt();
+    Object[] array = new Object[size];
+    for (int i = 0; i < size; i++) {
+      array[i] = in.readObject();
+    }
+    run.setNextArray(new SortArray(array, size));
+    
+    run.releaseLatch();
+  }
+  
+  private void close() throws Exception {
+    
+    if (raf != null) {
+      raf.close();
+      file.delete();
+    }    
   }
   
 }

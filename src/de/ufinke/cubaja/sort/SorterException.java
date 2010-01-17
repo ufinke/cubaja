@@ -3,7 +3,7 @@
 
 package de.ufinke.cubaja.sort;
 
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.Text;
 
 public class SorterException extends RuntimeException {
 

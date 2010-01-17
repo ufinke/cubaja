@@ -3,8 +3,10 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.*;
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
 
@@ -19,7 +21,7 @@ final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
   public ResultQueueIterator(SortManager manager) {
   
     this.manager = manager;
-    queue = manager.getResultQueue();
+    queue = manager.getMainQueue();
     readFromQueue();
   }
 

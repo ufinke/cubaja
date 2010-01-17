@@ -3,8 +3,11 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.util.concurrent.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 final class SortTask implements Runnable {
 
@@ -47,6 +50,7 @@ final class SortTask implements Runnable {
     }
   }
   
+  @SuppressWarnings("unchecked")
   private void handleRequest(final Request request) throws Exception {
     
     switch (request.getType()) {
@@ -62,19 +66,37 @@ final class SortTask implements Runnable {
           mergeFromArrayList();
         }
         break;
+        
+      case INIT_RUN_MERGE:
+        initRunMerge((List<Run>) request.getData());
+        break;
     }
   }
-    
+  
   private void mergeFromFile() throws Exception {
     
     drainToFileTask();
+    writeQueue(manager.getFileQueue(), new Request(RequestType.SWITCH_STATE));
+  }
+  
+  private void initRunMerge(List<Run> runList) throws Exception {
+    
+    for (Run run : runList) {
+      run.requestNextBlock();
+    }
+    mergeResult(runList);
+  }
+    
+  private void mergeFromArrayList() throws Exception {
+    
+    mergeResult(arrayList);
   }
   
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private void mergeFromArrayList() throws Exception {
+  private void mergeResult(List sources) throws Exception {
     
-    final Merger merger = new Merger(manager.getComparator(), arrayList);
-    final BlockingQueue<Request> queue = manager.getResultQueue();
+    final Merger merger = new Merger(manager.getComparator(), sources);
+    final BlockingQueue<Request> queue = manager.getMainQueue();
     
     mergeToQueue(merger, queue, RequestType.RESULT);
     writeQueue(queue, new Request(RequestType.END_OF_DATA));
