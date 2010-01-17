@@ -11,9 +11,9 @@ import java.util.NoSuchElementException;
 
 public class Merger<D> implements Iterable<D> {
 
-  static private class Source<E> {
+  static private final class Source<E> {
     
-    private Iterator<E> iterator;
+    private final Iterator<E> iterator;
     private E currentEntry;
     private boolean hasCurrent;
     
@@ -42,11 +42,11 @@ public class Merger<D> implements Iterable<D> {
     }
   }
   
-  static private class MergeIterator<F> implements Iterator<F> {
+  static private final class MergeIterator<F> implements Iterator<F> {
 
-    private Comparator<? super F> comparator;
-    private Source<F> leftSource;
-    private Source<F> rightSource;
+    private final Comparator<? super F> comparator;
+    private final Source<F> leftSource;
+    private final Source<F> rightSource;
     
     public MergeIterator(Comparator<? super F> comparator, Source<F> leftSource, Source<F> rightSource) {
       
@@ -63,9 +63,9 @@ public class Merger<D> implements Iterable<D> {
     public F next() {
 
       if (leftSource.hasObject()) {
-        F left = leftSource.getObject();
+        final F left = leftSource.getObject();
         if (rightSource.hasObject()) {
-          F right = rightSource.getObject();
+          final F right = rightSource.getObject();
           if (comparator.compare(left, right) <= 0) {
             leftSource.advance();
             return left;
@@ -78,7 +78,7 @@ public class Merger<D> implements Iterable<D> {
           return left;
         }
       } else if (rightSource.hasObject()) {
-        F result = rightSource.getObject();
+        final F result = rightSource.getObject();
         rightSource.advance();
         return result;
       } else {
@@ -92,7 +92,7 @@ public class Merger<D> implements Iterable<D> {
     }    
   }
 
-  private Iterator<D> iterator;
+  private final Iterator<D> iterator;
   
   public Merger(Comparator<? super D> comparator, Iterable<D> leftSource, Iterable<D> rightSource) {
 

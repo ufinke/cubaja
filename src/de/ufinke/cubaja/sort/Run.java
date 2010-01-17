@@ -9,7 +9,7 @@ import de.ufinke.cubaja.util.IteratorException;
 
 class Run implements Iterable<Object>, Iterator<Object> {
 
-  private Info info;
+  private SortManager info;
   private IOManager ioManager;
 
   private long blockPosition;
@@ -25,7 +25,7 @@ class Run implements Iterable<Object>, Iterator<Object> {
 
   private volatile CountDownLatch latch;
 
-  public Run(Info info, IOManager ioManager, long blockPosition, int blockLength) throws Exception {
+  public Run(SortManager info, IOManager ioManager, long blockPosition, int blockLength) throws Exception {
 
     this.info = info;
     this.ioManager = ioManager;

@@ -22,7 +22,7 @@ import de.ufinke.cubaja.io.RandomAccessBuffer;
 
 class IOManager {
 
-  private Info info;
+  private SortManager info;
   private SortConfig config;
   
   private File file;
@@ -41,13 +41,13 @@ class IOManager {
   
   private List<Long> runPositions;
   
-  public IOManager(Info info) throws Exception {
+  public IOManager(SortManager info) throws Exception {
     
     this.info = info;
     config = info.getConfig();
     
     open();
-    buffer = new RandomAccessBuffer(Info.BYTES_PER_BLOCK, 1000);
+    buffer = new RandomAccessBuffer(Info.SortManager, 1000);
     
     executor = Executors.newSingleThreadExecutor();
     

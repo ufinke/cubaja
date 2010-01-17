@@ -4,11 +4,11 @@
 package de.ufinke.cubaja.sort;
 
 
-class FileThread extends Thread {
+final class FileTask implements Runnable {
 
-  private Info info;
+  private SortManager info;
   
-  public FileThread(Info info) {
+  public FileTask(SortManager info) {
     
   }
   

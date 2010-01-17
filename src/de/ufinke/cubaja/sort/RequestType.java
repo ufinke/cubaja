@@ -5,5 +5,11 @@ package de.ufinke.cubaja.sort;
 
 enum RequestType {
 
-  SORT_ARRAY
+  CLOSE,
+  END_OF_DATA,
+  SWITCH_STATE,
+  RESULT,
+  SORT_ARRAY,
+  WRITE_BLOCKS,
+  END_RUN
 }

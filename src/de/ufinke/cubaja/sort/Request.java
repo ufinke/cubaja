@@ -3,14 +3,21 @@
 
 package de.ufinke.cubaja.sort;
 
-class Request {
+final class Request {
 
-  private RequestType type;
-  private Object data;
+  private final RequestType type;
+  private final Object data;
   
-  Request(RequestType type, Object data) {
+  public Request(RequestType type, Object data) {
     
     this.type = type;
+    this.data = data;
+  }
+  
+  public Request(RequestType type) {
+    
+    this.type = type;
+    this.data = null;
   }
   
   public RequestType getType() {

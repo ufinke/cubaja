@@ -3,37 +3,29 @@
 
 package de.ufinke.cubaja.sort;
 
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicLong;
-import de.ufinke.cubaja.util.IteratorException;
-import de.ufinke.cubaja.util.Stopwatch;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import de.ufinke.cubaja.util.Text;
 
 public class Sorter<D extends Serializable> implements Iterable<D> {
 
-  static private Text text = new Text(Sorter.class);
+  static private enum State {
+    PUT,
+    GET
+  }
   
-  volatile Info info;
-  private Stopwatch stopwatch;
+  static private final Text text = new Text(Sorter.class);
   
-  private Comparator<? super D> comparator;
-  private SortAlgorithm algorithm;
+  private final SortManager manager;
+  private State state;
   
-  private boolean isCalculated;
-  private boolean isRetrieveState;
+  private Object[] array;
+  private int size;
   
-  private volatile SortArray array;
-  private IOManager ioManager;
-  
-  AtomicLong putCount;
-  AtomicLong getCount;
-  private Timer timer;
+  private boolean sortTaskStarted;
   
   public Sorter(Comparator<? super D> comparator) {
     
@@ -42,110 +34,78 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
   
-    this.comparator = comparator;
-
-    info = new Info();
-    info.setConfig(config);
+    manager = new SortManager(config, comparator);
     
-    if (info.isDebug()) {
-      stopwatch = new Stopwatch();
-      info.debug("sortOpen");
-      if (info.isTrace()) {
-        createTimer(createPutTimerTask());
-      }
-    }
+    if (manager.isDebug()) {
+      manager.debug("sortOpen");
+    }    
     
-    algorithm = config.getAlgorithm();
-    algorithm.setComparator(comparator);
-    
-    array = new SortArray(Info.PROBE_SIZE);
-    
-    putCount = new AtomicLong();
-    getCount = new AtomicLong();
+    state = State.PUT;
+    allocateArray();
   }
   
-  public void add(D element) throws Exception {
+  private void allocateArray() {
+    
+    array = new Object[manager.getArraySize()];
+    size = 0;    
+  }
   
-    if (isRetrieveState) {
+  public void add(D element) throws SorterException, IllegalStateException {
+  
+    if (state != State.PUT) {
       throw new IllegalStateException(text.get("illegalAdd"));
     }
-    
-    if (array.isFull()) {
-      if (isCalculated) {
-        writeRun();
-      } else {
-        calculateSizes();
-        if (array.isFull()) {
-          writeRun();
-        }
-      }
+
+    if (size == array.length) {
+      writeArray();
+      allocateArray();
     }
     
-    array.add(element);
-    //putCount.incrementAndGet();
+    array[size++] = element;
   }
   
-  private void writeRun() throws Exception {
+  private void writeArray() {
     
-    if (array.getSize() == 0) {
+    if (size == 0) {
       return;
     }
-    
-    sortArray();
-    
-    if (ioManager == null) {
-      ioManager = new IOManager(info);
+
+    if (! sortTaskStarted) {
+      manager.submit(new SortTask(manager));
     }
     
-    info.sync();
-    
-    array = ioManager.writeRun(array);
-    
-    info.sync();
+    writeRequest(new Request(RequestType.SORT_ARRAY, new SortArray(array, size)));
   }
   
-  private void sortArray() {
+  private void writeRequest(Request request) {
     
-    algorithm.sort(array.getArray(), array.getSize());    
+    final BlockingQueue<Request> queue = manager.getSortQueue();
+    boolean written = false;
+    while (! written) {
+      manager.checkError();
+      try {
+        written = queue.offer(request, 1, TimeUnit.SECONDS);
+      } catch (Exception e) {
+        throw new SorterException(e);
+      }
+    }
   }
   
-  private void calculateSizes() throws Exception {
+  public Iterator<D> iterator() throws SorterException {
 
-    ByteArrayOutputStream bos = new ByteArrayOutputStream(Info.BYTES_PER_BLOCK);
-    ObjectOutputStream oos = new ObjectOutputStream(bos);
-    for (Object object : array.getArray()) {
-      oos.writeObject(object);
-    }
-    oos.close();
-    
-    info.calculateSizes(bos.size());
-    
-    if (info.getRunSize() > Info.PROBE_SIZE) {
-      array.enlarge(info.getRunSize());
-    }
-    
-    isCalculated = true;
-  }
-  
-  public Iterator<D> iterator() {
+    state = State.GET;
 
-    isRetrieveState = true;
-
-    if (info.isTrace()) {
-      timer.cancel();
-    }
-    
     try {
       return createIterator(); 
     } catch (Exception e) {
-      throw new IteratorException(e);
+      throw new SorterException(e);
     }
   }
   
   @SuppressWarnings({"unchecked"})
-  private Iterator<D> createIterator() throws Exception {
+  private Iterator<D> createIterator() {
     
-    final Iterator<Object> source = (ioManager == null) ? getSimpleIterator() : getMergeIterator();
+    final Iterator<Object> source = (sortTaskStarted) ? getQueueIterator() : getSimpleIterator();
     
     return new Iterator<D>() {
 
@@ -160,7 +120,6 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
       public D next() {
 
-        //getCount.incrementAndGet();
         return (D) source.next();
       }
 
@@ -172,83 +131,20 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   }
   
   private Iterator<Object> getSimpleIterator() {
-    
-    sortArray();
-    
-    if (info.isDebug()) {
-      info.debug("sortSwitch", putCount, 0 , 0);
-      if (info.isTrace()) {
-        createTimer(createGetTimerTask());
-      }
-    }
-    
-    return array;
-  }
-  
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  private Iterator<Object> getMergeIterator() throws Exception {
-    
-    info.sync();
-    
-    writeRun();
-    ioManager.finishWrite();
-    
-    if (info.isDebug()) {
-      info.debug("sortSwitch", putCount, ioManager.getRunCount(), ioManager.getFileSize());
-      if (info.isTrace()) {
-        createTimer(createGetTimerTask());
-      }
-    }
-    
-    Iterator<Object> merger = new Merger(comparator, ioManager.getRuns()).iterator();
-    
-    info.sync();
-    
-    return merger;
-  }
-  
-  void close() throws IteratorException {
 
-    if (ioManager != null) {
-      try {
-        ioManager.close();
-      } catch (Exception e) {
-        throw new IteratorException(e);
-      }
-      ioManager = null;
-    }
-    
-    if (info.isDebug()) {
-      if (info.isTrace()) {
-        timer.cancel();
-      }
-      long time = stopwatch.elapsedMillis();
-      info.debug("sortClose", getCount, stopwatch.format(time));
-    }
+    manager.getAlgorithm().sort(array, size);
+    return new SortArray(array, size);
   }
   
-  private TimerTask createPutTimerTask() {
-    
-    return new TimerTask() {
-      public void run() {
-        info.trace("sortPut", putCount.get());
-      }
-    };
+  private Iterator<Object> getQueueIterator() {
+
+    writeRequest(new Request(RequestType.SWITCH_STATE));
+    return new QueueIterator(manager);
   }
   
-  private TimerTask createGetTimerTask() {
+  void close() {
     
-    return new TimerTask() {
-      public void run() {
-        info.trace("sortGet", getCount.get());
-      }
-    };
+    manager.close();
   }
 
-  private void createTimer(TimerTask task) {
-    
-    long millis = info.getConfig().getLogInterval() * 1000;
-    timer = new Timer();
-    timer.schedule(task, millis, millis);
-  }
 }
