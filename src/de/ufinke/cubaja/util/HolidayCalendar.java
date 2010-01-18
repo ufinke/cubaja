@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HolidayCalendar {
 
-  private HolidayConfig config;
+  private final HolidayConfig config;
   private Map<Integer, BitSet> map;
   
   public HolidayCalendar(HolidayConfig config) {
@@ -120,9 +120,10 @@ public class HolidayCalendar {
     }
     
     Calendar limit = Calendar.getInstance();
-    cal.set(YEAR, year);
-    cal.set(MONTH, 11);
-    cal.set(DAY_OF_MONTH, 31);
+    limit.clear();
+    limit.set(YEAR, year);
+    limit.set(MONTH, 11);
+    limit.set(DAY_OF_MONTH, 31);
     if (entry.getValidTo() != null) {
       if (Util.compare(entry.getValidTo(), limit.getTime()) < 0) {
         limit.setTime(entry.getValidTo());
@@ -146,7 +147,7 @@ public class HolidayCalendar {
     
     cal.clear();
     cal.set(YEAR, easter.get(YEAR));
-    cal.set(MONTH, easter.get(MONTH));
+    cal.set(MONTH, easter.get(MONTH) - 1);
     cal.set(DAY_OF_MONTH, easter.get(DAY_OF_MONTH));
     cal.add(DATE, config.getOffset());
     

@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -23,6 +23,7 @@ public enum Weekday {
   
   private Weekday(int calendarConstant) {
     
+    this.calendarConstant = calendarConstant;
   }
   
   public int getCalendarConstant() {

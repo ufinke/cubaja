@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+<holidays>
+
+  <!-- calendar for banking days in Cologne / Rhineland -->
+  
+  <weekday days="saturday, sunday"/>
+  
+  <fix month="1"  day="1"  name="Neujahr"/>
+  <fix month="5"  day="1"  name="Maifeiertag"/>
+  <fix month="10" day="3"  name="Tag der Deutschen Einheit"/>
+  <fix month="11" day="1"  name="Allerheiligen"/>
+  <fix month="12" day="24" name="Heiligabend"/>
+  <fix month="12" day="25" name="1. Weihnachtsfeiertag"/>
+  <fix month="12" day="26" name="2. Weihnachtsfeiertag"/>
+  <fix month="12" day="31" name="Silvester"/>
+  
+  <easter offset="-48" name="Rosenmontag"/>
+  <easter offset="-2"  name="Karfreitag"/>
+  <easter offset="1"   name="Ostermontag"/>
+  <easter offset="39"  name="Christi Himmelfahrt"/>
+  <easter offset="50"  name="Pfingstmontag"/>
+  <easter offset="60"  name="Fronleichnam"/>
+
+</holidays>
