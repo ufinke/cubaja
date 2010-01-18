@@ -159,6 +159,8 @@ final class FileTask implements Runnable {
     
     out.close();
     
+    final RandomAccessBuffer buffer = this.buffer;
+    
     int len = buffer.size();
     
     if (blockCount == 0) {
@@ -170,6 +172,7 @@ final class FileTask implements Runnable {
     buffer.writeInt(objectCount);
     
     if (lastBlock) {
+      buffer.setPosition(buffer.size());
       buffer.writeInt(0);
     }
     
@@ -202,6 +205,8 @@ final class FileTask implements Runnable {
     final int blockLength = run.getBlockLength();
     
     run.setBlockPosition(blockPosition + blockLength);
+
+    final RandomAccessBuffer buffer = this.buffer;
     
     raf.seek(blockPosition);
     buffer.reset();
@@ -213,15 +218,16 @@ final class FileTask implements Runnable {
     buffer.cut(0, blockEnd);
     buffer.setPosition(0);
     
-    ObjectInputStream in = new ObjectInputStream(buffer.getInputStream());
-
-    final int size = in.readInt();
+    int size = buffer.readInt();
     Object[] array = new Object[size];
+    
+    ObjectInputStream in = new ObjectInputStream(buffer.getInputStream());
     for (int i = 0; i < size; i++) {
       array[i] = in.readObject();
     }
-    run.setNextArray(new SortArray(array, size));
+    in.close();
     
+    run.setNextArray(new SortArray(array, size));
     run.releaseLatch();
   }
   

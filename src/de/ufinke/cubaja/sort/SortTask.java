@@ -121,6 +121,10 @@ final class SortTask implements Runnable {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private void drainToFileTask() throws Exception {
 
+    if (arrayList.size() == 0) {
+      return;
+    }
+    
     if (! fileTaskStarted) {
       manager.submit(new FileTask(manager));
       fileTaskStarted = true;

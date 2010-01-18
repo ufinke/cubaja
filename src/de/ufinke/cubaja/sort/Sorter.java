@@ -108,8 +108,6 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     
     final Iterator<Object> source = (sortTaskStarted) ? getQueueIterator() : getSimpleIterator();
     
-    manager.switchState();
-    
     return new Iterator<D>() {
 
       public boolean hasNext() {
@@ -137,6 +135,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
     manager.addPutCount(size);
     manager.getAlgorithm().sort(array, size);
+    manager.switchState();
+    
     return new SortArray(array, size);
   }
   
@@ -144,6 +144,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
 
     writeArray();
     array = null;
+    manager.switchState();
+    
     writeRequest(new Request(RequestType.SWITCH_STATE));
     return new ResultQueueIterator(manager);
   }
