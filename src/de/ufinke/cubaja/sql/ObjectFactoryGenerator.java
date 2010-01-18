@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -63,6 +63,8 @@ class ObjectFactoryGenerator implements Generator {
   static private final Type sqlExceptionType = new Type(SQLException.class);
 
   private Type dataClassType;
+  private int singleColumnSqlType;
+  private ObjectFactoryType builtin;
   private Map<String, SearchEntry> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
@@ -83,8 +85,20 @@ class ObjectFactoryGenerator implements Generator {
       return factory;
     }
     
+    if (dataClass.isPrimitive()) {
+      throw new SQLException(text.get("primitive"));
+    }
+    
     dataClassType = new Type(dataClass);
-    createSetterMap(dataClass);
+    
+    builtin = null;
+    if (singleColumnSqlType != 0) {
+      TypeCombination combination = new TypeCombination(singleColumnSqlType, dataClass);
+      builtin = ObjectFactoryType.getType(combination);
+    }    
+    if (builtin == null) {
+      createSetterMap(dataClass);
+    }
     
     Class<?> factoryClass = Loader.createClass(this, "QueryObjectFactory", dataClass);
     factory = (ObjectFactory) factoryClass.newInstance();
@@ -103,7 +117,12 @@ class ObjectFactoryGenerator implements Generator {
     
     GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "createObject", queryType);
     method.addException(sqlExceptionType);
-    generateCode(method.getCode());    
+    
+    if (builtin == null) {
+      generateCode(method.getCode());    
+    } else {
+      generateBuiltin(method.getCode());
+    }
     
     return genClass;
   }
@@ -131,6 +150,14 @@ class ObjectFactoryGenerator implements Generator {
     code.returnReference(); // returns duplicated data object
   }  
   
+  private void generateBuiltin(CodeAttribute code) {
+    
+    code.loadLocalReference(1); // query
+    code.loadConstant(1); // column #1
+    code.invokeVirtual(queryType, dataClassType, builtin.getReaderMethod(), intType);
+    code.returnReference();
+  }
+  
   private void createSearchMap(ResultSetMetaData metaData) throws SQLException {
     
     int size = metaData.getColumnCount();
@@ -141,6 +168,10 @@ class ObjectFactoryGenerator implements Generator {
       String name = metaData.getColumnName(i).toLowerCase();
       SearchEntry entry = new SearchEntry(name, i, metaData.getColumnType(i));
       searchMap.put(Util.createMethodName(name, "set"), entry);
+    }
+    
+    if (searchMap.size() == 1) {
+      singleColumnSqlType = metaData.getColumnType(1);
     }
   }
   

@@ -47,7 +47,7 @@ import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {
 
-  // CONSTANT(sqlType, setterParameterClass, isPrimitive, queryReadMethodName, priorityWithinSqlType)
+  // CONSTANT(sqlType, setterParameterClass, queryReadMethodName, priorityWithinSqlType)
   TINYINT_BYTE_OBJECT       (TINYINT      , Byte.class          ,  "ByteObject"     ,  1),
   TINYINT_BYTE              (TINYINT      , Byte.TYPE           ,  "Byte"           ,  2),
   TINYINT_SHORT_OBJECT      (TINYINT      , Short.class         ,  "ShortObject"    ,  3),
