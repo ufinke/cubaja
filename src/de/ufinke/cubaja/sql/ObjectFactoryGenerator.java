@@ -162,7 +162,7 @@ class ObjectFactoryGenerator implements Generator {
     
     int size = metaData.getColumnCount();
     
-    searchMap = new HashMap<String, SearchEntry>(size << 1);
+    searchMap = new HashMap<String, SearchEntry>();
     
     for (int i = 1; i <= size; i++) {
       String name = metaData.getColumnName(i).toLowerCase();

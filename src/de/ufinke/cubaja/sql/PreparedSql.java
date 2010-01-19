@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -44,7 +44,7 @@ public class PreparedSql {
   protected DatabaseConfig config;
   
   private List<String> variableList;
-  private Map<String, Integer> variableMap;
+  private Map<String, int[]> variableMap;
   private boolean changed;
   
   private Class<?> dataClass;
@@ -67,25 +67,35 @@ public class PreparedSql {
   }
   
   /**
-   * Retrieves the position of a named variable.
+   * Retrieves the positions of a named variable.
    * @param name
-   * @return position of the variable, beginning with <code>1</code>
+   * @return positions of the variable, beginning with <code>1</code>
    * @throws SQLException
    */
-  public int getVariablePosition(String name) throws SQLException {
+  public int[] getVariablePositions(String name) throws SQLException {
   
     if (variableMap == null) {
-      variableMap = new HashMap<String, Integer>(variableList.size() << 1);
-      for (int i = 1; i < variableList.size(); i++) {
-        variableMap.put(variableList.get(i), i);
+      variableMap = new HashMap<String, int[]>();
+      int limit = variableList.size();
+      for (int i = 1; i < limit; i++) {
+        String varName = variableList.get(i);
+        int[] entry = variableMap.get(varName);
+        if (entry == null) {
+          entry = new int[1];
+          variableMap.put(varName, entry);
+        } else {
+          int[] newEntry = new int[entry.length + 1];
+          System.arraycopy(entry, 0, newEntry, 1, entry.length);
+        }
+        entry[0] = i;
       }
     }
     
-    Integer position = variableMap.get(name);
-    if (position == null) {
+    int[] positions = variableMap.get(name);
+    if (positions == null) {
       throw new SQLException(text.get("variableNotFound", name));
     }
-    return position;
+    return positions;
   }
   
   /**
@@ -98,6 +108,14 @@ public class PreparedSql {
   }
   
   /**
+   * Resets the change flag to <code>false</code>.
+   */
+  protected void resetChanged() {
+    
+    changed = false;
+  }
+  
+  /**
    * Sets a <code>boolean</code> variable identified by name.
    * @param name
    * @param value
@@ -105,7 +123,9 @@ public class PreparedSql {
    */
   public void setBoolean(String name, boolean value) throws SQLException {
     
-    setBoolean(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setBoolean(i, value);
+    }
   }
   
   /**
@@ -128,7 +148,9 @@ public class PreparedSql {
    */
   public void setBoolean(String name, Boolean value) throws SQLException {
     
-    setBoolean(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setBoolean(i, value);
+    }
   }
   
   /**
@@ -155,7 +177,9 @@ public class PreparedSql {
    */
   public void setByte(String name, byte value) throws SQLException {
     
-    setByte(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setByte(i, value);
+    }
   }
   
   /**
@@ -178,7 +202,9 @@ public class PreparedSql {
    */
   public void setByte(String name, Byte value) throws SQLException {
     
-    setByte(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setByte(i, value);
+    }
   }
   
   /**
@@ -205,7 +231,9 @@ public class PreparedSql {
    */
   public void setCharacter(String name, char value) throws SQLException {
     
-    setCharacter(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setCharacter(i, value);
+    }
   }
   
   /**
@@ -227,7 +255,9 @@ public class PreparedSql {
    */
   public void setCharacter(String name, Character value) throws SQLException {
     
-    setCharacter(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setCharacter(i, value);
+    }
   }
   
   /**
@@ -254,7 +284,9 @@ public class PreparedSql {
    */
   public void setShort(String name, short value) throws SQLException {
     
-    setShort(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setShort(i, value);
+    }
   }
   
   /**
@@ -277,7 +309,9 @@ public class PreparedSql {
    */
   public void setShort(String name, Short value) throws SQLException {
     
-    setShort(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setShort(i, value);
+    }
   }
   
   /**
@@ -304,7 +338,9 @@ public class PreparedSql {
    */
   public void setInt(String name, int value) throws SQLException {
     
-    setInt(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setInt(i, value);
+    }
   }
   
   /**
@@ -327,7 +363,9 @@ public class PreparedSql {
    */
   public void setInt(String name, Integer value) throws SQLException {
     
-    setInt(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setInt(i, value);
+    }
   }
   
   /**
@@ -354,7 +392,9 @@ public class PreparedSql {
    */
   public void setLong(String name, long value) throws SQLException {
     
-    setLong(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setLong(i, value);
+    }
   }
   
   /**
@@ -377,7 +417,9 @@ public class PreparedSql {
    */
   public void setLong(String name, Long value) throws SQLException {
     
-    setLong(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setLong(i, value);
+    }
   }
   
   /**
@@ -404,7 +446,9 @@ public class PreparedSql {
    */
   public void setFloat(String name, float value) throws SQLException {
     
-    setFloat(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setFloat(i, value);
+    }
   }
   
   /**
@@ -427,7 +471,9 @@ public class PreparedSql {
    */
   public void setFloat(String name, Float value) throws SQLException {
     
-    setFloat(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setFloat(i, value);
+    }
   }
   
   /**
@@ -454,7 +500,9 @@ public class PreparedSql {
    */
   public void setDouble(String name, double value) throws SQLException {
     
-    setDouble(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setDouble(i, value);
+    }
   }
   
   /**
@@ -477,7 +525,9 @@ public class PreparedSql {
    */
   public void setDouble(String name, Double value) throws SQLException {
     
-    setDouble(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setDouble(i, value);
+    }
   }
   
   /**
@@ -504,7 +554,9 @@ public class PreparedSql {
    */
   public void setBigDecimal(String name, BigDecimal value) throws SQLException {
     
-    setBigDecimal(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setBigDecimal(i, value);
+    }
   }
   
   /**
@@ -528,7 +580,9 @@ public class PreparedSql {
    */
   public void setBigInteger(String name, BigInteger value) throws SQLException {
     
-    setBigInteger(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setBigInteger(i, value);
+    }
   }
   
   /**
@@ -552,7 +606,9 @@ public class PreparedSql {
    */
   public void setString(String name, String value) throws SQLException {
     
-    setString(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setString(i, value);
+    }
   }
   
   /**
@@ -575,7 +631,9 @@ public class PreparedSql {
    */
   public void setDate(String name, java.util.Date value) throws SQLException {
     
-    setDate(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setDate(i, value);
+    }
   }
   
   /**
@@ -597,7 +655,9 @@ public class PreparedSql {
    */
   public void setTimestamp(String name, java.util.Date value) throws SQLException {
     
-    setTimestamp(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setTimestamp(i, value);
+    }
   }
   
   /**
@@ -619,7 +679,9 @@ public class PreparedSql {
    */
   public void setTime(String name, java.util.Date value) throws SQLException {
     
-    setTime(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setTime(i, value);
+    }
   }
   
   /**
@@ -641,7 +703,9 @@ public class PreparedSql {
    */
   public void setDate(String name, java.sql.Date value) throws SQLException {
     
-    setDate(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setDate(i, value);
+    }
   }
   
   /**
@@ -664,7 +728,9 @@ public class PreparedSql {
    */
   public void setTimestamp(String name, Timestamp value) throws SQLException {
     
-    setTimestamp(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setTimestamp(i, value);
+    }
   }
   
   /**
@@ -687,7 +753,9 @@ public class PreparedSql {
    */
   public void setTime(String name, Time value) throws SQLException {
     
-    setTime(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setTime(i, value);
+    }
   }
   
   /**
@@ -710,7 +778,9 @@ public class PreparedSql {
    */
   public void setArray(String name, Array value) throws SQLException {
     
-    setArray(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setArray(i, value);
+    }
   }
   
   /**
@@ -733,7 +803,9 @@ public class PreparedSql {
    */
   public void setBlob(String name, Blob value) throws SQLException {
     
-    setBlob(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setBlob(i, value);
+    }
   }
   
   /**
@@ -756,7 +828,9 @@ public class PreparedSql {
    */
   public void setClob(String name, Clob value) throws SQLException {
     
-    setClob(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setClob(i, value);
+    }
   }
   
   /**
@@ -779,7 +853,9 @@ public class PreparedSql {
    */
   public void setObject(String name, Object value) throws SQLException {
     
-    setObject(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setObject(i, value);
+    }
   }
   
   /**
@@ -802,7 +878,9 @@ public class PreparedSql {
    */
   public void setRef(String name, Ref value) throws SQLException {
     
-    setRef(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setRef(i, value);
+    }
   }
   
   /**
@@ -825,7 +903,9 @@ public class PreparedSql {
    */
   public void setURL(String name, URL value) throws SQLException {
     
-    setURL(getVariablePosition(name), value);
+    for (int i : getVariablePositions(name)) {
+      setURL(i, value);
+    }
   }
   
   /**

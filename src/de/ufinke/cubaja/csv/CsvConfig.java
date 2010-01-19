@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -6,7 +6,7 @@ package de.ufinke.cubaja.csv;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.text.DecimalFormatSymbols;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -467,7 +467,7 @@ public class CsvConfig {
     
     if (writerDecimalChar == null) {
       if (decimalChar == null) {
-        writerDecimalChar = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+        writerDecimalChar = new DecimalFormat().getDecimalFormatSymbols().getDecimalSeparator();
       } else {
         writerDecimalChar = decimalChar;
       }

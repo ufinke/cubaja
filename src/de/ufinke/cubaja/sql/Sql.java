@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -175,12 +175,24 @@ public class Sql {
   
   boolean hasVariables() {
     
+    storeVariable();
+    
     return variableList.size() > 1;
   }
   
   List<String> getVariables() {
+
+    storeVariable();
     
     return variableList;
+  }
+  
+  private void storeVariable() {
+
+    if (variable != null) {
+      variableList.add(variable.toString());
+      variable = null;
+    }
   }
   
   /**
@@ -334,7 +346,7 @@ public class Sql {
    * @param value
    * @return this
    */
-  public Sql append(int[] value) {
+  public Sql appendList(int[] value) {
     
     if (value == null) {
       return this;
@@ -422,8 +434,7 @@ public class Sql {
           if (Character.isJavaIdentifierPart(c)) {
             variable.append(c);
           } else {
-            variableList.add(variable.toString());
-            variable = null;
+            storeVariable();
             state = State.DEFAULT;
           }
           break;

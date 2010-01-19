@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -59,7 +59,7 @@ public class Update extends PreparedSql {
     int[] updateCount = EMPTY_UPDATE_COUNT;
     
     if (intervalBatchCount == batchSize) {
-      updateCount = executeBatch(false);
+      updateCount = doExecuteBatch();
     }
     intervalBatchCount++;
     
@@ -76,10 +76,12 @@ public class Update extends PreparedSql {
    */
   public int[] executeBatch() throws SQLException {
 
-    return executeBatch(true);
+    resetBatchCount = true;
+    
+    return doExecuteBatch();
   }
   
-  private int[] executeBatch(boolean directCall) throws SQLException {
+  private int[] doExecuteBatch() throws SQLException {
     
     int[] updateCount = EMPTY_UPDATE_COUNT;
     

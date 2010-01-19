@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -71,7 +71,7 @@ class VariableSetterGenerator implements Generator {
   
   private void createVariableMap(List<String> variableList) {
     
-    variableMap = new HashMap<String, Integer>(variableList.size() << 2);
+    variableMap = new HashMap<String, Integer>();
     
     for (int i = 1; i < variableList.size(); i++) {
       String methodName = Util.createMethodName(variableList.get(i), "get");

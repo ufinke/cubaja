@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -48,6 +48,7 @@ public class Query extends PreparedSql implements ColumnReader {
     
     closeResultSet();
     resultSet = statement.executeQuery();
+    resetChanged();
     rowCount = 0;
   }
   
