@@ -2,7 +2,7 @@
 
 <project name="cubaja" default="zip">
 	
-	<property name="version" value="0.3.0"/>
+	<property name="version" value="0.3.1"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>

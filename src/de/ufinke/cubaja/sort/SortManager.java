@@ -22,8 +22,8 @@ final class SortManager {
   static private final int MINIMUM_RUN_SIZE = 1024;
   static private final int MAX_ARRAY_SIZE = 1024 * 16;
   // ObjectOutputStream drains after buffer of 1K is filled;
-  // resulting block to disk is 31K <= block <= 32K
-  static private final int DEFAULT_BLOCK_SIZE = 1024 * 31;
+  // resulting block to disk is approximately 15K <= block <= 16K
+  static private final int DEFAULT_BLOCK_SIZE = 1024 * 15;
   static private final int MINIMUM_BLOCK_SIZE = 1024 * 7;
 
   static final Text text = new Text(Sorter.class);

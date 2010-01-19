@@ -79,7 +79,7 @@ final class SortTask implements Runnable {
   
   private void mergeFromFile() throws Exception {
     
-    drainToFileTask();
+    drainToFile();
     writeQueue(manager.getFileQueue(), new Request(RequestType.SWITCH_STATE));
   }
   
@@ -114,12 +114,12 @@ final class SortTask implements Runnable {
     arrayList.add(sortArray);
     
     if (arrayList.size() == manager.getArrayCount()) {
-      drainToFileTask();
+      drainToFile();
     }
   }
   
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private void drainToFileTask() throws Exception {
+  private void drainToFile() throws Exception {
 
     if (arrayList.size() == 0) {
       return;
