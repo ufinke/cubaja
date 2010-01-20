@@ -86,6 +86,7 @@ public class PreparedSql {
         } else {
           int[] newEntry = new int[entry.length + 1];
           System.arraycopy(entry, 0, newEntry, 1, entry.length);
+          entry = newEntry;
         }
         entry[0] = i;
       }
