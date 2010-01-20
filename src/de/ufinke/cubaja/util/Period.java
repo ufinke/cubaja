@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -9,6 +9,46 @@ import java.util.Iterator;
 
 public class Period {
 
+  /**
+   * Creates a <code>Date</code> object from year, month and day.
+   * Note that, in contrary to <code>java.util.Calendar</code>,
+   * january is month <code>1</code>.
+   * @param year
+   * @param month
+   * @param dayOfMonth
+   * @return date
+   */
+  static public Date createDate(int year, int month, int dayOfMonth) {
+    
+    Calendar cal = Calendar.getInstance();
+    cal.clear();
+    cal.set(Calendar.YEAR, year);
+    cal.set(Calendar.MONTH, month - 1);
+    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    return cal.getTime();
+  }
+
+  /**
+   * Returns a <code>Date</code> without time components.
+   * @param date
+   * @return date
+   */
+  static public Date stripTime(Date date) {
+    
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.set(Calendar.HOUR_OF_DAY, 0);
+    cal.set(Calendar.MINUTE, 0);
+    cal.set(Calendar.SECOND, 0);
+    cal.set(Calendar.MILLISECOND, 0);
+    return cal.getTime();
+  }
+  
+  static public Date today() {
+    
+    return stripTime(new Date());
+  }
+  
   public static Period createMonth(Date date) {
     
     Calendar cal = Calendar.getInstance();

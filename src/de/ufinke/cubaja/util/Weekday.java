@@ -4,6 +4,7 @@
 package de.ufinke.cubaja.util;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Weekday definitions.
@@ -29,6 +30,37 @@ public enum Weekday {
   public int getCalendarConstant() {
     
     return calendarConstant;
+  }
+  
+  /**
+   * Returns a date's weekday.
+   * @param date
+   * @return weekday
+   */
+  static public Weekday getWeekday(Date date) {
+    
+    if (weekdayMap == null) {
+      createWeekdayMap();
+    }
+    
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    return weekdayMap[cal.get(Calendar.DAY_OF_WEEK)];
+  }
+  
+  static private Weekday[] weekdayMap;
+  
+  static private synchronized void createWeekdayMap() {
+    
+    if (weekdayMap != null) {
+      return;
+    }
+    
+    weekdayMap = new Weekday[8];
+    
+    for (Weekday weekday : Weekday.values()) {
+      weekdayMap[weekday.calendarConstant] = weekday;
+    }
   }
   
 }

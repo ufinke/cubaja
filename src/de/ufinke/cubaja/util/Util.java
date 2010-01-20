@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -9,10 +9,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Miscellaneous utility methods.
@@ -21,7 +18,6 @@ import java.util.Map;
 public class Util {
 
   static private Text text = new Text(Util.class);
-  static private Map<Integer, Weekday> weekdayMap;
   
   static private double P_FACTOR[] = new double[] {
     1.0,
@@ -305,78 +301,15 @@ public class Util {
   }
   
   /**
-   * Returns a <code>Date</code> without time components.
+   * Formats a date.
    * @param date
-   * @return date
-   */
-  static public Date stripTime(Date date) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    return cal.getTime();
-  }
-  
-  /**
-   * Formats a date as <code>yyyy-MM-dd</code>.
-   * @param date
+   * @param pattern
    * @return formatted date
    */
-  static public String formatDate(Date date) {
+  static public String formatDate(Date date, String pattern) {
     
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat sdf = new SimpleDateFormat(pattern);
     return sdf.format(date);
-  }
-  
-  /**
-   * Creates a <code>Date</code> object from year, month and day.
-   * Note that, in contrary to <code>java.util.Calendar</code>,
-   * january is month <code>1</code>.
-   * @param year
-   * @param month
-   * @param dayOfMonth
-   * @return date
-   */
-  static public Date createDate(int year, int month, int dayOfMonth) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.clear();
-    cal.set(Calendar.YEAR, year);
-    cal.set(Calendar.MONTH, month - 1);
-    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    return cal.getTime();
-  }
-
-  /**
-   * Returns a date's weekday.
-   * @param date
-   * @return weekday
-   */
-  static public Weekday getWeekday(Date date) {
-    
-    if (weekdayMap == null) {
-      createWeekdayMap();
-    }
-    
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    return weekdayMap.get(cal.get(Calendar.DAY_OF_WEEK));
-  }
-  
-  static private synchronized void createWeekdayMap() {
-    
-    if (weekdayMap != null) {
-      return;
-    }
-    
-    weekdayMap = new HashMap<Integer, Weekday>(16);
-    
-    for (Weekday weekday : Weekday.values()) {
-      weekdayMap.put(weekday.getCalendarConstant(), weekday);
-    }
   }
   
   /**
