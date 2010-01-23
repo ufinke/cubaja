@@ -721,7 +721,7 @@ public class CsvReader implements ColumnReader {
     }
   }
   
-  public <D> Iterable<D> readAllRows(Class<? extends D> clazz) {
+  public <D> Iterable<D> iterable(Class<? extends D> clazz) {
     
     return new RowIterator<D>(this, clazz);
   }

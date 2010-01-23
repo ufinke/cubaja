@@ -48,14 +48,13 @@ public class Mergesort implements SortAlgorithm {
   @SuppressWarnings("unchecked")
   private void mergesort(final int left, final int right) {
     
-    
-    final Object[] entries = this.entries;
-    final Object[] temp = this.temp;
-    
     if (right <= left) {
       return;
     }
 
+    final Object[] entries = this.entries;
+    final Object[] temp = this.temp;
+    
     int i = left;
     boolean sorted = true;
     while (sorted && (i < right)) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -163,10 +163,19 @@ public class HolidayConfig {
   }
   
   private List<HolidayEntryConfig> entryList;
+  private HolidayCalendar calendar;
   
   public HolidayConfig() {
   
     entryList = new ArrayList<HolidayEntryConfig>();
+  }
+  
+  public HolidayCalendar getHolidayCalendar() {
+    
+    if (calendar == null) {
+      calendar = new HolidayCalendar(this);
+    }
+    return calendar;
   }
   
   public List<HolidayEntryConfig> getEntryList() {

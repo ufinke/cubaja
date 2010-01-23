@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
@@ -398,6 +398,6 @@ public interface ColumnReader {
    * @param clazz
    * @return Iterable
    */
-  public <D> Iterable<D> readAllRows(Class<? extends D> clazz);
+  public <D> Iterable<D> iterable(Class<? extends D> clazz);
 
 }

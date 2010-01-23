@@ -6,87 +6,11 @@ package de.ufinke.cubaja.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.io.*;
+import java.text.*;
 
-public class Period {
+public class Period implements Iterable<Date>, Externalizable, Comparable<Period> {
 
-  /**
-   * Creates a <code>Date</code> object from year, month and day.
-   * Note that, in contrary to <code>java.util.Calendar</code>,
-   * january is month <code>1</code>.
-   * @param year
-   * @param month
-   * @param dayOfMonth
-   * @return date
-   */
-  static public Date createDate(int year, int month, int dayOfMonth) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.clear();
-    cal.set(Calendar.YEAR, year);
-    cal.set(Calendar.MONTH, month - 1);
-    cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-    return cal.getTime();
-  }
-
-  /**
-   * Returns a <code>Date</code> without time components.
-   * @param date
-   * @return date
-   */
-  static public Date stripTime(Date date) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    return cal.getTime();
-  }
-  
-  static public Date today() {
-    
-    return stripTime(new Date());
-  }
-  
-  public static Period createMonth(Date date) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    
-    cal.set(Calendar.DAY_OF_MONTH, 1);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    Date start = cal.getTime();
-    
-    cal.add(Calendar.MONTH, 1);
-    cal.add(Calendar.DATE, -1);
-    Date end = cal.getTime();
-    
-    return new Period(start, end);
-  }
-  
-  public static Period createYear(Date date) {
-    
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    
-    cal.set(Calendar.DAY_OF_YEAR, 1);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    Date start = cal.getTime();
-    
-    cal.add(Calendar.YEAR, 1);
-    cal.add(Calendar.DATE, -1);
-    Date end = cal.getTime();
-    
-    return new Period(start, end);
-  }
-  
   Date start;
   Date end;
   
@@ -94,6 +18,47 @@ public class Period {
   
     this.start = start;
     this.end = end;
+  }
+  
+  public Period(Day start, Day end) {
+    
+    this.start = start.getDate();
+    this.end = end.getDate();
+  }
+  
+  public boolean equals(Object object) {
+    
+    if (object instanceof Period) {
+      Period other = (Period) object;
+      return start.equals(other.start) && end.equals(other.end);
+    }
+    return false;
+  }
+  
+  public int hashCode() {
+    
+    return start.hashCode();
+  }
+  
+  public String toString() {
+
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    StringBuilder sb = new StringBuilder(24);
+    sb.append('[');
+    sb.append(sdf.format(start));
+    sb.append(';');
+    sb.append(sdf.format(end));
+    sb.append(']');
+    return sb.toString();
+  }
+  
+  public int compareTo(Period other) {
+    
+    int result = Util.compare(start, other.start);
+    if (result == 0) {
+      result = Util.compare(end, other.end);
+    }
+    return result;
   }
   
   public boolean contains(Date date) {
@@ -112,88 +77,59 @@ public class Period {
     return end;
   }
   
-  public Period addMonth(int count) {
+  public Iterator<Date> iterator() {
     
-    Calendar cal = Calendar.getInstance();
-    
-    cal.setTime(start);
-    cal.add(Calendar.MONTH, count);
-    Date start = cal.getTime();
-    
-    cal.setTime(end);
-    cal.add(Calendar.DATE, 1);
-    cal.add(Calendar.MONTH, count);
-    cal.add(Calendar.DATE, -1);
-    Date end = cal.getTime();
-    
-    return new Period(start, end);
-  }
-  
-  public Period addYear(int count) {
-    
-    Calendar cal = Calendar.getInstance();
-    
-    cal.setTime(start);
-    cal.add(Calendar.YEAR, count);
-    Date start = cal.getTime();
-    
-    cal.setTime(end);
-    cal.add(Calendar.DATE, 1);
-    cal.add(Calendar.YEAR, count);
-    cal.add(Calendar.DATE, -1);
-    Date end = cal.getTime();
-    
-    return new Period(start, end);
-  }
-  
-  public Iterable<Date> iterateDays(final int step) {
-    
-    return new Iterable<Date>() {
+    return new Iterator<Date>() {
+      
+      private Calendar cal = initCal();
+      private Date nextDate;
 
-      public Iterator<Date> iterator() {
-
-        return new Iterator<Date>() {
-          
-          private Calendar cal = initCal();
-          private Date nextDate;
-
-          private Calendar initCal() {
-          
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(start);
-            
-            if (Util.compare(start, end) <= 0) {
-              nextDate = start;
-            }
-            
-            return cal;
-          }
-          
-          public boolean hasNext() {
-
-            return nextDate != null;
-          }
-
-          public Date next() {
-
-            Date result = nextDate;
-            
-            cal.add(Calendar.DATE, step);
-            nextDate = cal.getTime();
-            if (nextDate.compareTo(end) > 0) {
-              nextDate = null;
-            }
-            
-            return result;
-          }
-
-          public void remove() throws UnsupportedOperationException {
-            
-            throw new UnsupportedOperationException();
-          }          
-        };
+      private Calendar initCal() {
+      
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(start);
+        
+        if (Util.compare(start, end) <= 0) {
+          nextDate = start;
+        }
+        
+        return cal;
       }
+      
+      public boolean hasNext() {
+
+        return nextDate != null;
+      }
+
+      public Date next() {
+
+        Date result = nextDate;
+        
+        cal.add(Calendar.DATE, 1);
+        nextDate = cal.getTime();
+        if (nextDate.compareTo(end) > 0) {
+          nextDate = null;
+        }
+        
+        return result;
+      }
+
+      public void remove() throws UnsupportedOperationException {
+        
+        throw new UnsupportedOperationException();
+      }          
     };
   }
-  
+
+  public void writeExternal(ObjectOutput out) throws IOException {
+
+    out.writeLong(start.getTime());
+    out.writeLong(end.getTime());
+  }
+
+  public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+
+    start = new Date(in.readLong());
+    end = new Date(in.readLong());
+  }
 }

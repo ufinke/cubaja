@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.cafebabe;
@@ -16,9 +16,6 @@ import java.io.FileOutputStream;
  */
 public class Loader extends ClassLoader {
 
-  static private final String dumpDirectory = System.getProperty(Loader.class.getPackage().getName() + ".dump");
-  static private final String classNamePrefix = Loader.class.getPackage() + ".Generated";
-  
   /**
    * Convenience method to generate and load a class.
    * <p>
@@ -44,7 +41,8 @@ public class Loader extends ClassLoader {
     loader.setGenerator(generator);
     
     StringBuilder sb = new StringBuilder(200);
-    sb.append(classNamePrefix);
+    sb.append(generator.getClass().getPackage());
+    sb.append(".Generated");
     for (int i = 0; i < nameSuffix.length; i++) {
       sb.append('_');
       Object suffix = nameSuffix[i];
@@ -111,6 +109,7 @@ public class Loader extends ClassLoader {
   
   private void dump(String className, byte[] array) throws Exception {
     
+    String dumpDirectory = System.getProperty(Loader.class.getPackage().getName() + ".dump");
     if (dumpDirectory == null) {
       return;
     }

@@ -1,9 +1,10 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import de.ufinke.cubaja.util.IteratorException;
 
 /**
@@ -56,11 +57,11 @@ public class RowIterator<D> implements Iterator<D>, Iterable<D> {
     return hasNext;
   }
   
-  public D next() throws IteratorException {
+  public D next() throws IteratorException, NoSuchElementException {
     
     if (! calledHasNext) {
       if (! hasNext()) {
-        return null;
+        throw new NoSuchElementException();
       }
     }
     calledHasNext = false;

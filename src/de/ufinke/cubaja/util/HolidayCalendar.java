@@ -44,6 +44,16 @@ public class HolidayCalendar {
     return set.get(cal.get(DAY_OF_YEAR));
   }
   
+  public boolean isWorkday(Date date) {
+    
+    return ! isHoliday(date);
+  }
+  
+  public boolean isWorkday(Calendar cal) {
+    
+    return ! isHoliday(cal);
+  }
+  
   private BitSet createSet(int year) {
     
     BitSet set = new BitSet(367);

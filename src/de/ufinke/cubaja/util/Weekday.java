@@ -21,6 +21,7 @@ public enum Weekday {
   SATURDAY (Calendar.SATURDAY);
   
   private int calendarConstant;
+  private String string;
   
   private Weekday(int calendarConstant) {
     
@@ -32,6 +33,20 @@ public enum Weekday {
     return calendarConstant;
   }
   
+  public String toString() {
+    
+    if (string == null) {
+      if (text == null) {
+        text = new Text(Weekday.class);
+      }
+      string = text.get(name()); 
+    }
+    
+    return string;
+  }
+  
+  static private Text text;
+  
   /**
    * Returns a date's weekday.
    * @param date
@@ -39,12 +54,17 @@ public enum Weekday {
    */
   static public Weekday getWeekday(Date date) {
     
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    return getWeekday(cal);
+  }
+  
+  static public Weekday getWeekday(Calendar cal) {
+    
     if (weekdayMap == null) {
       createWeekdayMap();
     }
     
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
     return weekdayMap[cal.get(Calendar.DAY_OF_WEEK)];
   }
   

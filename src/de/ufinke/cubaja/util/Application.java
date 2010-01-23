@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -17,6 +17,12 @@ public abstract class Application {
 
   static private Log logger = LogFactory.getLog(Application.class);
   static private Text text = new Text(Application.class);
+  
+  static public final int EXIT_CODE_OK = 0;
+  static public final int EXIT_CODE_WARN = 4;
+  static public final int EXIT_CODE_ERROR = 8;
+  static public final int EXIT_CODE_SEVERE = 12;
+  static public final int EXIT_CODE_FATAL = 16;
 
   private Stopwatch stopwatch;
   private String[] args;
@@ -85,7 +91,7 @@ public abstract class Application {
       work();
     } catch (Throwable t) {
       logger.fatal(text.get("abort"), t);
-      setExitCode(16);
+      setExitCode(EXIT_CODE_FATAL);
     }
     
     stopwatch.elapsedMillis();

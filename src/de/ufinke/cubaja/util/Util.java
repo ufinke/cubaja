@@ -306,7 +306,7 @@ public class Util {
    * @param pattern
    * @return formatted date
    */
-  static public String formatDate(Date date, String pattern) {
+  static public String format(Date date, String pattern) {
     
     SimpleDateFormat sdf = new SimpleDateFormat(pattern);
     return sdf.format(date);

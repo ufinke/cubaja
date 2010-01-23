@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -765,5 +765,19 @@ public class CsvWriter {
     } catch (Exception e) {
       throw new CsvException(text.get("writeObject", clazz.getName()), e);
     }
+  }
+  
+  /**
+   * Fills columns from getter methods of data object and writes row.
+   * This method just calls <code>writeObject</code>
+   * and <code>nextRow</code>.
+   * @param dataObject
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void writeRow(Object dataObject) throws IOException, CsvException {
+    
+    writeObject(dataObject);
+    nextRow();
   }
 }

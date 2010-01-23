@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -193,6 +193,7 @@ public class DatabaseConfig {
   private int fetchSize;
   private int batchSize;
   private boolean log;
+  private Database database;
 
   /**
    * Constructor.
@@ -429,4 +430,20 @@ public class DatabaseConfig {
     
     return connection;
   }
+  
+  /**
+   * Returns a <code>Database</code> instance.
+   * The instance is created on the first call to this method.
+   * Subsequent calls will return the same instance.
+   * @return database instance with connection
+   * @throws SQLException
+   */
+  public Database getDatabase() throws SQLException {
+    
+    if (database == null) {
+      database = new Database(this);
+    }
+    return database;
+  }
+  
 }
