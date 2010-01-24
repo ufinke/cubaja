@@ -774,7 +774,7 @@ public class Query extends PreparedSql implements ColumnReader {
     }
   }
 
-  public <D> Iterable<D> iterable(Class<? extends D> clazz) {
+  public <D> Iterable<D> cursor(Class<? extends D> clazz) {
 
     return new RowIterator<D>(this, clazz);
   }

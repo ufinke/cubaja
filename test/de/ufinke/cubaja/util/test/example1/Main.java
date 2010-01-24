@@ -19,11 +19,11 @@ public class Main extends Application {
     HolidayConfig config = configurator.configure(new HolidayConfig());
     HolidayCalendar holidays = new HolidayCalendar(config);
     
-    Period period = new Period(Util.createDate(2010, 1, 1), Util.createDate(2011, 12, 31));
+    Period period = new Period(new Day(2010, 1, 1), new Day(2011, 12, 31));
     
-    for (Date date : period.iterateDays(1)) {
+    for (Date date : period) {
       if (holidays.isHoliday(date)) {
-        System.out.println(Util.formatDate(date));
+        System.out.println(Util.format(date, "yyyy-MM-dd"));
       }
     }
   }

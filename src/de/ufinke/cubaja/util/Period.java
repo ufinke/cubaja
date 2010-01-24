@@ -20,10 +20,10 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
     this.end = end;
   }
   
-  public Period(Day start, Day end) {
+  public Period(Calendar start, Calendar end) {
     
-    this.start = start.getDate();
-    this.end = end.getDate();
+    this.start = start.getTime();
+    this.end = end.getTime();
   }
   
   public boolean equals(Object object) {
@@ -37,18 +37,16 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
   
   public int hashCode() {
     
-    return start.hashCode();
+    return start.hashCode() + end.hashCode();
   }
   
   public String toString() {
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    StringBuilder sb = new StringBuilder(24);
-    sb.append('[');
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    StringBuilder sb = new StringBuilder(50);
     sb.append(sdf.format(start));
-    sb.append(';');
+    sb.append(" - ");
     sb.append(sdf.format(end));
-    sb.append(']');
     return sb.toString();
   }
   

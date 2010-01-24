@@ -22,7 +22,7 @@ public class Main {
     
     CsvReader reader = new CsvReader(config.getCsv());
     
-    for (Data data : reader.readAllRows(Data.class)) {
+    for (Data data : reader.cursor(Data.class)) {
       System.out.println(data.getText() + ", " + data.getNumber() + ", " + data.getChoice());
     }
     

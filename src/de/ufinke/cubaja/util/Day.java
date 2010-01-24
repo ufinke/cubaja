@@ -4,135 +4,112 @@
 package de.ufinke.cubaja.util;
 
 import java.util.*;
-import static java.util.Calendar.*;
 import java.io.*;
 
-public class Day implements Cloneable, Comparable<Day>, Externalizable {
+public class Day extends GregorianCalendar implements Externalizable {
 
-  private GregorianCalendar calendar;
-  
   public Day() {
     
-    calendar = new GregorianCalendar();
     stripTime();
   }
   
   public Day(Date date) {
     
-    calendar = new GregorianCalendar();
-    calendar.setTime(date);
+    setTime(date);
     stripTime();
   }
   
-  public Day(GregorianCalendar calendar) {
-    
-    this.calendar = (GregorianCalendar) calendar.clone();
+  public Day(Calendar calendar) {
+
+    setTimeInMillis(calendar.getTimeInMillis());
     stripTime();
   }
   
   public Day(long millis) {
     
-    calendar = new GregorianCalendar();
-    calendar.setTimeInMillis(millis);
+    setTimeInMillis(millis);
     stripTime();
   }
   
   public Day(int year, int month, int day) {
     
-    calendar = new GregorianCalendar();
-    calendar.clear();
-    calendar.set(YEAR, year);
-    calendar.set(MONTH, month - 1);
-    calendar.set(DAY_OF_MONTH, day);
+    set(YEAR, year);
+    set(MONTH, month - 1);
+    set(DAY_OF_MONTH, day);
+    stripTime();
   }
   
   private void stripTime() {
     
-    calendar.clear(HOUR);
-    calendar.clear(MINUTE);
-    calendar.clear(SECOND);
-    calendar.clear(MILLISECOND);
+    set(HOUR, 0);
+    set(MINUTE, 0);
+    set(SECOND, 0);
+    set(MILLISECOND, 0);
   }
   
   public String toString() {
     
-    return Util.format(getDate(), "yyyy-MM-dd");
+    return Util.format(getTime(), "yyyy-MM-dd");
   }
-  
+
   public Day clone() {
     
-    return new Day(calendar);
-  }
-  
-  public boolean equals(Object object) {
-    
-    if (object instanceof Calendar) {
-      Calendar other = (Calendar) object;
-      return calendar.equals(other);
-    }
-    return false;
-  }
-  
-  public int hashCode() {
-    
-    return calendar.hashCode();
-  }
-  
-  public int compareTo(Day other) {
-    
-    return Util.compare(calendar, other.calendar);
+    return new Day(getTimeInMillis());
   }
   
   public void writeExternal(ObjectOutput out) throws IOException {
 
-    out.writeShort(calendar.get(YEAR));
-    out.writeByte(calendar.get(MONTH));
-    out.writeByte(calendar.get(DAY_OF_MONTH));
+    out.writeShort(get(YEAR));
+    out.writeByte(get(MONTH));
+    out.writeByte(get(DAY_OF_MONTH));
   }
 
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-    calendar = new GregorianCalendar(in.readShort(), in.readByte(), in.readByte());
+    clear();
+    set(YEAR, in.readShort());
+    set(MONTH, in.readByte());
+    set(DAY_OF_MONTH, in.readByte());
   }
   
-  public int getYear() {
+  public int year() {
     
-    return calendar.get(YEAR);
+    return get(YEAR);
   }
   
-  public int getMonth() {
+  public int month() {
     
-    return calendar.get(MONTH) + 1;
+    return get(MONTH) + 1;
   }
   
-  public int getDay() {
+  public int day() {
     
-    return calendar.get(DAY_OF_MONTH);
+    return get(DAY_OF_MONTH);
   }
   
-  public Date getDate() {
+  public Date date() {
     
-    return calendar.getTime();
+    return getTime();
   }
-  
-  public GregorianCalendar getCalendar() {
+
+  public Calendar calendar() {
     
-    return (GregorianCalendar) calendar.clone();
+    return clone();
   }
   
   public java.sql.Date getSqlDate() {
     
-    return new java.sql.Date(calendar.getTimeInMillis());
+    return new java.sql.Date(getTimeInMillis());
   }
   
   public Weekday getWeekday() {
     
-    return Weekday.getWeekday(calendar);
+    return Weekday.getWeekday(this);
   }
   
   public String format(String pattern) {
     
-    return Util.format(getDate(), pattern);
+    return Util.format(getTime(), pattern);
   }
   
   public boolean isWorkday(HolidayConfig config) {
@@ -142,7 +119,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   
   public boolean isWorkday(HolidayCalendar holidays) {
     
-    return holidays.isWorkday(calendar);
+    return holidays.isWorkday(this);
   }
   
   public boolean isHoliday(HolidayConfig config) {
@@ -152,32 +129,32 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   
   public boolean isHoliday(HolidayCalendar holidays) {
     
-    return holidays.isHoliday(calendar);
+    return holidays.isHoliday(this);
   }
   
   public boolean isFirstDayOfMonth() {
     
-    return calendar.get(DAY_OF_MONTH) == 1;
+    return get(DAY_OF_MONTH) == 1;
   }
   
   public boolean isLastDayOfMonth() {
     
-    return calendar.get(DAY_OF_MONTH) == calendar.getActualMaximum(DAY_OF_MONTH);
+    return get(DAY_OF_MONTH) == getActualMaximum(DAY_OF_MONTH);
   }
   
   public boolean isFirstDayOfYear() {
     
-    return calendar.get(MONTH) == 0 && calendar.get(DAY_OF_MONTH) == 1;
+    return get(MONTH) == 0 && get(DAY_OF_MONTH) == 1;
   }
   
   public boolean isLastDayOfYear() {
     
-    return calendar.get(MONTH) == 11 && calendar.get(DAY_OF_MONTH) == 31;
+    return get(MONTH) == 11 && get(DAY_OF_MONTH) == 31;
   }
   
   public void addDays(int count) {
     
-    calendar.add(DATE, count);
+    add(DATE, count);
   }
   
   public void addWorkdays(int count, HolidayConfig config) {
@@ -190,26 +167,36 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
     int step = (count < 0) ? -1 : 1;
     count = Math.abs(count);
     while (count > 0) {
-      calendar.add(DATE, step);
-      if (holidays.isWorkday(calendar)) {
+      add(DATE, step);
+      if (holidays.isWorkday(this)) {
         count--;
       }
     }
   }
   
+  public void addMonths(int count) {
+    
+    add(MONTH, count);
+  }
+  
   public void addMonths(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
-    calendar.add(MONTH, count);
+    add(MONTH, count);
     if (adjustLastDay) {
       adjustLastDayOfMonth();
     }
   }
   
+  public void addYears(int count) {
+    
+    add(YEAR, count);
+  }
+  
   public void addYears(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
-    calendar.add(YEAR, count);
+    add(YEAR, count);
     if (adjustLastDay) {
       adjustLastDayOfMonth();
     }
@@ -217,7 +204,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   
   public void adjustNextWeekday(Weekday weekday) {
     
-    int difference = weekday.getCalendarConstant() - calendar.get(DAY_OF_WEEK);
+    int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
     if (difference == 0) {
       return;
     } else if (difference < 0) {
@@ -228,7 +215,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   
   public void adjustPreviousWeekday(Weekday weekday) {
     
-    int difference = weekday.getCalendarConstant() - calendar.get(DAY_OF_WEEK);
+    int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
     if (difference == 0) {
       return;
     } else if (difference > 0) {
@@ -245,7 +232,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   public void adjustNextWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
-      addDays(1);
+      add(DATE, 1);
     }
   }
   
@@ -257,7 +244,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   public void adjustPreviousWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
-      addDays(-1);
+      add(DATE, -1);
     }
   }
   
@@ -269,7 +256,7 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   public void adjustNextHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
-      addDays(1);
+      add(DATE, 1);
     }
   }
   
@@ -281,30 +268,57 @@ public class Day implements Cloneable, Comparable<Day>, Externalizable {
   public void adjustPreviousHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
-      addDays(-1);
+      add(DATE, -1);
     }
   }
   
   public void adjustFirstDayOfMonth() {
     
-    calendar.set(DAY_OF_MONTH, 1);
+    set(DAY_OF_MONTH, 1);
   }
   
   public void adjustLastDayOfMonth() {
     
-    calendar.set(DAY_OF_MONTH, calendar.getActualMaximum(DAY_OF_MONTH));
+    set(DAY_OF_MONTH, getActualMaximum(DAY_OF_MONTH));
   }
   
   public void adjustFirstDayOfYear() {
     
-    calendar.set(MONTH, 0);
-    calendar.set(DAY_OF_MONTH, 1);
+    set(MONTH, 0);
+    set(DAY_OF_MONTH, 1);
   }
   
   public void adjustLastDayOfYear() {
     
-    calendar.set(MONTH, 11);
-    calendar.set(DAY_OF_MONTH, 31);
+    set(MONTH, 11);
+    set(DAY_OF_MONTH, 31);
+  }
+  
+  public int dayCount(Calendar until) {
+    
+    if (get(YEAR) == until.get(YEAR)) {
+      return until.get(DAY_OF_YEAR) - get(DAY_OF_YEAR);
+    }
+    
+    boolean swap = compareTo(until) > 0;
+    
+    Calendar from = swap ? until : this;
+    Calendar to = swap ? this : until;
+    
+    Day calc = new Day(from);
+    calc.adjustLastDayOfYear();
+    int count = calc.get(DAY_OF_YEAR) - from.get(DAY_OF_YEAR);
+    calc.add(DATE, 1);
+    while (calc.get(YEAR) != to.get(YEAR)) {
+      count += calc.getActualMaximum(DAY_OF_YEAR);
+      calc.add(YEAR, 1);
+    }
+    count += to.get(DAY_OF_YEAR);
+    
+    if (swap) {
+      count *= -1;
+    }
+    return count;
   }
   
 }

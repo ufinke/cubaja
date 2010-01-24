@@ -398,6 +398,6 @@ public interface ColumnReader {
    * @param clazz
    * @return Iterable
    */
-  public <D> Iterable<D> iterable(Class<? extends D> clazz);
+  public <D> Iterable<D> cursor(Class<? extends D> clazz);
 
 }
