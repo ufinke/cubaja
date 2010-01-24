@@ -294,6 +294,11 @@ public class Day extends GregorianCalendar implements Externalizable {
     set(DAY_OF_MONTH, 31);
   }
   
+  public int dayCount(Date until) {
+    
+    return dayCount(new Day(until));
+  }
+  
   public int dayCount(Calendar until) {
     
     if (get(YEAR) == until.get(YEAR)) {
@@ -319,6 +324,15 @@ public class Day extends GregorianCalendar implements Externalizable {
       count *= -1;
     }
     return count;
+  }
+  
+  public int day30Count(Calendar until) {
+    
+    if (get(MONTH) == until.get(MONTH) && get(YEAR) == until.get(YEAR)) {
+      return until.get(DAY_OF_MONTH) - get(DAY_OF_MONTH);
+    }    
+    int months = (until.get(YEAR) - get(YEAR)) * 12 + until.get(MONTH) - get(MONTH);
+    return (months * 30) - Math.min(30, get(DAY_OF_MONTH)) + Math.min(30, until.get(DAY_OF_MONTH));
   }
   
 }
