@@ -1,6 +1,6 @@
 package de.ufinke.cubaja.csv.test.example2;
 
-import java.util.*;
+import java.util.Date;
 
 public class Data {
 

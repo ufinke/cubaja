@@ -1,9 +1,9 @@
 package de.ufinke.cubaja.csv.test.example2;
 
-import de.ufinke.cubaja.util.*;
-import de.ufinke.cubaja.csv.*;
-import de.ufinke.cubaja.config.*;
-import java.util.*;
+import java.util.Date;
+import de.ufinke.cubaja.config.Configurator;
+import de.ufinke.cubaja.csv.CsvWriter;
+import de.ufinke.cubaja.util.Application;
 
 public class Main extends Application {
 

@@ -3,11 +3,14 @@
 
 package de.ufinke.cubaja.util;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.io.*;
-import java.text.*;
 
 public class Period implements Iterable<Date>, Externalizable, Comparable<Period> {
 

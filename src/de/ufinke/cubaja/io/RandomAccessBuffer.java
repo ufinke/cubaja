@@ -143,7 +143,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   /**
    * Retrieves the current position.
-   * @return
+   * @return current position
    */
   public int getPosition() {
     
@@ -154,7 +154,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
    * Retrieves the current size.
    * The buffer's size is determined by the highest reached position.
    * There are some methods which reset the size to zero.
-   * @return
+   * @return size
    */
   public int size() {
     
@@ -164,7 +164,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   /**
    * Retrieves the current capacity.
    * The capacity is the amount of allocated, but not necessarily filled, bytes.
-   * @return
+   * @return current capacity
    */
   public int capacity() {
     
@@ -206,7 +206,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   /**
    * Copies the buffer's content up to the current size to a byte array.
-   * @return
+   * @return byte array
    */
   public byte[] toByteArray() {
     

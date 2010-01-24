@@ -3,8 +3,13 @@
 
 package de.ufinke.cubaja.util;
 
-import java.util.*;
-import java.io.*;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class Day extends GregorianCalendar implements Externalizable {
 
@@ -152,17 +157,19 @@ public class Day extends GregorianCalendar implements Externalizable {
     return get(MONTH) == 11 && get(DAY_OF_MONTH) == 31;
   }
   
-  public void addDays(int count) {
+  public Day addDays(int count) {
     
     add(DATE, count);
+    return this;
   }
   
-  public void addWorkdays(int count, HolidayConfig config) {
+  public Day addWorkdays(int count, HolidayConfig config) {
     
     addWorkdays(count, config.getHolidayCalendar());
+    return this;
   }
   
-  public void addWorkdays(int count, HolidayCalendar holidays) {
+  public Day addWorkdays(int count, HolidayCalendar holidays) {
     
     int step = (count < 0) ? -1 : 1;
     count = Math.abs(count);
@@ -172,126 +179,145 @@ public class Day extends GregorianCalendar implements Externalizable {
         count--;
       }
     }
+    return this;
   }
   
-  public void addMonths(int count) {
+  public Day addMonths(int count) {
     
     add(MONTH, count);
+    return this;
   }
   
-  public void addMonths(int count, boolean retainLastDayOfMonth) {
+  public Day addMonths(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
     add(MONTH, count);
     if (adjustLastDay) {
       adjustLastDayOfMonth();
     }
+    return this;
   }
   
-  public void addYears(int count) {
+  public Day addYears(int count) {
     
     add(YEAR, count);
+    return this;
   }
   
-  public void addYears(int count, boolean retainLastDayOfMonth) {
+  public Day addYears(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
     add(YEAR, count);
     if (adjustLastDay) {
       adjustLastDayOfMonth();
     }
+    return this;
   }
   
-  public void adjustNextWeekday(Weekday weekday) {
+  public Day adjustNextWeekday(Weekday weekday) {
     
     int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
     if (difference == 0) {
-      return;
+      return this;
     } else if (difference < 0) {
       difference += 7;
     }
     addDays(difference);
+    return this;
   }
   
-  public void adjustPreviousWeekday(Weekday weekday) {
+  public Day adjustPreviousWeekday(Weekday weekday) {
     
     int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
     if (difference == 0) {
-      return;
+      return this;
     } else if (difference > 0) {
       difference -= 7;
     }
     addDays(difference);
+    return this;
   }
   
-  public void adjustNextWorkday(HolidayConfig config) {
+  public Day adjustNextWorkday(HolidayConfig config) {
     
     adjustNextWorkday(config.getHolidayCalendar());
+    return this;
   }
   
-  public void adjustNextWorkday(HolidayCalendar holidays) {
+  public Day adjustNextWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
       add(DATE, 1);
     }
+    return this;
   }
   
-  public void adjustPreviousWorkday(HolidayConfig config) {
+  public Day adjustPreviousWorkday(HolidayConfig config) {
     
     adjustPreviousWorkday(config.getHolidayCalendar());
+    return this;
   }
   
-  public void adjustPreviousWorkday(HolidayCalendar holidays) {
+  public Day adjustPreviousWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
       add(DATE, -1);
     }
+    return this;
   }
   
-  public void adjustNextHoliday(HolidayConfig config) {
+  public Day adjustNextHoliday(HolidayConfig config) {
     
     adjustNextHoliday(config.getHolidayCalendar());
+    return this;
   }
   
-  public void adjustNextHoliday(HolidayCalendar holidays) {
+  public Day adjustNextHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
       add(DATE, 1);
     }
+    return this;
   }
   
-  public void adjustPreviousHoliday(HolidayConfig config) {
+  public Day adjustPreviousHoliday(HolidayConfig config) {
     
     adjustPreviousHoliday(config.getHolidayCalendar());
+    return this;
   }
   
-  public void adjustPreviousHoliday(HolidayCalendar holidays) {
+  public Day adjustPreviousHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
       add(DATE, -1);
     }
+    return this;
   }
   
-  public void adjustFirstDayOfMonth() {
+  public Day adjustFirstDayOfMonth() {
     
     set(DAY_OF_MONTH, 1);
+    return this;
   }
   
-  public void adjustLastDayOfMonth() {
+  public Day adjustLastDayOfMonth() {
     
     set(DAY_OF_MONTH, getActualMaximum(DAY_OF_MONTH));
+    return this;
   }
   
-  public void adjustFirstDayOfYear() {
+  public Day adjustFirstDayOfYear() {
     
     set(MONTH, 0);
     set(DAY_OF_MONTH, 1);
+    return this;
   }
   
-  public void adjustLastDayOfYear() {
+  public Day adjustLastDayOfYear() {
     
     set(MONTH, 11);
     set(DAY_OF_MONTH, 31);
+    return this;
   }
   
   public int dayCount(Date until) {

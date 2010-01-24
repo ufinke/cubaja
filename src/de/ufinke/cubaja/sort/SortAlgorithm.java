@@ -14,7 +14,7 @@ public interface SortAlgorithm {
   /**
    * Sorts an array of objects.
    * @param array
-   * @return sorted array
+   * @param size
    */
   public void sort(Object[] array, int size);
   

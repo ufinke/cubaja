@@ -1,8 +1,13 @@
 package de.ufinke.cubaja.util.test.example1;
 
-import de.ufinke.cubaja.util.*;
-import de.ufinke.cubaja.config.*;
-import java.util.*;
+import java.util.Date;
+import de.ufinke.cubaja.config.Configurator;
+import de.ufinke.cubaja.util.Application;
+import de.ufinke.cubaja.util.Day;
+import de.ufinke.cubaja.util.HolidayCalendar;
+import de.ufinke.cubaja.util.HolidayConfig;
+import de.ufinke.cubaja.util.Period;
+import de.ufinke.cubaja.util.Util;
 
 public class Main extends Application {
 
