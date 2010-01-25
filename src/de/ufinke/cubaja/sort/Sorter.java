@@ -10,6 +10,17 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Sorts an arbitrary number of objects.
+ * If the objects don't fit into memory,
+ * pre-sorted runs with serialized objects are written
+ * to a temporary file.
+ * An object is put to the sorter with the <code>add</code> method.
+ * Sorted objects are retrieved with an iterator;
+ * <code>Sorter</code> implements the appropriate <code>Iterable</code>.
+ * @author Uwe Finke
+ * @param <D> data type
+ */
 public class Sorter<D extends Serializable> implements Iterable<D> {
 
   static private enum State {
@@ -28,11 +39,20 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   private boolean sortTaskStarted;
   
+  /**
+   * Constructor with default configuration.
+   * @param comparator
+   */
   public Sorter(Comparator<? super D> comparator) {
     
     this(comparator, new SortConfig());
   }
   
+  /**
+   * Constructor with explicit configuration.
+   * @param comparator
+   * @param config
+   */
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
   
     manager = new SortManager(config, comparator);    
@@ -46,6 +66,12 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     size = 0;    
   }
   
+  /**
+   * Adds an object.
+   * @param element
+   * @throws SorterException
+   * @throws IllegalStateException
+   */
   public void add(D element) throws SorterException, IllegalStateException {
   
     if (state != State.PUT) {
@@ -89,6 +115,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
   }
   
+  /**
+   * Retrieves the sorted objects.
+   */
   public Iterator<D> iterator() throws SorterException {
 
     if (state != State.PUT) {
@@ -150,6 +179,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     return new ResultQueueIterator(manager);
   }
   
+  /**
+   * Aborts the sort before all objects have been read.
+   */
   public void abort() {
     
     close();

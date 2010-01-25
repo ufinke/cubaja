@@ -82,12 +82,12 @@ public class PreparedSql {
         int[] entry = variableMap.get(varName);
         if (entry == null) {
           entry = new int[1];
-          variableMap.put(varName, entry);
         } else {
           int[] newEntry = new int[entry.length + 1];
           System.arraycopy(entry, 0, newEntry, 1, entry.length);
           entry = newEntry;
         }
+        variableMap.put(varName, entry);
         entry[0] = i;
       }
     }

@@ -9,6 +9,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Merges an arbitrary number of sorted sources.
+ * After the sources are defined with a constructor,
+ * the merged objects are retrieved by an iterator.
+ * @author Uwe Finke
+ * @param <D> data type
+ */
 public class Merger<D> implements Iterable<D> {
 
   static private final class Source<E> {
@@ -94,6 +101,12 @@ public class Merger<D> implements Iterable<D> {
 
   private final Iterator<D> iterator;
   
+  /**
+   * Constructor with 2 sources.
+   * @param comparator
+   * @param leftSource
+   * @param rightSource
+   */
   public Merger(Comparator<? super D> comparator, Iterable<D> leftSource, Iterable<D> rightSource) {
 
     Source<D> left = new Source<D>(leftSource.iterator());
@@ -101,6 +114,14 @@ public class Merger<D> implements Iterable<D> {
     iterator = new MergeIterator<D>(comparator, left, right);
   }
   
+  /**
+   * Constructor with a list of sources.
+   * The sources are split into sub-lists
+   * until the constructor with 2 sources can be used.
+   * As a result, the objects are merged from a binary tree.
+   * @param comparator
+   * @param sources
+   */
   public Merger(Comparator<? super D> comparator, List<Iterable<D>> sources) {
     
     switch (sources.size()) {
@@ -134,6 +155,9 @@ public class Merger<D> implements Iterable<D> {
     }
   }
   
+  /**
+   * Retrieves one object after another in proper sequence.
+   */
   public Iterator<D> iterator() {
     
     return iterator;
