@@ -1,13 +1,10 @@
 package de.ufinke.cubaja.util.test.example1;
 
-import java.util.Date;
 import de.ufinke.cubaja.config.Configurator;
 import de.ufinke.cubaja.util.Application;
 import de.ufinke.cubaja.util.Day;
 import de.ufinke.cubaja.util.HolidayCalendar;
 import de.ufinke.cubaja.util.HolidayConfig;
-import de.ufinke.cubaja.util.Period;
-import de.ufinke.cubaja.util.Util;
 
 public class Main extends Application {
 
@@ -24,12 +21,13 @@ public class Main extends Application {
     HolidayConfig config = configurator.configure(new HolidayConfig());
     HolidayCalendar holidays = new HolidayCalendar(config);
     
-    Period period = new Period(new Day(2010, 1, 1), new Day(2011, 12, 31));
-    
-    for (Date date : period) {
-      if (holidays.isHoliday(date)) {
-        System.out.println(Util.format(date, "yyyy-MM-dd"));
+    Day current = new Day(2010, 1, 1);
+    Day nextYear = current.clone().addYears(1);
+    while (current.compareTo(nextYear) < 0) {
+      if (holidays.isHoliday(current)) {
+        System.out.println(current);
       }
+      current.addDays(1);
     }
   }
 }
