@@ -10,22 +10,21 @@ import java.io.ObjectOutput;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 
-public class Period implements Iterable<Date>, Externalizable, Comparable<Period> {
+public class Period implements Externalizable, Comparable<Period> {
 
-  Date start;
+  Date begin;
   Date end;
   
-  public Period(Date start, Date end) {
+  public Period(Date begin, Date end) {
   
-    this.start = start;
+    this.begin = begin;
     this.end = end;
   }
   
-  public Period(Calendar start, Calendar end) {
+  public Period(Calendar begin, Calendar end) {
     
-    this.start = start.getTime();
+    this.begin = begin.getTime();
     this.end = end.getTime();
   }
   
@@ -33,21 +32,21 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
     
     if (object instanceof Period) {
       Period other = (Period) object;
-      return start.equals(other.start) && end.equals(other.end);
+      return begin.equals(other.begin) && end.equals(other.end);
     }
     return false;
   }
   
   public int hashCode() {
     
-    return start.hashCode() + end.hashCode();
+    return begin.hashCode() + end.hashCode();
   }
   
   public String toString() {
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     StringBuilder sb = new StringBuilder(50);
-    sb.append(sdf.format(start));
+    sb.append(sdf.format(begin));
     sb.append(" - ");
     sb.append(sdf.format(end));
     return sb.toString();
@@ -55,7 +54,7 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
   
   public int compareTo(Period other) {
     
-    int result = Util.compare(start, other.start);
+    int result = Util.compare(begin, other.begin);
     if (result == 0) {
       result = Util.compare(end, other.end);
     }
@@ -64,13 +63,13 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
   
   public boolean contains(Date date) {
     
-    return Util.compare(start, date) <= 0
+    return Util.compare(begin, date) <= 0
         && Util.compare(end, date) >= 0;
   }
 
-  public Date getStart() {
+  public Date getBegin() {
   
-    return start;
+    return begin;
   }
   
   public Date getEnd() {
@@ -78,59 +77,15 @@ public class Period implements Iterable<Date>, Externalizable, Comparable<Period
     return end;
   }
   
-  public Iterator<Date> iterator() {
-    
-    return new Iterator<Date>() {
-      
-      private Calendar cal = initCal();
-      private Date nextDate;
-
-      private Calendar initCal() {
-      
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(start);
-        
-        if (Util.compare(start, end) <= 0) {
-          nextDate = start;
-        }
-        
-        return cal;
-      }
-      
-      public boolean hasNext() {
-
-        return nextDate != null;
-      }
-
-      public Date next() {
-
-        Date result = nextDate;
-        
-        cal.add(Calendar.DATE, 1);
-        nextDate = cal.getTime();
-        if (nextDate.compareTo(end) > 0) {
-          nextDate = null;
-        }
-        
-        return result;
-      }
-
-      public void remove() throws UnsupportedOperationException {
-        
-        throw new UnsupportedOperationException();
-      }          
-    };
-  }
-
   public void writeExternal(ObjectOutput out) throws IOException {
 
-    out.writeLong(start.getTime());
+    out.writeLong(begin.getTime());
     out.writeLong(end.getTime());
   }
 
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
-    start = new Date(in.readLong());
+    begin = new Date(in.readLong());
     end = new Date(in.readLong());
   }
 }

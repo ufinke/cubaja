@@ -24,11 +24,6 @@ import de.ufinke.cubaja.util.Text;
  * The <code>Matcher</code> ensures that any matching data objects we didn't read from the
  * <code>MatchSource</code> are skipped before the next key in sequence is determined,
  * which is the lowest next key of all sources.
- * <p/>
- * The <code>Iterator</code> may throw an <code>OutOfSequenceException</code>
- * (which is a subclass of <code>RuntimeException</code>) if any source is out of sequence.
- * The exception notes a source number; the sources are numbered 
- * in the order of their creation starting with <code>0</code>. 
  * @author Uwe Finke
  * @param <K> key type
  */

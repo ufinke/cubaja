@@ -13,6 +13,11 @@ import java.util.GregorianCalendar;
 
 public class Day extends GregorianCalendar implements Externalizable {
 
+  static public Date today() {
+    
+    return new Day().date();
+  }
+  
   public Day() {
     
     stripTime();
@@ -350,6 +355,11 @@ public class Day extends GregorianCalendar implements Externalizable {
       count *= -1;
     }
     return count;
+  }
+  
+  public int day30Count(Date until) {
+    
+    return day30Count(new Day(until));
   }
   
   public int day30Count(Calendar until) {
