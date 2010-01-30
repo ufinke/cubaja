@@ -1,6 +1,10 @@
 /**
  * <p>
  * Classes for easy access to XML configuration data.
+ * </p>
+ * Examples see <a href="./doc-files/cubaja_config_en.pdf" hreflang="en" target="_blank">HowTo</a>
+ * (<a href="./doc-files/cubaja_config_de.pdf" hreflang="de" target="_blank">German</a>).
+ * <p>
  * The idea is to eliminate code for interpreting typeless configuration data
  * from the application. The application relies on typesafe data which can
  * be retrieved from instances representing an object oriented view of the configuration.

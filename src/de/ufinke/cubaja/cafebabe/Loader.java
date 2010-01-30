@@ -60,7 +60,15 @@ public class Loader extends ClassLoader {
   private Generator generator;
   
   /**
-   * Constructor.
+   * Default constructor.
+   * Parent class loader is the system class loader.
+   */
+  public Loader() {
+    
+  }
+  
+  /**
+   * Constructor with explicit parent class loader.
    * @param parentLoader
    */
   public Loader(ClassLoader parentLoader) {

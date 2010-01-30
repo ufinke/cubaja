@@ -12,7 +12,7 @@ public class Main extends Application {
     new Main().start();
   }
   
-  protected void work() throws Exception {
+  protected void execute() throws Exception {
     
     Configurator configurator = new Configurator();
     configurator.setBaseName("de/ufinke/cubaja/csv/test/example2/config");

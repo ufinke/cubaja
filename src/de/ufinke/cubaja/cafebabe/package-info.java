@@ -1,7 +1,7 @@
 /**
  * <p>
  * Bytecode generator.
- * To use the package, start with <code>Loader</code>.
+ * To use the package, start with {@link de.ufinke.cubaja.cafebabe.Loader}.
  * </p>
  * <p>
  * Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.

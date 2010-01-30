@@ -88,7 +88,7 @@ public abstract class Application {
     stopwatch = new Stopwatch(getClass().getName());
     
     try {
-      work();
+      execute();
     } catch (Throwable t) {
       logger.fatal(text.get("abort"), t);
       setExitCode(EXIT_CODE_FATAL);
@@ -105,5 +105,5 @@ public abstract class Application {
    * it is called by <code>start</code>.
    * @throws Exception
    */
-  abstract protected void work() throws Exception;
+  abstract protected void execute() throws Exception;
 }

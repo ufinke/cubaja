@@ -100,4 +100,25 @@
     
 	</target>
 	
+  <target name="local_doc">
+  
+    <delete dir="${dist}/javadoc"/>
+    <mkdir dir="${dist}/javadoc"/>
+    
+    <javadoc destdir="${dist}/javadoc"
+             classpathref="lib">
+      <fileset dir="./src">
+        <exclude name="**/*.properties"/>
+        <exclude name="**/doc-files/**"/>
+      </fileset>
+    </javadoc>
+    
+    <copy todir="${dist}/javadoc">
+      <fileset dir="./src">
+        <include name="**/doc-files/**/*.pdf"/>
+      </fileset>
+    </copy>
+    
+  </target>
+    
 </project>

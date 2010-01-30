@@ -13,7 +13,7 @@ public class Main extends Application {
     new Main().start();
   }
   
-  public void work() throws Exception {
+  public void execute() throws Exception {
     
     Configurator configurator = new Configurator();
     configurator.setBaseName(Main.class.getPackage().getName().replace('.', '/') + "/holiday_config");
