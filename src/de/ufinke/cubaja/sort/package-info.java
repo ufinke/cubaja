@@ -1,7 +1,6 @@
 /**
  * <p>
- * Package for sort, merge and match tasks <i><b>(under construction)</b></i>.
- * Class <code>Matcher</code> and accompanied classes are ready for use.
+ * Package for sort, merge and match tasks.
  * </p>
  * <p>
  * Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.

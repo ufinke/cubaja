@@ -13,10 +13,10 @@ import org.apache.commons.logging.LogFactory;
  * and call <code>start()</code>.
  * @author Uwe Finke
  */
-public abstract class Application {
+public abstract class Executor {
 
-  static private Log logger = LogFactory.getLog(Application.class);
-  static private Text text = new Text(Application.class);
+  static private Log logger = LogFactory.getLog(Executor.class);
+  static private Text text = new Text(Executor.class);
   
   static public final int EXIT_CODE_OK = 0;
   static public final int EXIT_CODE_WARN = 4;
@@ -28,7 +28,7 @@ public abstract class Application {
   private String[] args;
   private int exitCode;
 
-  protected Application() {
+  protected Executor() {
 
   }
 

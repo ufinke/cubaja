@@ -3,9 +3,9 @@ package de.ufinke.cubaja.csv.test.example2;
 import java.util.Date;
 import de.ufinke.cubaja.config.Configurator;
 import de.ufinke.cubaja.csv.CsvWriter;
-import de.ufinke.cubaja.util.Application;
+import de.ufinke.cubaja.util.Executor;
 
-public class Main extends Application {
+public class Main extends Executor {
 
   static public void main(String[] args) {
     

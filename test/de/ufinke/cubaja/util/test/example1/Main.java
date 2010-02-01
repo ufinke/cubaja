@@ -1,12 +1,12 @@
 package de.ufinke.cubaja.util.test.example1;
 
 import de.ufinke.cubaja.config.Configurator;
-import de.ufinke.cubaja.util.Application;
+import de.ufinke.cubaja.util.Executor;
 import de.ufinke.cubaja.util.Day;
 import de.ufinke.cubaja.util.HolidayCalendar;
 import de.ufinke.cubaja.util.HolidayConfig;
 
-public class Main extends Application {
+public class Main extends Executor {
 
   static public void main(String[] args) {
     

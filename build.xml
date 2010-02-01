@@ -2,7 +2,7 @@
 
 <project name="cubaja" default="zip">
 	
-	<property name="version" value="0.4.0"/>
+	<property name="version" value="0.4.1"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>
@@ -50,12 +50,25 @@
 	  <mkdir dir="${dist}/javadoc"/>
 	  
     <javadoc destdir="${dist}/javadoc"
-    	       classpathref="lib">
+             classpathref="lib"
+             windowtitle="cubaja API"
+             overview="${dist}/misc/overview.html"
+             link="http://java.sun.com/j2se/1.5.0/docs/api">
       <fileset dir="${dist}/src">
-      	<exclude name="**/*.properties"/>
+        <exclude name="**/*.properties"/>
+        <exclude name="**/doc-files/**"/>
       </fileset>
     </javadoc>
-		
+    
+    <copy todir="${dist}/javadoc">
+      <fileset dir="${dist}/src">
+        <include name="**/doc-files/**/*.pdf"/>
+      </fileset>
+      <fileset dir="${dist}/misc">
+        <include name="cubaja_logo_075.jpeg"/>
+      </fileset>
+    </copy>
+    
 	</target>
 		
 	<target name="jar" depends="compile">
@@ -106,7 +119,10 @@
     <mkdir dir="${dist}/javadoc"/>
     
     <javadoc destdir="${dist}/javadoc"
-             classpathref="lib">
+             classpathref="lib"
+             windowtitle="cubaja API"
+             overview="./misc/overview.html"
+             link="http://java.sun.com/j2se/1.5.0/docs/api">
       <fileset dir="./src">
         <exclude name="**/*.properties"/>
         <exclude name="**/doc-files/**"/>
@@ -116,6 +132,9 @@
     <copy todir="${dist}/javadoc">
       <fileset dir="./src">
         <include name="**/doc-files/**/*.pdf"/>
+      </fileset>
+      <fileset dir="./misc">
+        <include name="cubaja_logo_075.jpeg"/>
       </fileset>
     </copy>
     

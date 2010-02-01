@@ -1,6 +1,6 @@
 /**
  * <p>
- * Classes for easy access to XML configuration data.
+ * Easy access to XML configuration data.
  * </p>
  * Examples see <a href="./doc-files/cubaja_config_en.pdf" hreflang="en" target="_blank">HowTo</a>
  * (<a href="./doc-files/cubaja_config_de.pdf" hreflang="de" target="_blank">German</a>).
@@ -11,7 +11,7 @@
  * This framework makes configuration issues nearly as easy as coding simple data access objects.
  * </p>
  * <p>
- * The central class of this package is <code>Configurator</code>.
+ * The central class of this package is {@link de.ufinke.cubaja.config.Configurator Configurator}.
  * </p>
  * <p>
  * An arbitrary object represents
@@ -32,9 +32,11 @@
  * <code>java.math.BigDecimal</code>, <code>Class</code> and interfaces.
  * Other types with a public parameterless constructor are considered to be element nodes.
  * Those types need not to extend or implement supertypes or interfaces.
- * But if such a type implements <code>StartElementHandler</code>,
- * <code>EndElementHandler</code>, <code>ParameterFactoryFinder</code> or
- * <code>ParameterFactoryProvider</code>, the implemented methods will
+ * But if such a type implements 
+ * {@link de.ufinke.cubaja.config.StartElementHandler StartElementHandler},
+ * {@link de.ufinke.cubaja.config.EndElementHandler} 
+ * or {@link de.ufinke.cubaja.config.ParameterFactoryProvider}, 
+ * the implemented methods will
  * be called during the configuration process and we gain more control for special purposes.
  * </p>
  * <p>
@@ -49,11 +51,14 @@
  * and collected in an array.
  * </p>
  * <p>
- * The application passes its root configuration object to
- * the method <code>configure</code> of a <code>Configurator</code> instance.
- * Before doing so, we can customize the <code>Configurator</code>,
+ * The application passes it's root configuration object to the
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure}
+ * method of a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
+ * Before doing so, we can customize the 
+ * {@link de.ufinke.cubaja.config.Configurator Configurator},
  * e.g. by setting the base name of the XML source,
- * applying properties, setting patterns, or providing <code>ParameterFactoryFinder</code>s
+ * applying properties, setting patterns, or providing 
+ * {@link de.ufinke.cubaja.config.ParameterFactoryFinder ParameterFactoryFinder}s
  * for our own parameter types.  
  * </p>
  * <p>
@@ -62,13 +67,14 @@
  * Those properties are replaced by their actual values when the
  * parameter types of the setter / adder methods are processed.
  * There are several possible sources for property values, all provided by implementations
- * of <code>PropertyProvider</code>. Basic property providers are defined by enum
- * <code>PropertyProviderType</code>. 
+ * of {@link de.ufinke.cubaja.config.PropertyProvider PropertyProvider}. 
+ * Basic property providers are defined by enum
+ * {@link de.ufinke.cubaja.config.PropertyProviderType PropertyProviderType}. 
  * Additionally, we can write our own providers or pass an instance of <code>java.util.Properties</code>.
  * </p>
  * <p>
  * The properties search order is defined by the order of  
- * <code>addPropertyProvider</code> method calls.
+ * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
  * if we did not define them explicitly and we did not add the <code>NULL</code> property provider.
  * The default order is as follows:
@@ -87,7 +93,7 @@
  *   <li>
  *     <code>BASE_XML</code>
  *     <br/>
- *     Properties defined in the XML document with the special element tag
+ *     Properties defined in the XML document with the special element
  *     <br/>
  *     <code>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</code>.
  *   </li>
@@ -99,22 +105,30 @@
  * </ol>
  * </p>
  * <p>
- * We can invoke <code>configure</code> more than once on a <code>Configurator</code> instance.
+ * We can invoke {@link de.ufinke.cubaja.config.Configurator#configure configure} 
+ * more than once on a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
  * This is useful when we split a big configuration into several independent files
  * (e.g. technical and end-user responsibility) and we want to use the same basic settings.
  * The providers for the property types 
  * <code>BASE_PROPERTIES</code> and <code>BASE_XML</code> are stored in stacks.
  * The properties are searched from the top of the stack downward.
- * On every call to <code>configure</code> the actual base providers are initialized
- * and pushed to the stack. When <code>configure</code> finishes, they are popped off the stack.
- * A call to <code>pushBaseProperties</code> pushes the base providers
+ * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure} 
+ * the actual base providers are initialized
+ * and pushed to the stack. When 
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure}
+ * finishes, they are popped off the stack.
+ * A call to {@link de.ufinke.cubaja.config.Configurator#pushBaseProperties pushBaseProperties} 
+ * pushes the base providers
  * (with properties file and XML defined properties) created by the previous call to
- * <code>configure</code> onto the stack before we let
- * <code>configure</code> parse the next XML document. There is a corresponding method
- * <code>popBaseProperties</code> to pop the providers off the stack.
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure} onto the stack before we let
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure} parse the next XML document. 
+ * There is a corresponding method
+ * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popBaseProperties} 
+ * to pop the providers off the stack.
  * </p>
  * <p>
- * Implementations of <code>NamedPropertyProvider</code> are not part of the search sequence.
+ * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
+ * are not part of the search sequence.
  * The provider is called directly when a <code>configProperty</code> element
  * with an attribute '<code>provider</code>' is encountered. Such <code>configProperty</code>
  * elements may have sub-elements with the tag name '<code>parm</code>', containing attributes
@@ -126,7 +140,7 @@
  * is discarded but its children are processed as if they had been defined in
  * the root document.
  * </p>
- * There is another special element named <code>configSettings</code> to set the parsers behaviour.
+ * There is another special element named <code>configSettings</code> to set the parser's behaviour.
  * Possible attributes are
  * <ol>
  *   <li>
