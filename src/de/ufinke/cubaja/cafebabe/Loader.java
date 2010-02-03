@@ -41,7 +41,7 @@ public class Loader extends ClassLoader {
     loader.setGenerator(generator);
     
     StringBuilder sb = new StringBuilder(200);
-    sb.append(generator.getClass().getPackage());
+    sb.append(generator.getClass().getPackage().getName());
     sb.append(".Generated");
     for (int i = 0; i < nameSuffix.length; i++) {
       sb.append('_');

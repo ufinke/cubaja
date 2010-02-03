@@ -94,7 +94,7 @@ public class Type {
             size = 0;
             break;
           case 'D':
-          case 'L':
+          case 'J':
             size = 2;
             break;
         }
