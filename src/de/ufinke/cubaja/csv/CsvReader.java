@@ -14,6 +14,7 @@ import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.io.RowIterator;
+import de.ufinke.cubaja.util.*;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -700,6 +701,25 @@ public class CsvReader implements ColumnReader {
       return colConfig.getDateFormat().parse(s);
     } catch (Exception e) {
       handleParseError(e, s, "Date");
+      return null;
+    }
+  }
+  
+  public <E extends Enum<E>> E readEnum(String columnName, Class<E> enumType) throws CsvException {
+    
+    return readEnum(getColumnPosition(columnName), enumType);
+  }
+  
+  public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> enumType) throws CsvException {
+    
+    String s = getColumn(columnPosition).trim();
+    if (s.length() == 0) {
+      return null;
+    }
+    try {
+      return Util.getEnum(enumType, s);
+    } catch (NoSuchEnumException e) {
+      handleParseError(e, s, enumType.getName());
       return null;
     }
   }

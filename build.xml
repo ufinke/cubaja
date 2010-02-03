@@ -2,7 +2,7 @@
 
 <project name="cubaja" default="zip">
 	
-	<property name="version" value="0.4.1"/>
+	<property name="version" value="0.4.2"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>
@@ -27,6 +27,9 @@
 			<export srcurl="http://cubaja.googlecode.com/svn/trunk/src" 
 				      revision="${revision}" 
 				      destpath="${dist}/src"/>
+      <export srcurl="http://cubaja.googlecode.com/svn/trunk/misc" 
+              revision="${revision}" 
+              destpath="${dist}/misc"/>
 			<info   target="http://cubaja.googlecode.com/svn/trunk"/>
 		</svn>
 			

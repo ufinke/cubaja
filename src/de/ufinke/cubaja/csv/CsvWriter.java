@@ -745,6 +745,35 @@ public class CsvWriter {
   }
   
   /**
+   * Fills column identified by name with an <code>Enum</code>.
+   * @param columnName
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(String columnName, Enum<?> value) throws IOException, CsvException {
+    
+    write(getColumnPosition(columnName), value);
+  }
+  
+  /**
+   * Fills column identified by position with an <code>Enum</code>.
+   * @param position
+   * @param value
+   * @throws IOException
+   * @throws CsvException
+   */
+  public void write(int position, Enum<?> value) throws IOException, CsvException {
+    
+    setColConfig(position);
+    if (value == null) {
+      writeNull(position);
+    } else {
+      writeBuffer(position, value.name());
+    }
+  }
+  
+  /**
    * Fills columns from getter methods of data object.
    * @param dataObject
    * @throws CsvException

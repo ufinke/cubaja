@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -33,6 +33,7 @@ class ObjectFactoryGenerator implements Generator {
   }
   
   static private final Type objectType = new Type(Object.class);
+  static private final Type clazzType = new Type(Class.class);
   static private final Type voidType = new Type(Void.TYPE);
   static private final Type intType = new Type(Integer.TYPE);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
@@ -101,11 +102,16 @@ class ObjectFactoryGenerator implements Generator {
       ObjectFactoryType type = setter.type;
       Type parmType = type.getType();
       
-      code.duplicate();
+      code.duplicate(); // data object with setter method
       
-      code.loadLocalReference(1);
+      code.loadLocalReference(1); // CsvReader
       code.loadConstant(setter.position);
-      code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
+      if (type.needsClass()) {
+        code.loadConstant(parmType);
+        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType, clazzType);
+      } else {
+        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
+      }
       
       code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
     }

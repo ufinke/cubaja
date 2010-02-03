@@ -268,7 +268,12 @@ public class CodeAttribute implements Generatable {
   
   public void loadConstant(Class<?> value) {
     
-    int index = constantPool.addClass(new Type(value));
+    loadConstant(new Type(value));
+  }
+  
+  public void loadConstant(Type value) {
+    
+    int index = constantPool.addClass(value);
     if (index <= Byte.MAX_VALUE) {
       writeOpCode(0x12); // ldc
       write1(index);
