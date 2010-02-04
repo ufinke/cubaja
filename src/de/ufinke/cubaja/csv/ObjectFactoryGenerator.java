@@ -21,13 +21,15 @@ class ObjectFactoryGenerator implements Generator {
   static private class SetterEntry {
   
     String name;
-    ObjectFactoryType type;
+    ObjectFactoryType readerType;
+    Type dataType;
     int position;
     
-    SetterEntry(String methodName, ObjectFactoryType parameterType, int position) {
+    SetterEntry(String methodName, ObjectFactoryType readerType, Class<?> dataType, int position) {
       
       this.name = methodName;
-      this.type = parameterType;
+      this.readerType = readerType;
+      this.dataType = new Type(dataType);
       this.position = position;
     }
   }
@@ -99,21 +101,22 @@ class ObjectFactoryGenerator implements Generator {
     
     for (SetterEntry setter : setterMap.values()) {
       
-      ObjectFactoryType type = setter.type;
-      Type parmType = type.getType();
+      Type readerType = setter.readerType.getType();
+      String readerMethod = setter.readerType.getReaderMethod();
       
       code.duplicate(); // data object with setter method
       
       code.loadLocalReference(1); // CsvReader
       code.loadConstant(setter.position);
-      if (type.needsClass()) {
-        code.loadConstant(parmType);
-        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType, clazzType);
+      if (setter.readerType.needsClass()) {
+        code.loadConstant(setter.dataType);
+        code.invokeVirtual(csvReaderType, readerType, readerMethod, intType, clazzType);
+        code.cast(setter.dataType);
+        code.invokeVirtual(dataClassType, voidType, setter.name, setter.dataType);
       } else {
-        code.invokeVirtual(csvReaderType, parmType, type.getReaderMethod(), intType);
+        code.invokeVirtual(csvReaderType, readerType, readerMethod, intType);
+        code.invokeVirtual(dataClassType, voidType, setter.name, setter.dataType);
       }
-      
-      code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
     }
     
     code.returnReference(); // returns duplicated data object
@@ -139,20 +142,21 @@ class ObjectFactoryGenerator implements Generator {
         String methodName = method.getName();
         Integer position = searchMap.get(methodName);
         
-        if (position != null && method.getReturnType() == Void.TYPE) {
+        if (position != null) {
           
           Class<?>[] parameterTypes = method.getParameterTypes();
           
           if (parameterTypes.length == 1) {
             
-            ObjectFactoryType type = ObjectFactoryType.getType(parameterTypes[0]);
+            Class<?> parmClazz = parameterTypes[0];
+            ObjectFactoryType type = ObjectFactoryType.getType(parmClazz);
             
             if (type != null) {
               
               SetterEntry entry = setterMap.get(methodName);
               
-              if (entry == null || type.getPriority() < entry.type.getPriority()) {
-                setterMap.put(methodName, new SetterEntry(methodName, type, position));
+              if (entry == null || type.getPriority() < entry.readerType.getPriority()) {
+                setterMap.put(methodName, new SetterEntry(methodName, type, parmClazz, position));
               }
             }
           }

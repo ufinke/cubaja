@@ -14,8 +14,9 @@ import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.io.ColumnReader;
 import de.ufinke.cubaja.io.RowIterator;
-import de.ufinke.cubaja.util.*;
+import de.ufinke.cubaja.util.NoSuchEnumException;
 import de.ufinke.cubaja.util.Text;
+import de.ufinke.cubaja.util.Util;
 
 /**
  * CSV reader.

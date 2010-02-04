@@ -21,13 +21,15 @@ class ObjectWriterGenerator implements Generator {
   static private class GetterEntry {
   
     String name;
-    ObjectFactoryType type;
+    Type returnType;
+    ObjectFactoryType writerType;
     int position;
     
-    GetterEntry(String methodName, ObjectFactoryType type, int position) {
+    GetterEntry(String methodName, ObjectFactoryType writerType, Class<?> returnType, int position) {
       
       this.name = methodName;
-      this.type = type;
+      this.writerType = writerType;
+      this.returnType = new Type(returnType);
       this.position = position;
     }
   }
@@ -97,12 +99,11 @@ class ObjectWriterGenerator implements Generator {
     code.storeLocalReference(3);
     
     for (GetterEntry getter : getterMap.values()) {
-      Type parmType = getter.type.getType();
       code.loadLocalReference(1); // writer
       code.loadConstant(getter.position);      
       code.loadLocalReference(3); // data object
-      code.invokeVirtual(dataClassType, parmType, getter.name); // get
-      code.invokeVirtual(csvWriterType, voidType, "write", intType, parmType);
+      code.invokeVirtual(dataClassType, getter.returnType, getter.name); // get
+      code.invokeVirtual(csvWriterType, voidType, "write", intType, getter.writerType.getType());
     }
     
     code.returnVoid();
@@ -125,16 +126,19 @@ class ObjectWriterGenerator implements Generator {
       
       if (method.getParameterTypes().length == 0) {
         
+        Class<?> returnType = method.getReturnType();
         String methodName = method.getName();
         Integer position = searchMap.get(methodName);
+        if (position == null && returnType == Boolean.TYPE && methodName.startsWith("is")) {
+          position = searchMap.get("get" + methodName.substring(2));
+        }
         
         if (position != null) {
           
-          Class<?> returnType = method.getReturnType();
           ObjectFactoryType type = ObjectFactoryType.getType(returnType);
           
           if (type != null) {
-            getterMap.put(methodName, new GetterEntry(methodName, type, position));
+            getterMap.put(methodName, new GetterEntry(methodName, type, returnType, position));
           }
         }
       }

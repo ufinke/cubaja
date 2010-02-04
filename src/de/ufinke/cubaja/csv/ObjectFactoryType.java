@@ -47,6 +47,7 @@ enum ObjectFactoryType {
     this.clazz = clazz;
     type = new Type(clazz);
     this.primitive = primitive;
+    this.needsClass = needsClass;
     readerMethod = "read" + method;
     this.priority = priority;
   }

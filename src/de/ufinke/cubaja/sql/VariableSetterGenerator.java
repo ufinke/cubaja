@@ -86,9 +86,13 @@ class VariableSetterGenerator implements Generator {
     for (Method method : dataClass.getMethods()) {
       if (method.getParameterTypes().length == 0) {
         String name = method.getName();
+        Class<?> returnType = method.getReturnType();
         Integer position = variableMap.get(name);
+        if (position == null && returnType == Boolean.TYPE && name.startsWith("is")) {
+          position = variableMap.get("get" + name.substring(2));
+        }
         if (position != null) {
-          VariableSetterType type = VariableSetterType.getType(method.getReturnType());
+          VariableSetterType type = VariableSetterType.getType(returnType);
           if (type != null) {
             list.add(new ListEntry(name, position, type));
           }
