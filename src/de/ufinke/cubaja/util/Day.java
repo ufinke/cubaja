@@ -51,7 +51,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   
   private void stripTime() {
     
-    set(HOUR, 0);
+    set(HOUR_OF_DAY, 0);
     set(MINUTE, 0);
     set(SECOND, 0);
     set(MILLISECOND, 0);
@@ -80,6 +80,11 @@ public class Day extends GregorianCalendar implements Externalizable {
     set(YEAR, in.readShort());
     set(MONTH, in.readByte());
     set(DAY_OF_MONTH, in.readByte());
+  }
+  
+  public int compareTo(Date date) {
+    
+    return getTime().compareTo(date);
   }
   
   public int year() {
