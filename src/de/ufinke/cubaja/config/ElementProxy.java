@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -21,6 +21,7 @@ class ElementProxy {
   private boolean endElement;
   private boolean factoryProvider;
   private boolean factoryFinder;
+  private boolean elementProvider;
   private Map<String, MethodProxy> methodMap;
   private MethodProxy parentMethod;
   private MethodProxy charDataMethod;
@@ -110,6 +111,9 @@ class ElementProxy {
       if (ParameterFactoryFinder.class.isAssignableFrom(implementedInterface)) {
         factoryFinder = true;
       }
+      if (ElementFactoryProvider.class.isAssignableFrom(implementedInterface)) {
+        elementProvider = true;
+      }
     }
     
     methodMap = new HashMap<String, MethodProxy>();
@@ -139,6 +143,11 @@ class ElementProxy {
   boolean isFactoryFinder() {
     
     return factoryFinder;
+  }
+  
+  boolean isElementProvider() {
+    
+    return elementProvider;
   }
   
   private void checkMethod(Method method) throws ConfigException {

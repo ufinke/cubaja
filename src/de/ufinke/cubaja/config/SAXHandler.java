@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -355,47 +355,16 @@ class SAXHandler extends DefaultHandler2 {
   
   private void startElement(ElementProxy element, Attributes atts) throws SAXException {
     
-    Object node = null;
+    Object node = (element.getKind() == ElementKind.ROOT_NODE) ? rootNode : getNonRootNode(element, atts);
     
-    if (element.getKind() == ElementKind.ROOT_NODE) {
-      
-      node = rootNode;
-      
-    } else {
-      
-      ElementProxy parentElement = peekElement();
-      MethodProxy parentMethod = parentElement.findMethod(element.getName());
-      if (parentMethod == null) {
-        throw new ConfigException(text.get("unexpectedElement", element.getName()));
+    if (node == null) {
+      if (atts.getLength() > 0) {
+        throw new ConfigException(text.get("leaf", element.getName()));
       }
-      element.setParentMethod(parentMethod);
-      
-      ParameterFactory factory = null;
-      if (parentElement.isFactoryProvider()) {
-        ParameterFactoryProvider provider = (ParameterFactoryProvider) parentElement.getNode();
-        factory = provider.getFactory(element.getName(), parentMethod.getType());
-      }
-      if (factory == null) {
-        factory = parameterManager.getFactory(parentMethod.getType());
-      }
-      element.setFactory(factory);
-      
-      if (factory.isNode()) {
-        try {          
-          node = parameterManager.createParameter(factory, element.getName(), parentMethod);
-        } catch (Exception e) {
-          String clazz = parentMethod.getMethod().getParameterTypes()[0].getName();
-          throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()));
-        }
-        element.setKind(ElementKind.NODE);
-      } else {
-        element.setKind(ElementKind.ATTRIBUTE);
-      }
+      return;
     }
     
-    if (node != null) {
-      element.setNode(node);
-    }
+    element.setNode(node);
     
     if (element.isStartElement()) {
       StartElementHandler handler = (StartElementHandler) node;
@@ -407,15 +376,74 @@ class SAXHandler extends DefaultHandler2 {
       parameterManager.pushParameterFactoryFinder(finder);
     }
     
-    if (atts.getLength() > 0) {      
-      if (element.getKind() == ElementKind.ATTRIBUTE) {
-        throw new ConfigException(text.get("leaf", element.getName()));
-      } else {
-        for (int i = 0; i < atts.getLength(); i++) {
-          setAttribute(element, atts.getLocalName(i), atts.getValue(i));
-        }
+    for (int i = 0; i < atts.getLength(); i++) {
+      setAttribute(element, atts.getLocalName(i), atts.getValue(i));
+    }
+  }
+  
+  private Object getNonRootNode(ElementProxy element, Attributes atts) throws SAXException {
+
+    Object node = null;
+    
+    ElementProxy parentElement = peekElement();
+    
+    MethodProxy parentMethod = null;
+    ParameterFactory factory = null;
+    
+    if (parentElement.isElementProvider()) {
+      ElementFactoryProvider provider = (ElementFactoryProvider) parentElement.getNode();
+      ElementFactory ef = provider.getFactory(element.getName(), createAttributeMap(atts));
+      if (ef != null) {
+        parentMethod = new MethodProxy(ef.getMethod());
+        factory = new ElementParameterFactory(ef.getElement(parentMethod.getAnnotations()));
       }
     }
+    
+    if (parentMethod == null) {
+      parentMethod = parentElement.findMethod(element.getName());
+    }
+    
+    if (parentMethod == null) {
+      throw new ConfigException(text.get("unexpectedElement", element.getName()));
+    }
+    element.setParentMethod(parentMethod);
+
+    if (factory == null) {
+      if (parentElement.isFactoryProvider()) {
+        ParameterFactoryProvider provider = (ParameterFactoryProvider) parentElement.getNode();
+        factory = provider.getFactory(element.getName(), parentMethod.getType());
+      }
+    }
+    
+    if (factory == null) {
+      factory = parameterManager.getFactory(parentMethod.getType());
+    }      
+    element.setFactory(factory);
+    
+    if (factory.isNode()) {
+      try {          
+        node = parameterManager.createParameter(factory, element.getName(), parentMethod);
+      } catch (Exception e) {
+        String clazz = parentMethod.getMethod().getParameterTypes()[0].getName();
+        throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()));
+      }
+      element.setKind(ElementKind.NODE);
+    } else {
+      element.setKind(ElementKind.ATTRIBUTE);
+    }
+    
+    return node;
+  }
+  
+  private Map<String, String> createAttributeMap(Attributes atts) {
+    
+    Map<String, String> map = new HashMap<String, String>();
+    
+    for (int i = 0; i < atts.getLength(); i++) {
+      map.put(atts.getLocalName(i), atts.getValue(i));
+    }
+    
+    return map;
   }
   
   private void setAttribute(ElementProxy element, String name, String value) throws SAXException {
