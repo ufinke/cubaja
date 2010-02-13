@@ -25,14 +25,14 @@ public class TimestampProvider implements NamedPropertyProvider {
    * <p/>
    * We can specify the format by an optional <code>parm</code> 
    * with name <code>pattern</code>.
-   * The default format is <code>yyyyMMddHHmmss</code>.
+   * The default format is <code>yyyyMMdd_HHmmss</code>.
    * @return property value
    */
   public String getProperty(String name, Map<String, String> parms) {
     
     String pattern = parms.get("pattern");
     if (pattern == null) {
-      pattern = "yyyyMMddHHmmss";
+      pattern = "yyyyMMdd_HHmmss";
     }
     
     return new SimpleDateFormat(pattern).format(new Date());

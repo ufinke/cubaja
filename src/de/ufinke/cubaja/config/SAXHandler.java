@@ -16,6 +16,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 import de.ufinke.cubaja.util.Text;
+import static de.ufinke.cubaja.config.ElementKind.*;
 
 class SAXHandler extends DefaultHandler2 {
 
@@ -182,7 +183,7 @@ class SAXHandler extends DefaultHandler2 {
   private ElementProxy peekElement() {
     
     ElementProxy element = elementStack.peek();
-    if (element.getKind() == ElementKind.INCLUDED_ROOT) {
+    if (element.getKind() == INCLUDED_ROOT) {
       element = elementStack.get(elementStack.size() - 2);
     }
     return element;
@@ -215,26 +216,28 @@ class SAXHandler extends DefaultHandler2 {
   
   private void startElement(String localName, Attributes atts) throws SAXException {
     
-    ElementKind kind = ElementKind.UNKNOWN;
+    ElementKind kind = UNKNOWN;
     if (elementStack.size() == 0) {
-      kind = ElementKind.ROOT_NODE;
+      kind = ROOT_NODE;
     } else if (includedRoot) {
       includedRoot = false;
-      kind = ElementKind.INCLUDED_ROOT;
+      kind = INCLUDED_ROOT;
     } else {
       ElementKind parentKind = peekElement().getKind();
       switch (parentKind) {        
         case INCLUDE_DEFINITION:
         case INCLUDED_CONTENT:
-          kind = ElementKind.INCLUDED_CONTENT;
+          kind = INCLUDED_CONTENT;
           break;
         default:
           if (localName.equals("configInclude")) {
-            kind = ElementKind.INCLUDE;
+            kind = INCLUDE;
           } else if (localName.equals("configProperty")) {
-            kind = ElementKind.PROPERTY;
+            kind = PROPERTY;
+          } else if (localName.equals("configPropertyProvider")) {
+            kind = PROPERTY_PROVIDER_DEFINITION;
           } else if (localName.equals("configSettings")) {
-            kind = ElementKind.SETTINGS;
+            kind = SETTINGS;
           } else {        
             switch (parentKind) {
               case ATTRIBUTE:
@@ -246,7 +249,7 @@ class SAXHandler extends DefaultHandler2 {
                 if (! localName.equals("parm")) {
                   throw new ConfigException(text.get("propertyParmName"));
                 }
-                kind = ElementKind.PROPERTY_PARM;
+                kind = PROPERTY_PARM;
                 break;
             }
           }
@@ -265,6 +268,9 @@ class SAXHandler extends DefaultHandler2 {
         break;
       case PROPERTY_PARM:
         startPropertyParm(element, atts);
+        break;
+      case PROPERTY_PROVIDER_DEFINITION:
+        startPropertyProviderDefinition(element, atts);
         break;
       case INCLUDE:
         startInclude(element, atts);
@@ -355,7 +361,7 @@ class SAXHandler extends DefaultHandler2 {
   
   private void startElement(ElementProxy element, Attributes atts) throws SAXException {
     
-    Object node = (element.getKind() == ElementKind.ROOT_NODE) ? rootNode : getNonRootNode(element, atts);
+    Object node = (element.getKind() == ROOT_NODE) ? rootNode : getNonRootNode(element, atts);
     
     if (node == null) {
       if (atts.getLength() > 0) {
@@ -427,9 +433,9 @@ class SAXHandler extends DefaultHandler2 {
         String clazz = parentMethod.getMethod().getParameterTypes()[0].getName();
         throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()));
       }
-      element.setKind(ElementKind.NODE);
+      element.setKind(NODE);
     } else {
-      element.setKind(ElementKind.ATTRIBUTE);
+      element.setKind(ATTRIBUTE);
     }
     
     return node;
@@ -513,7 +519,7 @@ class SAXHandler extends DefaultHandler2 {
         break;
     }
     
-    if (! (element.getKind() == ElementKind.ROOT_NODE)) {      
+    if (! (element.getKind() == ROOT_NODE)) {      
       Object parentNode = peekElement().getNode();
       element.getParentMethod().invoke(element.getName(), parentNode, parm);
     }
@@ -533,7 +539,7 @@ class SAXHandler extends DefaultHandler2 {
     }
     
     if (defineIndex > -1) {
-      element.setKind(ElementKind.INCLUDE_DEFINITION);
+      element.setKind(INCLUDE_DEFINITION);
       includeDefinition = new IncludeDefinition(atts.getValue(defineIndex), locatorStack.peek());
       includedContent = true;
     }
@@ -580,7 +586,7 @@ class SAXHandler extends DefaultHandler2 {
     }
     
     if (providerIndex > -1) {
-      element.setKind(ElementKind.PROPERTY_PROVIDER);
+      element.setKind(PROPERTY_PROVIDER);
       String provider = resolve(atts.getValue(providerIndex), false);
       NamedPropertyValue entry = new NamedPropertyValue(name, provider);
       propertyStack.push(entry);
@@ -605,6 +611,25 @@ class SAXHandler extends DefaultHandler2 {
     String value = resolve(atts.getValue(valueIndex), false);
     NamedPropertyValue entry = propertyStack.peek();
     entry.addParm(name, value);
+  }
+  
+  private void startPropertyProviderDefinition(ElementProxy element, Attributes atts) throws SAXException {
+    
+    int nameIndex = atts.getIndex("", "name");
+    int classIndex = atts.getIndex("", "class");
+    if (nameIndex == -1 || classIndex == -1) {
+      throw new ConfigException(text.get("propertyProviderDefAtts"));
+    }
+    
+    String name = atts.getValue(nameIndex);
+    String className = resolve(atts.getValue(classIndex), false);
+    try {
+      Class<?> clazz = Class.forName(className);
+      NamedPropertyProvider provider = (NamedPropertyProvider) clazz.newInstance();
+      namedProviderMap.put(name, provider);
+    } catch (Exception e) {
+      throw new ConfigException(text.get("propertyProviderDefFailed", className), e);
+    }
   }
   
   private void startSettings(ElementProxy element, Attributes atts) throws SAXException {
