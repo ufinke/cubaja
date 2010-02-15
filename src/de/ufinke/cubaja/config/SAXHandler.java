@@ -3,6 +3,19 @@
 
 package de.ufinke.cubaja.config;
 
+import static de.ufinke.cubaja.config.ElementKind.ATTRIBUTE;
+import static de.ufinke.cubaja.config.ElementKind.INCLUDE;
+import static de.ufinke.cubaja.config.ElementKind.INCLUDED_CONTENT;
+import static de.ufinke.cubaja.config.ElementKind.INCLUDED_ROOT;
+import static de.ufinke.cubaja.config.ElementKind.INCLUDE_DEFINITION;
+import static de.ufinke.cubaja.config.ElementKind.NODE;
+import static de.ufinke.cubaja.config.ElementKind.PROPERTY;
+import static de.ufinke.cubaja.config.ElementKind.PROPERTY_PARM;
+import static de.ufinke.cubaja.config.ElementKind.PROPERTY_PROVIDER;
+import static de.ufinke.cubaja.config.ElementKind.PROPERTY_PROVIDER_DEFINITION;
+import static de.ufinke.cubaja.config.ElementKind.ROOT_NODE;
+import static de.ufinke.cubaja.config.ElementKind.SETTINGS;
+import static de.ufinke.cubaja.config.ElementKind.UNKNOWN;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -16,7 +29,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
 import de.ufinke.cubaja.util.Text;
-import static de.ufinke.cubaja.config.ElementKind.*;
 
 class SAXHandler extends DefaultHandler2 {
 

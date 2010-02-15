@@ -127,6 +127,9 @@ public class Configurator {
    */
   public void setBaseName(String baseName) {
     
+    if (baseName.endsWith(".xml")) {
+      baseName = baseName.substring(0, baseName.length() - 4);
+    }
     this.baseName = baseName;
   }
   
