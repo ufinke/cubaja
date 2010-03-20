@@ -259,6 +259,7 @@ public class Sql {
    * The file name's extension must be <code>sql</code> (lower case).
    * The <code>sqlResource</code> parameter contains only the
    * plain file name without extension and without path.
+   * The resource must be coded in <code>UTF-8</code>.
    * @param packageClass
    * @param sqlResource
    * @return this

@@ -11,36 +11,69 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+/**
+ * Extension of <code>GregorianCalendar</code>.
+ * This class offers date calculations on a day basis.
+ * Time components like hour, minute and second are stripped in the constructors
+ * so that the day represents the time at midnight.
+ * @author Uwe Finke
+ */
 public class Day extends GregorianCalendar implements Externalizable {
 
+  /**
+   * Creates a <code>Date</code> set to midnight of the current day.
+   * @return today's <code>Day</code> instance
+   */
   static public Date today() {
     
     return new Day().date();
   }
   
+  /**
+   * Creates a <code>Day</code> initialized to midnight of the current day.
+   */
   public Day() {
     
     stripTime();
   }
   
+  /**
+   * Creates a <code>Day</code> initialized to midnight of the supplied date.
+   * @param date
+   */
   public Day(Date date) {
     
     setTime(date);
     stripTime();
   }
   
+  /**
+   * Creates a <code>Day</code> initialized to midnight of the supplied calendar object.
+   * @param calendar
+   */
   public Day(Calendar calendar) {
 
     setTimeInMillis(calendar.getTimeInMillis());
     stripTime();
   }
   
+  /**
+   * Creates a <code>Day</code> initialized to midnight of the supplied time.
+   * @param millis
+   */
   public Day(long millis) {
     
     setTimeInMillis(millis);
     stripTime();
   }
   
+  /**
+   * Creates a <code>Day</code> initialized to the specified date.
+   * Note that <code>month</code> starts with <code>1</code> for january.
+   * @param year
+   * @param month
+   * @param day
+   */
   public Day(int year, int month, int day) {
     
     set(YEAR, year);
@@ -57,16 +90,25 @@ public class Day extends GregorianCalendar implements Externalizable {
     set(MILLISECOND, 0);
   }
   
+  /**
+   * Returns a string with format <code>yyyy-MM-dd</code>.
+   */
   public String toString() {
     
-    return Util.format(getTime(), "yyyy-MM-dd");
+    return format("yyyy-MM-dd");
   }
 
+  /**
+   * Creates a copy of this object.
+   */
   public Day clone() {
     
     return new Day(getTimeInMillis());
   }
   
+  /**
+   * Writes this object's values to a stream.
+   */
   public void writeExternal(ObjectOutput out) throws IOException {
 
     out.writeShort(get(YEAR));
@@ -74,6 +116,9 @@ public class Day extends GregorianCalendar implements Externalizable {
     out.writeByte(get(DAY_OF_MONTH));
   }
 
+  /**
+   * Reads this object's values from a stream.
+   */
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
     clear();
@@ -81,104 +126,190 @@ public class Day extends GregorianCalendar implements Externalizable {
     set(MONTH, in.readByte());
     set(DAY_OF_MONTH, in.readByte());
   }
-  
+
+  /**
+   * Compares this object to a <code>Date</code>.
+   * @param date
+   * @return see <code>java.util.Comparator</code>
+   */
   public int compareTo(Date date) {
     
     return getTime().compareTo(date);
   }
   
+  /**
+   * Returns this object's year value.
+   * @return year
+   */
   public int year() {
     
     return get(YEAR);
   }
   
+  /**
+   * Returns this object's month value, ranging from <code>1</code> to <code>12</code>.
+   * @return month
+   */
   public int month() {
     
     return get(MONTH) + 1;
   }
   
+  /**
+   * Returns this object's day of month value.
+   * @return day of month
+   */
   public int day() {
     
     return get(DAY_OF_MONTH);
   }
   
+  /**
+   * Returns this day as date.
+   * @return date
+   */
   public Date date() {
     
     return getTime();
   }
 
-  public Calendar calendar() {
-    
-    return clone();
-  }
-  
+  /**
+   * Returns this day as a SQL date.
+   * @return SQLDate
+   */
   public java.sql.Date getSqlDate() {
     
     return new java.sql.Date(getTimeInMillis());
   }
   
+  /**
+   * Returns the weekday of this day.
+   * @return weekday
+   */
   public Weekday getWeekday() {
     
     return Weekday.getWeekday(this);
   }
   
+  /**
+   * Formats this day according to the specified pattern.
+   * For pattern see <code>java.text.SimpleDateFormat</code>.
+   * @param pattern
+   * @return formatted string
+   */
   public String format(String pattern) {
     
     return Util.format(getTime(), pattern);
   }
   
+  /**
+   * Determines whether this day is a workday.
+   * @param config
+   * @return flag
+   */
   public boolean isWorkday(HolidayConfig config) {
     
     return isWorkday(config.getHolidayCalendar());
   }
   
+  /**
+   * Determines whether this day is a workday.
+   * @param holidays
+   * @return flag
+   */
   public boolean isWorkday(HolidayCalendar holidays) {
     
     return holidays.isWorkday(this);
   }
   
+  /**
+   * Determines whether this day is a holiday.
+   * @param config
+   * @return flag
+   */
   public boolean isHoliday(HolidayConfig config) {
     
     return isHoliday(config.getHolidayCalendar());
   }
   
+  /**
+   * Determines whether this day is a holiday.
+   * @param holidays
+   * @return flag
+   */
   public boolean isHoliday(HolidayCalendar holidays) {
     
     return holidays.isHoliday(this);
   }
   
+  /**
+   * Returns whether this day is the first day of a month.
+   * @return flag
+   */
   public boolean isFirstDayOfMonth() {
     
     return get(DAY_OF_MONTH) == 1;
   }
   
+  /**
+   * Returns whether this day is the last day of a month.
+   * @return flag
+   */
   public boolean isLastDayOfMonth() {
     
     return get(DAY_OF_MONTH) == getActualMaximum(DAY_OF_MONTH);
   }
   
+  /**
+   * Returns whether this day is the first day of a year.
+   * @return flag
+   */
   public boolean isFirstDayOfYear() {
     
     return get(MONTH) == 0 && get(DAY_OF_MONTH) == 1;
   }
   
+  /**
+   * Returns wheter this day is the last day of a year.
+   * @return flag
+   */
   public boolean isLastDayOfYear() {
     
     return get(MONTH) == 11 && get(DAY_OF_MONTH) == 31;
   }
   
+  /**
+   * Adds an amount of days to this object.
+   * The amount may be negative.
+   * @param count
+   * @return this
+   */
   public Day addDays(int count) {
     
     add(DATE, count);
     return this;
   }
   
+  /**
+   * Adds an amount of workdays to this object.
+   * The amount may be negative.
+   * @param count
+   * @param config
+   * @return this
+   */
   public Day addWorkdays(int count, HolidayConfig config) {
     
     addWorkdays(count, config.getHolidayCalendar());
     return this;
   }
   
+  /**
+   * Adds an amount of workdays to this object.
+   * The amount may be negative.
+   * @param count
+   * @param holidays
+   * @return this
+   */
   public Day addWorkdays(int count, HolidayCalendar holidays) {
     
     int step = (count < 0) ? -1 : 1;
@@ -192,12 +323,28 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Adds an amount of months to this object.
+   * The amount may be negative.
+   * @param count
+   * @return this
+   */
   public Day addMonths(int count) {
     
     add(MONTH, count);
     return this;
   }
   
+  /**
+   * Adds an amount of month to this object adjusting end of month.
+   * The amount may be negative.
+   * If <code>retainLastDayOfMonth</code> is <code>true</code>
+   * and the current day is the last day of a month,
+   * than it is guaranteed that the result will also be the last day of a month.
+   * @param count
+   * @param retainLastDayOfMonth
+   * @return this
+   */
   public Day addMonths(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
@@ -208,12 +355,29 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Adds an amount of years to this object.
+   * The amount may be negative. 
+   * @param count
+   * @return this
+   */
   public Day addYears(int count) {
     
     add(YEAR, count);
     return this;
   }
   
+  /**
+   * Adds an amount of years to this object adjusting end of month.
+   * The amount may be negative.
+   * If <code>retainLastDayOfMonth</code> is <code>true</code>
+   * and the current day is the last day of a month,
+   * than it is guaranteed that the result will also be the last day of a month
+   * (this is a special case for the last day of february in leap years).
+   * @param count
+   * @param retainLastDayOfMonth
+   * @return this
+   */
   public Day addYears(int count, boolean retainLastDayOfMonth) {
     
     boolean adjustLastDay = retainLastDayOfMonth && isLastDayOfMonth();
@@ -224,6 +388,12 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Sets this day conditionally to a specified weekday in the future.
+   * If the current weekday is already the desired weekday, this day leaves as it is.
+   * @param weekday
+   * @return this
+   */
   public Day adjustNextWeekday(Weekday weekday) {
     
     int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
@@ -236,6 +406,12 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Sets this day conditionally to a specified weekday in the past.
+   * If the current weekday is already the desired weekday, this day leaves as it is.
+   * @param weekday
+   * @return this
+   */
   public Day adjustPreviousWeekday(Weekday weekday) {
     
     int difference = weekday.getCalendarConstant() - get(DAY_OF_WEEK);
@@ -248,12 +424,24 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the next workday.
+   * If this day is already a workday, it leaves as it is.
+   * @param config
+   * @return this
+   */
   public Day adjustNextWorkday(HolidayConfig config) {
     
     adjustNextWorkday(config.getHolidayCalendar());
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the next workday.
+   * If this day is already a workday, it leaves as it is.
+   * @param holidays
+   * @return this
+   */
   public Day adjustNextWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
@@ -261,13 +449,25 @@ public class Day extends GregorianCalendar implements Externalizable {
     }
     return this;
   }
-  
+
+  /**
+   * Sets this day conditionally to the previous workday.
+   * If this day is already a workday, it leaves as it is.
+   * @param config
+   * @return this
+   */
   public Day adjustPreviousWorkday(HolidayConfig config) {
     
     adjustPreviousWorkday(config.getHolidayCalendar());
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the previous workday.
+   * If this day is already a workday, it leaves as it is.
+   * @param holidays
+   * @return this
+   */
   public Day adjustPreviousWorkday(HolidayCalendar holidays) {
     
     while (isHoliday(holidays)) {
@@ -276,12 +476,24 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the next holiday.
+   * If this day is already a workday, it leaves as it is.
+   * @param config
+   * @return this
+   */
   public Day adjustNextHoliday(HolidayConfig config) {
     
     adjustNextHoliday(config.getHolidayCalendar());
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the next holiday.
+   * If this day is already a workday, it leaves as it is.
+   * @param holidays
+   * @return this
+   */
   public Day adjustNextHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
@@ -289,13 +501,25 @@ public class Day extends GregorianCalendar implements Externalizable {
     }
     return this;
   }
-  
+
+  /**
+   * Sets this day conditionally to the previous holiday.
+   * If this day is already a workday, it leaves as it is.
+   * @param config
+   * @return this
+   */
   public Day adjustPreviousHoliday(HolidayConfig config) {
     
     adjustPreviousHoliday(config.getHolidayCalendar());
     return this;
   }
   
+  /**
+   * Sets this day conditionally to the previous holiday.
+   * If this day is already a workday, it leaves as it is.
+   * @param holidays
+   * @return this
+   */
   public Day adjustPreviousHoliday(HolidayCalendar holidays) {
     
     while (isWorkday(holidays)) {
@@ -303,19 +527,31 @@ public class Day extends GregorianCalendar implements Externalizable {
     }
     return this;
   }
-  
+
+  /**
+   * Sets this object to the first day of the month.
+   * @return this
+   */
   public Day adjustFirstDayOfMonth() {
     
     set(DAY_OF_MONTH, 1);
     return this;
   }
   
+  /**
+   * Sets this object to the last day of the month.
+   * @return this
+   */
   public Day adjustLastDayOfMonth() {
     
     set(DAY_OF_MONTH, getActualMaximum(DAY_OF_MONTH));
     return this;
   }
   
+  /**
+   * Sets this object to the first day of the year.
+   * @return this
+   */
   public Day adjustFirstDayOfYear() {
     
     set(MONTH, 0);
@@ -323,6 +559,10 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Sets this object to the last day of the year.
+   * @return this
+   */
   public Day adjustLastDayOfYear() {
     
     set(MONTH, 11);
@@ -330,11 +570,23 @@ public class Day extends GregorianCalendar implements Externalizable {
     return this;
   }
   
+  /**
+   * Returns the number of days between this day and a specified date.
+   * The specified date may be in the past.
+   * @param until
+   * @return day count
+   */
   public int dayCount(Date until) {
     
     return dayCount(new Day(until));
   }
   
+  /**
+   * Returns the number of days between this day and another day.
+   * The other day may be in the past.
+   * @param until
+   * @return day count
+   */
   public int dayCount(Calendar until) {
     
     if (get(YEAR) == until.get(YEAR)) {
