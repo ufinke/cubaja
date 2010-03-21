@@ -8,11 +8,11 @@ import de.ufinke.cubaja.config.Mandatory;
 /**
  * Replacement definition.
  * <p>
- * A <code>ColConfig</code>
+ * A <tt>ColConfig</tt>
  * may contain any number of replacement definitions.
  * For every definition, 
  * the retrieved column content string is 
- * replaced using method <code>replaceAll</code> of class <code>String</code>.
+ * replaced using method <tt>replaceAll</tt> of class <tt>String</tt>.
  * <p>
  * XML attributes and subelements:
  * <blockquote>
@@ -25,25 +25,25 @@ import de.ufinke.cubaja.config.Mandatory;
  *     <th align="center">U</th>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>regex</code></td>
+ *     <td align="left" valign="top"><tt>regex</tt></td>
  *     <td align="left" valign="top">the regular expression</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>replacement</code></td>
+ *     <td align="left" valign="top"><tt>replacement</tt></td>
  *     <td align="left" valign="top">the replacement string</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  * </table>
- * <code>A/E</code>: attribute or subelement
+ * <tt>A/E</tt>: attribute or subelement
  * <br/>
- * <code>M</code>: mandatory
+ * <tt>M</tt>: mandatory
  * <br/>
- * <code>U</code>: unique
+ * <tt>U</tt>: unique
  * </blockquote>
  * </p>
  * @author Uwe Finke

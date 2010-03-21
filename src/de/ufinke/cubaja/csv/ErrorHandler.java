@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * <code>CsvException</code> handler.
+ * <tt>CsvException</tt> handler.
  * @author Uwe Finke
  */
 public interface ErrorHandler {

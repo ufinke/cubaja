@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Accessor to data objects matching to a key.
- * Instances are created by <code>Matcher</code>.
+ * Instances are created by <tt>Matcher</tt>.
  * @author Uwe Finke
  * @param <D> data type
  */
@@ -41,7 +41,7 @@ public final class MatchSource<D> {
   
   /**
    * Returns an iterator over all matching data objects.
-   * This iterator doesn't support the <code>remove</code> method.
+   * This iterator doesn't support the <tt>remove</tt> method.
    * @return an iterator
    */
   public Iterable<D> getAll() {
@@ -86,8 +86,8 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Signals whether this source matches the <code>Matcher</code>s key.
-   * @return <code>true</code> when matching, <code>false</code> otherwise
+   * Signals whether this source matches the <tt>Matcher</tt>s key.
+   * @return <tt>true</tt> when matching, <tt>false</tt> otherwise
    */
   public boolean matches() {
     

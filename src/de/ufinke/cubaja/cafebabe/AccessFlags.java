@@ -3,6 +3,11 @@
 
 package de.ufinke.cubaja.cafebabe;
 
+/**
+ * Constants representing bit values.
+ * Access flags may be combined with a logical <tt>or</tt> operand.
+ * @author Uwe Finke
+ */
 public interface AccessFlags {
 
   static public final int ACC_PUBLIC       = 0x0001;

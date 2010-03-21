@@ -157,7 +157,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the line number where the error occured.
-   * If not applicable, the line number is <code>0</code>.
+   * If not applicable, the line number is <tt>0</tt>.
    * @return line number
    */
   public int getLineNumber() {
@@ -167,7 +167,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the row number where the error occured.
-   * If not applicable, the row number is <code>0</code>.
+   * If not applicable, the row number is <tt>0</tt>.
    * @return row number
    */
   public int getRowNumber() {
@@ -177,7 +177,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the number of the erroneous column.
-   * If not applicable, the column number is <code>0</code>.
+   * If not applicable, the column number is <tt>0</tt>.
    * @return column number
    */
   public int getColumnNumber() {
@@ -187,7 +187,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the name of the erroneous column.
-   * If not applicable, the column name is <code>null</code>.
+   * If not applicable, the column name is <tt>null</tt>.
    * @return column name
    */
   public String getColumnName() {
@@ -197,7 +197,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the complete row in error.
-   * If not applicable, the row is <code>null</code>.
+   * If not applicable, the row is <tt>null</tt>.
    * @return row content
    */
   public String getRowContent() {
@@ -207,7 +207,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the content of the erroneous column.
-   * If not applicable, the column is <code>null</code>.
+   * If not applicable, the column is <tt>null</tt>.
    * @return column content
    */
   public String getColumnContent() {

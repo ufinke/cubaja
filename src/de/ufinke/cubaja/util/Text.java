@@ -9,7 +9,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Combines <code>ResourceBundle</code> and <code>MessageFormat</code>.
+ * Combines <tt>ResourceBundle</tt> and <tt>MessageFormat</tt>.
  * @author Uwe Finke
  */
 public class Text {
@@ -42,7 +42,7 @@ public class Text {
    * Constructor with the using class and a locale.
    * <p/>
    * The bundle name is derived from the class package name
-   * suffixed with '<code>.text</code>'.
+   * suffixed with '<tt>.text</tt>'.
    * @param usingClass the using class
    * @param locale locale
    */
@@ -55,7 +55,7 @@ public class Text {
    * Constructor with the using class and the default locale.
    * <p/>
    * The bundle name is derived from the class package name
-   * suffixed with '<code>.text</code>'.
+   * suffixed with '<tt>.text</tt>'.
    * @param usingClass the using class
    */
   public Text(Class<?> usingClass) {

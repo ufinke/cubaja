@@ -21,9 +21,9 @@ import java.util.Map;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Wrapper for a <code>PreparedStatement</code>.
- * Superclass of <code>Query</code> and <code>Update</code>
- * which are created by <code>Database</code> methods.
+ * Wrapper for a <tt>PreparedStatement</tt>.
+ * Superclass of <tt>Query</tt> and <tt>Update</tt>
+ * which are created by <tt>Database</tt> methods.
  * @author Uwe Finke
  */
 public class PreparedSql {
@@ -69,7 +69,7 @@ public class PreparedSql {
   /**
    * Retrieves the positions of a named variable.
    * @param name
-   * @return positions of the variable, beginning with <code>1</code>
+   * @return positions of the variable, beginning with <tt>1</tt>
    * @throws SQLException
    */
   public int[] getVariablePositions(String name) throws SQLException {
@@ -109,7 +109,7 @@ public class PreparedSql {
   }
   
   /**
-   * Resets the change flag to <code>false</code>.
+   * Resets the change flag to <tt>false</tt>.
    */
   protected void resetChanged() {
     
@@ -117,7 +117,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>boolean</code> variable identified by name.
+   * Sets a <tt>boolean</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -130,7 +130,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>boolean</code> variable identified by position.
+   * Sets a <tt>boolean</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -142,7 +142,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Boolean</code> variable identified by name.
+   * Sets a <tt>Boolean</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -155,7 +155,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Boolean</code> variable identified by position.
+   * Sets a <tt>Boolean</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -171,7 +171,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>byte</code> variable identified by name.
+   * Sets a <tt>byte</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -184,7 +184,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>byte</code> variable identified by position.
+   * Sets a <tt>byte</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -196,7 +196,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Byte</code> variable identified by name.
+   * Sets a <tt>Byte</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -209,7 +209,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Byte</code> variable identified by position.
+   * Sets a <tt>Byte</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -225,7 +225,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>char</code> variable identified by name.
+   * Sets a <tt>char</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -238,7 +238,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>char</code> variable identified by position.
+   * Sets a <tt>char</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -249,7 +249,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Character</code> variable identified by name.
+   * Sets a <tt>Character</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -262,7 +262,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Character</code> variable identified by position.
+   * Sets a <tt>Character</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -278,7 +278,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>short</code> variable identified by name.
+   * Sets a <tt>short</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -291,7 +291,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>short</code> variable identified by position.
+   * Sets a <tt>short</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -303,7 +303,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Short</code> variable identified by name.
+   * Sets a <tt>Short</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -316,7 +316,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Short</code> variable identified by position.
+   * Sets a <tt>Short</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -332,7 +332,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets an <code>int</code> variable identified by name.
+   * Sets an <tt>int</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -345,7 +345,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets an <code>int</code> variable identified by position.
+   * Sets an <tt>int</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -357,7 +357,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets an <code>Integer</code> variable identified by name.
+   * Sets an <tt>Integer</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -370,7 +370,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets an <code>Integer</code> variable identified by position.
+   * Sets an <tt>Integer</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -386,7 +386,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>long</code> variable identified by name.
+   * Sets a <tt>long</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -399,7 +399,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>long</code> variable identified by position.
+   * Sets a <tt>long</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -411,7 +411,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Long</code> variable identified by name.
+   * Sets a <tt>Long</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -424,7 +424,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Long</code> variable identified by position.
+   * Sets a <tt>Long</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -440,7 +440,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>float</code> variable identified by name.
+   * Sets a <tt>float</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -453,7 +453,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>float</code> variable identified by position.
+   * Sets a <tt>float</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -465,7 +465,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Float</code> variable identified by name.
+   * Sets a <tt>Float</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -478,7 +478,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Float</code> variable identified by position.
+   * Sets a <tt>Float</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -494,7 +494,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>double</code> variable identified by name.
+   * Sets a <tt>double</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -507,7 +507,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>double</code> variable identified by position.
+   * Sets a <tt>double</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -519,7 +519,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Double</code> variable identified by name.
+   * Sets a <tt>Double</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -532,7 +532,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Double</code> variable identified by position.
+   * Sets a <tt>Double</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -548,7 +548,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>BigDecimal</code> variable identified by name.
+   * Sets a <tt>BigDecimal</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -561,7 +561,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>BigDecimal</code> variable identified by position.
+   * Sets a <tt>BigDecimal</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -573,8 +573,8 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>BigInteger</code> variable identified by name.
-   * The value is presented to the driver as <code>BigDecimal</code>.
+   * Sets a <tt>BigInteger</tt> variable identified by name.
+   * The value is presented to the driver as <tt>BigDecimal</tt>.
    * @param name
    * @param value
    * @throws SQLException
@@ -587,8 +587,8 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>BigInteger</code> variable identified by position.
-   * The value is presented to the driver as <code>BigDecimal</code>.
+   * Sets a <tt>BigInteger</tt> variable identified by position.
+   * The value is presented to the driver as <tt>BigDecimal</tt>.
    * @param position
    * @param value
    * @throws SQLException
@@ -600,7 +600,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>String</code> variable identified by name.
+   * Sets a <tt>String</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -613,7 +613,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>String</code> variable identified by position.
+   * Sets a <tt>String</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -625,7 +625,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Date</code> variable identified by name.
+   * Sets a <tt>Date</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -638,7 +638,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Date</code> variable identified by position to a <code>java.util.Date</code> value.
+   * Sets a <tt>Date</tt> variable identified by position to a <tt>java.util.Date</tt> value.
    * @param position
    * @param value
    * @throws SQLException
@@ -649,7 +649,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Timestamp</code> variable identified by name to a <code>java.util.Date</code> value.
+   * Sets a <tt>Timestamp</tt> variable identified by name to a <tt>java.util.Date</tt> value.
    * @param name
    * @param value
    * @throws SQLException
@@ -662,7 +662,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Timestamp</code> variable identified by position to a <code>java.util.Date</code> value.
+   * Sets a <tt>Timestamp</tt> variable identified by position to a <tt>java.util.Date</tt> value.
    * @param position
    * @param value
    * @throws SQLException
@@ -673,7 +673,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Time</code> variable identified by name to a <code>java.util.Date</code> value.
+   * Sets a <tt>Time</tt> variable identified by name to a <tt>java.util.Date</tt> value.
    * @param name
    * @param value
    * @throws SQLException
@@ -686,7 +686,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Time</code> variable identified by position to a <code>java.util.Date</code> value.
+   * Sets a <tt>Time</tt> variable identified by position to a <tt>java.util.Date</tt> value.
    * @param position
    * @param value
    * @throws SQLException
@@ -697,7 +697,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Date</code> variable identified by name.
+   * Sets a <tt>Date</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -710,7 +710,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Date</code> variable identified by position.
+   * Sets a <tt>Date</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -722,7 +722,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Timestamp</code> variable identified by name.
+   * Sets a <tt>Timestamp</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -735,7 +735,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Timestamp</code> variable identified by position.
+   * Sets a <tt>Timestamp</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -747,7 +747,7 @@ public class PreparedSql {
   }
 
   /**
-   * Sets a <code>Time</code> variable identified by name.
+   * Sets a <tt>Time</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -760,7 +760,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Time</code> variable identified by position.
+   * Sets a <tt>Time</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -772,7 +772,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets an <code>Array</code> variable identified by name.
+   * Sets an <tt>Array</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -785,7 +785,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets an <code>Array</code> variable identified by position.
+   * Sets an <tt>Array</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -797,7 +797,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Blob</code> variable identified by name.
+   * Sets a <tt>Blob</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -810,7 +810,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Blob</code> variable identified by position.
+   * Sets a <tt>Blob</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -822,7 +822,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Clob</code> variable identified by name.
+   * Sets a <tt>Clob</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -835,7 +835,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Clob</code> variable identified by position.
+   * Sets a <tt>Clob</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -847,7 +847,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Object</code> variable identified by name.
+   * Sets a <tt>Object</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -860,7 +860,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Object</code> variable identified by position.
+   * Sets a <tt>Object</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -872,7 +872,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Ref</code> variable identified by name.
+   * Sets a <tt>Ref</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -885,7 +885,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>Ref</code> variable identified by position.
+   * Sets a <tt>Ref</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException
@@ -897,7 +897,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>URL</code> variable identified by name.
+   * Sets a <tt>URL</tt> variable identified by name.
    * @param name
    * @param value
    * @throws SQLException
@@ -910,7 +910,7 @@ public class PreparedSql {
   }
   
   /**
-   * Sets a <code>URL</code> variable identified by position.
+   * Sets a <tt>URL</tt> variable identified by position.
    * @param position
    * @param value
    * @throws SQLException

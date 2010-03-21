@@ -23,8 +23,8 @@ import de.ufinke.cubaja.io.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Wrapper for <code>select</code> statements and result sets.
- * An instance is created by an appropriate <code>Database</code> method.
+ * Wrapper for <tt>select</tt> statements and result sets.
+ * An instance is created by an appropriate <tt>Database</tt> method.
  * @author Uwe Finke
  */
 public class Query extends PreparedSql implements ColumnReader {
@@ -245,7 +245,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by name as <code>java.sql.Date</code>.
+   * Reads a date column identified by name as <tt>java.sql.Date</tt>.
    * @param columnName
    * @return Date
    * @throws SQLException
@@ -256,7 +256,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by position as <code>java.sql.Date</code>.
+   * Reads a date column identified by position as <tt>java.sql.Date</tt>.
    * @param columnPosition
    * @return Date
    * @throws SQLException
@@ -268,7 +268,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a timestamp column identified by name as <code>Timestamp</code>.
+   * Reads a timestamp column identified by name as <tt>Timestamp</tt>.
    * @param columnName
    * @return Timestamp
    * @throws SQLException
@@ -279,7 +279,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a timestamp column identified by position as <code>Timestamp</code>.
+   * Reads a timestamp column identified by position as <tt>Timestamp</tt>.
    * @param columnPosition
    * @return Timestamp
    * @throws SQLException
@@ -291,7 +291,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by name as <code>Time</code>.
+   * Reads a time column identified by name as <tt>Time</tt>.
    * @param columnName
    * @return Time
    * @throws SQLException
@@ -302,7 +302,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by position as <code>Time</code>.
+   * Reads a time column identified by position as <tt>Time</tt>.
    * @param columnPosition
    * @return Time
    * @throws SQLException
@@ -314,7 +314,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by name as <code>java.util.Date</code>.
+   * Reads a date column identified by name as <tt>java.util.Date</tt>.
    * @param columnName
    * @return Date
    * @throws SQLException
@@ -325,7 +325,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a date column identified by position as <code>java.util.Date</code>.
+   * Reads a date column identified by position as <tt>java.util.Date</tt>.
    * @param columnPosition
    * @return Date
    * @throws SQLException
@@ -337,7 +337,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a timestamp column identified by name as <code>java.util.Date</code>.
+   * Reads a timestamp column identified by name as <tt>java.util.Date</tt>.
    * @param columnName
    * @return Timestamp
    * @throws SQLException
@@ -348,7 +348,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a timestamp column identified by position as <code>java.util.Date</code>.
+   * Reads a timestamp column identified by position as <tt>java.util.Date</tt>.
    * @param columnPosition
    * @return Timestamp
    * @throws SQLException
@@ -360,7 +360,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by name as <code>java.util.Date</code>.
+   * Reads a time column identified by name as <tt>java.util.Date</tt>.
    * @param columnName
    * @return Time
    * @throws SQLException
@@ -371,7 +371,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a time column identified by position as <code>java.util.Date</code>.
+   * Reads a time column identified by position as <tt>java.util.Date</tt>.
    * @param columnPosition
    * @return java.util.Date
    * @throws SQLException

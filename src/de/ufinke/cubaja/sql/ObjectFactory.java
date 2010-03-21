@@ -6,7 +6,7 @@ package de.ufinke.cubaja.sql;
 import java.sql.SQLException;
 
 /**
- * Factory needed internaly for <code>Query.readRow()</code>.
+ * Factory needed internaly for <tt>Query.readRow()</tt>.
  * @author Uwe Finke
  */
 public interface ObjectFactory {

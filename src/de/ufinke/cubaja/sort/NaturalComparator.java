@@ -7,7 +7,7 @@ import java.util.Comparator;
 import de.ufinke.cubaja.util.Util;
 
 /**
- * A <code>Comparator</code> which compares <code>Comparable</code>s.
+ * A <tt>Comparator</tt> which compares <tt>Comparable</tt>s.
  * @author Uwe Finke
  * @param <D> data type
  */
@@ -21,9 +21,9 @@ public class NaturalComparator<D extends Comparable<? super D>> implements Compa
   }
   
   /**
-   * Returns the compare value as defined by <code>Comparator</code>.
-   * A <code>null</code> value is less than any other value.
-   * @return <code>&lt;=-1</code> (a &lt; b), <code>0</code> (a = b), or <code>&gt;=1</code> (a &gt; b)  
+   * Returns the compare value as defined by <tt>Comparator</tt>.
+   * A <tt>null</tt> value is less than any other value.
+   * @return <tt>&lt;=-1</tt> (a &lt; b), <tt>0</tt> (a = b), or <tt>&gt;=1</tt> (a &gt; b)  
    */
   public int compare(D a, D b) {
     

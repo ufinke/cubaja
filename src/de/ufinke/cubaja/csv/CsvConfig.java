@@ -20,7 +20,7 @@ import de.ufinke.cubaja.io.FileConfig;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Global <code>CsvReader</code> properties.
+ * Global <tt>CsvReader</tt> properties.
  * <p>
  * XML attributes and subelements: <blockquote>
  * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
@@ -32,30 +32,30 @@ import de.ufinke.cubaja.util.Text;
  * <th align="center">U</th>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>file</code></td>
- * <td align="left" valign="top">file name; mandatory if <code>CsvReader</code>
- * constructor without <code>Reader</code> parameter is used</td>
+ * <td align="left" valign="top"><tt>file</tt></td>
+ * <td align="left" valign="top">file name; mandatory if <tt>CsvReader</tt>
+ * constructor without <tt>Reader</tt> parameter is used</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>charset</code></td>
+ * <td align="left" valign="top"><tt>charset</tt></td>
  * <td align="left" valign="top">character set name</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>separator</code></td>
+ * <td align="left" valign="top"><tt>separator</tt></td>
  * <td align="left" valign="top">character which separates columns (default: tab
- * [<code>x'09'</code>])</td>
+ * [<tt>x'09'</tt>])</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>escapeChar</code></td>
+ * <td align="left" valign="top"><tt>escapeChar</tt></td>
  * <td align="left" valign="top">character which delimits text containing
  * separator characters (default: there is no escape character)</td>
  * <td align="center" valign="top">A</td>
@@ -63,7 +63,7 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>parser</code></td>
+ * <td align="left" valign="top"><tt>parser</tt></td>
  * <td align="left" valign="top">class name of a
  * {@link de.ufinke.cubaja.csv.RowParser RowParser} implementation (default:
  * {@link de.ufinke.cubaja.csv.DefaultRowParser DefaultRowParser})</td>
@@ -72,15 +72,15 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>trim</code></td>
+ * <td align="left" valign="top"><tt>trim</tt></td>
  * <td align="left" valign="top">global trim attribute for column content
- * (default: <code>false</code>)</td>
+ * (default: <tt>false</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>decimalChar</code></td>
+ * <td align="left" valign="top"><tt>decimalChar</tt></td>
  * <td align="left" valign="top">global character for decimal point; may be a
  * point or a comma (default: both point and comma are decimalChars)</td>
  * <td align="center" valign="top">A</td>
@@ -88,7 +88,7 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>scale</code></td>
+ * <td align="left" valign="top"><tt>scale</tt></td>
  * <td align="left" valign="top">number of fractional digits for decimal numbers
  * (default: 2)</td>
  * <td align="center" valign="top">A</td>
@@ -96,31 +96,31 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>datePattern</code></td>
+ * <td align="left" valign="top"><tt>datePattern</tt></td>
  * <td align="left" valign="top">global date format pattern as described in
- * <code>java.text.SimpleDateFormat</code> (default: <code>yyyy-MM-dd</code>)</td>
+ * <tt>java.text.SimpleDateFormat</tt> (default: <tt>yyyy-MM-dd</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>trueValue</code></td>
- * <td align="left" valign="top">values representing boolean <code>true</code>
- * (default: <code>true</code>)</td>
+ * <td align="left" valign="top"><tt>trueValue</tt></td>
+ * <td align="left" valign="top">values representing boolean <tt>true</tt>
+ * (default: <tt>true</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>falseValue</code></td>
- * <td align="left" valign="top">values representing boolean <code>false</code>
- * (default: <code>false</code>)</td>
+ * <td align="left" valign="top"><tt>falseValue</tt></td>
+ * <td align="left" valign="top">values representing boolean <tt>false</tt>
+ * (default: <tt>false</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>header</code></td>
+ * <td align="left" valign="top"><tt>header</tt></td>
  * <td align="left" valign="top">see description of method
  * {@link de.ufinke.cubaja.csv.CsvConfig#setHeader(java.lang.Boolean) setHeader}
  * </td>
@@ -129,7 +129,7 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>rowFilter</code></td>
+ * <td align="left" valign="top"><tt>rowFilter</tt></td>
  * <td align="left" valign="top">class name of a
  * {@link de.ufinke.cubaja.csv.RowFilter RowFilter} implementation</td>
  * <td align="center" valign="top">A</td>
@@ -137,7 +137,7 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>formatter</code></td>
+ * <td align="left" valign="top"><tt>formatter</tt></td>
  * <td align="left" valign="top">class name of a
  * {@link de.ufinke.cubaja.csv.RowFormatter RowFormatter} implementation
  * (default: {@link de.ufinke.cubaja.csv.DefaultRowFormatter
@@ -147,15 +147,15 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>rowSeparator</code></td>
+ * <td align="left" valign="top"><tt>rowSeparator</tt></td>
  * <td align="left" valign="top">separator between rows (lines) used by
- * <code>CsvWriter</code> (default: platform dependent JVM default)</td>
+ * <tt>CsvWriter</tt> (default: platform dependent JVM default)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><code>col</code></td>
+ * <td align="left" valign="top"><tt>col</tt></td>
  * <td align="left" valign="top">column definition (see
  * {@link de.ufinke.cubaja.csv.ColConfig ColConfig})</td>
  * <td align="center" valign="top">E</td>
@@ -163,9 +163,9 @@ import de.ufinke.cubaja.util.Text;
  * <td align="center" valign="top"></td>
  * </tr>
  * </table>
- * <code>A/E</code>: attribute or subelement <br/>
- * <code>M</code>: mandatory <br/>
- * <code>U</code>: unique </blockquote>
+ * <tt>A/E</tt>: attribute or subelement <br/>
+ * <tt>M</tt>: mandatory <br/>
+ * <tt>U</tt>: unique </blockquote>
  * </p>
  * 
  * @author Uwe Finke
@@ -332,8 +332,8 @@ public class CsvConfig {
   }
 
   /**
-   * Creates a <code>Reader</code>. This method is called by the
-   * <code>CsvReader</code> constructor without a <code>Reader</code> parameter.
+   * Creates a <tt>Reader</tt>. This method is called by the
+   * <tt>CsvReader</tt> constructor without a <tt>Reader</tt> parameter.
    * If we use this constructor, the file name must have been set. The charset
    * property is also used if specified.
    * 
@@ -358,8 +358,8 @@ public class CsvConfig {
   }
 
   /**
-   * Creates a <code>Writer</code>. This method is called by the
-   * <code>CsvWriter</code> constructor without a <code>Writer</code> parameter.
+   * Creates a <tt>Writer</tt>. This method is called by the
+   * <tt>CsvWriter</tt> constructor without a <tt>Writer</tt> parameter.
    * If we use this constructor, the file name must have been set. The charset
    * property is also used if specified.
    * 
@@ -395,7 +395,7 @@ public class CsvConfig {
 
   /**
    * Returns the column separator character. The default separator is the tab
-   * character (<code>\t</code>).
+   * character (<tt>\t</tt>).
    * 
    * @return separator
    */
@@ -440,7 +440,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the parser. By default, this is a <code>DefaultRowParser</code>.
+   * Returns the parser. By default, this is a <tt>DefaultRowParser</tt>.
    * 
    * @return parser
    */
@@ -513,7 +513,7 @@ public class CsvConfig {
    * Returns the trim property. When set, column content is trimmed before
    * further processing. Note that on read operations that require parsing the
    * content is always trimmed. By default, the trim property is
-   * <code>false</code>.
+   * <tt>false</tt>.
    * 
    * @return trim propery
    */
@@ -536,10 +536,10 @@ public class CsvConfig {
   }
 
   /**
-   * Returns whether the CSV input has a header row. This is <code>true</code>
-   * when we set the header attribute explicitly to <code>true</code>, or when
+   * Returns whether the CSV input has a header row. This is <tt>true</tt>
+   * when we set the header attribute explicitly to <tt>true</tt>, or when
    * we define a header property on at least one column and the header attribute
-   * is not set explicitly to <code>false</code>.
+   * is not set explicitly to <tt>false</tt>.
    * 
    * @return flag
    */
@@ -549,7 +549,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the explicitly set header attribute. May be <code>null</code> if
+   * Returns the explicitly set header attribute. May be <tt>null</tt> if
    * the attribute has not been set.
    * 
    * @return header attribute
@@ -562,21 +562,21 @@ public class CsvConfig {
   /**
    * Signals whether the CSV input has a header row.
    * <p>
-   * When we set this attribute to <code>true</code>, the first input row is
+   * When we set this attribute to <tt>true</tt>, the first input row is
    * used to define all (or additional) columns. The name attribute of the
    * automatically defined columns is derived from the column content. For the
    * name attribute, all non-identifier characters (that is,
-   * <code>Character.isJavaIdentifierPart</code> returns <code>false</code> for
+   * <tt>Character.isJavaIdentifierPart</tt> returns <tt>false</tt> for
    * this character) are replaced by an underscore. The header attribute of
    * those columns is the original column content. If the generated name matches
    * an already existing column name, this column is not added automatically.
    * <p>
-   * When we set this attribute to <code>false</code> the first row is not
-   * processed as header row even if some <code>col</code> definitions contain a
-   * <code>header</code> attribute.
+   * When we set this attribute to <tt>false</tt> the first row is not
+   * processed as header row even if some <tt>col</tt> definitions contain a
+   * <tt>header</tt> attribute.
    * <p>
    * When we don't set this attribute at all, the first row is considered to be
-   * a header row if any <code>col</code> definition has a <code>header</code>
+   * a header row if any <tt>col</tt> definition has a <tt>header</tt>
    * attribute.
    * 
    * @param header
@@ -650,7 +650,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the formatter for <code>CsvWriter</code> output.
+   * Returns the formatter for <tt>CsvWriter</tt> output.
    * 
    * @return formatter
    */
@@ -663,8 +663,8 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the formatter for <code>CsvWriter</code> output. Default is
-   * <code>DefaultRowFormatter</code>.
+   * Sets the formatter for <tt>CsvWriter</tt> output. Default is
+   * <tt>DefaultRowFormatter</tt>.
    * 
    * @param formatter
    */
@@ -674,7 +674,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the row separator needed for <code>CsvWriter</code>.
+   * Returns the row separator needed for <tt>CsvWriter</tt>.
    * 
    * @return row separator character(s)
    */
@@ -687,9 +687,9 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the row separator needed for <code>CsvWriter</code>. Default is the
+   * Sets the row separator needed for <tt>CsvWriter</tt>. Default is the
    * platform dependent separator returned by
-   * <code>System.getProperty("line.separator")</code>.
+   * <tt>System.getProperty("line.separator")</tt>.
    * 
    * @param rowSeparator
    */
@@ -699,7 +699,7 @@ public class CsvConfig {
   }
 
   /**
-   * Retrieves the representation of boolean value <code>true</code>.
+   * Retrieves the representation of boolean value <tt>true</tt>.
    * 
    * @return true value
    */
@@ -712,8 +712,8 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the representation of boolean value <code>true</code>. Default is
-   * <code>true</code>.
+   * Sets the representation of boolean value <tt>true</tt>. Default is
+   * <tt>true</tt>.
    * 
    * @param trueValue
    */
@@ -723,7 +723,7 @@ public class CsvConfig {
   }
 
   /**
-   * Retrieves the representation of boolean value <code>false</code>.
+   * Retrieves the representation of boolean value <tt>false</tt>.
    * 
    * @return false value
    */
@@ -736,7 +736,7 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the representation of boolean value <code>false</code>.
+   * Sets the representation of boolean value <tt>false</tt>.
    * 
    * @param falseValue
    */
@@ -759,7 +759,7 @@ public class CsvConfig {
 
   /**
    * Sets the number of fractional digits for decimal numbers.
-   * Default is <code>2</code>.
+   * Default is <tt>2</tt>.
    * @param scale
    */
   public void setScale(Integer scale) {

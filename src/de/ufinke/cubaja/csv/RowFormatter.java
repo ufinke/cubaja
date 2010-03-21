@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.io.Writer;
 
 /**
- * Row formatter for <code>CsvWriter</code>.
+ * Row formatter for <tt>CsvWriter</tt>.
  * @author Uwe Finke
  */
 public interface RowFormatter {
 
   /**
-   * Called during <code>CsvWriter</code> initialization.
+   * Called during <tt>CsvWriter</tt> initialization.
    * @param out
    * @param config
    * @throws IOException
@@ -39,7 +39,7 @@ public interface RowFormatter {
   
   /**
    * Cleanup hook.
-   * Note that the writer will be closed by <code>CsvWriter</code>.
+   * Note that the writer will be closed by <tt>CsvWriter</tt>.
    * @throws IOException
    * @throws CsvException
    */

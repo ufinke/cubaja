@@ -3,8 +3,6 @@
 
 package de.ufinke.cubaja.csv;
 
-import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_FINAL;
-import static de.ufinke.cubaja.cafebabe.AccessFlags.ACC_PUBLIC;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;

@@ -13,13 +13,13 @@ import java.util.Stack;
 /**
  * Configuration main class.
  * <p/>
- * When we invoke the <code>configure</code> method,
- * unless the <code>NULL</code> property provider
+ * When we invoke the <tt>configure</tt> method,
+ * unless the <tt>NULL</tt> property provider
  * had been added, 
  * all not already specified base propery providers are
  * added automatically in the order 
- * <code>SYSTEM</code>, <code>BASE_PROPERTIES</code>,
- * <code>BASE_XML</code>, and <code>ENVIRONMENT</code>.
+ * <tt>SYSTEM</tt>, <tt>BASE_PROPERTIES</tt>,
+ * <tt>BASE_XML</tt>, and <tt>ENVIRONMENT</tt>.
  * @author Uwe Finke
  */
 public class Configurator {
@@ -100,10 +100,10 @@ public class Configurator {
    * <p/>
    * The map is shared between the
    * application (can be accessed with this method)
-   * and all implementors of the <code>ManagedElement</code> interface.
+   * and all implementors of the <tt>ManagedElement</tt> interface.
    * We can optionally put general information into the 
    * map. 
-   * There is one map per <code>Configurator</code> instance.
+   * There is one map per <tt>Configurator</tt> instance.
    * @return the shared map
    */  
   public Map<Object, Object> infoMap() {
@@ -115,13 +115,13 @@ public class Configurator {
    * Sets the base name of XML and property documents.
    * <p/>
    * The base name is the name of the XML document to be parsed,
-   * without the '<code>.xml</code>' extension.
+   * without the '<tt>.xml</tt>' extension.
    * There may be an optional properties file with the same 
-   * name (and extension '<code>.properties</code>').
+   * name (and extension '<tt>.properties</tt>').
    * <p/>
-   * If we don't supply a base name, the default <code>config</code>
-   * will be used; with '<code>config.xml</code>' as XML document name
-   * and '<code>config.properties</code>' as name of the 
+   * If we don't supply a base name, the default <tt>config</tt>
+   * will be used; with '<tt>config.xml</tt>' as XML document name
+   * and '<tt>config.properties</tt>' as name of the 
    * optional base properties file.
    * @param baseName the XML document name without file name extension
    */
@@ -143,12 +143,12 @@ public class Configurator {
   }
   
   /**
-   * Sets an individual <code>ResourceLoader</code>.
+   * Sets an individual <tt>ResourceLoader</tt>.
    * <p/>
    * If we don't specify a resource loader,
-   * <code>Configurator</code> uses a default resource loader,
+   * <tt>Configurator</tt> uses a default resource loader,
    * which tries to get the XML parser's input from a resource
-   * (see <code>java.lang.Classloader</code>) 
+   * (see <tt>java.lang.Classloader</tt>) 
    * or from a file in the file system.
    * @param loader an individual resource loader
    */
@@ -298,7 +298,7 @@ public class Configurator {
   }
 
   /**
-   * Pushes last <code>configure</code> properties onto the stack.
+   * Pushes last <tt>configure</tt> properties onto the stack.
    */
   public void pushBaseProperties() {
     
@@ -318,16 +318,16 @@ public class Configurator {
   /**
    * Adds a parameter factory finder.
    * <p/>
-   * We need an individual <code>ParameterFactoryFinder</code>
+   * We need an individual <tt>ParameterFactoryFinder</tt>
    * if we want have support for our own parameter types.
    * The instances will be invoked in the descending order of
    * their definition. 
    * The last finder in the stack is a default finder which 
-   * includes the <code>ParameterFactory</code>s 
+   * includes the <tt>ParameterFactory</tt>s 
    * for the basic parameter types.
    * <p/>
    * Additionally to the global finders
-   * an element node object may implement the <code>DynamicElement</code> interface
+   * an element node object may implement the <tt>DynamicElement</tt> interface
    * to provide an individual
    * finder which is used only in the scope of that node.
    * @param finder a parameter factory finder
@@ -340,11 +340,11 @@ public class Configurator {
   /**
    * Sets the date pattern.
    * <p/>
-   * The default pattern is <code>yyyy-MM-dd</code>.
+   * The default pattern is <tt>yyyy-MM-dd</tt>.
    * <p/>
    * We can set another pattern in the XML document
-   * with the attribute <code>datePattern</code>
-   * in a <code>configSettings</code> element.
+   * with the attribute <tt>datePattern</tt>
+   * in a <tt>configSettings</tt> element.
    * @param pattern The date pattern
    * @param hint a user-friendly pattern used in exception messages
    */
@@ -363,10 +363,10 @@ public class Configurator {
   }
   
   /**
-   * Sets constants values for boolean <code>true</code>.
+   * Sets constants values for boolean <tt>true</tt>.
    * <p/>
-   * Default values are <code>true</code>, <code>yes</code> and <code>on</code>.
-   * @param trueValues The constants representing <code>true</code>
+   * Default values are <tt>true</tt>, <tt>yes</tt> and <tt>on</tt>.
+   * @param trueValues The constants representing <tt>true</tt>
    */
   public void setTrueValues(String[] trueValues) {
     
@@ -374,10 +374,10 @@ public class Configurator {
   }
   
   /**
-   * Sets constants for boolean <code>false</code>.
+   * Sets constants for boolean <tt>false</tt>.
    * <p/>
-   * Default values are <code>false</code>, <code>no</code> and <code>off</code>.
-   * @param falseValues The constants representing <code>false</code>.
+   * Default values are <tt>false</tt>, <tt>no</tt> and <tt>off</tt>.
+   * @param falseValues The constants representing <tt>false</tt>.
    */
   public void setFalseValues(String[] falseValues) {
     
@@ -387,7 +387,7 @@ public class Configurator {
   /**
    * Specifies the decimal point character.
    * <p/>
-   * By default, or if the passed Character is <code>null</code>,
+   * By default, or if the passed Character is <tt>null</tt>,
    * both point and comma are treated as 
    * decimal point characters.
    * <p/>
@@ -397,8 +397,8 @@ public class Configurator {
    * when parsing numeric values.
    * <p/>
    * We can set another decimal point character in the XML document
-   * with the attribute <code>decimalPoint</code>
-   * in a <code>configSettings</code> element.
+   * with the attribute <tt>decimalPoint</tt>
+   * in a <tt>configSettings</tt> element.
    * @param decimalPoint the decimal point character
    */
   public void setDecimalPoint(Character decimalPoint) {
@@ -412,9 +412,9 @@ public class Configurator {
    * By default, escape sequence processing is enabled.
    * <p/>
    * We can switch the setting in the XML document
-   * with the attribute <code>processEscape</code>
-   * in a <code>configSettings</code> element.
-   * @param processEscape <code>true</code> or <code>false</code>
+   * with the attribute <tt>processEscape</tt>
+   * in a <tt>configSettings</tt> element.
+   * @param processEscape <tt>true</tt> or <tt>false</tt>
    */
   public void setProcessEscape(boolean processEscape) {
     
@@ -427,9 +427,9 @@ public class Configurator {
    * By default, properties resolving is enabled.
    * <p/>
    * We can switch the setting in the XML document
-   * with the attribute <code>processProperties</code>
-   * in a <code>configSettings</code> element.
-   * @param processProperties <code>true</code> or <code>false</code>
+   * with the attribute <tt>processProperties</tt>
+   * in a <tt>configSettings</tt> element.
+   * @param processProperties <tt>true</tt> or <tt>false</tt>
    */
   public void setProcessProperties(boolean processProperties) {
     

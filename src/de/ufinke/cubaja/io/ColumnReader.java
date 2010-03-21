@@ -27,7 +27,7 @@ public interface ColumnReader {
 
   /**
    * Retrieves the next row.
-   * @return <code>true</code> when a row was successfully read, <code>false</code> when there were no more rows to process.
+   * @return <tt>true</tt> when a row was successfully read, <tt>false</tt> when there were no more rows to process.
    * @throws Exception
    */
   public boolean nextRow() throws Exception;
@@ -378,11 +378,11 @@ public interface ColumnReader {
    * Returns a data object.
    * <p>
    * The data object class must have setter methods corresponding to 
-   * column names. See description of method <code>createMethodName</code> 
-   * of class <code>de.ufinke.cubaja.Util</code> for building method names from
+   * column names. See description of method <tt>createMethodName</tt> 
+   * of class <tt>de.ufinke.cubaja.Util</tt> for building method names from
    * column names.
    * The setter methods must have a void return type and exactly one parameter
-   * of a type supported by one of the sources <code>read</code> 
+   * of a type supported by one of the sources <tt>read</tt> 
    * methods.
    * @param <D> data type
    * @param clazz
@@ -392,8 +392,8 @@ public interface ColumnReader {
   public <D> D readRow(Class<? extends D> clazz) throws Exception;
 
   /**
-   * Returns an <code>Iterable</code> over all rows.
-   * The data object is created by <code>readObject</code>.
+   * Returns an <tt>Iterable</tt> over all rows.
+   * The data object is created by <tt>readObject</tt>.
    * @param <D> data type
    * @param clazz
    * @return Iterable

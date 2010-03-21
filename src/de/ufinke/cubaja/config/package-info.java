@@ -18,18 +18,18 @@
  * an XML element. Like XML elements, the element node objects may be nested.
  * For every type of XML element, we code a separate class.
  * These classes have 'setter' and 'adder' methods; that is, their names begin
- * with <code>set</code> or <code>add</code>, followed by the name of an XML attribute
+ * with <tt>set</tt> or <tt>add</tt>, followed by the name of an XML attribute
  * or the tag name of an XML element. The difference between setter and adder methods is, 
  * that setters may be invoked only once (for an attribute value or a unique subelement),
  * whereas adders may be invoked any number of times 
  * (within an adder method, the passed parameter is typically added to a collection).
  * </p>
  * <p>
- * Setter and adder methods must have a <code>void</code> return type and exactly one
+ * Setter and adder methods must have a <tt>void</tt> return type and exactly one
  * parameter. Builtin supported parameter types are
- * <code>Enum</code>s, all primitive types and their corresponding object classes, 
- * <code>String</code>, <code>java.util.Date</code>, <code>java.math.BigInteger</code>,
- * <code>java.math.BigDecimal</code>, <code>Class</code> and interfaces.
+ * <tt>Enum</tt>s, all primitive types and their corresponding object classes, 
+ * <tt>String</tt>, <tt>java.util.Date</tt>, <tt>java.math.BigInteger</tt>,
+ * <tt>java.math.BigDecimal</tt>, <tt>Class</tt> and interfaces.
  * Other types with a public parameterless constructor are considered to be element nodes.
  * Those types need not to extend or implement supertypes or interfaces.
  * But if such a type implements 
@@ -63,42 +63,42 @@
  * </p>
  * <p>
  * The XML attribute values or element content may contain properties in the form 
- * <code>${<i>propertyName</i>}</code>.
+ * <tt>${<i>propertyName</i>}</tt>.
  * Those properties are replaced by their actual values when the
  * parameter types of the setter / adder methods are processed.
  * There are several possible sources for property values, all provided by implementations
  * of {@link de.ufinke.cubaja.config.PropertyProvider PropertyProvider}. 
  * Basic property providers are defined by enum
  * {@link de.ufinke.cubaja.config.PropertyProviderType PropertyProviderType}. 
- * Additionally, we can write our own providers or pass an instance of <code>java.util.Properties</code>.
+ * Additionally, we can write our own providers or pass an instance of <tt>java.util.Properties</tt>.
  * </p>
  * <p>
  * The properties search order is defined by the order of  
  * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
- * if we did not define them explicitly and we did not add the <code>NULL</code> property provider.
+ * if we did not define them explicitly and we did not add the <tt>NULL</tt> property provider.
  * The default order is as follows:
  * <ol>
  *   <li>
- *     <code>SYSTEM</code>
+ *     <tt>SYSTEM</tt>
  *     <br/>
  *     System properties.
  *   </li>
  *   <li>
- *     <code>BASE_PROPERTIES</code>
+ *     <tt>BASE_PROPERTIES</tt>
  *     <br/>
- *     Properties in an optional file <code><i>baseName</i>.properties</code>
- *     corresponding to the XML source <code><i>baseName</i>.xml</code>.
+ *     Properties in an optional file <tt><i>baseName</i>.properties</tt>
+ *     corresponding to the XML source <tt><i>baseName</i>.xml</tt>.
  *   </li>
  *   <li>
- *     <code>BASE_XML</code>
+ *     <tt>BASE_XML</tt>
  *     <br/>
  *     Properties defined in the XML document with the special element
  *     <br/>
- *     <code>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</code>.
+ *     <tt>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</tt>.
  *   </li>
  *   <li>
- *     <code>ENVIRONMENT</code>
+ *     <tt>ENVIRONMENT</tt>
  *     <br/>
  *     Environment variables.
  *   </li>
@@ -110,7 +110,7 @@
  * This is useful when we split a big configuration into several independent files
  * (e.g. technical and end-user responsibility) and we want to use the same basic settings.
  * The providers for the property types 
- * <code>BASE_PROPERTIES</code> and <code>BASE_XML</code> are stored in stacks.
+ * <tt>BASE_PROPERTIES</tt> and <tt>BASE_XML</tt> are stored in stacks.
  * The properties are searched from the top of the stack downward.
  * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure} 
  * the actual base providers are initialized
@@ -129,60 +129,60 @@
  * <p>
  * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
  * are not part of the search sequence.
- * The provider is called directly when a <code>configProperty</code> element
- * with an attribute '<code>provider</code>' is encountered. Such <code>configProperty</code>
- * elements may have sub-elements with the tag name '<code>parm</code>', containing attributes
- * '<code>name</code>' and '<code>value</code>'.
+ * The provider is called directly when a <tt>configProperty</tt> element
+ * with an attribute '<tt>provider</tt>' is encountered. Such <tt>configProperty</tt>
+ * elements may have sub-elements with the tag name '<tt>parm</tt>', containing attributes
+ * '<tt>name</tt>' and '<tt>value</tt>'.
  * </p>
  * <p>
- * The special element <code>configInclude</code> with an attribute named <code>include</code>
+ * The special element <tt>configInclude</tt> with an attribute named <tt>include</tt>
  * includes the named resource (or file) while parsing. The root element of the included resource
  * is discarded but its children are processed as if they had been defined in
  * the root document.
  * </p>
- * There is another special element named <code>configSettings</code> to set the parser's behaviour.
+ * There is another special element named <tt>configSettings</tt> to set the parser's behaviour.
  * Possible attributes are
  * <ol>
  *   <li>
- *     <code>datePattern</code>
+ *     <tt>datePattern</tt>
  *     <br/>
  *     The date pattern for parsing date values.
- *     For a description how to code the pattern see <code>java.text.SimpleDateFormat</code>.
- *     Default is <code>yyyy-MM-dd</code>.
+ *     For a description how to code the pattern see <tt>java.text.SimpleDateFormat</tt>.
+ *     Default is <tt>yyyy-MM-dd</tt>.
  *   </li>
  *   <li>
- *     <code>trueValues</code>
+ *     <tt>trueValues</tt>
  *     <br/>
- *     A comma separated list of constants representing the boolean value <code>true</code>.
- *     Default is <code>true,yes,on</code>.
+ *     A comma separated list of constants representing the boolean value <tt>true</tt>.
+ *     Default is <tt>true,yes,on</tt>.
  *   </li>
  *   <li>
- *     <code>falseValues</code>
+ *     <tt>falseValues</tt>
  *     <br/>
- *     A comma separated list of constants representing the boolean value <code>false</code>.
- *     Default is <code>false,no,off</code>.
+ *     A comma separated list of constants representing the boolean value <tt>false</tt>.
+ *     Default is <tt>false,no,off</tt>.
  *   </li>
  *   <li>
- *     <code>decimalPoint</code>
+ *     <tt>decimalPoint</tt>
  *     <br/>
  *     The decimal point character, which may be a point or a comma.
  *     By default, both characters are processed as decimal point.
  *   </li>
  *   <li>
- *     <code>processEscape</code>
+ *     <tt>processEscape</tt>
  *     <br/>
  *     Enables or disables processing of escape characters 
- *     (introduced by backslash, i.e. <code>\n</code> for newline).
- *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
+ *     (introduced by backslash, i.e. <tt>\n</tt> for newline).
+ *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
  *     processing, other values disable processing.
  *     By default, processing is enabled.
  *   </li>
  *   <li>
- *     <code>processProperties</code>
+ *     <tt>processProperties</tt>
  *     <br/>
  *     Enables or disables processing of properties
- *     (that is, replacement of <code>${...}</code> sequences).
- *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
+ *     (that is, replacement of <tt>${...}</tt> sequences).
+ *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
  *     processing, other values disable processing.
  *     By default, processing is enabled.
  *   </li>
@@ -192,7 +192,7 @@
  * <br/>
  * Subject to 
  * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
- * See <code>license.txt</code> distributed with this package.
+ * See <tt>license.txt</tt> distributed with this package.
  * </p>
  */
 package de.ufinke.cubaja.config;

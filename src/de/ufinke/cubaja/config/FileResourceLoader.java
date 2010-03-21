@@ -11,7 +11,7 @@ import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
 /**
- * File reading <code>ResourceLoader</code>.
+ * File reading <tt>ResourceLoader</tt>.
  * <p>
  * If a resource name is not an absolute file name,
  * this loader will read a file relative to a

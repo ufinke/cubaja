@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * Needed internally for <code>CsvWriter.writeObject</code>.
+ * Needed internally for <tt>CsvWriter.writeObject</tt>.
  * @author Uwe Finke
  */
 public interface ObjectWriter {

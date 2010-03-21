@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <code>ErrorHandler</code> which collects exceptions.
+ * <tt>ErrorHandler</tt> which collects exceptions.
  * @author Uwe Finke
  */
 public class CollectingErrorHandler implements ErrorHandler {

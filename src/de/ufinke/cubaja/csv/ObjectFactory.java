@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * Factory needed internaly for <code>CsvReader.readObject()</code>.
+ * Factory needed internaly for <tt>CsvReader.readObject()</tt>.
  * @author Uwe Finke
  */
 public interface ObjectFactory {

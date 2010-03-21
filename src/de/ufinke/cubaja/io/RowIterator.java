@@ -8,15 +8,15 @@ import java.util.NoSuchElementException;
 import de.ufinke.cubaja.util.IteratorException;
 
 /**
- * <code>Iterator</code> over rows of a <code>ColumnReader</code>.
- * Returns itself as <code>Iterable</code>.
- * An instance is created by method <code>readAllRows</code> of a <code>ColumnReader</code>.
+ * <tt>Iterator</tt> over rows of a <tt>ColumnReader</tt>.
+ * Returns itself as <tt>Iterable</tt>.
+ * An instance is created by method <tt>readAllRows</tt> of a <tt>ColumnReader</tt>.
  * <p>
- * Because an <code>Iterator</code> is not allowed to throw a normal <code>Exception</code>,
- * the methods <code>next</code> and <code>hasNext</code> wrap exceptions into
- * an <code>IteratorException</code> which is a <code>RuntimeException</code>.
+ * Because an <tt>Iterator</tt> is not allowed to throw a normal <tt>Exception</tt>,
+ * the methods <tt>next</tt> and <tt>hasNext</tt> wrap exceptions into
+ * an <tt>IteratorException</tt> which is a <tt>RuntimeException</tt>.
  * <p>
- * The <code>remove</code> operation is not supported.
+ * The <tt>remove</tt> operation is not supported.
  * @author Uwe Finke
  * @param <D> data object type
  */
@@ -74,7 +74,7 @@ public class RowIterator<D> implements Iterator<D>, Iterable<D> {
   }
   
   /**
-   * Throws an <code>UnsupportedOperationException</code>.
+   * Throws an <tt>UnsupportedOperationException</tt>.
    */
   public void remove() throws UnsupportedOperationException {
     

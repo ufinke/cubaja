@@ -13,7 +13,7 @@ import java.io.Reader;
 public interface RowParser {
 
   /**
-   * Called during <code>CsvReader</code> initialization.
+   * Called during <tt>CsvReader</tt> initialization.
    * @param in
    * @param config
    * @throws CsvException
@@ -21,7 +21,7 @@ public interface RowParser {
   public void init(Reader in, CsvConfig config) throws IOException, CsvException;
 
   /**
-   * Returns next row, or <code>null</code> when EOF.
+   * Returns next row, or <tt>null</tt> when EOF.
    * @return complete row
    * @throws IOException
    */

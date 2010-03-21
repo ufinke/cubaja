@@ -7,8 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Wrapper for <code>insert</code>, <code>update</code> or <code>delete</code> statements.
- * An instance is created by an appropriate <code>Database</code> method.
+ * Wrapper for <tt>insert</tt>, <tt>update</tt> or <tt>delete</tt> statements.
+ * An instance is created by an appropriate <tt>Database</tt> method.
  * @author Uwe Finke
  */
 public class Update extends PreparedSql {
@@ -29,7 +29,7 @@ public class Update extends PreparedSql {
 
   /**
    * Executes the statement immediately.
-   * Calls the <code>PreparedStatement</code>'s <code>executeUpdate</code> method.
+   * Calls the <tt>PreparedStatement</tt>'s <tt>executeUpdate</tt> method.
    * @return number of concerned rows.
    * @throws SQLException
    */
@@ -40,13 +40,13 @@ public class Update extends PreparedSql {
   
   /**
    * Adds a row to a bulk operation.
-   * If the configuration's <code>batchSize</code> value
+   * If the configuration's <tt>batchSize</tt> value
    * has been reached, this method  
-   * calls the <code>PreparedStatement</code>'s <code>executeBatch</code> method
+   * calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method
    * automatically.
    * After that, the
-   * <code>PreparedStatement</code>'s <code>addBatch</code> method is called.
-   * @return number of concerned rows (result from <code>executeBatch</code>)
+   * <tt>PreparedStatement</tt>'s <tt>addBatch</tt> method is called.
+   * @return number of concerned rows (result from <tt>executeBatch</tt>)
    * @throws SQLException
    */
   public int[] addBatch() throws SQLException {
@@ -69,9 +69,9 @@ public class Update extends PreparedSql {
   }
   
   /**
-   * Writes the rows supplied by <code>addBatch</code> to the database.
-   * Calls the <code>PreparedStatement</code>'s <code>executeBatch</code> method.
-   * @return number of concerned rows (not including the result of intermediate calls triggered automatically by <code>addBatch</code>)
+   * Writes the rows supplied by <tt>addBatch</tt> to the database.
+   * Calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method.
+   * @return number of concerned rows (not including the result of intermediate calls triggered automatically by <tt>addBatch</tt>)
    * @throws SQLException
    */
   public int[] executeBatch() throws SQLException {
@@ -95,9 +95,9 @@ public class Update extends PreparedSql {
   }
   
   /**
-   * Returns the total number of <code>addBatch</code> calls.
-   * After a direct call to <code>executeBatch</code> the counter
-   * is reset on the first subsequent call to <code>addBatch</code>.
+   * Returns the total number of <tt>addBatch</tt> calls.
+   * After a direct call to <tt>executeBatch</tt> the counter
+   * is reset on the first subsequent call to <tt>addBatch</tt>.
    * @return number of requests
    */
   public int getBatchCount() {

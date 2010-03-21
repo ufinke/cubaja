@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.sql;
 
 /**
- * Interface needed internally for <code>PreparedSql.setVariables()</code>.
+ * Interface needed internally for <tt>PreparedSql.setVariables()</tt>.
  * @author Uwe Finke
  */
 public interface VariableSetter {

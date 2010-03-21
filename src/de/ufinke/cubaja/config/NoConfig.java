@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
  * Marks a setter / adder method as not applicable for automatic configuration.
  * <p/>
  * All methods of an element node class 
- * that have names starting with <code>set</code> or <code>add</code>,
- * have a <code>void</code> return type and exactly one parameter,
+ * that have names starting with <tt>set</tt> or <tt>add</tt>,
+ * have a <tt>void</tt> return type and exactly one parameter,
  * are selected for automatic setting of attribute or element values.
  * When we have methods which meet these conditions but we don't want to be
  * used them in automatic configuration processing, we must mark them

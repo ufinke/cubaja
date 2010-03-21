@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * Default <code>ErrorHandler</code>.
+ * Default <tt>ErrorHandler</tt>.
  * @author Uwe Finke
  */
 public class DefaultErrorHandler implements ErrorHandler {

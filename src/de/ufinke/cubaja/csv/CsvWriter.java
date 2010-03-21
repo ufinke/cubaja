@@ -167,7 +167,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>String</code>.
+   * Fills column identified by name with a <tt>String</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -179,7 +179,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by position with a <code>String</code>.
+   * Fills column identified by position with a <tt>String</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -205,7 +205,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>boolean</code>.
+   * Fills column identified by name with a <tt>boolean</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -217,7 +217,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>boolean</code>.
+   * Fills column identified by position with a <tt>boolean</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -230,7 +230,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>Boolean</code>.
+   * Fills column identified by name with a <tt>Boolean</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -242,7 +242,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Boolean</code>.
+   * Fills column identified by position with a <tt>Boolean</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -264,7 +264,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>char</code>.
+   * Fills column identified by name with a <tt>char</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -276,7 +276,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>char</code>.
+   * Fills column identified by position with a <tt>char</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -289,7 +289,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>Character</code>.
+   * Fills column identified by name with a <tt>Character</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -301,7 +301,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Character</code>.
+   * Fills column identified by position with a <tt>Character</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -323,7 +323,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>byte</code>.
+   * Fills column identified by name with a <tt>byte</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -335,7 +335,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>byte</code>.
+   * Fills column identified by position with a <tt>byte</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -348,7 +348,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with an <code>short</code>.
+   * Fills column identified by name with an <tt>short</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -360,7 +360,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>short</code>.
+   * Fills column identified by position with a <tt>short</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -373,7 +373,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * Fills column identified by name with an <tt>int</tt> (or <tt>byte</tt> or <tt>short</tt>).
    * @param columnName
    * @param value
    * @throws IOException
@@ -385,7 +385,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * Fills column identified by position with an <tt>int</tt> (or <tt>byte</tt> or <tt>short</tt>).
    * @param position
    * @param value
    * @throws IOException
@@ -398,7 +398,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>Byte</code>.
+   * Fills column identified by name with a <tt>Byte</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -410,7 +410,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Byte</code>.
+   * Fills column identified by position with a <tt>Byte</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -427,7 +427,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>Short</code>.
+   * Fills column identified by name with a <tt>Short</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -439,7 +439,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Short</code>.
+   * Fills column identified by position with a <tt>Short</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -456,7 +456,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with an <code>Integer</code>.
+   * Fills column identified by name with an <tt>Integer</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -468,7 +468,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with an <code>Integer</code>.
+   * Fills column identified by position with an <tt>Integer</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -490,7 +490,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>long</code>.
+   * Fills column identified by name with a <tt>long</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -502,7 +502,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>long</code>.
+   * Fills column identified by position with a <tt>long</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -515,7 +515,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>Long</code>.
+   * Fills column identified by name with a <tt>Long</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -527,7 +527,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Long</code>.
+   * Fills column identified by position with a <tt>Long</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -550,7 +550,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>double</code>.
+   * Fills column identified by name with a <tt>double</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -562,7 +562,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>double</code>.
+   * Fills column identified by position with a <tt>double</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -575,7 +575,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>float</code>.
+   * Fills column identified by name with a <tt>float</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -587,7 +587,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>float</code>.
+   * Fills column identified by position with a <tt>float</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -600,7 +600,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <code>Double</code>.
+   * Fills column identified by name with a <tt>Double</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -612,7 +612,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Double</code>.
+   * Fills column identified by position with a <tt>Double</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -629,7 +629,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>Float</code>.
+   * Fills column identified by name with a <tt>Float</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -641,7 +641,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Float</code>.
+   * Fills column identified by position with a <tt>Float</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -658,7 +658,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>BigDecimal</code>.
+   * Fills column identified by name with a <tt>BigDecimal</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -670,7 +670,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>BigDecimal</code>.
+   * Fills column identified by position with a <tt>BigDecimal</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -687,7 +687,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>BigInteger</code>.
+   * Fills column identified by name with a <tt>BigInteger</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -699,7 +699,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>BigInteger</code>.
+   * Fills column identified by position with a <tt>BigInteger</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -716,7 +716,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <code>Date</code>.
+   * Fills column identified by name with a <tt>Date</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -728,7 +728,7 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <code>Date</code>.
+   * Fills column identified by position with a <tt>Date</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -745,7 +745,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with an <code>Enum</code>.
+   * Fills column identified by name with an <tt>Enum</tt>.
    * @param columnName
    * @param value
    * @throws IOException
@@ -757,7 +757,7 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by position with an <code>Enum</code>.
+   * Fills column identified by position with an <tt>Enum</tt>.
    * @param position
    * @param value
    * @throws IOException
@@ -798,8 +798,8 @@ public class CsvWriter {
   
   /**
    * Fills columns from getter methods of data object and writes row.
-   * This method just calls <code>writeObject</code>
-   * and <code>nextRow</code>.
+   * This method just calls <tt>writeObject</tt>
+   * and <tt>nextRow</tt>.
    * @param dataObject
    * @throws IOException
    * @throws CsvException

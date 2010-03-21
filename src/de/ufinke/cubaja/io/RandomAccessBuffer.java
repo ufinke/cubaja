@@ -16,9 +16,9 @@ import java.io.OutputStream;
 
 /**
  * Flexible byte array buffer.
- * Functions similar to <code>java.io.RandomAccessFile</code>;
- * an alternative to <code>ByteArrayOutputStream</code>
- * and <code>ByteArrayInputStream</code> 
+ * Functions similar to <tt>java.io.RandomAccessFile</tt>;
+ * an alternative to <tt>ByteArrayOutputStream</tt>
+ * and <tt>ByteArrayInputStream</tt> 
  * when more flexibility is required. 
  * <p>
  * The buffer is backed by an automatically growing byte array.
@@ -93,7 +93,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   /**
    * Default constructor with default capacity.
-   * Default initial and additional capacity are both <code>4096</code> bytes.
+   * Default initial and additional capacity are both <tt>4096</tt> bytes.
    */
   public RandomAccessBuffer() {
     
@@ -115,7 +115,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
 
   /**
-   * Sets position and size to <code>0</code>.
+   * Sets position and size to <tt>0</tt>.
    */
   public void reset() {
     
@@ -173,9 +173,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   /**
    * Cuts the contents and sets position and size.
-   * It is expected to be <code>0 <= from <= to <= size</code>.
-   * If <code>from = 0</code>, then size and position are both set to the <code>to</code> value.
-   * If <code>from > 0</code>, then all bytes between from (inclusive) and to (exclusive) 
+   * It is expected to be <tt>0 <= from <= to <= size</tt>.
+   * If <tt>from = 0</tt>, then size and position are both set to the <tt>to</tt> value.
+   * If <tt>from > 0</tt>, then all bytes between from (inclusive) and to (exclusive) 
    * are copied to the buffer's beginning; size and position are set to the amount of copied
    * bytes.
    * @param from
@@ -243,8 +243,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Returns an <code>OutputStream</code> which writes into this buffer.
-   * Needed for <code>FilterOutputStream</code>s.
+   * Returns an <tt>OutputStream</tt> which writes into this buffer.
+   * Needed for <tt>FilterOutputStream</tt>s.
    * @return output stream
    */
   public OutputStream getOutputStream() {
@@ -383,8 +383,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Returns an <code>InputStream</code> which reads from this buffer.
-   * Needed for <code>FilterInputStream</code>.
+   * Returns an <tt>InputStream</tt> which reads from this buffer.
+   * Needed for <tt>FilterInputStream</tt>.
    * @return input stream
    */
   public InputStream getInputStream() {
@@ -396,7 +396,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Reads one byte as <code>InputStream</code> would do.
+   * Reads one byte as <tt>InputStream</tt> would do.
    * @return one byte
    * @throws IOException
    */
@@ -409,13 +409,13 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Reads an array of bytes as <code>InputStream</code> would do.
+   * Reads an array of bytes as <tt>InputStream</tt> would do.
    * Reads at most up to the current size; therefore the returned
    * value may be less than the requested length.
    * @param b byte array to fill
    * @param off start offset within byte array
    * @param len maximum number of bytes to transfer
-   * @return number of bytes read, <code>-1</code> if the position had reached the current size
+   * @return number of bytes read, <tt>-1</tt> if the position had reached the current size
    * @throws IOException
    */
   public int read(byte[] b, int off, int len) throws IOException {
@@ -596,11 +596,11 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
 
   /**
-   * Reads up to <code>len</code> bytes from a stream into this buffer.
+   * Reads up to <tt>len</tt> bytes from a stream into this buffer.
    * The starting position within this buffer is it's current position.
-   * The stream's <code>read(byte[] b, int off, int len)</code> method
+   * The stream's <tt>read(byte[] b, int off, int len)</tt> method
    * is called repeatedly until all bytes requested with the 
-   * <code>len</code> parameter are read or a <code>-1</code> is returned from the stream.
+   * <tt>len</tt> parameter are read or a <tt>-1</tt> is returned from the stream.
    * @param in
    * @param len
    * @return number of bytes which had effectively been read
@@ -634,7 +634,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Reads exactly <code>len</code> bytes from a data input into this buffer.
+   * Reads exactly <tt>len</tt> bytes from a data input into this buffer.
    * @param in
    * @param len
    * @throws IOException

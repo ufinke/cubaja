@@ -7,7 +7,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 
 /**
- * Wrapper for legacy <code>Enumeration</code>s.
+ * Wrapper for legacy <tt>Enumeration</tt>s.
  * @author Uwe Finke
  * @param <E> type
  */
@@ -35,7 +35,7 @@ public class EnumerationIterator<E> implements Iterator<E>, Iterable<E> {
   }
 
   /**
-   * Throws <code>UnsupportedOperationException</code>.
+   * Throws <tt>UnsupportedOperationException</tt>.
    */
   public void remove() {
 

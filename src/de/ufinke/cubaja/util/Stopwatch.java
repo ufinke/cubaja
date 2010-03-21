@@ -30,7 +30,7 @@ public class Stopwatch {
   /**
    * Takes the start time and logs a start message.
    * <p>
-   * A subsequent call to <code>elapsedMillis</code>
+   * A subsequent call to <tt>elapsedMillis</tt>
    * will also log an end message together with the elapsed time.
    * @param message
    */
@@ -76,11 +76,11 @@ public class Stopwatch {
   /**
    * Formats a duration given in milliseconds.
    * <p>
-   * The format is <code><i>N</i>d <i>N</i>h <i>N</i>m <i>N</i>s <i>N</i>ms</code>
-   * where <code>d</code> are days, <code>h</code> are hours, <code>m</code>
-   * are minutes, <code>s</code> are seconds and <code>ms</code> are milliseconds.
+   * The format is <tt><i>N</i>d <i>N</i>h <i>N</i>m <i>N</i>s <i>N</i>ms</tt>
+   * where <tt>d</tt> are days, <tt>h</tt> are hours, <tt>m</tt>
+   * are minutes, <tt>s</tt> are seconds and <tt>ms</tt> are milliseconds.
    * Seconds and larger units are part of the result only when the value of the
-   * highest unit is not <code>0</code>. 
+   * highest unit is not <tt>0</tt>. 
    * @param millis
    * @return formatted string
    */

@@ -9,7 +9,7 @@ import java.io.Reader;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Default <code>RowParser</code> implementation.
+ * Default <tt>RowParser</tt> implementation.
  * If an escape character is defined, this parser supposes
  * escape character usage as described in 
  * {@link <a href="http://tools.ietf.org/html/rfc4180">rfc4180</a>},

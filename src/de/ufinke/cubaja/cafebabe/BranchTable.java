@@ -9,6 +9,14 @@ import java.util.Comparator;
 import java.util.List;
 import de.ufinke.cubaja.util.Util;
 
+/**
+ * Parameter for <tt>lookupswitch</tt> and <tt>tableswitch</tt> instructions.
+ * See {@link CodeAttribute#lookupswitch(BranchTable) lookupswitch}
+ * and {@link CodeAttribute#tableswitch(BranchTable) tableswitch}.
+ * For definition of jump targets (labels) see 
+ * {@link CodeAttribute#defineLabel(String) defineLabel}. 
+ * @author Uwe Finke
+ */
 public class BranchTable {
 
   static class Pair {
@@ -37,12 +45,21 @@ public class BranchTable {
   private List<Pair> pairList;
   private boolean sorted;
   
+  /**
+   * Constructor with the default jump target.
+   * @param defaultLabelName
+   */
   public BranchTable(String defaultLabelName) {
     
     pairList = new ArrayList<Pair>();
     this.defaultLabelName = defaultLabelName;
   }
   
+  /**
+   * Adds a jump target.
+   * @param key
+   * @param labelName
+   */
   public void addBranch(int key, String labelName) {
     
     pairList.add(new Pair(key, labelName));

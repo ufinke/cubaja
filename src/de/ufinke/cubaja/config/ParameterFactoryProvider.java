@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.config;
 
 /**
- * Provider of <code>ParameterFactory</code> instances for special tags and types.
+ * Provider of <tt>ParameterFactory</tt> instances for special tags and types.
  * A configuration object may implement this interface
  * to provide its own local factories.
  * @author Uwe Finke
@@ -12,9 +12,9 @@ package de.ufinke.cubaja.config;
 public interface ParameterFactoryProvider {
 
   /**
-   * Returns a <code>ParameterFactory</code> for the specified name and type. 
+   * Returns a <tt>ParameterFactory</tt> for the specified name and type. 
    * If this provider can't provide an appropriate factory, it must
-   * return <code>null</code>.
+   * return <tt>null</tt>.
    * @param name element tag or attribute name
    * @param type parameter data type
    * @return parameter factory

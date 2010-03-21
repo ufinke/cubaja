@@ -15,9 +15,9 @@ import de.ufinke.cubaja.util.Text;
  * If the objects don't fit into memory,
  * pre-sorted runs with serialized objects are written
  * to a temporary file.
- * An object is put to the sorter with the <code>add</code> method.
+ * An object is put to the sorter with the <tt>add</tt> method.
  * Sorted objects are retrieved with an iterator;
- * <code>Sorter</code> implements the appropriate <code>Iterable</code>.
+ * <tt>Sorter</tt> implements the appropriate <tt>Iterable</tt>.
  * @author Uwe Finke
  * @param <D> data type
  */

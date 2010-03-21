@@ -15,9 +15,9 @@ import org.xml.sax.InputSource;
 public interface ResourceLoader {
 
   /**
-   * Provides an <code>org.xml.sax.InputSource</code> for an XML resource. 
+   * Provides an <tt>org.xml.sax.InputSource</tt> for an XML resource. 
    * @param resourceName the XML resource name
-   * @return the <code>InputSource</code> which will be parsed
+   * @return the <tt>InputSource</tt> which will be parsed
    * @throws ConfigException
    */
   public InputSource loadResource(String resourceName) throws ConfigException;

@@ -40,7 +40,7 @@ public class SortConfig {
 
   /**
    * Sets the sort algorithm.
-   * Default is <code>Quicksort</code>
+   * Default is <tt>Quicksort</tt>
    * @param algorithm
    */
   public void setAlgorithm(SortAlgorithm algorithm) {
@@ -62,7 +62,7 @@ public class SortConfig {
 
   /**
    * Sets the work directory for temporary files.
-   * Default is the directory supplied by system property <code>java.io.tmpdir</code>.
+   * Default is the directory supplied by system property <tt>java.io.tmpdir</tt>.
    * @param workDirectory
    */
   public void setWorkDirectory(String workDirectory) {
@@ -84,7 +84,7 @@ public class SortConfig {
 
   /**
    * Sets the file name prefix for temporary files.
-   * Default is <code>sort</code>.
+   * Default is <tt>sort</tt>.
    * @param filePrefix
    */
   public void setFilePrefix(String filePrefix) {
@@ -104,9 +104,9 @@ public class SortConfig {
   /**
    * Determines if sort activities should be logged.
    * Default is no logging.
-   * If logging is set to <code>true</code>
+   * If logging is set to <tt>true</tt>
    * debug and trace messages are written
-   * to logger <code>de.ufinke.cubaja.sort.Sorter</code>.
+   * to logger <tt>de.ufinke.cubaja.sort.Sorter</tt>.
    * @param log
    */
   public void setLog(boolean log) {
@@ -128,10 +128,10 @@ public class SortConfig {
   
   /**
    * Sets the delay between trace log messages in seconds.
-   * Default is <code>60</code>.
+   * Default is <tt>60</tt>.
    * If trace is enabled for the logger,
    * the number of processed objects is logged after 
-   * every <code>logInterval</code> seconds.
+   * every <tt>logInterval</tt> seconds.
    * @param logInterval
    */
   public void setLogInterval(int logInterval) {
@@ -178,7 +178,7 @@ public class SortConfig {
    * Serialized objects are written to disk in a block of bytes.
    * The content of the internal buffer is written
    * when the buffer's size exceeds the block size.
-   * Default block size is <code>15360</code> (15K).
+   * Default block size is <tt>15360</tt> (15K).
    * As result, the effective block size is between 15K and 16K for normal sized data objects.
    * @param blockSize
    */

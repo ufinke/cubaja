@@ -8,7 +8,7 @@ import java.util.List;
 import org.xml.sax.InputSource;
 
 /**
- * <code>ResourceLoader</code> for XML config data provided as String.
+ * <tt>ResourceLoader</tt> for XML config data provided as String.
  * @author Uwe Finke
  */
 public class StringResourceLoader implements ResourceLoader {

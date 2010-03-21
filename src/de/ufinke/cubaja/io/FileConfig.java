@@ -37,25 +37,25 @@ import de.ufinke.cubaja.util.Text;
  *     <th align="center">U</th>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>name</code></td>
+ *     <td align="left" valign="top"><tt>name</tt></td>
  *     <td align="left" valign="top">file name</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>charset</code></td>
+ *     <td align="left" valign="top"><tt>charset</tt></td>
  *     <td align="left" valign="top">character set name</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  * </table>
- * <code>A/E</code>: attribute or subelement
+ * <tt>A/E</tt>: attribute or subelement
  * <br/>
- * <code>M</code>: mandatory
+ * <tt>M</tt>: mandatory
  * <br/>
- * <code>U</code>: unique
+ * <tt>U</tt>: unique
  * </blockquote>
  * </p>
  * @author Uwe Finke
@@ -113,10 +113,10 @@ public class FileConfig {
   }
   
   /**
-   * Retrieves the <code>Charset</code> according to the charset attribute.
+   * Retrieves the <tt>Charset</tt> according to the charset attribute.
    * If no charset was specified, we get the default charset of the runtime 
    * environment.
-   * @return the <code>Charset</code>
+   * @return the <tt>Charset</tt>
    */
   public Charset getCharset() {
     
@@ -128,7 +128,7 @@ public class FileConfig {
   
   /**
    * Creates a file object.
-   * @return a <code>File</code>
+   * @return a <tt>File</tt>
    */
   public File createFile() {
     
@@ -139,7 +139,7 @@ public class FileConfig {
    * Creates a file object representing a directory.
    * All directories in the path which do not already exist
    * will be allocated automatically.
-   * @return a <code>File</code>
+   * @return a <tt>File</tt>
    */
   public File createDirectory() {
     
@@ -165,7 +165,7 @@ public class FileConfig {
    * All parent directories which do not already exist
    * will be allocated automatically.
    * The stream is buffered.
-   * @return an <code>OutputStream</code>
+   * @return an <tt>OutputStream</tt>
    * @throws IOException
    */
   public OutputStream createOutputStream() throws IOException {
@@ -177,9 +177,9 @@ public class FileConfig {
    * Creates a writer.
    * All parent directories which do not already exist
    * will be allocated automatically.
-   * Uses the <code>getCharset</code> method.
+   * Uses the <tt>getCharset</tt> method.
    * The writer and the underlaying stream are buffered.
-   * @return a <code>Writer</code>
+   * @return a <tt>Writer</tt>
    * @throws IOException
    */
   public Writer createWriter() throws IOException {
@@ -190,7 +190,7 @@ public class FileConfig {
   /**
    * Creates an input stream.
    * The stream is buffered.
-   * @return an <code>InputStream</code>
+   * @return an <tt>InputStream</tt>
    * @throws IOException
    */
   public InputStream createInputStream() throws IOException {
@@ -200,9 +200,9 @@ public class FileConfig {
   
   /**
    * Creates a reader.
-   * Uses the <code>getCharset</code> method.
+   * Uses the <tt>getCharset</tt> method.
    * The reader and the underlaying stream are buffered.
-   * @return a <code>Reader</code>
+   * @return a <tt>Reader</tt>
    * @throws IOException
    */
   public Reader createReader() throws IOException {

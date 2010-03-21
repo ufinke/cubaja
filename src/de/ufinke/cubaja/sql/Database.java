@@ -16,13 +16,13 @@ import de.ufinke.cubaja.util.Text;
  * Wrapper for a database connection.
  * <p>
  * If not specified otherwise by configuration,
- * autocommit is <code>false</code>.
+ * autocommit is <tt>false</tt>.
  * This is different from default JDBC behaviour.
  * <p>
- * If we specify <code>log='true'</code> 
+ * If we specify <tt>log='true'</tt> 
  * in the configuration, statements will be logged
  * using the Apache CommonsLogging framework.
- * In the log message, each <code>Database</code>
+ * In the log message, each <tt>Database</tt>
  * instance has a unique id number.
  * @author Uwe Finke
  */
@@ -101,8 +101,8 @@ public class Database {
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <code>SQLException</code>. This is
-   * useful e.g. for <code>drop</code> statements.
+   * and should not throw an <tt>SQLException</tt>. This is
+   * useful e.g. for <tt>drop</tt> statements.
    * The SQL codes are vendor specific. 
    * @param sql
    * @param acceptedSqlCodes
@@ -121,16 +121,16 @@ public class Database {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <code>sql</code> (lower case).
-   * The <code>sqlResource</code> parameter contains only the
+   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * <p>
    * There may be more than one SQL statement; each
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <code>SQLException</code>. This is
-   * useful e.g. for <code>drop</code> statements.
+   * and should not throw an <tt>SQLException</tt>. This is
+   * useful e.g. for <tt>drop</tt> statements.
    * The SQL codes are vendor specific. 
    * @param packageClass
    * @param sqlResource
@@ -144,14 +144,14 @@ public class Database {
   }
   
   /**
-   * Executes SQL provided as <code>Sql</code> instance immediately.
+   * Executes SQL provided as <tt>Sql</tt> instance immediately.
    * <p>
    * There may be more than one SQL statement; each
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <code>SQLException</code>. This is
-   * useful e.g. for <code>drop</code> statements.
+   * and should not throw an <tt>SQLException</tt>. This is
+   * useful e.g. for <tt>drop</tt> statements.
    * The SQL codes are vendor specific. 
    * @param sql
    * @param acceptedSqlCodes
@@ -195,7 +195,7 @@ public class Database {
   }
   
   /**
-   * Creates a <code>Query</code> instance with SQL provided as string.
+   * Creates a <tt>Query</tt> instance with SQL provided as string.
    * @param sql
    * @return Query
    * @throws SQLException
@@ -206,15 +206,15 @@ public class Database {
   }
   
   /**
-   * Creates a <code>Query</code> instance with SQL provided as resource.
+   * Creates a <tt>Query</tt> instance with SQL provided as resource.
    * <p>
    * The SQL must be written in a separate file within a java source package
    * (usually the package where the class which uses the SQL belongs to).
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <code>sql</code> (lower case).
-   * The <code>sqlResource</code> parameter contains only the
+   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass
    * @param sqlResource
@@ -228,7 +228,7 @@ public class Database {
   }
   
   /**
-   * Creates a <code>Query</code> instance with SQL provided as <code>Sql</code> object.
+   * Creates a <tt>Query</tt> instance with SQL provided as <tt>Sql</tt> object.
    * @param sql
    * @return Query
    * @throws SQLException
@@ -260,9 +260,9 @@ public class Database {
   }
   
   /**
-   * Creates an <code>Update</code> instance with SQL provided as string.
-   * The SQL statement may be either <code>insert</code>, <code>update</code>
-   * or <code>delete</code>.
+   * Creates an <tt>Update</tt> instance with SQL provided as string.
+   * The SQL statement may be either <tt>insert</tt>, <tt>update</tt>
+   * or <tt>delete</tt>.
    * @param sql
    * @return Update
    * @throws SQLException
@@ -273,17 +273,17 @@ public class Database {
   }
   
   /**
-   * Creates an <code>Update</code> instance with SQL provided as resource.
-   * The SQL statement may be either <code>insert</code>, <code>update</code>
-   * or <code>delete</code>.
+   * Creates an <tt>Update</tt> instance with SQL provided as resource.
+   * The SQL statement may be either <tt>insert</tt>, <tt>update</tt>
+   * or <tt>delete</tt>.
    * <p>
    * The SQL must be written in a separate file within a java source package
    * (usually the package where the class which uses the SQL belongs to).
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <code>sql</code> (lower case).
-   * The <code>sqlResource</code> parameter contains only the
+   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass
    * @param sqlResource
@@ -297,7 +297,7 @@ public class Database {
   }
   
   /**
-   * Creates an <code>Update</code> instance with SQL provided as <code>Sql</code> object.
+   * Creates an <tt>Update</tt> instance with SQL provided as <tt>Sql</tt> object.
    * @param sql
    * @return Update
    * @throws SQLException

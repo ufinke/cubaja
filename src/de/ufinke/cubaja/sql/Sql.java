@@ -17,7 +17,7 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Collector and interpreter of SQL text.
- * The various <code>append</code> methods keep track 
+ * The various <tt>append</tt> methods keep track 
  * of line breaks, separators and comments.
  * The result is an executable SQL.
  * @author Uwe Finke
@@ -102,8 +102,8 @@ public class Sql {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <code>sql</code> (lower case).
-   * The <code>sqlResource</code> parameter contains only the
+   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass
    * @param sqlResource
@@ -256,10 +256,10 @@ public class Sql {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <code>sql</code> (lower case).
-   * The <code>sqlResource</code> parameter contains only the
+   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
-   * The resource must be coded in <code>UTF-8</code>.
+   * The resource must be coded in <tt>UTF-8</tt>.
    * @param packageClass
    * @param sqlResource
    * @return this
@@ -288,10 +288,10 @@ public class Sql {
   
   /**
    * Appends a list of values separated by comma.
-   * If an object type is not a subtype of <code>Number</code>,
+   * If an object type is not a subtype of <tt>Number</tt>,
    * the value will be enclosed by apostrophs.
    * <p>
-   * Useful for <code>IN</code> predicates.
+   * Useful for <tt>IN</tt> predicates.
    * The parantheses are not generated automatically.
    * @param value
    * @return this
@@ -322,10 +322,10 @@ public class Sql {
   
   /**
    * Appends a list of values separated by comma.
-   * If an object type is not a subtype of <code>Number</code>,
+   * If an object type is not a subtype of <tt>Number</tt>,
    * the value will be enclosed by apostrophs.
    * <p>
-   * Useful for <code>IN</code> predicates.
+   * Useful for <tt>IN</tt> predicates.
    * The parantheses are not generated automatically.
    * @param value
    * @return this
@@ -342,7 +342,7 @@ public class Sql {
   /**
    * Appends a list of integer values separated by comma.
    * <p>
-   * Useful for <code>IN</code> predicates.
+   * Useful for <tt>IN</tt> predicates.
    * The parantheses are not generated automatically.
    * @param value
    * @return this
@@ -366,9 +366,9 @@ public class Sql {
   }
   
   /**
-   * Generates SQL code for <code>update</code> statements.
+   * Generates SQL code for <tt>update</tt> statements.
    * The variables in the list are expanded to 
-   * <code>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</code>.
+   * <tt>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</tt>.
    * @param variables
    * @return this
    */
@@ -389,9 +389,9 @@ public class Sql {
   }
   
   /**
-   * Generates SQL code for <code>insert</code> statements.
+   * Generates SQL code for <tt>insert</tt> statements.
    * The variables in the list are expanded to 
-   * <code>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</code>.
+   * <tt>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</tt>.
    * @param variables
    * @return this
    */

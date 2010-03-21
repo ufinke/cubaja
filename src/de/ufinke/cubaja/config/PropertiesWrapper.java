@@ -6,7 +6,7 @@ package de.ufinke.cubaja.config;
 import java.util.Properties;
 
 /**
- * Wrapper for <code>java.util.Properies</code> implementing <code>PropertyProvider</code>.
+ * Wrapper for <tt>java.util.Properies</tt> implementing <tt>PropertyProvider</tt>.
  * @author Uwe Finke
  */
 class PropertiesWrapper implements PropertyProvider {

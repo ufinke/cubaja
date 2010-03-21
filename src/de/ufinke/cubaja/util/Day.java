@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
- * Extension of <code>GregorianCalendar</code>.
+ * Extension of <tt>GregorianCalendar</tt>.
  * This class offers date calculations on a day basis.
  * Time components like hour, minute and second are stripped in the constructors
  * so that the day represents the time at midnight.
@@ -21,8 +21,8 @@ import java.util.GregorianCalendar;
 public class Day extends GregorianCalendar implements Externalizable {
 
   /**
-   * Creates a <code>Date</code> set to midnight of the current day.
-   * @return today's <code>Day</code> instance
+   * Creates a <tt>Date</tt> set to midnight of the current day.
+   * @return today's <tt>Day</tt> instance
    */
   static public Date today() {
     
@@ -30,7 +30,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Creates a <code>Day</code> initialized to midnight of the current day.
+   * Creates a <tt>Day</tt> initialized to midnight of the current day.
    */
   public Day() {
     
@@ -38,7 +38,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Creates a <code>Day</code> initialized to midnight of the supplied date.
+   * Creates a <tt>Day</tt> initialized to midnight of the supplied date.
    * @param date
    */
   public Day(Date date) {
@@ -48,7 +48,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Creates a <code>Day</code> initialized to midnight of the supplied calendar object.
+   * Creates a <tt>Day</tt> initialized to midnight of the supplied calendar object.
    * @param calendar
    */
   public Day(Calendar calendar) {
@@ -58,7 +58,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Creates a <code>Day</code> initialized to midnight of the supplied time.
+   * Creates a <tt>Day</tt> initialized to midnight of the supplied time.
    * @param millis
    */
   public Day(long millis) {
@@ -68,8 +68,8 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Creates a <code>Day</code> initialized to the specified date.
-   * Note that <code>month</code> starts with <code>1</code> for january.
+   * Creates a <tt>Day</tt> initialized to the specified date.
+   * Note that <tt>month</tt> starts with <tt>1</tt> for january.
    * @param year
    * @param month
    * @param day
@@ -91,7 +91,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns a string with format <code>yyyy-MM-dd</code>.
+   * Returns a string with format <tt>yyyy-MM-dd</tt>.
    */
   public String toString() {
     
@@ -128,9 +128,9 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
 
   /**
-   * Compares this object to a <code>Date</code>.
+   * Compares this object to a <tt>Date</tt>.
    * @param date
-   * @return see <code>java.util.Comparator</code>
+   * @return see <tt>java.util.Comparator</tt>
    */
   public int compareTo(Date date) {
     
@@ -147,7 +147,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this object's month value, ranging from <code>1</code> to <code>12</code>.
+   * Returns this object's month value, ranging from <tt>1</tt> to <tt>12</tt>.
    * @return month
    */
   public int month() {
@@ -193,7 +193,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   
   /**
    * Formats this day according to the specified pattern.
-   * For pattern see <code>java.text.SimpleDateFormat</code>.
+   * For pattern see <tt>java.text.SimpleDateFormat</tt>.
    * @param pattern
    * @return formatted string
    */
@@ -338,7 +338,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   /**
    * Adds an amount of month to this object adjusting end of month.
    * The amount may be negative.
-   * If <code>retainLastDayOfMonth</code> is <code>true</code>
+   * If <tt>retainLastDayOfMonth</tt> is <tt>true</tt>
    * and the current day is the last day of a month,
    * than it is guaranteed that the result will also be the last day of a month.
    * @param count
@@ -370,7 +370,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   /**
    * Adds an amount of years to this object adjusting end of month.
    * The amount may be negative.
-   * If <code>retainLastDayOfMonth</code> is <code>true</code>
+   * If <tt>retainLastDayOfMonth</tt> is <tt>true</tt>
    * and the current day is the last day of a month,
    * than it is guaranteed that the result will also be the last day of a month
    * (this is a special case for the last day of february in leap years).

@@ -24,81 +24,81 @@ import de.ufinke.cubaja.util.Text;
  *     <th align="center">U</th>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>driver</code></td>
+ *     <td align="left" valign="top"><tt>driver</tt></td>
  *     <td align="left" valign="top">driver class</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>url</code></td>
+ *     <td align="left" valign="top"><tt>url</tt></td>
  *     <td align="left" valign="top">URL</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>user</code></td>
+ *     <td align="left" valign="top"><tt>user</tt></td>
  *     <td align="left" valign="top">user ID</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>password</code></td>
+ *     <td align="left" valign="top"><tt>password</tt></td>
  *     <td align="left" valign="top">password</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>excecute</code></td>
- *     <td align="left" valign="top">statement that should be executed immediately after a <code>Database</code> instance has been created (e.g. to set the default schema)</td>
+ *     <td align="left" valign="top"><tt>excecute</tt></td>
+ *     <td align="left" valign="top">statement that should be executed immediately after a <tt>Database</tt> instance has been created (e.g. to set the default schema)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>property</code></td>
- *     <td align="left" valign="top">any property; see <code>DatabaseConfig.PropertyConfig</code></td>
+ *     <td align="left" valign="top"><tt>property</tt></td>
+ *     <td align="left" valign="top">any property; see <tt>DatabaseConfig.PropertyConfig</tt></td>
  *     <td align="center" valign="top">E</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top"> </td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>autoCommit</code></td>
- *     <td align="left" valign="top">set to <code>true</code> when a commit should follow each single statement automatically (as native JDBC connections do); default is <code>false</code> (as database systems with transaction capabilities do)</td>
+ *     <td align="left" valign="top"><tt>autoCommit</tt></td>
+ *     <td align="left" valign="top">set to <tt>true</tt> when a commit should follow each single statement automatically (as native JDBC connections do); default is <tt>false</tt> (as database systems with transaction capabilities do)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>log</code></td>
- *     <td align="left" valign="top">set to <code>true</code> when actions should be logged; default is <code>false</code></td>
+ *     <td align="left" valign="top"><tt>log</tt></td>
+ *     <td align="left" valign="top">set to <tt>true</tt> when actions should be logged; default is <tt>false</tt></td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>fetchSize</code></td>
- *     <td align="left" valign="top">number of result rows fetched in a single block operation; default is <code>4095</code> (some database systems ignore this value and set an optimum fetchSize automatically)</td>
+ *     <td align="left" valign="top"><tt>fetchSize</tt></td>
+ *     <td align="left" valign="top">number of result rows fetched in a single block operation; default is <tt>4095</tt> (some database systems ignore this value and set an optimum fetchSize automatically)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>batchSize</code></td>
- *     <td align="left" valign="top">maximum number of native <code>addBatch</code> operations; default is <code>8191</code> (an <code>Update</code> instance calls <code>executeBatch</code> automatically when this limit is reached)</td>
+ *     <td align="left" valign="top"><tt>batchSize</tt></td>
+ *     <td align="left" valign="top">maximum number of native <tt>addBatch</tt> operations; default is <tt>8191</tt> (an <tt>Update</tt> instance calls <tt>executeBatch</tt> automatically when this limit is reached)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  * </table>
- * <code>A/E</code>: attribute or subelement
+ * <tt>A/E</tt>: attribute or subelement
  * <br/>
- * <code>M</code>: mandatory
+ * <tt>M</tt>: mandatory
  * <br/>
- * <code>U</code>: unique
+ * <tt>U</tt>: unique
  * </blockquote>
  * </p>
  * @author Uwe Finke
@@ -121,25 +121,25 @@ public class DatabaseConfig {
    *     <th align="center">U</th>
    *     </tr>
    *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><code>name</code></td>
+   *     <td align="left" valign="top"><tt>name</tt></td>
    *     <td align="left" valign="top">property name</td>
    *     <td align="center" valign="top">A</td>
    *     <td align="center" valign="top">x</td>
    *     <td align="center" valign="top">x</td>
    *     </tr>
    *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><code>value</code></td>
+   *     <td align="left" valign="top"><tt>value</tt></td>
    *     <td align="left" valign="top">property value</td>
    *     <td align="center" valign="top">A</td>
    *     <td align="center" valign="top">x</td>
    *     <td align="center" valign="top">x</td>
    *     </tr>
    * </table>
-   * <code>A/E</code>: attribute or subelement
+   * <tt>A/E</tt>: attribute or subelement
    * <br/>
-   * <code>M</code>: mandatory
+   * <tt>M</tt>: mandatory
    * <br/>
-   * <code>U</code>: unique
+   * <tt>U</tt>: unique
    * </blockquote>
    * </p>
    * @author Uwe Finke
@@ -221,7 +221,7 @@ public class DatabaseConfig {
    * Sets the log flag.
    * If set, activities like establishing or closing a connection,
    * commit, rollback and statement creation are logged
-   * on <code>debug</code> level.
+   * on <tt>debug</tt> level.
    * @param log
    */
   public void setLog(boolean log) {
@@ -231,7 +231,7 @@ public class DatabaseConfig {
 
   /**
    * Returns the autoCommit flag.
-   * By default, autoCommit is <code>false</code>.
+   * By default, autoCommit is <tt>false</tt>.
    * @return autoCommit flag
    */
   public boolean isAutoCommit() {
@@ -250,7 +250,7 @@ public class DatabaseConfig {
 
   /**
    * Returns the fetchSize for queries.
-   * By default, this configuration class returns <code>4096</code>.
+   * By default, this configuration class returns <tt>4096</tt>.
    * @return fetch size
    */
   public int getFetchSize() {
@@ -269,7 +269,7 @@ public class DatabaseConfig {
   
   /**
    * Returns the batchSize for updates.
-   * By default, this configuration class returns <code>8191</code>.
+   * By default, this configuration class returns <tt>8191</tt>.
    * @return batch size
    */
   public int getBatchSize() {
@@ -371,7 +371,7 @@ public class DatabaseConfig {
 
   /**
    * Sets an SQL statement.
-   * The statement is executed during initialization of a <code>Database</code> instance.
+   * The statement is executed during initialization of a <tt>Database</tt> instance.
    * Useful to set the current schema, for example.
    * @param execute an SQL statement
    */
@@ -391,7 +391,7 @@ public class DatabaseConfig {
   
   /**
    * Returns all properties.
-   * The <code>user</code> and <code>password</code> parameters
+   * The <tt>user</tt> and <tt>password</tt> parameters
    * are also part of the properties.
    * @return properties
    */
@@ -432,7 +432,7 @@ public class DatabaseConfig {
   }
   
   /**
-   * Returns a <code>Database</code> instance.
+   * Returns a <tt>Database</tt> instance.
    * The instance is created on the first call to this method.
    * Subsequent calls will return the same instance.
    * @return database instance with connection

@@ -21,28 +21,28 @@ import de.ufinke.cubaja.util.Util;
 /**
  * CSV reader.
  * <p>
- * We retrieve rows in a loop calling <code>nextRow</code>
- * until we receive <code>false</code>.
+ * We retrieve rows in a loop calling <tt>nextRow</tt>
+ * until we receive <tt>false</tt>.
  * <p>
  * For every row, we can read column contents as the type we need in our application,
- * or we can create a data object with column data by using method <code>readObject</code>.
+ * or we can create a data object with column data by using method <tt>readObject</tt>.
  * When the column is empty, the read methods for numeric primitive types
- * return <code>0</code>; read methods for objects types 
- * (except <code>readObject</code>) return <code>null</code>.
+ * return <tt>0</tt>; read methods for objects types 
+ * (except <tt>readObject</tt>) return <tt>null</tt>.
  * <p>
  * The position of the first column is 1, not 0.
  * <p>
  * The first row is read automatically if the configurations
- * <code>hasHeaderRow</code> method returns <code>true</code>.
+ * <tt>hasHeaderRow</tt> method returns <tt>true</tt>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
  * Despite the automatism, we can retrieve the content of the header
- * row before we call <code>nextRow</code> the first time. 
+ * row before we call <tt>nextRow</tt> the first time. 
  * <p>
- * Most methods may throw a <code>CsvException</code>.
+ * Most methods may throw a <tt>CsvException</tt>.
  * An exception is thrown if there is an attempt to
- * read any data after a call to <code>nextRow</code>
- * returned <code>false</code>, or after the reader was closed.
+ * read any data after a call to <tt>nextRow</tt>
+ * returned <tt>false</tt>, or after the reader was closed.
  * @author Uwe Finke
  */
 public class CsvReader implements ColumnReader {

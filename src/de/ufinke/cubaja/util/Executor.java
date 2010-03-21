@@ -9,8 +9,8 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Application main class template.
  * <p>
- * Usage: Implement a subclass, create an instance of it in the <code>main</code> method
- * and call <code>start()</code>.
+ * Usage: Implement a subclass, create an instance of it in the <tt>main</tt> method
+ * and call <tt>start()</tt>.
  * @author Uwe Finke
  */
 public abstract class Executor {
@@ -43,7 +43,7 @@ public abstract class Executor {
 
   /**
    * Sets args.
-   * May be called in the <code>main</code> method
+   * May be called in the <tt>main</tt> method
    * when arguments have to be passed to the application.
    * @param args
    */
@@ -54,7 +54,7 @@ public abstract class Executor {
 
   /**
    * Returns the stopwatch.
-   * The stopwatch is created in the <code>start</code> method.
+   * The stopwatch is created in the <tt>start</tt> method.
    * @return stopwatch
    */
   protected Stopwatch getStopwatch() {
@@ -64,7 +64,7 @@ public abstract class Executor {
   
   /**
    * Sets the exit code.
-   * Default exit code is <code>0</code>.
+   * Default exit code is <tt>0</tt>.
    * @param exitCode
    */
   protected void setExitCode(int exitCode) {
@@ -74,14 +74,14 @@ public abstract class Executor {
 
   /**
    * Starts the application.
-   * Call <code>start()</code> in the <code>main</code> method.
+   * Call <tt>start()</tt> in the <tt>main</tt> method.
    * <p>
    * This method writes a start message to the log, 
-   * calls <code>work()</code>, writes an end message containing
-   * the elapsed time and calls <code>System.exit</code>
+   * calls <tt>work()</tt>, writes an end message containing
+   * the elapsed time and calls <tt>System.exit</tt>
    * with the exit code.
    * Any Throwable is catched and logged before the application aborts.
-   * In case of abort the exit code is set to <code>16</code> (fatal).
+   * In case of abort the exit code is set to <tt>16</tt> (fatal).
    */
   protected void start() {
 
@@ -102,7 +102,7 @@ public abstract class Executor {
   /**
    * Does the application's work.
    * This method has to be implemented in a subclass;
-   * it is called by <code>start</code>.
+   * it is called by <tt>start</tt>.
    * @throws Exception
    */
   abstract protected void execute() throws Exception;

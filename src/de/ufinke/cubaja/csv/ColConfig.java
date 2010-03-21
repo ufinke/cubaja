@@ -34,88 +34,88 @@ import de.ufinke.cubaja.util.Text;
  *     <th align="center">U</th>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>name</code></td>
+ *     <td align="left" valign="top"><tt>name</tt></td>
  *     <td align="left" valign="top">the name of this column</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top">x</td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>header</code></td>
+ *     <td align="left" valign="top"><tt>header</tt></td>
  *     <td align="left" valign="top">the exact content of this columns header line</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>position</code></td>
- *     <td align="left" valign="top">the position of this column, starting with <code>1</code> for the first column (default: position of the previous column plus one; or - in case the <code>header</code> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
+ *     <td align="left" valign="top"><tt>position</tt></td>
+ *     <td align="left" valign="top">the position of this column, starting with <tt>1</tt> for the first column (default: position of the previous column plus one; or - in case the <tt>header</tt> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>trim</code></td>
- *     <td align="left" valign="top">trim attribute for column content (default: global <code>trim</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>trim</tt></td>
+ *     <td align="left" valign="top">trim attribute for column content (default: global <tt>trim</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>decimalChar</code></td>
- *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: global <code>decimalChar</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>decimalChar</tt></td>
+ *     <td align="left" valign="top">character for decimal point; may be a point or a comma (default: global <tt>decimalChar</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>scale</code></td>
- *     <td align="left" valign="top">number of fractional digits for decimal numbers (default: global <code>scale</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>scale</tt></td>
+ *     <td align="left" valign="top">number of fractional digits for decimal numbers (default: global <tt>scale</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>datePattern</code></td>
- *     <td align="left" valign="top">date format pattern as described in <code>java.text.SimpleDateFormat</code> (default: global <code>datePattern</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>datePattern</tt></td>
+ *     <td align="left" valign="top">date format pattern as described in <tt>java.text.SimpleDateFormat</tt> (default: global <tt>datePattern</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>trueValue</code></td>
- *     <td align="left" valign="top">value representing boolean value <code>true</code> (default: global <code>trueValue</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>trueValue</tt></td>
+ *     <td align="left" valign="top">value representing boolean value <tt>true</tt> (default: global <tt>trueValue</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>falseValue</code></td>
- *     <td align="left" valign="top">value representing boolean value <code>false</code> (default: global <code>falseValue</code> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top"><tt>falseValue</tt></td>
+ *     <td align="left" valign="top">value representing boolean value <tt>false</tt> (default: global <tt>falseValue</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>editor</code></td>
+ *     <td align="left" valign="top"><tt>editor</tt></td>
  *     <td align="left" valign="top">class name of a {@link de.ufinke.cubaja.csv.ColumnEditor ColumnEditor} implementation</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><code>replace</code></td>
+ *     <td align="left" valign="top"><tt>replace</tt></td>
  *     <td align="left" valign="top">replacement constants (see {@link de.ufinke.cubaja.csv.ReplaceConfig ReplaceConfig})</td>
  *     <td align="center" valign="top">E</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top"> </td>
  *     </tr>
  * </table>
- * <code>A/E</code>: attribute or subelement
+ * <tt>A/E</tt>: attribute or subelement
  * <br/>
- * <code>M</code>: mandatory
+ * <tt>M</tt>: mandatory
  * <br/>
- * <code>U</code>: unique
+ * <tt>U</tt>: unique
  * </blockquote>
  * </p>
  * @author Uwe Finke
@@ -229,7 +229,7 @@ public class ColConfig {
   /**
    * Returns the trim property.
    * If not specified,
-   * we get the global trim property from <code>CsvConfig</code>
+   * we get the global trim property from <tt>CsvConfig</tt>
    * @return trim
    */
   public Boolean isTrim() {
@@ -252,8 +252,8 @@ public class ColConfig {
   /**
    * Returns the decimal point character.
    * If not specified,
-   * we get the global character from <code>CsvConfig</code>.
-   * @return <code>null</code>, point or comma.
+   * we get the global character from <tt>CsvConfig</tt>.
+   * @return <tt>null</tt>, point or comma.
    */
   public Character getDecimalChar() {
 
@@ -291,7 +291,7 @@ public class ColConfig {
   /**
    * Returns the date format.
    * If not specified,
-   * we get the global date format from <code>CsvConfig</code>.
+   * we get the global date format from <tt>CsvConfig</tt>.
    * @return date format
    */
   public SimpleDateFormat getDateFormat() {
@@ -312,9 +312,9 @@ public class ColConfig {
   }
   
   /**
-   * Returns the constant representing the boolean value <code>true</code>.
+   * Returns the constant representing the boolean value <tt>true</tt>.
    * If not specified,
-   * we get the global constant from <code>CsvConfig</code>.
+   * we get the global constant from <tt>CsvConfig</tt>.
    * @return true value
    */
   public String getTrueValue() {
@@ -326,7 +326,7 @@ public class ColConfig {
   }
 
   /**
-   * Sets the constant representing the boolean value <code>true</code>.
+   * Sets the constant representing the boolean value <tt>true</tt>.
    * @param trueValue
    */
   public void setTrueValue(String trueValue) {
@@ -335,9 +335,9 @@ public class ColConfig {
   }
 
   /**
-   * Returns the constant representing the boolean value <code>false</code>.
+   * Returns the constant representing the boolean value <tt>false</tt>.
    * If not specified,
-   * we get the global constant from <code>CsvConfig</code>.
+   * we get the global constant from <tt>CsvConfig</tt>.
    * @return false value
    */
   public String getFalseValue() {
@@ -349,7 +349,7 @@ public class ColConfig {
   }
 
   /**
-   * Sets the constant representing the boolean value <code>false</code>.
+   * Sets the constant representing the boolean value <tt>false</tt>.
    * @param falseValue
    */
   public void setFalseValue(String falseValue) {
@@ -390,7 +390,7 @@ public class ColConfig {
   
   /**
    * Returns the list with replacement definitions.
-   * If there are no replacement definitions, we get <code>null</code>.
+   * If there are no replacement definitions, we get <tt>null</tt>.
    * @return list
    */
   public List<ReplaceConfig> getReplaceList() {
@@ -412,7 +412,7 @@ public class ColConfig {
 
   /**
    * Sets the number of fractional digits for decimal numbers.
-   * Default is <code>2</code>.
+   * Default is <tt>2</tt>.
    * @param scale
    */
   public void setScale(Integer scale) {
