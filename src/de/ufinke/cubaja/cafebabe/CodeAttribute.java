@@ -11,6 +11,232 @@ import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Code portion of a method.
+ * An instance is supplied by {@link GenMethod#getCode()}.
+ * <p>
+ * Java instructions are added to the code by calling 
+ * methods which generate the opcodes and their parameters.
+ * Like in assembler languages, labels may be defined to mark branch target points.
+ * Local variables may be identified by their index number, or by name.
+ * Constant pool entries are added automatically when needed.
+ * <p>
+ * The Java VM opcodes are implemented by the following methods:<blockquote>
+ * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
+ * <tr bgcolor="#ccccff">
+ * <th align="left">opcode</th>
+ * <th align="left">mnemonic</th>
+ * <th align="center">implementing method(s)</th>
+ * </tr>
+ * <tr align="left" valign="top"><td><tt>00</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc10.html#nop">nop</a>}</tt></td><td>{@link #nop()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>01</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aconst_null">aconst_null</a>}</tt></td><td>{@link #loadNull()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>02</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_m1</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>03</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_0</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>04</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_1</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>05</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_2</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>06</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_3</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>07</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_4</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>08</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iconst_i">iconst_5</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>09</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lconst_l">lconst_0</a>}</tt></td><td>{@link #loadConstant(long)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lconst_l">lconst_1</a>}</tt></td><td>{@link #loadConstant(long)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fconst_f">fconst_0</a>}</tt></td><td>{@link #loadConstant(float)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fconst_f">fconst_1</a>}</tt></td><td>{@link #loadConstant(float)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fconst_f">fconst_2</a>}</tt></td><td>{@link #loadConstant(float)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dconst_d">dconst_0</a>}</tt></td><td>{@link #loadConstant(double)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>0F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dconst_d">dconst_1</a>}</tt></td><td>{@link #loadConstant(double)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>10</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc1.html#bipush">bipush</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>11</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc13.html#sipush">sipush</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>12</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc">ldc</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}, {@link #loadConstant(Class)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>13</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc_w">ldc_w</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}, {@link #loadConstant(Class)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>14</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc2_w">ldc2_w</a>}</tt></td><td>{@link #loadConstant(long)}, {@link #loadConstant(double)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>15</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload">iload</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>16</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload">lload</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>17</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fload">fload</a>}</tt></td><td>{@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>18</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dload">dload</a>}</tt></td><td>{@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>19</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aload">aload</a>}</tt></td><td>{@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload_n">iload_0</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload_n">iload_1</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload_n">iload_2</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload_n">iload_3</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload_n">lload_0</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>1F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload_n">lload_1</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>20</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload_n">lload_2</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>21</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload_n">lload_3</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>22</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fload_n">fload_0</a>}</tt></td><td>{@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>23</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fload_n">fload_1</a>}</tt></td><td>{@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>24</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fload_n">fload_2</a>}</tt></td><td>{@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>25</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fload_n">fload_3</a>}</tt></td><td>{@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>26</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dload_n">dload_0</a>}</tt></td><td>{@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>27</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dload_n">dload_1</a>}</tt></td><td>{@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>28</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dload_n">dload_2</a>}</tt></td><td>{@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>29</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dload_n">dload_3</a>}</tt></td><td>{@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aload_n">aload_0</a>}</tt></td><td>{@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aload_n">aload_1</a>}</tt></td><td>{@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aload_n">aload_2</a>}</tt></td><td>{@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aload_n">aload_3</a>}</tt></td><td>{@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iaload">iaload</a>}</tt></td><td>{@link #loadIntArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>2F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#laload">laload</a>}</tt></td><td>{@link #loadLongArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>30</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#faload">faload</a>}</tt></td><td>{@link #loadFloatArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>31</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#daload">daload</a>}</tt></td><td>{@link #loadDoubleArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>32</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aaload">aaload</a>}</tt></td><td>{@link #loadReferenceArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>33</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc1.html#baload">baload</a>}</tt></td><td>{@link #loadBooleanArrayElement()}, {@link #loadByteArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>34</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc2.html#caload">caload</a>}</tt></td><td>{@link #loadCharArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>35</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc13.html#saload">saload</a>}</tt></td><td>{@link #loadShortArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>36</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#istore">istore</a>}</tt></td><td>{@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>37</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lstore">lstore</a>}</tt></td><td>{@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>38</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fstore">fstore</a>}</tt></td><td>{@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>39</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dstore">dstore</a>}</tt></td><td>{@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#astore">astore</a>}</tt></td><td>{@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#istore_n">istore_0</a>}</tt></td><td>{@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#istore_n">istore_1</a>}</tt></td><td>{@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#istore_n">istore_2</a>}</tt></td><td>{@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#istore_n">istore_3</a>}</tt></td><td>{@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>3F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lstore_n">lstore_0</a>}</tt></td><td>{@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>40</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lstore_n">lstore_1</a>}</tt></td><td>{@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>41</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lstore_n">lstore_2</a>}</tt></td><td>{@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>42</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lstore_n">lstore_3</a>}</tt></td><td>{@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>43</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fstore_n">fstore_0</a>}</tt></td><td>{@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>44</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fstore_n">fstore_1</a>}</tt></td><td>{@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>45</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fstore_n">fstore_2</a>}</tt></td><td>{@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>46</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fstore_n">fstore_3</a>}</tt></td><td>{@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>47</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dstore_n">dstore_0</a>}</tt></td><td>{@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>48</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dstore_n">dstore_1</a>}</tt></td><td>{@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>49</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dstore_n">dstore_2</a>}</tt></td><td>{@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dstore_n">dstore_3</a>}</tt></td><td>{@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#astore_n">astore_0</a>}</tt></td><td>{@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#astore_n">astore_1</a>}</tt></td><td>{@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#astore_n">astore_2</a>}</tt></td><td>{@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#astore_n">astore_3</a>}</tt></td><td>{@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>4F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iastore">iastore</a>}</tt></td><td>{@link #storeIntArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>50</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lastore">lastore</a>}</tt></td><td>{@link #storeLongArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>51</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fastore">fastore</a>}</tt></td><td>{@link #storeFloatArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>52</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dastore">dastore</a>}</tt></td><td>{@link #storeDoubleArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>53</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#aastore">aastore</a>}</tt></td><td>{@link #storeReferenceArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>54</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc1.html#bastore">bastore</a>}</tt></td><td>{@link #storeBooleanArrayElement()}, {@link #storeByteArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>55</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc2.html#castore">castore</a>}</tt></td><td>{@link #storeCharArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>56</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc13.html#sastore">sastore</a>}</tt></td><td>{@link #storeShortArrayElement()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>57</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc11.html#pop">pop</a>}</tt></td><td>{@link #pop()}, {@link #pop(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>58</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc11.html#pop2">pop2</a>}</tt></td><td>{@link #popDouble()}, {@link #pop(int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>59</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup">dup</a>}</tt></td><td>{@link #duplicate()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup_x1">dup_x1</a>}</tt></td><td>{@link #duplicateSkip()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup_x2">dup_x2</a>}</tt></td><td>{@link #duplicateSkipDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup2">dup2</a>}</tt></td><td>{@link #duplicateDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup2_x1">dup2_x1</a>}</tt></td><td>{@link #duplicateDoubleSkip()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dup2_x2">dup2_x2</a>}</tt></td><td>{@link #duplicateDoubleSkipDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>5F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc13.html#swap">swap</a>}</tt></td><td>{@link #swap()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>60</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iadd">iadd</a>}</tt></td><td>{@link #addInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>61</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ladd">ladd</a>}</tt></td><td>{@link #addLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>62</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fadd">fadd</a>}</tt></td><td>{@link #addFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>63</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dadd">dadd</a>}</tt></td><td>{@link #addDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>64</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#isub">isub</a>}</tt></td><td>{@link #subtractInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>65</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lsub">lsub</a>}</tt></td><td>{@link #subtractLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>66</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fsub">fsub</a>}</tt></td><td>{@link #subtractFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>67</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dsub">dsub</a>}</tt></td><td>{@link #subtractDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>68</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#imul">imul</a>}</tt></td><td>{@link #multiplyInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>69</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lmul">lmul</a>}</tt></td><td>{@link #multiplyLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fmul">fmul</a>}</tt></td><td>{@link #multiplyFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dmul">dmul</a>}</tt></td><td>{@link #multiplyDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#idiv">idiv</a>}</tt></td><td>{@link #divideInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldiv">ldiv</a>}</tt></td><td>{@link #divideLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fdiv">fdiv</a>}</tt></td><td>{@link #divideFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>6F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#ddiv">ddiv</a>}</tt></td><td>{@link #divideDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>70</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#irem">irem</a>}</tt></td><td>{@link #remainderInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>71</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lrem">lrem</a>}</tt></td><td>{@link #remainderLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>72</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#frem">frem</a>}</tt></td><td>{@link #remainderFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>73</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#drem">drem</a>}</tt></td><td>{@link #remainderDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>74</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ineg">ineg</a>}</tt></td><td>{@link #negateInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>75</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lneg">lneg</a>}</tt></td><td>{@link #negateLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>76</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fneg">fneg</a>}</tt></td><td>{@link #negateFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>77</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dneg">dneg</a>}</tt></td><td>{@link #negateDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>78</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ishl">ishl</a>}</tt></td><td>{@link #shiftLeftInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>79</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lshl">lshl</a>}</tt></td><td>{@link #shiftLeftLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ishr">ishr</a>}</tt></td><td>{@link #arithmeticShiftRightInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lshr">lshr</a>}</tt></td><td>{@link #arithmeticShiftRightLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iushr">iushr</a>}</tt></td><td>{@link #logicalShiftRightInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lushr">lushr</a>}</tt></td><td>{@link #logicalShiftRightLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iand">iand</a>}</tt></td><td>{@link #booleanAndInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>7F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#land">land</a>}</tt></td><td>{@link #booleanAndLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>80</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ior">ior</a>}</tt></td><td>{@link #booleanOrInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>81</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lor">lor</a>}</tt></td><td>{@link #booleanOrLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>82</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ixor">ixor</a>}</tt></td><td>{@link #booleanXorInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>83</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lxor">lxor</a>}</tt></td><td>{@link #booleanXorLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>84</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iinc">iinc</a>}</tt></td><td>{@link #incrementLocalInt(int, int)}, {@link #incrementLocalInt(String, int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>85</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2l">i2l</a>}</tt></td><td>{@link #convertIntToLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>86</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2f">i2f</a>}</tt></td><td>{@link #convertIntToFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>87</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2d">i2d</a>}</tt></td><td>{@link #convertIntToDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>88</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#l2i">l2i</a>}</tt></td><td>{@link #convertLongToInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>89</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#l2f">l2f</a>}</tt></td><td>{@link #convertLongToFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#l2d">l2d</a>}</tt></td><td>{@link #convertLongToDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#f2i">f2i</a>}</tt></td><td>{@link #convertFloatToInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#f2l">f2l</a>}</tt></td><td>{@link #convertFloatToLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#f2d">f2d</a>}</tt></td><td>{@link #convertFloatToDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#d2i">d2i</a>}</tt></td><td>{@link #convertDoubleToInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>8F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#d2l">d2l</a>}</tt></td><td>{@link #convertDoubleToLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>90</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#d2f">d2f</a>}</tt></td><td>{@link #convertDoubleToFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>91</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2b">i2b</a>}</tt></td><td>{@link #convertIntToByte()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>92</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2c">i2c</a>}</tt></td><td>{@link #convertIntToChar()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>93</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#i2s">i2s</a>}</tt></td><td>{@link #convertIntToShort()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>94</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lcmp">lcmp</a>}</tt></td><td>{@link #compareLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>95</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fcmpop">fcmpl</a>}</tt></td><td>{@link #compareFloat(boolean)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>96</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#fcmpop">fcmpg</a>}</tt></td><td>{@link #compareFloat(boolean)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>97</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dcmpop">dcmpl</a>}</tt></td><td>{@link #compareDouble(boolean)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>98</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dcmpop">dcmpg</a>}</tt></td><td>{@link #compareDouble(boolean)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>99</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">ifeq</a>}</tt></td><td>{@link #branchIfEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9A</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">ifne</a>}</tt></td><td>{@link #branchIfNotEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9B</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">iflt</a>}</tt></td><td>{@link #branchIfLess(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9C</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">ifge</a>}</tt></td><td>{@link #branchIfGreaterEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9D</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">ifgt</a>}</tt></td><td>{@link #branchIfGreater(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9E</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifcond">ifle</a>}</tt></td><td>{@link #branchIfLessEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>9F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmpeq</a>}</tt></td><td>{@link #compareIntBranchIfEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A0</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmpne</a>}</tt></td><td>{@link #compareIntBranchIfNotEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A1</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmplt</a>}</tt></td><td>{@link #compareIntBranchIfLess(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A2</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmpge</a>}</tt></td><td>{@link #compareIntBranchIfGreaterEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A3</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmpgt</a>}</tt></td><td>{@link #compareIntBranchIfGreater(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A4</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_icmpcond">if_icmple</a>}</tt></td><td>{@link #compareIntBranchIfLessEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A5</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_acmpcond">if_acmpeq</a>}</tt></td><td>{@link #compareReferenceBranchIfEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A6</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#if_acmpcond">if_acmpne</a>}</tt></td><td>{@link #compareReferenceBranchIfNotEqual(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A7</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc5.html#goto">goto</a>}</tt></td><td>{@link #branch(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A8</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc7.html#jsr">jsr</a>}</tt></td><td>{@link #jumpSubroutine(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>A9</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc12.html#ret">ret</a>}</tt></td><td>{@link #returnFromSubroutine(int)}, {@link #returnFromSubroutine(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AA</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc14.html#tableswitch">tableswitch</a>}</tt></td><td>{@link #tableswitch(BranchTable)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AB</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lookupswitch">lookupswitch</a>}</tt></td><td>{@link #lookupswitch(BranchTable)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AC</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ireturn">ireturn</a>}</tt></td><td>{@link #returnInt()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AD</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lreturn">lreturn</a>}</tt></td><td>{@link #returnLong()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AE</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc4.html#freturn">freturn</a>}</tt></td><td>{@link #returnFloat()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>AF</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dreturn">dreturn</a>}</tt></td><td>{@link #returnDouble()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B0</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#areturn">areturn</a>}</tt></td><td>{@link #returnReference()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B1</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc12.html#return">return</a>}</tt></td><td>{@link #returnVoid()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B2</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc5.html#getstatic">getstatic</a>}</tt></td><td>{@link #getStatic(Type, Type, String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B3</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc11.html#putstatic">putstatic</a>}</tt></td><td>{@link #putStatic(Type, Type, String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B4</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc5.html#getfield">getfield</a>}</tt></td><td>{@link #getField(Type, Type, String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B5</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc11.html#putfield">putfield</a>}</tt></td><td>{@link #putField(Type, Type, String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B6</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#invokevirtual">invokevirtual</a>}</tt></td><td>{@link #invokeVirtual(Type, Type, String, Type...)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B7</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#invokespecial">invokespecial</a>}</tt></td><td>{@link #invokeSpecial(Type, Type, String, Type...)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B8</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#invokestatic">invokestatic</a>}</tt></td><td>{@link #invokeStatic(Type, Type, String, Type...)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>B9</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#invokeinterface">invokeinterface</a>}</tt></td><td>{@link #invokeInterface(Type, Type, String, Type...)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>BA</tt></td><td><tt><i>xxxunusedxxx</i></tt></td><td></td></tr>
+ * <tr align="left" valign="top"><td><tt>BB</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc10.html#new">new</a>}</tt></td><td>{@link #newObject(Type)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>BC</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc10.html#newarray">newarray</a>}</tt></td><td>{@link #newArray(Type)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>BD</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#anewarray">anewarray</a>}</tt></td><td>{@link #newArray(Type)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>BE</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#arraylength">arraylength</a>}</tt></td><td>{@link #arraylength()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>BF</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc.html#athrow">athrow</a>}</tt></td><td>{@link #throwException()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C0</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc2.html#checkcast">checkcast</a>}</tt></td><td>{@link #cast(Type)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C1</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#instanceof">instanceof</a>}</tt></td><td>{@link #checkInstance(Type)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C2</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc9.html#monitorenter">monitorenter</a>}</tt></td><td>{@link #monitorEnter()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C3</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc9.html#monitorexit">monitorexit</a>}</tt></td><td>{@link #monitorExit()}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C4</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc15.html#wide">wide</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}, {@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}, {@link #loadLocalFloat(int)}, {@link #loadLocalFloat(String)}, {@link #loadLocalDouble(int)}, {@link #loadLocalDouble(String)}, {@link #loadLocalReference(int)}, {@link #loadLocalReference(String)}, {@link #storeLocalInt(int)}, {@link #storeLocalInt(String)}, {@link #storeLocalLong(int)}, {@link #storeLocalLong(String)}, {@link #storeLocalFloat(int)}, {@link #storeLocalFloat(String)}, {@link #storeLocalDouble(int)}, {@link #storeLocalDouble(String)}, {@link #storeLocalReference(int)}, {@link #storeLocalReference(String)}, {@link #incrementLocalInt(int, int)}, {@link #incrementLocalInt(String, int)}, {@link #returnFromSubroutine(int)}, {@link #returnFromSubroutine(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C5</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc9.html#multianewarray">multianewarray</a>}</tt></td><td>{@link #newMultiReferenceArray(Type, int)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C6</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifnull">ifnull</a>}</tt></td><td>{@link #branchIfNull(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C7</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#ifnonnull">ifnonnull</a>}</tt></td><td>{@link #branchIfNonNull(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C8</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc5.html#goto_w">goto_w</a>}</tt></td><td>{@link #branchFar(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>C9</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc7.html#jsr_w">jsr_w</a>}</tt></td><td>{@link #jumpFarSubroutine(String)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>CA</tt></td><td><tt><i>breakpoint</i></tt></td><td></td></tr>
+ * <tr align="left" valign="top"><td><tt>FE</tt></td><td><tt><i>impdep1</i></tt></td><td></td></tr>
+ * <tr align="left" valign="top"><td><tt>FF</tt></td><td><tt><i>impdep2</i></tt></td><td></td></tr>
+ * </table></blockquote>
+ * 
+ * @author Uwe Finke
+ */
 public class CodeAttribute implements Generatable {
 
   static private Text text = new Text(CodeAttribute.class);
@@ -126,6 +352,11 @@ public class CodeAttribute implements Generatable {
     checkLabelStack(label);
   }
   
+  /**
+   * Defines a label.
+   * This label may be used as branch target in jump instructions.
+   * @param labelName
+   */
   public void defineLabel(String labelName) {
     
     Label label = getLabel(labelName);
@@ -133,11 +364,26 @@ public class CodeAttribute implements Generatable {
     checkLabelStack(label);
   }
   
+  /**
+   * Defines a <tt>try-/catch</tt>-block.
+   * The <tt>try</tt>-block must be enclosed with a start and an end label.
+   * The entry point of the <tt>catch</tt>-block (handler) must also be labelled.
+   * @param startLabelName 
+   * @param endLabelName
+   * @param exceptionType
+   * @param handlerLabelName
+   */
   public void defineExceptionHandler(String startLabelName, String endLabelName, Type exceptionType, String handlerLabelName) {
     
     exceptionHandlerList.add(new ExceptionHandlerDefinition(getLabel(startLabelName), getLabel(endLabelName), exceptionType, getLabel(handlerLabelName)));
   }
   
+  /**
+   * Returns the index of a named local variable.
+   * @param variableName
+   * @param type
+   * @return index
+   */
   public int getLocalVariable(String variableName, Type type) {
     
     int index = getLocalVariable(variableName);
@@ -145,17 +391,28 @@ public class CodeAttribute implements Generatable {
     return index;
   }
 
+  /**
+   * Opcode <tt>nop</tt>.
+   */
   public void nop() {
     
     writeOpCode(0x00); // nop
   }
   
+  /**
+   * Opcode <tt>aconst_null</tt>.
+   */
   public void loadNull() {
   
     writeOpCode(0x01); // aconst_null
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load an integer constant 
+   * (<tt>iconst_&lt;n&gt;</tt>, <tt>bipush</tt>, <tt>sipush</tt>, <tt>ldc</tt> or <tt>ldc_w</tt>).
+   * @param value
+   */
   public void loadConstant(int value) {
     
     switch (value) {
@@ -870,7 +1127,7 @@ public class CodeAttribute implements Generatable {
     currentStack--;
   }
   
-  public void mulitiplyLong() {
+  public void multiplyLong() {
     
     writeOpCode(0x69); // lmul
     currentStack -= 2;
