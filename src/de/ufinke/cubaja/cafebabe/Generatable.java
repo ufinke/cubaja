@@ -7,5 +7,10 @@ import java.io.DataOutputStream;
 
 interface Generatable {
 
+  /**
+   * Writes generated result to a stream.
+   * @param out
+   * @throws Exception
+   */
   public void generate(DataOutputStream out) throws Exception;
 }

@@ -46,8 +46,8 @@ import de.ufinke.cubaja.util.Text;
  * <tr align="left" valign="top"><td><tt>0F</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc3.html#dconst_d">dconst_1</a>}</tt></td><td>{@link #loadConstant(double)}</td></tr>
  * <tr align="left" valign="top"><td><tt>10</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc1.html#bipush">bipush</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
  * <tr align="left" valign="top"><td><tt>11</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc13.html#sipush">sipush</a>}</tt></td><td>{@link #loadConstant(int)}</td></tr>
- * <tr align="left" valign="top"><td><tt>12</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc">ldc</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}, {@link #loadConstant(Class)}</td></tr>
- * <tr align="left" valign="top"><td><tt>13</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc_w">ldc_w</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}, {@link #loadConstant(Class)}</td></tr>
+ * <tr align="left" valign="top"><td><tt>12</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc">ldc</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}}</td></tr>
+ * <tr align="left" valign="top"><td><tt>13</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc_w">ldc_w</a>}</tt></td><td>{@link #loadConstant(int)}, {@link #loadConstant(float)}, {@link #loadConstant(Type)}}</td></tr>
  * <tr align="left" valign="top"><td><tt>14</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#ldc2_w">ldc2_w</a>}</tt></td><td>{@link #loadConstant(long)}, {@link #loadConstant(double)}</td></tr>
  * <tr align="left" valign="top"><td><tt>15</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc6.html#iload">iload</a>}</tt></td><td>{@link #loadLocalInt(int)}, {@link #loadLocalInt(String)}</td></tr>
  * <tr align="left" valign="top"><td><tt>16</tt></td><td><tt>{@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions2.doc8.html#lload">lload</a>}</tt></td><td>{@link #loadLocalLong(int)}, {@link #loadLocalLong(String)}</td></tr>
@@ -459,6 +459,11 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load a long constant
+   * (<tt>lconst_&lt;n&gt;</tt> or <tt>ldc2_w</tt>).
+   * @param value
+   */
   public void loadConstant(long value) {
 
     if (value == 0L) {
@@ -473,6 +478,11 @@ public class CodeAttribute implements Generatable {
     incrementStack(2);
   }
   
+  /**
+   * Opcode to load a float constant
+   * (<tt>fconst_&lt;n&gt;</tt>, <tt>ldc</tt> or <tt>ldc_w</tt>).
+   * @param value
+   */
   public void loadConstant(float value) {
 
     if (value == 0.0F) {
@@ -495,6 +505,11 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load a double constant
+   * (<tt>dconst_&lt;n&gt;</tt> or <tt>ldc2_w</tt>).
+   * @param value
+   */
   public void loadConstant(double value) {
 
     if (value == 0.0D) {
@@ -509,6 +524,11 @@ public class CodeAttribute implements Generatable {
     incrementStack(2);
   }
   
+  /**
+   * Opcode to load a string constant
+   * (<tt>ldc</tt> or <tt>lcd_w</tt>).
+   * @param value
+   */
   public void loadConstant(String value) {
     
     int index = constantPool.addString(value);
@@ -523,11 +543,11 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
-  public void loadConstant(Class<?> value) {
-    
-    loadConstant(new Type(value));
-  }
-  
+  /**
+   * Opcode to load a class constant
+   * (<tt>ldc</tt> or <tt>lcd_w</tt>).
+   * @param value
+   */
   public void loadConstant(Type value) {
     
     int index = constantPool.addClass(value);
@@ -542,11 +562,21 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load a local int variable by name
+   * (<tt>iload_&lt;n&gt;</tt> or <tt>iload</tt>).
+   * @param variableName
+   */
   public void loadLocalInt(String variableName) {
     
     loadLocalInt(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to load a local int variable
+   * (<tt>iload_&lt;n&gt;</tt> or <tt>iload</tt>).
+   * @param index
+   */
   public void loadLocalInt(int index) {
     
     checkMaxLocals(index);
@@ -578,11 +608,21 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load a local long variable by name
+   * (<tt>lload_&lt;n&gt;</tt> or <tt>lload</tt>).
+   * @param variableName
+   */
   public void loadLocalLong(String variableName) {
     
     loadLocalLong(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to load a local long variable
+   * (<tt>lload_&lt;n&gt;</tt> or <tt>lload</tt>).
+   * @param index
+   */
   public void loadLocalLong(int index) {
    
     checkMaxLocals(index + 1);
@@ -614,11 +654,21 @@ public class CodeAttribute implements Generatable {
     incrementStack(2);
   }
   
+  /**
+   * Opcode to load a local float variable by name
+   * (<tt>fload_&lt;n&gt;</tt> or <tt>fload</tt>).
+   * @param variableName
+   */
   public void loadLocalFloat(String variableName) {
     
     loadLocalFloat(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to load a local float variable
+   * (<tt>fload_&lt;n&gt;</tt> or <tt>fload</tt>).
+   * @param index
+   */
   public void loadLocalFloat(int index) {
     
     checkMaxLocals(index);
@@ -650,11 +700,21 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode to load a local double variable by name
+   * (<tt>dload_&lt;n&gt;</tt> or <tt>dload</tt>).
+   * @param variableName
+   */
   public void loadLocalDouble(String variableName) {
     
     loadLocalDouble(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to load a local double variable
+   * (<tt>dload_&lt;n&gt;</tt> or <tt>dload</tt>).
+   * @param index
+   */
   public void loadLocalDouble(int index) {
    
     checkMaxLocals(index + 1);
@@ -686,11 +746,21 @@ public class CodeAttribute implements Generatable {
     incrementStack(2);
   }
   
+  /**
+   * Opcode to load a local reference variable by name
+   * (<tt>aload_&lt;n&gt;</tt> or <tt>aload</tt>).
+   * @param variableName
+   */
   public void loadLocalReference(String variableName) {
     
     loadLocalReference(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to load a local reference variable
+   * (<tt>aload_&lt;n&gt;</tt> or <tt>aload</tt>).
+   * @param index
+   */
   public void loadLocalReference(int index) {
     
     checkMaxLocals(index);
@@ -722,63 +792,100 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>iaload</tt>.
+   */
   public void loadIntArrayElement() {
     
     writeOpCode(0x2E); // iaload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>laload</tt>.
+   */
   public void loadLongArrayElement() {
     
     writeOpCode(0x2F); // laload
   }
   
+  /**
+   * Opcode <tt>faload</tt>.
+   */
   public void loadFloatArrayElement() {
     
     writeOpCode(0x30); // faload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>daload</tt>.
+   */
   public void loadDoubleArrayElement() {
     
-    writeOpCode(0x31); // laload
+    writeOpCode(0x31); // daload
   }
   
+  /**
+   * Opcode <tt>aaload</tt>.
+   */
   public void loadReferenceArrayElement() {
     
     writeOpCode(0x32); // aaload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>baload</tt> (boolean).
+   */
   public void loadBooleanArrayElement() {
     
     writeOpCode(0x33); // baload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>baload</tt> (byte).
+   */
   public void loadByteArrayElement() {
     
     writeOpCode(0x33); // baload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>caload</tt>.
+   */
   public void loadCharArrayElement() {
     
     writeOpCode(0x34); // caload
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>saload</tt>.
+   */
   public void loadShortArrayElement() {
     
     writeOpCode(0x35); // saload
     currentStack--;
   }
   
+  /**
+   * Opcode to store a local int variable by name
+   * (<tt>istore_&lt;n&gt;</tt> or <tt>istore</tt>).
+   * @param variableName
+   */
   public void storeLocalInt(String variableName) {
     
     storeLocalInt(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to store a local int variable
+   * (<tt>istore_&lt;n&gt;</tt> or <tt>istore</tt>).
+   * @param index
+   */
   public void storeLocalInt(int index) {
    
     checkMaxLocals(index);
@@ -810,11 +917,21 @@ public class CodeAttribute implements Generatable {
     currentStack--;
   }
   
+  /**
+   * Opcode to store a local long variable by name
+   * (<tt>lstore_&lt;n&gt;</tt> or <tt>lstore</tt>).
+   * @param variableName
+   */
   public void storeLocalLong(String variableName) {
     
     storeLocalLong(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to store a local long variable
+   * (<tt>lstore_&lt;n&gt;</tt> or <tt>lstore</tt>).
+   * @param index
+   */
   public void storeLocalLong(int index) {
     
     checkMaxLocals(index + 1);
@@ -846,11 +963,21 @@ public class CodeAttribute implements Generatable {
     currentStack -= 2;
   }
   
+  /**
+   * Opcode to store a local float variable by name
+   * (<tt>fstore_&lt;n&gt;</tt> or <tt>fstore</tt>).
+   * @param variableName
+   */
   public void storeLocalFloat(String variableName) {
     
     storeLocalFloat(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to store a local float variable
+   * (<tt>fstore_&lt;n&gt;</tt> or <tt>fstore</tt>).
+   * @param index
+   */
   public void storeLocalFloat(int index) {
     
     checkMaxLocals(index);
@@ -882,11 +1009,21 @@ public class CodeAttribute implements Generatable {
     currentStack--;
   }
   
+  /**
+   * Opcode to store a local double variable by name
+   * (<tt>dstore_&lt;n&gt;</tt> or <tt>dstore</tt>).
+   * @param variableName
+   */
   public void storeLocalDouble(String variableName) {
     
     storeLocalDouble(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to store a local double variable
+   * (<tt>dstore_&lt;n&gt;</tt> or <tt>dstore</tt>).
+   * @param index
+   */
   public void storeLocalDouble(int index) {
     
     checkMaxLocals(index + 1);
@@ -918,11 +1055,21 @@ public class CodeAttribute implements Generatable {
     currentStack -= 2;
   }
   
+  /**
+   * Opcode to store a local reference variable by name
+   * (<tt>astore_&lt;n&gt;</tt> or <tt>astore</tt>).
+   * @param variableName
+   */
   public void storeLocalReference(String variableName) {
     
     storeLocalReference(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode to store a local reference variable
+   * (<tt>astore_&lt;n&gt;</tt> or <tt>astore</tt>).
+   * @param index
+   */
   public void storeLocalReference(int index) {
     
     checkMaxLocals(index);
@@ -954,72 +1101,109 @@ public class CodeAttribute implements Generatable {
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>iastore</tt>.
+   */
   public void storeIntArrayElement() {
     
     writeOpCode(0x4F); // iastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>lastore</tt>.
+   */
   public void storeLongArrayElement() {
     
     writeOpCode(0x50); // lastore
     currentStack -= 4;
   }
   
+  /**
+   * Opcode <tt>fastore</tt>.
+   */
   public void storeFloatArrayElement() {
     
     writeOpCode(0x51); // fastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>dastore</tt>.
+   */
   public void storeDoubleArrayElement() {
     
-    writeOpCode(0x52); // lastore
+    writeOpCode(0x52); // dastore
     currentStack -= 4;
   }
   
+  /**
+   * Opcode <tt>aastore</tt>.
+   */
   public void storeReferenceArrayElement() {
     
     writeOpCode(0x53); // aastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>bastore</tt> (boolean).
+   */
   public void storeBooleanArrayElement() {
     
     writeOpCode(0x54); // bastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>bastore</tt> (byte).
+   */
   public void storeByteArrayElement() {
     
     writeOpCode(0x54); // bastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>castore</tt>.
+   */
   public void storeCharArrayElement() {
     
     writeOpCode(0x55); // castore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>sastore</tt>.
+   */
   public void storeShortArrayElement() {
     
     writeOpCode(0x56); // sastore
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>pop</tt>.
+   */
   public void pop() {
     
     writeOpCode(0x57); // pop
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>pop2</tt>.
+   */
   public void popDouble() {
     
     writeOpCode(0x58); // pop2
     currentStack -= 2;
   }
   
+  /**
+   * Opcode to pop <tt>popSize</tt> bytes
+   * (<tt>pop</tt> or <tt>pop2</tt> repeatedly).
+   */
   public void pop(int popSize) {
 
     int remainingPops = popSize;
@@ -1032,264 +1216,405 @@ public class CodeAttribute implements Generatable {
     }
   }
   
+  /**
+   * Opcode <tt>dup</tt>.
+   */
   public void duplicate() {
     
     writeOpCode(0x59); // dup
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>dup_x1</tt>.
+   */
   public void duplicateSkip() {
     
     writeOpCode(0x5A); // dup_x1
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>dup_x2</tt>.
+   */
   public void duplicateSkipDouble() {
     
     writeOpCode(0x5B); // dup_x2
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>dup2</tt>.
+   */
   public void duplicateDouble() {
     
     writeOpCode(0x5C); // dup2
     incrementStack(2);
   }
   
+  /**
+   * Opcode <tt>dup2_x1</tt>.
+   */
   public void duplicateDoubleSkip() {
     
     writeOpCode(0x5D); // dup2_x1
     incrementStack(2);
   }
   
+  /**
+   * Opcode <tt>dup2_x2</tt>.
+   */
   public void duplicateDoubleSkipDouble() {
     
     writeOpCode(0x5E); // dup2_x2
     incrementStack(2);
   }
   
+  /**
+   * Opcode <tt>swap</tt>.
+   */
   public void swap() {
     
     writeOpCode(0x5F); // swap
   }
   
+  /**
+   * Opcode <tt>iadd</tt>.
+   */
   public void addInt() {
     
     writeOpCode(0x60); // iadd
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>ladd</tt>.
+   */
   public void addLong() {
     
     writeOpCode(0x61); // ladd
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>fadd</tt>.
+   */
   public void addFloat() {
     
     writeOpCode(0x62); // fadd
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>dadd</tt>.
+   */
   public void addDouble() {
     
     writeOpCode(0x63); // dadd
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>isub</tt>.
+   */
   public void subtractInt() {
     
     writeOpCode(0x64); // isub
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lsub</tt>.
+   */
   public void subtractLong() {
     
     writeOpCode(0x65); // lsub
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>fsub</tt>.
+   */
   public void subtractFloat() {
     
     writeOpCode(0x66); // fsub
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>dsub</tt>.
+   */
   public void subtractDouble() {
     
     writeOpCode(0x67); // dsub
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>imul</tt>.
+   */
   public void multiplyInt() {
     
     writeOpCode(0x68); // imul
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lmul</tt>.
+   */
   public void multiplyLong() {
     
     writeOpCode(0x69); // lmul
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>fmul</tt>.
+   */
   public void multiplyFloat() {
     
     writeOpCode(0x6A); // fmul
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>dmul</tt>.
+   */
   public void multiplyDouble() {
     
     writeOpCode(0x6B); // dmul
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>idiv</tt>.
+   */
   public void divideInt() {
     
     writeOpCode(0x6C); // idiv
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>ldiv</tt>.
+   */
   public void divideLong() {
     
     writeOpCode(0x6D); // ldiv
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>fdiv</tt>.
+   */
   public void divideFloat() {
     
     writeOpCode(0x6E); // fdiv
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>ddiv</tt>.
+   */
   public void divideDouble() {
     
     writeOpCode(0x6F); // ddiv
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>irem</tt>.
+   */
   public void remainderInt() {
     
     writeOpCode(0x70); // irem
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lrem</tt>.
+   */
   public void remainderLong() {
     
     writeOpCode(0x71); // lrem
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>frem</tt>.
+   */
   public void remainderFloat() {
     
     writeOpCode(0x72); // frem
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>drem</tt>.
+   */
   public void remainderDouble() {
     
     writeOpCode(0x73); // drem
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>ineg</tt>.
+   */
   public void negateInt() {
     
     writeOpCode(0x74); // ineg
   }
   
+  /**
+   * Opcode <tt>lneg</tt>.
+   */
   public void negateLong() {
     
     writeOpCode(0x75); // lneg
   }
   
+  /**
+   * Opcode <tt>fneg</tt>.
+   */
   public void negateFloat() {
     
     writeOpCode(0x76); // fneg
   }
   
+  /**
+   * Opcode <tt>dneg</tt>.
+   */
   public void negateDouble() {
     
     writeOpCode(0x77); // dneg
   }
   
+  /**
+   * Opcode <tt>ishl</tt>.
+   */
   public void shiftLeftInt() {
     
     writeOpCode(0x78); // ishl
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lshl</tt>.
+   */
   public void shiftLeftLong() {
     
     writeOpCode(0x79); // lshl
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>ishr</tt>.
+   */
   public void arithmeticShiftRightInt() {
     
     writeOpCode(0x7A); // ishr
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lshr</tt>.
+   */
   public void arithmeticShiftRightLong() {
     
     writeOpCode(0x7B); // lshr
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>iushr</tt>.
+   */
   public void logicalShiftRightInt() {
     
     writeOpCode(0x7C); // iushr
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lushr</tt>.
+   */
   public void logicalShiftRightLong() {
     
     writeOpCode(0x7D); // lushr
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>iand</tt>.
+   */
   public void booleanAndInt() {
     
     writeOpCode(0x7E); // iand
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>land</tt>.
+   */
   public void booleanAndLong() {
     
     writeOpCode(0x7F); // land
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>ior</tt>.
+   */
   public void booleanOrInt() {
     
     writeOpCode(0x80); // ior
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lor</tt>.
+   */
   public void booleanOrLong() {
     
     writeOpCode(0x81); // lor
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>ixor</tt>.
+   */
   public void booleanXorInt() {
     
     writeOpCode(0x82); // ixor
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>lxor</tt>.
+   */
   public void booleanXorLong() {
     
     writeOpCode(0x83); // lxor
     currentStack -= 2;
   }
   
+  /**
+   * Opcode to increment a local int variable by name
+   * (<tt>iinc</tt> or a combination of load, add and store</tt>).
+   * @param variableName
+   * @param increment
+   */
   public void incrementLocalInt(String variableName, int increment) {
     
     incrementLocalInt(getLocalVariable(variableName), increment);
   }
   
+  /**
+   * Opcode to increment a local int variable
+   * (<tt>iinc</tt> or a combination of load, add and store</tt>).
+   * @param index
+   * @param increment
+   */
   public void incrementLocalInt(int index, int increment) {
     
     checkMaxLocals(index);
@@ -1310,108 +1635,169 @@ public class CodeAttribute implements Generatable {
       storeLocalInt(index);
     }
   }
-  
+
+  /**
+   * Opcode <tt>i2l</tt>.
+   */
   public void convertIntToLong() {
     
     writeOpCode(0x85); // i2l
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>i2f</tt>.
+   */
   public void convertIntToFloat() {
     
     writeOpCode(0x86); // i2f
   }
   
+  /**
+   * Opcode <tt>i2d</tt>.
+   */
   public void convertIntToDouble() {
     
     writeOpCode(0x87); // i2d
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>l2i</tt>.
+   */
   public void convertLongToInt() {
     
     writeOpCode(0x88); // l2i
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>l2f</tt>.
+   */
   public void convertLongToFloat() {
     
     writeOpCode(0x89); // l2f
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>l2d</tt>.
+   */
   public void convertLongToDouble() {
     
     writeOpCode(0x8A); // l2d
   }
   
+  /**
+   * Opcode <tt>f2i</tt>.
+   */
   public void convertFloatToInt() {
     
     writeOpCode(0x8B); // f2i
   }
   
+  /**
+   * Opcode <tt>f2l</tt>.
+   */
   public void convertFloatToLong() {
     
     writeOpCode(0x8C); // f2l
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>f2d</tt>.
+   */
   public void convertFloatToDouble() {
     
     writeOpCode(0x8D); // f2d
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>d2i</tt>.
+   */
   public void convertDoubleToInt() {
     
     writeOpCode(0x8E); // d2i
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>d2l</tt>.
+   */
   public void convertDoubleToLong() {
     
     writeOpCode(0x8F); // d2l
   }
   
+  /**
+   * Opcode <tt>d2f</tt>.
+   */
   public void convertDoubleToFloat() {
     
     writeOpCode(0x90); // d2f
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>i2b</tt>.
+   */
   public void convertIntToByte() {
     
     writeOpCode(0x91); // i2b
   }
   
+  /**
+   * Opcode <tt>i2c</tt>.
+   */
   public void convertIntToChar() {
     
     writeOpCode(0x92); // i2c
   }
   
+  /**
+   * Opcode <tt>i2s</tt>.
+   */
   public void convertIntToShort() {
     
     writeOpCode(0x93); // i2s
   }
   
+  /**
+   * Opcode <tt>lcmp</tt>.
+   */
   public void compareLong() {
     
     writeOpCode(0x94); // lcmp
     currentStack -= 3;
   }
-  
+
+  /**
+   * Opcode <tt>fcmpg</tt> or <tt>fcmpl</tt>.
+   * @param nanIsMinus
+   */
   public void compareFloat(boolean nanIsMinus) {
     
     writeOpCode(nanIsMinus ? 0x95 : 0x96); // fcmpg : fcmpl
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>dcmpg</tt> or <tt>dcmpl</tt>.
+   * @param nanIsMinus
+   */
   public void compareDouble(boolean nanIsMinus) {
     
     writeOpCode(nanIsMinus ? 0x97 : 0x98); // dcmpg : dcmpl
     currentStack -= 3;
   }
   
+  /**
+   * Opcode <tt>ifeq</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfEqual(String labelName) {
     
     writeOpCode(0x99); // ifeq
@@ -1419,6 +1805,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>ifne</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfNotEqual(String labelName) {
     
     writeOpCode(0x9A); // ifne
@@ -1426,6 +1817,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>iflt</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfLess(String labelName) {
     
     writeOpCode(0x9B); // iflt
@@ -1433,6 +1829,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>ifge</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfGreaterEqual(String labelName) {
     
     writeOpCode(0x9C); // ifge
@@ -1440,6 +1841,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>ifgt</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfGreater(String labelName) {
     
     writeOpCode(0x9D); // ifgt
@@ -1447,6 +1853,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>ifle</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfLessEqual(String labelName) {
     
     writeOpCode(0x9E); // ifle
@@ -1454,6 +1865,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmpeq</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfEqual(String labelName) {
     
     writeOpCode(0x9F); // if_icmpeq
@@ -1461,6 +1877,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmpne</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfNotEqual(String labelName) {
     
     writeOpCode(0xA0); // if_icmpne
@@ -1468,6 +1889,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmplt</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfLess(String labelName) {
     
     writeOpCode(0xA1); // if_icmplt
@@ -1475,6 +1901,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmpge</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfGreaterEqual(String labelName) {
     
     writeOpCode(0xA2); // if_icmpge
@@ -1482,6 +1913,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmpgt</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfGreater(String labelName) {
     
     writeOpCode(0xA3); // if_icmpgt
@@ -1489,6 +1925,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_icmple</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareIntBranchIfLessEqual(String labelName) {
     
     writeOpCode(0xA4); // if_icmple
@@ -1496,6 +1937,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_acmpeq</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareReferenceBranchIfEqual(String labelName) {
     
     writeOpCode(0xA5); // if_acmpeq
@@ -1503,6 +1949,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>if_acmpne</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void compareReferenceBranchIfNotEqual(String labelName) {
     
     writeOpCode(0xA6); // if_acmpne
@@ -1510,6 +1961,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>goto</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branch(String labelName) {
     
     writeOpCode(0xA7); // goto
@@ -1517,6 +1973,11 @@ public class CodeAttribute implements Generatable {
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>jsr</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void jumpSubroutine(String labelName) {
     
     writeOpCode(0xA8); // jsr
@@ -1524,11 +1985,19 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
   
+  /**
+   * Opcode <tt>ret</tt> (address variable by name).
+   * @param variableName
+   */
   public void returnFromSubroutine(String variableName) {
     
     returnFromSubroutine(getLocalVariable(variableName));
   }
   
+  /**
+   * Opcode <tt>ret</tt>.
+   * @param index
+   */
   public void returnFromSubroutine(int index) {
     
     checkMaxLocals(index);
@@ -1543,11 +2012,19 @@ public class CodeAttribute implements Generatable {
     }
   }
   
+  /**
+   * Opcode <tt>tableswitch</tt>.
+   * @param table
+   */
   public void tableswitch(BranchTable table) {
     
     codeSwitch(0xAA, table); // tableswitch
   }
   
+  /**
+   * Opcode <tt>lookupswitch</tt>.
+   * @param table
+   */
   public void lookupswitch(BranchTable table) {
     
     codeSwitch(0xAB, table); // lookupswitch
@@ -1620,42 +2097,66 @@ public class CodeAttribute implements Generatable {
     }
   }
   
+  /**
+   * Opcode <tt>ireturn</tt>.
+   */
   public void returnInt() {
     
     writeOpCode(0xAC); // ireturn
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>lreturn</tt>.
+   */
   public void returnLong() {
     
     writeOpCode(0xAD); // lreturn
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>freturn</tt>.
+   */
   public void returnFloat() {
     
     writeOpCode(0xAE); // freturn
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>dreturn</tt>.
+   */
   public void returnDouble() {
     
     writeOpCode(0xAF); // dreturn
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>areturn</tt>.
+   */
   public void returnReference() {
     
     writeOpCode(0xB0); // areturn
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>return</tt>.
+   */
   public void returnVoid() {
     
     writeOpCode(0xB1); // return
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>getstatic</tt>.
+   * @param fieldClass
+   * @param fieldType
+   * @param fieldName
+   */
   public void getStatic(Type fieldClass, Type fieldType, String fieldName) {
     
     writeOpCode(0xB2); // getstatic
@@ -1663,6 +2164,12 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>putstatic</tt>.
+   * @param fieldClass
+   * @param fieldType
+   * @param fieldName
+   */
   public void putStatic(Type fieldClass, Type fieldType, String fieldName) {
 
     writeOpCode(0xB3); // putstatic
@@ -1670,12 +2177,24 @@ public class CodeAttribute implements Generatable {
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>getfield</tt>.
+   * @param fieldClass
+   * @param fieldType
+   * @param fieldName
+   */
   public void getField(Type fieldClass, Type fieldType, String fieldName) {
     
     writeOpCode(0xB4); // getfield
     write2(constantPool.addFieldref(fieldClass, fieldName, fieldType));
   }
   
+  /**
+   * Opcode <tt>putfield</tt>.
+   * @param fieldClass
+   * @param fieldType
+   * @param fieldName
+   */
   public void putField(Type fieldClass, Type fieldType, String fieldName) {
 
     writeOpCode(0xB5); // putfield
@@ -1683,21 +2202,49 @@ public class CodeAttribute implements Generatable {
     currentStack -= 2;
   }
   
+  /**
+   * Opcode <tt>invokevirtual</tt>.
+   * @param methodClass
+   * @param returnType
+   * @param methodName
+   * @param argTypes
+   */
   public void invokeVirtual(Type methodClass, Type returnType, String methodName, Type... argTypes) {
     
     invoke(0xB6, 1, methodClass, returnType, methodName, argTypes); // invokevirtual
   }
   
+  /**
+   * Opcode <tt>invokespecial</tt>.
+   * @param methodClass
+   * @param returnType
+   * @param methodName
+   * @param argTypes
+   */
   public void invokeSpecial(Type methodClass, Type returnType, String methodName, Type... argTypes) {
     
     invoke(0xB7, 1, methodClass, returnType, methodName, argTypes); // invokespecial
   }
   
+  /**
+   * Opcode <tt>invokestatic</tt>.
+   * @param methodClass
+   * @param returnType
+   * @param methodName
+   * @param argTypes
+   */
   public void invokeStatic(Type methodClass, Type returnType, String methodName, Type... argTypes) {
     
     invoke(0xB8, 0, methodClass, returnType, methodName, argTypes); // invokestatic
   }
   
+  /**
+   * Opcode <tt>invokeinterface</tt>.
+   * @param methodClass
+   * @param returnType
+   * @param methodName
+   * @param argTypes
+   */
   public void invokeInterface(Type methodClass, Type returnType, String methodName, Type... argTypes) {
     
     invoke(0xB9, 1, methodClass, returnType, methodName, argTypes); // invokeinterface
@@ -1721,7 +2268,11 @@ public class CodeAttribute implements Generatable {
     
     incrementStack(returnType.getSize());
   }
-  
+
+  /**
+   * Opcode <tt>new</tt>.
+   * @param clazz
+   */
   public void newObject(Type clazz) {
     
     writeOpCode(0xBB); // new
@@ -1729,6 +2280,10 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>newarray</tt> or <tt>anewarray</tt>.
+   * @param elementType
+   */
   public void newArray(Type elementType) {
     
     int arrayType = 0;
@@ -1768,11 +2323,17 @@ public class CodeAttribute implements Generatable {
     }
   }
   
+  /**
+   * Opcode <tt>arraylength</tt>.
+   */
   public void arraylength() {
     
     writeOpCode(0xBE); // arraylength
   }
   
+  /**
+   * Opcode <tt>athrow</tt>.
+   */
   public void throwException() {
 
     writeOpCode(0xBF); // athrow
@@ -1780,30 +2341,49 @@ public class CodeAttribute implements Generatable {
     incrementStack(1);
   }
   
+  /**
+   * Opcode <tt>checkcast</tt>.
+   * @param checkedType
+   */
   public void cast(Type checkedType) {
     
     writeOpCode(0xC0); // checkcast
     write2(constantPool.addClass(checkedType));
   }
   
+  /**
+   * Opcode <tt>instanceof</tt>.
+   * @param checkedType
+   */
   public void checkInstance(Type checkedType) {
     
     writeOpCode(0xC1); // instanceof
     write2(constantPool.addClass(checkedType));
   }
   
+  /**
+   * Opcode <tt>monitorenter</tt>.
+   */
   public void monitorEnter() {
     
     writeOpCode(0xC2); // monitorenter
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>monitorexit</tt>.
+   */
   public void monitorExit() {
     
     writeOpCode(0xC3); // monitorexit
     currentStack--;
   }
   
+  /**
+   * Opcode <tt>multianewarray</tt>.
+   * @param clazz
+   * @param dimensions
+   */
   public void newMultiReferenceArray(Type clazz, int dimensions) {
     
     writeOpCode(0xC5); // multianewarray
@@ -1812,6 +2392,11 @@ public class CodeAttribute implements Generatable {
     currentStack -= (dimensions - 1);
   }
   
+  /**
+   * Opcode <tt>ifnull</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfNull(String labelName) {
     
     writeOpCode(0xC6); // ifnull
@@ -1819,6 +2404,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
     
+  /**
+   * Opcode <tt>ifnonnull</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchIfNonNull(String labelName) {
     
     writeOpCode(0xC7); // ifnonnull
@@ -1826,6 +2416,11 @@ public class CodeAttribute implements Generatable {
     createJump(2, labelName);
   }
 
+  /**
+   * Opcode <tt>goto_w</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void branchFar(String labelName) {
     
     writeOpCode(0xC8); // goto_w
@@ -1833,6 +2428,11 @@ public class CodeAttribute implements Generatable {
     currentStack = 0;
   }
   
+  /**
+   * Opcode <tt>jsr_w</tt>.
+   * The label must be defined by {@link #defineLabel}.
+   * @param labelName
+   */
   public void jumpFarSubroutine(String labelName) {
     
     writeOpCode(0xC9); // jsr_w
