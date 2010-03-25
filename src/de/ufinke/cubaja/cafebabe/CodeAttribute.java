@@ -13,7 +13,7 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Code portion of a method.
- * An instance is supplied by {@link GenMethod#getCode()}.
+ * An instance is supplied by {@link GenMethod#getCode() getCode} in <tt>GenMethod</tt>.
  * <p>
  * Java instructions are added to the code by calling 
  * methods which generate the opcodes and their parameters.

@@ -7,6 +7,12 @@ import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Wrapper for a generated method.
+ * An instance is created by {@link GenClass#createField createMethod} 
+ * or {@link GenClass#createField createConstructor} in <tt>GenClass</tt>.
+ * @author Uwe Finke
+ */
 public class GenMethod implements Generatable, AccessFlags {
 
   private GenClass genClass;
@@ -36,11 +42,20 @@ public class GenMethod implements Generatable, AccessFlags {
     attributeList.add(code);
   }
   
+  /**
+   * Gives access to the method's code.
+   * @return code attribute
+   */
   public CodeAttribute getCode() {
     
     return code;
   }
   
+  /**
+   * Adds an exception.
+   * This corresponds to an entry in the <tt>throws</tt> clause of the method.
+   * @param exception
+   */
   public void addException(Type exception) {
     
     if (exceptionAttribute == null) {
@@ -50,6 +65,14 @@ public class GenMethod implements Generatable, AccessFlags {
     exceptionAttribute.addException(exception);
   }
   
+  /**
+   * Creates a bridge method which calls this method.
+   * The bridge method is added to the class.
+   * In a bridge method, the generic arguments are casted to the 
+   * argument types of the original method.
+   * @param genericReturnType
+   * @param genericArgs
+   */
   public void createGenericBridge(Type genericReturnType, Type... genericArgs) {
     
     GenMethod bridge = genClass.createMethod(accessFlags | ACC_BRIDGE | ACC_SYNTHETIC, genericReturnType, methodName, genericArgs);

@@ -6,6 +6,10 @@ package de.ufinke.cubaja.cafebabe;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Wrapper for class and primitive type information.
+ * @author Uwe Finke
+ */
 public class Type {
 
   {
@@ -30,18 +34,33 @@ public class Type {
   private String parameterName;
   private int size;
   private boolean sizeInitialized;
+  private int hashCode;
   
+  /**
+   * Defines a type by name.
+   * @param type
+   */
   public Type(String type) {
   
     componentName = type;
   }
   
+  /**
+   * Defines a type by name and gives it a name.
+   * This constructor may be used to name arguments which are passed to a method.
+   * @param type
+   * @param parameterName
+   */
   public Type(String type, String parameterName) {
     
     this(type);
     this.parameterName = parameterName;
   }
   
+  /**
+   * Defines a type by it's class.
+   * @param type
+   */
   public Type(Class<?> type) {
 
     while (type.isArray()) {
@@ -51,23 +70,43 @@ public class Type {
     componentName = type.getName();
   }
   
+  /**
+   * Defines a type by class and gives it a name.
+   * This constructor may be used to name arguments which are passed to a method.
+   * @param type
+   * @param parameterName
+   */
   public Type(Class<?> type, String parameterName) {
     
     this(type);
     this.parameterName = parameterName;
   }
   
+  /**
+   * Defines a type for a generated class.
+   * @param type
+   */
   public Type(GenClass type) {
 
     componentName = type.getName();
   }
   
+  /**
+   * Defines a type for a generated class and gives it a name.
+   * This constructor may be used to name arguments which are passed to a method.
+   * @param type
+   * @param parameterName
+   */
   public Type(GenClass type, String parameterName) {
     
     this(type);
     this.parameterName = parameterName;
   }
   
+  /**
+   * Tests equality to another <tt>Type</tt> instance.
+   * A type instance equals to another if both have the same descriptor.
+   */
   public boolean equals(Object o) {
     
     if (! (o instanceof Type)) {
@@ -78,11 +117,37 @@ public class Type {
     return getDescriptor().equals(other.getDescriptor());
   }
   
+  /**
+   * Returns the hash code.
+   */
+  public int hashCode() {
+    
+    if (hashCode == 0) {
+      hashCode = getDescriptor().hashCode();
+    }
+    return hashCode;
+  }
+  
+  /**
+   * Returns a <tt>String</tt> representation.
+   */
+  public String toString() {
+    
+    return getDescriptor();
+  }
+  
   String getParameterName() {
     
     return parameterName;
   }
   
+  /**
+   * Returns the type's memory size in words.
+   * <tt>long</tt> and <tt>double</tt> have size <tt>2</tt>,
+   * <tt>void</tt> has size <tt>0</tt>
+   * and all other types have size <tt>1</tt>.
+   * @return size
+   */
   public int getSize() {
 
     if (! sizeInitialized) {
