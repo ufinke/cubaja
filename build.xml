@@ -2,12 +2,13 @@
 
 <project name="cubaja" default="zip">
 	
-	<property name="version" value="0.4.2"/>
+	<property name="version" value="1.0.0"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>
-  
 	<property name="lib" value="../../lib"/>
+  <property name="jdkdoc" value="http://java.sun.com/j2se/1.5.0/docs/api"/>
+  
 	<path id="lib">
 		<pathelement path="${lib}/commons-logging.jar"/>
 	</path>
@@ -56,17 +57,13 @@
              classpathref="lib"
              windowtitle="cubaja API"
              overview="${dist}/misc/overview.html"
-             link="http://java.sun.com/j2se/1.5.0/docs/api">
+             link="${jdkdoc}">
       <fileset dir="${dist}/src">
         <exclude name="**/*.properties"/>
-        <exclude name="**/doc-files/**"/>
       </fileset>
     </javadoc>
     
     <copy todir="${dist}/javadoc">
-      <fileset dir="${dist}/src">
-        <include name="**/doc-files/**/*.pdf"/>
-      </fileset>
       <fileset dir="${dist}/misc">
         <include name="cubaja_logo_075.jpeg"/>
       </fileset>
@@ -125,17 +122,13 @@
              classpathref="lib"
              windowtitle="cubaja API"
              overview="./misc/overview.html"
-             link="http://java.sun.com/j2se/1.5.0/docs/api">
+             link="${jdkdoc}">
       <fileset dir="./src">
         <exclude name="**/*.properties"/>
-        <exclude name="**/doc-files/**"/>
       </fileset>
     </javadoc>
     
     <copy todir="${dist}/javadoc">
-      <fileset dir="./src">
-        <include name="**/doc-files/**/*.pdf"/>
-      </fileset>
       <fileset dir="./misc">
         <include name="cubaja_logo_075.jpeg"/>
       </fileset>

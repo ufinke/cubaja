@@ -1,29 +1,27 @@
 /**
  * <p>
  * Easy access to XML configuration data.
- * </p>
- * Examples see <a href="./doc-files/cubaja_config_en.pdf" hreflang="en" target="_blank">HowTo</a>
- * (<a href="./doc-files/cubaja_config_de.pdf" hreflang="de" target="_blank">German</a>).
  * <p>
- * The idea is to eliminate code for interpreting typeless configuration data
- * from the application. The application relies on typesafe data which can
- * be retrieved from instances representing an object oriented view of the configuration.
- * This framework makes configuration issues nearly as easy as coding simple data access objects.
- * </p>
+ * <b>Introduction</b>
+ * <p>
+ * The idea is to unburden the application from interpreting typeless configuration data. 
+ * Instead, the application relies on typesafe data which can
+ * be retrieved from objects giving a really object oriented view on the configuration.
+ * This framework makes configuration issues as easy as coding simple data access objects.
  * <p>
  * The central class of this package is {@link de.ufinke.cubaja.config.Configurator Configurator}.
- * </p>
  * <p>
- * An arbitrary object represents
+ * <b>Configuration Objects</b>
+ * <p>
+ * An arbitrary configuration object represents
  * an XML element. Like XML elements, the element node objects may be nested.
  * For every type of XML element, we code a separate class.
  * These classes have 'setter' and 'adder' methods; that is, their names begin
  * with <tt>set</tt> or <tt>add</tt>, followed by the name of an XML attribute
  * or the tag name of an XML element. The difference between setter and adder methods is, 
  * that setters may be invoked only once (for an attribute value or a unique subelement),
- * whereas adders may be invoked any number of times 
- * (within an adder method, the passed parameter is typically added to a collection).
- * </p>
+ * whereas adders may be invoked any number of times. 
+ * Within an adder method, the passed parameter is typically added to a collection.
  * <p>
  * Setter and adder methods must have a <tt>void</tt> return type and exactly one
  * parameter. Builtin supported parameter types are
@@ -37,8 +35,7 @@
  * {@link de.ufinke.cubaja.config.EndElementHandler} 
  * or {@link de.ufinke.cubaja.config.ParameterFactoryProvider}, 
  * the implemented methods will
- * be called during the configuration process and we gain more control for special purposes.
- * </p>
+ * be called during the configuration process to gain more control for special purposes.
  * <p>
  * An attribute value will be passed to the actual element node object
  * as the appropriate parameter type when processing the starting XML element tag.
@@ -47,22 +44,22 @@
  * processing the XML elements end tag. 
  * In case the parameter type is an array of the types listed above,
  * the attribute value or element content may be a comma separated list which is split 
- * into separate trimmed strings. The strings then are processed in the same way as single values
+ * into separate trimmed strings. The strings are processed in the same way as single values
  * and collected in an array.
- * </p>
  * <p>
  * The application passes it's root configuration object to the
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
  * method of a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
- * Before doing so, we can customize the 
- * {@link de.ufinke.cubaja.config.Configurator Configurator},
+ * Before doing so, the 
+ * {@link de.ufinke.cubaja.config.Configurator Configurator} may be customized,
  * e.g. by setting the base name of the XML source,
  * applying properties, setting patterns, or providing 
  * {@link de.ufinke.cubaja.config.ParameterFactoryFinder ParameterFactoryFinder}s
  * for our own parameter types.  
- * </p>
  * <p>
- * The XML attribute values or element content may contain properties in the form 
+ * <b>Properties</b>
+ * <p>
+ * The XML attribute values or element content may contain properties of the form 
  * <tt>${<i>propertyName</i>}</tt>.
  * Those properties are replaced by their actual values when the
  * parameter types of the setter / adder methods are processed.
@@ -70,45 +67,43 @@
  * of {@link de.ufinke.cubaja.config.PropertyProvider PropertyProvider}. 
  * Basic property providers are defined by enum
  * {@link de.ufinke.cubaja.config.PropertyProviderType PropertyProviderType}. 
- * Additionally, we can write our own providers or pass an instance of <tt>java.util.Properties</tt>.
- * </p>
+ * Additionally, you can write your own providers or pass an instance of <tt>java.util.Properties</tt>.
  * <p>
  * The properties search order is defined by the order of  
  * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
- * if we did not define them explicitly and we did not add the <tt>NULL</tt> property provider.
+ * if they where not defined explicitly and there is no <tt>NULL</tt> property provider.
  * The default order is as follows:
  * <ol>
  *   <li>
  *     <tt>SYSTEM</tt>
- *     <br/>
+ *     <br>
  *     System properties.
  *   </li>
  *   <li>
  *     <tt>BASE_PROPERTIES</tt>
- *     <br/>
+ *     <br>
  *     Properties in an optional file <tt><i>baseName</i>.properties</tt>
  *     corresponding to the XML source <tt><i>baseName</i>.xml</tt>.
  *   </li>
  *   <li>
  *     <tt>BASE_XML</tt>
- *     <br/>
+ *     <br>
  *     Properties defined in the XML document with the special element
- *     <br/>
+ *     <br>
  *     <tt>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</tt>.
  *   </li>
  *   <li>
  *     <tt>ENVIRONMENT</tt>
- *     <br/>
+ *     <br>
  *     Environment variables.
  *   </li>
  * </ol>
- * </p>
  * <p>
- * We can invoke {@link de.ufinke.cubaja.config.Configurator#configure configure} 
+ * The {@link de.ufinke.cubaja.config.Configurator#configure configure} method may be called 
  * more than once on a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
- * This is useful when we split a big configuration into several independent files
- * (e.g. technical and end-user responsibility) and we want to use the same basic settings.
+ * This is useful when a big configuration should be split into several independent files
+ * (e.g. technical and end-user responsibility) and the same basic settings should be used.
  * The providers for the property types 
  * <tt>BASE_PROPERTIES</tt> and <tt>BASE_XML</tt> are stored in stacks.
  * The properties are searched from the top of the stack downward.
@@ -125,7 +120,6 @@
  * There is a corresponding method
  * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popBaseProperties} 
  * to pop the providers off the stack.
- * </p>
  * <p>
  * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
  * are not part of the search sequence.
@@ -133,44 +127,47 @@
  * with an attribute '<tt>provider</tt>' is encountered. Such <tt>configProperty</tt>
  * elements may have sub-elements with the tag name '<tt>parm</tt>', containing attributes
  * '<tt>name</tt>' and '<tt>value</tt>'.
- * </p>
+ * <p>
+ * <b>Includes</b>
  * <p>
  * The special element <tt>configInclude</tt> with an attribute named <tt>include</tt>
  * includes the named resource (or file) while parsing. The root element of the included resource
  * is discarded but its children are processed as if they had been defined in
  * the root document.
  * </p>
+ * <b>Settings</b>
+ * <p>
  * There is another special element named <tt>configSettings</tt> to set the parser's behaviour.
  * Possible attributes are
  * <ol>
  *   <li>
  *     <tt>datePattern</tt>
- *     <br/>
+ *     <br>
  *     The date pattern for parsing date values.
  *     For a description how to code the pattern see <tt>java.text.SimpleDateFormat</tt>.
  *     Default is <tt>yyyy-MM-dd</tt>.
  *   </li>
  *   <li>
  *     <tt>trueValues</tt>
- *     <br/>
+ *     <br>
  *     A comma separated list of constants representing the boolean value <tt>true</tt>.
  *     Default is <tt>true,yes,on</tt>.
  *   </li>
  *   <li>
  *     <tt>falseValues</tt>
- *     <br/>
+ *     <br>
  *     A comma separated list of constants representing the boolean value <tt>false</tt>.
  *     Default is <tt>false,no,off</tt>.
  *   </li>
  *   <li>
  *     <tt>decimalPoint</tt>
- *     <br/>
+ *     <br>
  *     The decimal point character, which may be a point or a comma.
  *     By default, both characters are processed as decimal point.
  *   </li>
  *   <li>
  *     <tt>processEscape</tt>
- *     <br/>
+ *     <br>
  *     Enables or disables processing of escape characters 
  *     (introduced by backslash, i.e. <tt>\n</tt> for newline).
  *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
@@ -179,7 +176,7 @@
  *   </li>
  *   <li>
  *     <tt>processProperties</tt>
- *     <br/>
+ *     <br>
  *     Enables or disables processing of properties
  *     (that is, replacement of <tt>${...}</tt> sequences).
  *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
@@ -189,10 +186,9 @@
  * </ol>
  * <p>
  * Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
- * <br/>
+ * <br>
  * Subject to 
  * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
  * See <tt>license.txt</tt> distributed with this package.
- * </p>
  */
 package de.ufinke.cubaja.config;
