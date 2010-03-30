@@ -16,12 +16,12 @@ import de.ufinke.cubaja.util.Text;
  * A defined column must have a name.
  * All other properties are optional.
  * <p>
- * When we don't set an explicit position,
+ * When there is no explicit position,
  * the position is determined by the first matching header.
- * When we don't set a header,
+ * When there is no header,
  * the position is the position
  * of the previously defined column plus one.
- * The position of the first column is 1, not 0.
+ * The position of the first column is <tt>1</tt>, not <tt>0</tt>.
  * <p>
  * XML attributes and subelements:
  * <blockquote>
@@ -42,7 +42,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>header</tt></td>
- *     <td align="left" valign="top">the exact content of this columns header line</td>
+ *     <td align="left" valign="top">the exact content of this column's header line</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -77,7 +77,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>datePattern</tt></td>
- *     <td align="left" valign="top">date format pattern as described in <tt>java.text.SimpleDateFormat</tt> (default: global <tt>datePattern</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="left" valign="top">date format pattern as described in {@link java.text.SimpleDateFormat} (default: global <tt>datePattern</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>

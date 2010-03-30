@@ -12,7 +12,7 @@ public interface RowFilter {
   /**
    * Signals whether a row should be processed.
    * A filter is used in
-   * method <tt>nextRow</tt> of class <tt>CsvReader</tt>.
+   * {@link CsvReader#nextRow()}.
    * If the result is <tt>false</tt>,
    * the reader reads the next row immediately.
    * @param reader

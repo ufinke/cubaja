@@ -1,9 +1,10 @@
 /**
  * <p>
  * Package for processing CSV data.
- * Main class is <tt>CsvReader</tt>.
- * A <tt>CsvWriter</tt> is planned.
- * </p>
+ * Main classes are 
+ * {@link de.ufinke.cubaja.csv.CsvReader CsvReader} 
+ * and 
+ * {@link de.ufinke.cubaja.csv.CsvWriter CsvWriter}.
  * <p>
  * Copyright (c) 2009, Uwe Finke. All rights reserved.
  * <br/>

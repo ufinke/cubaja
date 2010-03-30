@@ -11,7 +11,7 @@ public interface ColumnEditor {
 
   /**
    * Edits the column.
-   * @param column
+   * @param column original column content
    * @param colConfig
    * @return edited column content
    * @throws CsvException

@@ -21,25 +21,28 @@ import de.ufinke.cubaja.util.Util;
 /**
  * CSV reader.
  * <p>
- * We retrieve rows in a loop calling <tt>nextRow</tt>
- * until we receive <tt>false</tt>.
+ * Rows are read in a loop by calling {@link #nextRow nextRow}
+ * until the result is <tt>false</tt>.
  * <p>
- * For every row, we can read column contents as the type we need in our application,
- * or we can create a data object with column data by using method <tt>readObject</tt>.
- * When the column is empty, the read methods for numeric primitive types
- * return <tt>0</tt>; read methods for objects types 
- * (except <tt>readObject</tt>) return <tt>null</tt>.
+ * For every row, the column contents may be read as the type needed in the application.
+ * Alternatively, a complete row may be read as data object with method {@link #readRow readRow}.
+ * An even more convenient way to read a complete CSV file is
+ * the {@link #cursor cursor} method, which combines
+ * the call to <tt>nextRow</tt> and <tt>readRow</tt> in an automatic loop.
  * <p>
- * The position of the first column is 1, not 0.
+ * When a column is empty, the read methods for numeric primitive types
+ * return <tt>0</tt>; read methods for objects types return <tt>null</tt>.
  * <p>
- * The first row is read automatically if the configurations
+ * The position of the first column is <tt>1</tt>, not <tt>0</tt>.
+ * <p>
+ * The first row is read automatically if the configuration's
  * <tt>hasHeaderRow</tt> method returns <tt>true</tt>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
- * Despite the automatism, we can retrieve the content of the header
- * row before we call <tt>nextRow</tt> the first time. 
+ * The content of an automatically read header
+ * row is accessible before the first explicit call to <tt>nextRow</tt>. 
  * <p>
- * Most methods may throw a <tt>CsvException</tt>.
+ * Most methods may throw a <tt>CsvException</tt>, e.g. as a result of parsing errors.
  * An exception is thrown if there is an attempt to
  * read any data after a call to <tt>nextRow</tt>
  * returned <tt>false</tt>, or after the reader was closed.
@@ -706,11 +709,27 @@ public class CsvReader implements ColumnReader {
     }
   }
   
+  /**
+   * Reads an <tt>enum</tt> constant.
+   * @param <E>
+   * @param columnName
+   * @param enumType
+   * @return enum
+   * @throws CsvException
+   */
   public <E extends Enum<E>> E readEnum(String columnName, Class<E> enumType) throws CsvException {
     
     return readEnum(getColumnPosition(columnName), enumType);
   }
   
+  /**
+   * Reads an <tt>enum</tt> constant.
+   * @param <E>
+   * @param columnPosition
+   * @param enumType
+   * @return enum
+   * @throws CsvException
+   */
   public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> enumType) throws CsvException {
     
     String s = getColumn(columnPosition).trim();

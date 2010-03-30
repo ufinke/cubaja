@@ -20,7 +20,7 @@ import de.ufinke.cubaja.io.FileConfig;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Global <tt>CsvReader</tt> properties.
+ * Global configuration properties.
  * <p>
  * XML attributes and subelements: <blockquote>
  * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
@@ -33,8 +33,9 @@ import de.ufinke.cubaja.util.Text;
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>file</tt></td>
- * <td align="left" valign="top">file name; mandatory if <tt>CsvReader</tt>
- * constructor without <tt>Reader</tt> parameter is used</td>
+ * <td align="left" valign="top">file name; mandatory if {@link CsvReader}
+ * constructor without <tt>Reader</tt> 
+ * or {@link CsvWriter} constructor without <tt>Writer</tt> parameter is used</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
@@ -82,14 +83,15 @@ import de.ufinke.cubaja.util.Text;
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>decimalChar</tt></td>
  * <td align="left" valign="top">global character for decimal point; may be a
- * point or a comma (default: both point and comma are decimalChars)</td>
+ * point or a comma (default for parsing: both point and comma are decimalChars; 
+ * default for formatting: depends on <tt>Locale</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>scale</tt></td>
- * <td align="left" valign="top">number of fractional digits for decimal numbers
+ * <td align="left" valign="top">maximum number of fractional digits in formatted decimal numbers
  * (default: 2)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
@@ -98,7 +100,7 @@ import de.ufinke.cubaja.util.Text;
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>datePattern</tt></td>
  * <td align="left" valign="top">global date format pattern as described in
- * <tt>java.text.SimpleDateFormat</tt> (default: <tt>yyyy-MM-dd</tt>)</td>
+ * {@link java.text.SimpleDateFormat} (default: <tt>yyyy-MM-dd</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
@@ -560,9 +562,10 @@ public class CsvConfig {
   }
 
   /**
-   * Signals whether the CSV input has a header row.
+   * Signals whether the CSV source or target has a header row.
    * <p>
-   * When we set this attribute to <tt>true</tt>, the first input row is
+   * When this attribute is set to <tt>true</tt>, the first input row 
+   * read by <tt>CsvReader</tt> is
    * used to define all (or additional) columns. The name attribute of the
    * automatically defined columns is derived from the column content. For the
    * name attribute, all non-identifier characters (that is,
@@ -571,13 +574,16 @@ public class CsvConfig {
    * those columns is the original column content. If the generated name matches
    * an already existing column name, this column is not added automatically.
    * <p>
-   * When we set this attribute to <tt>false</tt> the first row is not
+   * When this attribute is set to <tt>false</tt>, the first row is not
    * processed as header row even if some <tt>col</tt> definitions contain a
    * <tt>header</tt> attribute.
    * <p>
-   * When we don't set this attribute at all, the first row is considered to be
+   * When this attribute isn't set at all, the first row is considered to be
    * a header row if any <tt>col</tt> definition has a <tt>header</tt>
    * attribute.
+   * <p>
+   * A <tt>CsvWriter</tt> automatically writes a header row
+   * if this attribute is set to <tt>true</tt>.
    * 
    * @param header
    */

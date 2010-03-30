@@ -8,6 +8,7 @@ import java.io.Reader;
 
 /**
  * Row parser.
+ * A parser recognizes column delimiting separators and escape characters.
  * @author Uwe Finke
  */
 public interface RowParser {

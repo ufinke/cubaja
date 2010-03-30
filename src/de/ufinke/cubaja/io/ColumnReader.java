@@ -55,7 +55,7 @@ public interface ColumnReader {
   public int getColumnCount() throws Exception;
 
   /**
-   * Returns column content as string.
+   * Returns column content as <tt>String</tt>.
    * @param columnName 
    * @return string
    * @throws Exception
@@ -63,7 +63,7 @@ public interface ColumnReader {
   public String readString(String columnName) throws Exception;
 
   /**
-   * Returns column content as string.
+   * Returns column content as <tt>String</tt>.
    * @param columnPosition
    * @return string
    * @throws Exception
@@ -71,7 +71,7 @@ public interface ColumnReader {
   public String readString(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as boolean.
+   * Returns column content as <tt>boolean</tt>.
    * @param columnName
    * @return boolean
    * @throws Exception
@@ -79,7 +79,7 @@ public interface ColumnReader {
   public boolean readBoolean(String columnName) throws Exception;
 
   /**
-   * Returns column content as boolean.
+   * Returns column content as <tt>boolean</tt>.
    * @param columnPosition
    * @return boolean
    * @throws Exception
@@ -87,7 +87,7 @@ public interface ColumnReader {
   public boolean readBoolean(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Boolean object.
+   * Returns column content as <tt>Boolean</tt> object.
    * @param columnName
    * @return boolean
    * @throws Exception
@@ -95,7 +95,7 @@ public interface ColumnReader {
   public Boolean readBooleanObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Boolean object.
+   * Returns column content as <tt>Boolean</tt> object.
    * @param columnPosition
    * @return boolean
    * @throws Exception
@@ -103,7 +103,7 @@ public interface ColumnReader {
   public Boolean readBooleanObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as byte.
+   * Returns column content as <tt>byte</tt>.
    * @param columnName
    * @return byte
    * @throws Exception
@@ -111,7 +111,7 @@ public interface ColumnReader {
   public byte readByte(String columnName) throws Exception;
 
   /**
-   * Returns column content as byte.
+   * Returns column content as <tt>byte</tt>.
    * @param columnPosition
    * @return byte
    * @throws Exception
@@ -119,7 +119,7 @@ public interface ColumnReader {
   public byte readByte(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Byte object.
+   * Returns column content as <tt>Byte</tt> object.
    * @param columnName
    * @return byte
    * @throws Exception
@@ -127,7 +127,7 @@ public interface ColumnReader {
   public Byte readByteObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Byte object.
+   * Returns column content as <tt>Byte</tt> object.
    * @param columnPosition
    * @return byte
    * @throws Exception
@@ -135,7 +135,7 @@ public interface ColumnReader {
   public Byte readByteObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as short.
+   * Returns column content as <tt>short</tt>.
    * @param columnName
    * @return short
    * @throws Exception
@@ -143,7 +143,7 @@ public interface ColumnReader {
   public short readShort(String columnName) throws Exception;
 
   /**
-   * Returns column content as short.
+   * Returns column content as <tt>short</tt>.
    * @param columnPosition
    * @return short
    * @throws Exception
@@ -151,7 +151,7 @@ public interface ColumnReader {
   public short readShort(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Short object.
+   * Returns column content as <tt>Short</tt> object.
    * @param columnName
    * @return short
    * @throws Exception
@@ -159,7 +159,7 @@ public interface ColumnReader {
   public Short readShortObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Short object.
+   * Returns column content as <tt>Short</tt> object.
    * @param columnPosition
    * @return short
    * @throws Exception
@@ -167,7 +167,7 @@ public interface ColumnReader {
   public Short readShortObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as char.
+   * Returns column content as <tt>char</tt>.
    * @param columnName
    * @return char
    * @throws Exception
@@ -175,7 +175,7 @@ public interface ColumnReader {
   public char readChar(String columnName) throws Exception;
 
   /**
-   * Returns column content as char.
+   * Returns column content as <tt>char</tt>.
    * @param columnPosition
    * @return char
    * @throws Exception
@@ -183,7 +183,7 @@ public interface ColumnReader {
   public char readChar(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Character object.
+   * Returns column content as <tt>Character</tt> object.
    * @param columnName
    * @return char
    * @throws Exception
@@ -191,7 +191,7 @@ public interface ColumnReader {
   public Character readCharObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Character object.
+   * Returns column content as <tt>Character</tt> object.
    * @param columnPosition
    * @return char
    * @throws Exception
@@ -199,7 +199,7 @@ public interface ColumnReader {
   public Character readCharObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as int.
+   * Returns column content as <tt>int</tt>.
    * @param columnName
    * @return int
    * @throws Exception
@@ -207,7 +207,7 @@ public interface ColumnReader {
   public int readInt(String columnName) throws Exception;
 
   /**
-   * Returns column content as int.
+   * Returns column content as <tt>int</tt>.
    * @param columnPosition
    * @return int
    * @throws Exception
@@ -215,7 +215,7 @@ public interface ColumnReader {
   public int readInt(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Integer object.
+   * Returns column content as <tt>Integer</tt> object.
    * @param columnName
    * @return int
    * @throws Exception
@@ -223,7 +223,7 @@ public interface ColumnReader {
   public Integer readIntObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Integer object.
+   * Returns column content as <tt>Integer</tt> object.
    * @param columnPosition
    * @return int
    * @throws Exception
@@ -231,7 +231,7 @@ public interface ColumnReader {
   public Integer readIntObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as long.
+   * Returns column content as <tt>long</tt>.
    * @param columnName
    * @return long
    * @throws Exception
@@ -239,7 +239,7 @@ public interface ColumnReader {
   public long readLong(String columnName) throws Exception;
 
   /**
-   * Returns column content as long.
+   * Returns column content as <tt>long</tt>.
    * @param columnPosition
    * @return long
    * @throws Exception
@@ -247,7 +247,7 @@ public interface ColumnReader {
   public long readLong(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Long object.
+   * Returns column content as <tt>Long</tt> object.
    * @param columnName
    * @return long
    * @throws Exception
@@ -255,7 +255,7 @@ public interface ColumnReader {
   public Long readLongObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Long object.
+   * Returns column content as <tt>Long</tt> object.
    * @param columnPosition
    * @return long
    * @throws Exception
@@ -263,7 +263,7 @@ public interface ColumnReader {
   public Long readLongObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as float.
+   * Returns column content as <tt>float</tt>.
    * @param columnName
    * @return float
    * @throws Exception
@@ -271,7 +271,7 @@ public interface ColumnReader {
   public float readFloat(String columnName) throws Exception;
 
   /**
-   * Returns column content as float.
+   * Returns column content as <tt>float</tt>.
    * @param columnPosition
    * @return float
    * @throws Exception
@@ -279,7 +279,7 @@ public interface ColumnReader {
   public float readFloat(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Float object.
+   * Returns column content as <tt>Float</tt> object.
    * @param columnName
    * @return float
    * @throws Exception
@@ -287,7 +287,7 @@ public interface ColumnReader {
   public Float readFloatObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Float object.
+   * Returns column content as <tt>Float</tt> object.
    * @param columnPosition
    * @return float
    * @throws Exception
@@ -295,7 +295,7 @@ public interface ColumnReader {
   public Float readFloatObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as double.
+   * Returns column content as <tt>double</tt>.
    * @param columnName
    * @return double
    * @throws Exception
@@ -303,7 +303,7 @@ public interface ColumnReader {
   public double readDouble(String columnName) throws Exception;
 
   /**
-   * Returns column content as double.
+   * Returns column content as <tt>double</tt>.
    * @param columnPosition
    * @return double
    * @throws Exception
@@ -311,7 +311,7 @@ public interface ColumnReader {
   public double readDouble(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Double object.
+   * Returns column content as <tt>Double</tt> object.
    * @param columnName
    * @return double
    * @throws Exception
@@ -319,7 +319,7 @@ public interface ColumnReader {
   public Double readDoubleObject(String columnName) throws Exception;
 
   /**
-   * Returns column content as Double object.
+   * Returns column content as <tt>Double</tt> object.
    * @param columnPosition
    * @return double
    * @throws Exception
@@ -327,7 +327,7 @@ public interface ColumnReader {
   public Double readDoubleObject(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as BigDecimal.
+   * Returns column content as <tt>BigDecimal</tt>.
    * @param columnName
    * @return BigDecimal
    * @throws Exception
@@ -335,7 +335,7 @@ public interface ColumnReader {
   public BigDecimal readBigDecimal(String columnName) throws Exception;
 
   /**
-   * Returns column content as BigDecimal.
+   * Returns column content as <tt>BigDecimal</tt>.
    * @param columnPosition
    * @return BigDecimal
    * @throws Exception
@@ -343,7 +343,7 @@ public interface ColumnReader {
   public BigDecimal readBigDecimal(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as BigInteger.
+   * Returns column content as <tt>BigInteger</tt>.
    * @param columnName
    * @return BigInteger
    * @throws Exception
@@ -351,7 +351,7 @@ public interface ColumnReader {
   public BigInteger readBigInteger(String columnName) throws Exception;
 
   /**
-   * Returns column content as BigInteger.
+   * Returns column content as <tt>BigInteger</tt>.
    * @param columnPosition
    * @return BigInteger
    * @throws Exception
@@ -359,7 +359,7 @@ public interface ColumnReader {
   public BigInteger readBigInteger(int columnPosition) throws Exception;
 
   /**
-   * Returns column content as Date.
+   * Returns column content as <tt>Date</tt>.
    * @param columnName
    * @return Date
    * @throws Exception
@@ -367,7 +367,7 @@ public interface ColumnReader {
   public Date readDate(String columnName) throws Exception;
 
   /**
-   * Returns column content as Date.
+   * Returns column content as <tt>Date</tt>.
    * @param columnPosition
    * @return Date
    * @throws Exception
@@ -378,11 +378,10 @@ public interface ColumnReader {
    * Returns a data object.
    * <p>
    * The data object class must have setter methods corresponding to 
-   * column names. See description of method <tt>createMethodName</tt> 
-   * of class <tt>de.ufinke.cubaja.Util</tt> for building method names from
-   * column names.
-   * The setter methods must have a void return type and exactly one parameter
-   * of a type supported by one of the sources <tt>read</tt> 
+   * column names. See {@link de.ufinke.cubaja.util.Util#createMethodName createMethodName} 
+   * for details.
+   * The setter methods must have a <tt>void</tt> return type and exactly one parameter
+   * of a type supported by one of the source's <tt>read</tt> 
    * methods.
    * @param <D> data type
    * @param clazz
@@ -393,7 +392,7 @@ public interface ColumnReader {
 
   /**
    * Returns an <tt>Iterable</tt> over all rows.
-   * The data object is created by <tt>readObject</tt>.
+   * The data object is created by {@link #readRow readRow}.
    * @param <D> data type
    * @param clazz
    * @return Iterable
