@@ -10,7 +10,7 @@ import de.ufinke.cubaja.util.IteratorException;
 /**
  * <tt>Iterator</tt> over rows of a <tt>ColumnReader</tt>.
  * Returns itself as <tt>Iterable</tt>.
- * An instance is created by method <tt>readAllRows</tt> of a <tt>ColumnReader</tt>.
+ * An instance is created by method {@link ColumnReader#cursor cursor} of a <tt>ColumnReader</tt>.
  * <p>
  * Because an <tt>Iterator</tt> is not allowed to throw a normal <tt>Exception</tt>,
  * the methods <tt>next</tt> and <tt>hasNext</tt> wrap exceptions into
@@ -38,11 +38,17 @@ public class RowIterator<D> implements Iterator<D>, Iterable<D> {
     this.clazz = clazz;
   }
   
+  /**
+   * Returns this object as <tt>Iterator</tt>
+   */
   public Iterator<D> iterator() {
     
     return this;
   }
   
+  /**
+   * Signals whether there a next row to read.
+   */
   public boolean hasNext() throws IteratorException {
     
     if (! calledHasNext) {
@@ -57,6 +63,9 @@ public class RowIterator<D> implements Iterator<D>, Iterable<D> {
     return hasNext;
   }
   
+  /**
+   * Retrieves the next row.
+   */
   public D next() throws IteratorException, NoSuchElementException {
     
     if (! calledHasNext) {

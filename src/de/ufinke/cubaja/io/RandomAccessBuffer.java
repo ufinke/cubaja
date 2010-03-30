@@ -16,9 +16,9 @@ import java.io.OutputStream;
 
 /**
  * Flexible byte array buffer.
- * Functions similar to <tt>java.io.RandomAccessFile</tt>;
- * an alternative to <tt>ByteArrayOutputStream</tt>
- * and <tt>ByteArrayInputStream</tt> 
+ * Functions similar to {@link java.io.RandomAccessFile};
+ * an alternative to {@link java.io.ByteArrayOutputStream}
+ * and {@link java.io.ByteArrayInputStream} 
  * when more flexibility is required. 
  * <p>
  * The buffer is backed by an automatically growing byte array.
@@ -27,11 +27,11 @@ import java.io.OutputStream;
  * read operation reads data from. The position increments 
  * automatically when reading or writing.
  * The size is the maximum count of filled bytes within the buffer; 
- * it may be lesser than it's capacity.
+ * it may be less than it's capacity.
  * The size is set automatically during write operations
  * according to the resulting position.
  * Read operations never can read beyond the size. If such happens,
- * an EOFException is thrown.
+ * an <tt>EOFException</tt> is thrown.
  * @author Uwe Finke
  */
 public class RandomAccessBuffer implements DataInput, DataOutput {
@@ -172,7 +172,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Cuts the contents and sets position and size.
+   * Cuts the content and sets position and size.
    * It is expected to be <tt>0 <= from <= to <= size</tt>.
    * If <tt>from = 0</tt>, then size and position are both set to the <tt>to</tt> value.
    * If <tt>from > 0</tt>, then all bytes between from (inclusive) and to (exclusive) 
@@ -255,6 +255,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return outputStream;
   }
   
+  /**
+   * Writes a single byte into the buffer.
+   */
   public void write(int b) throws IOException {
 
     int pos = newWritePosition(1);
@@ -262,11 +265,17 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a byte array into the buffer.
+   */
   public void write(byte[] b) throws IOException {
 
     write(b, 0, b.length);
   }
 
+  /**
+   * Writes a portion of a byte array into the buffer.
+   */
   public void write(byte[] b, int off, int len) throws IOException {
 
     int pos = newWritePosition(len);
@@ -274,16 +283,25 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a <tt>boolean</tt> into the buffer.
+   */
   public void writeBoolean(boolean v) throws IOException {
 
     write(v ? 1 : 0);
   }
 
+  /**
+   * Writes a <tt>byte</tt> into the buffer.
+   */
   public void writeByte(int v) throws IOException {
 
     write(v);
   }
 
+  /**
+   * Writes a <tt>short</tt> into the buffer.
+   */
   public void writeShort(int v) throws IOException {
 
     newWritePosition(2);
@@ -293,11 +311,17 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a <tt>char</tt> into the buffer.
+   */
   public void writeChar(int v) throws IOException {
 
     writeShort(v);
   }
 
+  /**
+   * Writes an <tt>int</tt> into the buffer.
+   */
   public void writeInt(int v) throws IOException {
 
     newWritePosition(4);
@@ -309,6 +333,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a <tt>long</tt> into the buffer.
+   */
   public void writeLong(long v) throws IOException {
 
     newWritePosition(8);
@@ -326,16 +353,25 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a <tt>float</tt> into the buffer.
+   */
   public void writeFloat(float v) throws IOException {
 
     writeInt(Float.floatToIntBits(v));
   }
 
+  /**
+   * Writes a <tt>double</tt> into the buffer.
+   */
   public void writeDouble(double v) throws IOException {
 
     writeLong(Double.doubleToLongBits(v));
   }
 
+  /**
+   * Writes a <tt>String</tt> as bytes into the buffer.
+   */
   public void writeBytes(String s) throws IOException {
 
     int len = s.length();
@@ -347,6 +383,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes a <tt>String</tt> as characters into the buffer.
+   */
   public void writeChars(String s) throws IOException {
 
     int len = s.length();
@@ -360,6 +399,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Writes an UTF string into the buffer.
+   */
   public void writeUTF(String s) throws IOException {
 
     DataOutputStream dos = new DataOutputStream(getOutputStream());
@@ -430,11 +472,17 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return copySize;
   }
   
+  /**
+   * Reads a byte array from the buffer.
+   */
   public void readFully(byte[] b) throws IOException {
 
     readFully(b, 0, b.length);
   }
 
+  /**
+   * Reads a portion of a byte array from the buffer.
+   */
   public void readFully(byte[] b, int off, int len) throws IOException {
 
     int pos = newReadPosition(len);
@@ -442,6 +490,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     position = pos;
   }
 
+  /**
+   * Advances the buffer's position.
+   */
   public int skipBytes(int n) throws IOException {
 
     int skipped = Math.min(n, size - position);
@@ -449,11 +500,17 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return skipped;
   }
 
+  /**
+   * Reads a <tt>boolean</tt> from the buffer.
+   */
   public boolean readBoolean() throws IOException {
 
     return readByte() != 0;
   }
 
+  /**
+   * Reads a <tt>byte</tt> from the buffer.
+   */
   public byte readByte() throws IOException {
 
     int pos = newReadPosition(1);
@@ -462,6 +519,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return result;
   }
 
+  /**
+   * Reads an unsigned byte from the buffer.
+   */
   public int readUnsignedByte() throws IOException {
 
     int pos = newReadPosition(1);
@@ -470,6 +530,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return result;
   }
 
+  /**
+   * Reads a <tt>short</tt> from the buffer.
+   */
   public short readShort() throws IOException {
 
     newReadPosition(2);
@@ -480,6 +543,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return (short) result;
   }
 
+  /**
+   * Reads an unsigned short from the buffer.
+   */
   public int readUnsignedShort() throws IOException {
 
     newReadPosition(2);
@@ -490,11 +556,17 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return result;
   }
 
+  /**
+   * Reads a <tt>char</tt> from the buffer.
+   */
   public char readChar() throws IOException {
 
     return (char) readUnsignedShort();
   }
 
+  /**
+   * Reads an <tt>int</tt> from the buffer.
+   */
   public int readInt() throws IOException {
 
     newReadPosition(4);
@@ -507,6 +579,9 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return result;
   }
 
+  /**
+   * Reads a <tt>long</tt> from the buffer.
+   */
   public long readLong() throws IOException {
 
     newReadPosition(8);
@@ -525,22 +600,34 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     return result;
   }
 
+  /**
+   * Reads a <tt>float</tt> from the buffer.
+   */
   public float readFloat() throws IOException {
 
     return Float.intBitsToFloat(readInt());
   }
 
+  /**
+   * Reads a <tt>double</tt> from the buffer.
+   */
   public double readDouble() throws IOException {
 
     return Double.longBitsToDouble(readLong());
   }
 
+  /**
+   * Reads a line from the buffer.
+   */
   public String readLine() throws IOException {
 
     BufferedReader d = new BufferedReader(new InputStreamReader(getInputStream()));
     return d.readLine();
   }
 
+  /**
+   * Reads an UTF string from the buffer.
+   */
   public String readUTF() throws IOException {
 
     DataInputStream d = new DataInputStream(getInputStream());
