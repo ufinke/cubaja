@@ -128,6 +128,11 @@
  * elements may have sub-elements with the tag name '<tt>parm</tt>', containing attributes
  * '<tt>name</tt>' and '<tt>value</tt>'.
  * <p>
+ * Named property providers are defined by the application, or within the XML. For the latter,
+ * code an element '<tt>configPropertyProvider</tt>' with the attributes
+ * '<tt>name</tt>' (the provider's name) and '<tt>class</tt>' (the implementing class name).
+ * The class must be in the classpath.
+ * <p>
  * <b>Includes</b>
  * <p>
  * The special element <tt>configInclude</tt> with an attribute named <tt>include</tt>

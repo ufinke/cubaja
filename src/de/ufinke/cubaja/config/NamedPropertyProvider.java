@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * PropertyProvider variant.
  * <p/>
- * We need a <tt>NamedPropertyProvider</tt>
+ * A <tt>NamedPropertyProvider</tt> is needed
  * when a property value depends on program logic and
  * the program logic depends on other configuration content.
  * @author Uwe Finke

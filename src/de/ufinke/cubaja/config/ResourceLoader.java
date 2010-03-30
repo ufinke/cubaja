@@ -7,9 +7,6 @@ import org.xml.sax.InputSource;
 
 /**
  * Interface for an XML resource loader.
- * <p/>
- * We need an external loader in case we cannot place the XML source in the classpath
- * or the file system.
  * @author Uwe Finke
  */
 public interface ResourceLoader {

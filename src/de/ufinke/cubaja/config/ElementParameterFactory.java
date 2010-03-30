@@ -5,7 +5,6 @@ package de.ufinke.cubaja.config;
 
 import java.lang.annotation.Annotation;
 
-
 class ElementParameterFactory implements ParameterFactory {
 
   private Object parameter;
