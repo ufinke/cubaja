@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
@@ -11,12 +11,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import de.ufinke.cubaja.config.ConfigException;
@@ -52,12 +48,11 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  * </table>
  * <tt>A/E</tt>: attribute or subelement
- * <br/>
+ * <br>
  * <tt>M</tt>: mandatory
- * <br/>
+ * <br>
  * <tt>U</tt>: unique
  * </blockquote>
- * </p>
  * @author Uwe Finke
  */
 public class FileConfig {
@@ -114,9 +109,9 @@ public class FileConfig {
   
   /**
    * Retrieves the <tt>Charset</tt> according to the charset attribute.
-   * If no charset was specified, we get the default charset of the runtime 
-   * environment.
-   * @return the <tt>Charset</tt>
+   * If no charset was specified, the default charset of the runtime 
+   * environment is returned.
+   * @return the charset
    */
   public Charset getCharset() {
     
@@ -128,7 +123,7 @@ public class FileConfig {
   
   /**
    * Creates a file object.
-   * @return a <tt>File</tt>
+   * @return a file
    */
   public File createFile() {
     
@@ -139,7 +134,7 @@ public class FileConfig {
    * Creates a file object representing a directory.
    * All directories in the path which do not already exist
    * will be allocated automatically.
-   * @return a <tt>File</tt>
+   * @return a file
    */
   public File createDirectory() {
     
@@ -164,11 +159,10 @@ public class FileConfig {
    * Creates an output stream.
    * All parent directories which do not already exist
    * will be allocated automatically.
-   * The stream is buffered.
-   * @return an <tt>OutputStream</tt>
+   * @return an output stream
    * @throws IOException
    */
-  public OutputStream createOutputStream() throws IOException {
+  public BufferedOutputStream createOutputStream() throws IOException {
     
     return new BufferedOutputStream(new FileOutputStream(createOutputFile()));
   }
@@ -177,35 +171,34 @@ public class FileConfig {
    * Creates a writer.
    * All parent directories which do not already exist
    * will be allocated automatically.
-   * Uses the <tt>getCharset</tt> method.
+   * Uses the {@link #getCharset getCharset} method.
    * The writer and the underlaying stream are buffered.
-   * @return a <tt>Writer</tt>
+   * @return a writer
    * @throws IOException
    */
-  public Writer createWriter() throws IOException {
+  public BufferedWriter createWriter() throws IOException {
     
     return new BufferedWriter(new OutputStreamWriter(createOutputStream(), getCharset()));
   }
   
   /**
    * Creates an input stream.
-   * The stream is buffered.
-   * @return an <tt>InputStream</tt>
+   * @return an input stream
    * @throws IOException
    */
-  public InputStream createInputStream() throws IOException {
+  public BufferedInputStream createInputStream() throws IOException {
     
     return new BufferedInputStream(new FileInputStream(createFile()));
   }
   
   /**
    * Creates a reader.
-   * Uses the <tt>getCharset</tt> method.
+   * Uses the {@link #getCharset getCharset} method.
    * The reader and the underlaying stream are buffered.
-   * @return a <tt>Reader</tt>
+   * @return a reader
    * @throws IOException
    */
-  public Reader createReader() throws IOException {
+  public BufferedReader createReader() throws IOException {
     
     return new BufferedReader(new InputStreamReader(createInputStream(), getCharset()));
   }

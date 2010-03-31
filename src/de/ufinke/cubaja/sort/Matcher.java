@@ -15,13 +15,13 @@ import de.ufinke.cubaja.util.Text;
  * All sources must have been previously sorted by key in the same order.
  * If applicable, use the same <tt>Comparator</tt> for sorting and matching.
  * Keys may be <tt>null</tt>;
- * our <tt>Comparator</tt> should allow for <tt>null</tt> values
+ * the <tt>Comparator</tt> should allow for <tt>null</tt> values
  * to avoid <tt>NullPointerException</tt>s.
- * <p/>
- * The keys are presented by an <tt>Iterator</tt> in an ascending order
+ * <p>
+ * The distinct keys are presented to the application by an <tt>Iterator</tt> in an ascending order
  * (ascending as defined by the <tt>Comparator</tt>). 
- * For every key, we can get the matching data objects from the <tt>MatchSource</tt> instances.
- * The <tt>Matcher</tt> ensures that any matching data objects we didn't read from the
+ * For every key, the application can get the matching data objects from the {@link MatchSource} instances.
+ * The <tt>Matcher</tt> ensures that any matching data objects that are not read from the
  * <tt>MatchSource</tt> are skipped before the next key in sequence is determined,
  * which is the lowest next key of all sources.
  * @author Uwe Finke

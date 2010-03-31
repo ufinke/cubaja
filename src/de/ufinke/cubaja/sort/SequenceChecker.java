@@ -7,6 +7,13 @@ import java.util.Comparator;
 import java.util.Iterator;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Checks an <tt>Iterable</tt> for proper sequence.
+ * Throws an <tt>OutOfSequenceException</tt> if any data object
+ * is out of sequence.
+ * @author Uwe Finke
+ * @param <D> data type
+ */
 public class SequenceChecker<D> implements Iterable<D> {
 
   static Text text = new Text(SequenceChecker.class);
@@ -61,16 +68,30 @@ public class SequenceChecker<D> implements Iterable<D> {
   
   private Iterator<D> iterator;
   
+  /**
+   * Constructor.
+   * @param comparator
+   * @param input
+   */
   public SequenceChecker(Comparator<? super D> comparator, Iterable<D> input) {
     
     this(comparator, input, "SequenceChecker_" + getId());
   }
   
+  /**
+   * Constructor with a name which is used in error messages.
+   * @param comparator
+   * @param input
+   * @param name
+   */
   public SequenceChecker(Comparator<? super D> comparator, Iterable<D> input, String name) {
   
     iterator = new SequenceIterator<D>(comparator, input.iterator(), name);
   }
   
+  /**
+   * Iterates over the checked data objects.
+   */
   public Iterator<D> iterator() {
     
     return iterator;

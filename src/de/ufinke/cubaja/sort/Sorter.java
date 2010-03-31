@@ -18,6 +18,28 @@ import de.ufinke.cubaja.util.Text;
  * An object is put to the sorter with the <tt>add</tt> method.
  * Sorted objects are retrieved with an iterator;
  * <tt>Sorter</tt> implements the appropriate <tt>Iterable</tt>.
+ * <p>
+ * The implementation uses up to 3 threads:
+ * the first is the application's thread that adds and retrieves
+ * objects, the second sorts and merges arrays and the third
+ * handles IO to and from a temporary file (if needed).
+ * <p>
+ * It is strongly recommended to control the maximum heap size
+ * with the JVM's <tt>Xmx</tt> runtime parameter.
+ * A value of about <tt>1000M</tt> should be sufficient 
+ * to sort over 100 million medium sized objects, 
+ * assumed that the application doesn't need much heap space
+ * for other purpose than sort.
+ * If heap size is a problem, or objects are very large,
+ * memory requirements may be tuned with
+ * the <tt>runSize</tt> and <tt>blockSize</tt> properties
+ * in {@link SortConfig}. 
+ * Lower property values increase the number of maximum total objects,
+ * but performance may suffer. Higher values do not necessarily improve performance. 
+ * If your application uses the <tt>config</tt> package, 
+ * it would be a good idea to add a <tt>SortConfig</tt> to the configuration.
+ * Doing so, you have control over
+ * the sort parameters at runtime.
  * @author Uwe Finke
  * @param <D> data type
  */

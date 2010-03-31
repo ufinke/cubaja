@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Accessor to data objects matching to a key.
- * Instances are created by <tt>Matcher</tt>.
+ * Instances are created by {@link Matcher}.
  * @author Uwe Finke
  * @param <D> data type
  */
@@ -25,7 +25,8 @@ public final class MatchSource<D> {
   
   /**
    * Returns a single data object with matching key.
-   * We should first test whether the key matches
+   * An application should first test whether the key matches
+   * (see {@link #matches matches})
    * before calling this method.
    * @return a data object
    * @throws NoSuchElementException if the data doesn't match the key
@@ -86,7 +87,7 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Signals whether this source matches the <tt>Matcher</tt>s key.
+   * Signals whether this source matches the <tt>Matcher</tt>'s key.
    * @return <tt>true</tt> when matching, <tt>false</tt> otherwise
    */
   public boolean matches() {

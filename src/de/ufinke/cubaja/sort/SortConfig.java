@@ -5,6 +5,73 @@ package de.ufinke.cubaja.sort;
 
 /**
  * Sort configuration.
+ * <p>
+ * XML attributes and subelements:
+ * <blockquote>
+ * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
+ *   <tr bgcolor="#ccccff">
+ *     <th align="left">Name</th>
+ *     <th align="left">Description</th>
+ *     <th align="center">A/E</th>
+ *     <th align="center">M</th>
+ *     <th align="center">U</th>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>algorithm</tt></td>
+ *     <td align="left" valign="top">the name of a class which implements {@link SortAlgorithm}; default is <tt>de.ufinke.cubaja.sort.Quicksort</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>workDirectory</tt></td>
+ *     <td align="left" valign="top">directory for temporary files; default is the value of system property <tt>java.io.tmpdir</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>filePrefix</tt></td>
+ *     <td align="left" valign="top">name prefix of temporary files; default is <tt>sort</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>log</tt></td>
+ *     <td align="left" valign="top">if set to <tt>true</tt>, trace and debug messages are written to logger <tt>de.ufinke.cubaja.sort.Sorter</tt>; default is <tt>false</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>logInterval</tt></td>
+ *     <td align="left" valign="top">time interval between trace messages in seconds; default is <tt>60</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>runSize</tt></td>
+ *     <td align="left" valign="top">maximum number of objects in a run (see {@link #setRunSize setRunSize}); default is <tt>131072</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>blockSize</tt></td>
+ *     <td align="left" valign="top">number of bytes in a temporary file block (see {@link #setBlockSize setBlockSize}; default is <tt>15360</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ * </table>
+ * <tt>A/E</tt>: attribute or subelement
+ * <br>
+ * <tt>M</tt>: mandatory
+ * <br>
+ * <tt>U</tt>: unique
+ * </blockquote>
  * @author Uwe Finke
  */
 public class SortConfig {
