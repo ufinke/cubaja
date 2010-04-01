@@ -209,17 +209,7 @@ public class Day extends GregorianCalendar implements Externalizable {
    */
   public boolean isWorkday(HolidayConfig config) {
     
-    return isWorkday(config.getHolidayCalendar());
-  }
-  
-  /**
-   * Determines whether this day is a workday.
-   * @param holidays
-   * @return flag
-   */
-  public boolean isWorkday(HolidayCalendar holidays) {
-    
-    return holidays.isWorkday(this);
+    return config.isWorkday(this);
   }
   
   /**
@@ -228,18 +218,8 @@ public class Day extends GregorianCalendar implements Externalizable {
    * @return flag
    */
   public boolean isHoliday(HolidayConfig config) {
-    
-    return isHoliday(config.getHolidayCalendar());
-  }
-  
-  /**
-   * Determines whether this day is a holiday.
-   * @param holidays
-   * @return flag
-   */
-  public boolean isHoliday(HolidayCalendar holidays) {
-    
-    return holidays.isHoliday(this);
+
+    return config.isHoliday(this);
   }
   
   /**
@@ -299,24 +279,11 @@ public class Day extends GregorianCalendar implements Externalizable {
    */
   public Day addWorkdays(int count, HolidayConfig config) {
     
-    addWorkdays(count, config.getHolidayCalendar());
-    return this;
-  }
-  
-  /**
-   * Adds an amount of workdays to this object.
-   * The amount may be negative.
-   * @param count
-   * @param holidays
-   * @return this
-   */
-  public Day addWorkdays(int count, HolidayCalendar holidays) {
-    
     int step = (count < 0) ? -1 : 1;
     count = Math.abs(count);
     while (count > 0) {
       add(DATE, step);
-      if (holidays.isWorkday(this)) {
+      if (config.isWorkday(this)) {
         count--;
       }
     }
@@ -431,25 +398,13 @@ public class Day extends GregorianCalendar implements Externalizable {
    * @return this
    */
   public Day adjustNextWorkday(HolidayConfig config) {
-    
-    adjustNextWorkday(config.getHolidayCalendar());
-    return this;
-  }
-  
-  /**
-   * Sets this day conditionally to the next workday.
-   * If this day is already a workday, it leaves as it is.
-   * @param holidays
-   * @return this
-   */
-  public Day adjustNextWorkday(HolidayCalendar holidays) {
-    
-    while (isHoliday(holidays)) {
+
+    while (config.isHoliday(this)) {
       add(DATE, 1);
     }
     return this;
   }
-
+  
   /**
    * Sets this day conditionally to the previous workday.
    * If this day is already a workday, it leaves as it is.
@@ -457,20 +412,8 @@ public class Day extends GregorianCalendar implements Externalizable {
    * @return this
    */
   public Day adjustPreviousWorkday(HolidayConfig config) {
-    
-    adjustPreviousWorkday(config.getHolidayCalendar());
-    return this;
-  }
-  
-  /**
-   * Sets this day conditionally to the previous workday.
-   * If this day is already a workday, it leaves as it is.
-   * @param holidays
-   * @return this
-   */
-  public Day adjustPreviousWorkday(HolidayCalendar holidays) {
-    
-    while (isHoliday(holidays)) {
+
+    while (config.isHoliday(this)) {
       add(DATE, -1);
     }
     return this;
@@ -483,25 +426,13 @@ public class Day extends GregorianCalendar implements Externalizable {
    * @return this
    */
   public Day adjustNextHoliday(HolidayConfig config) {
-    
-    adjustNextHoliday(config.getHolidayCalendar());
-    return this;
-  }
-  
-  /**
-   * Sets this day conditionally to the next holiday.
-   * If this day is already a workday, it leaves as it is.
-   * @param holidays
-   * @return this
-   */
-  public Day adjustNextHoliday(HolidayCalendar holidays) {
-    
-    while (isWorkday(holidays)) {
+
+    while (config.isHoliday(this)) {
       add(DATE, 1);
     }
     return this;
   }
-
+  
   /**
    * Sets this day conditionally to the previous holiday.
    * If this day is already a workday, it leaves as it is.
@@ -510,24 +441,12 @@ public class Day extends GregorianCalendar implements Externalizable {
    */
   public Day adjustPreviousHoliday(HolidayConfig config) {
     
-    adjustPreviousHoliday(config.getHolidayCalendar());
-    return this;
-  }
-  
-  /**
-   * Sets this day conditionally to the previous holiday.
-   * If this day is already a workday, it leaves as it is.
-   * @param holidays
-   * @return this
-   */
-  public Day adjustPreviousHoliday(HolidayCalendar holidays) {
-    
-    while (isWorkday(holidays)) {
+    while (config.isHoliday(this)) {
       add(DATE, -1);
     }
     return this;
   }
-
+  
   /**
    * Sets this object to the first day of the month.
    * @return this

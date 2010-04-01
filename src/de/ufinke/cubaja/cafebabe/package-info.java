@@ -1,5 +1,6 @@
 /**
  * Bytecode generator.
+ * <p>
  * For discovering the package, start with {@link de.ufinke.cubaja.cafebabe.Loader Loader}.
  * <p>
  * See 
@@ -8,11 +9,10 @@
  * {@link <a href="http://java.sun.com/docs/books/jvms/second_edition/html/Instructions.doc.html">The Java Virtual Machine Instruction Set</a>}
  * for opcodes.
  * <p>
- * Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
- * <br/>
+ * Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+ * <br>
  * Subject to 
  * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
- * See <tt>license.txt</tt> distributed with this package.
- * </p>
+ * See <tt>license.txt</tt> distributed with this library.
  */
 package de.ufinke.cubaja.cafebabe;

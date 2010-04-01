@@ -24,11 +24,17 @@ public class EnumerationIterator<E> implements Iterator<E>, Iterable<E> {
     this.enumeration = enumeration;
   }
 
+  /**
+   * Tests if there are more elements.
+   */
   public boolean hasNext() {
 
     return enumeration.hasMoreElements();
   }
 
+  /**
+   * Returns next element.
+   */
   public E next() {
 
     return enumeration.nextElement();
@@ -42,6 +48,9 @@ public class EnumerationIterator<E> implements Iterator<E>, Iterable<E> {
     throw new UnsupportedOperationException();
   }
   
+  /**
+   * Implements <tt>Iteratable</tt>.
+   */
   public Iterator<E> iterator() {
     
     return this;

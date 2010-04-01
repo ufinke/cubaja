@@ -27,12 +27,20 @@ public enum Weekday {
     
     this.calendarConstant = calendarConstant;
   }
-  
+
+  /**
+   * Returns the corresponding <tt>Calendar</tt> constant.
+   * @return constant
+   */
   public int getCalendarConstant() {
     
     return calendarConstant;
   }
   
+  /**
+   * Returns the weekday's name.
+   * The name is localized according to resource bundle entries.
+   */
   public String toString() {
     
     if (string == null) {
@@ -59,6 +67,11 @@ public enum Weekday {
     return getWeekday(cal);
   }
   
+  /**
+   * Returns the calendar value's weekday.
+   * @param cal
+   * @return weekday
+   */
   static public Weekday getWeekday(Calendar cal) {
     
     if (weekdayMap == null) {

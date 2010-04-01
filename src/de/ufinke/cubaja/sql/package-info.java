@@ -1,23 +1,21 @@
 /**
- * <p>
  * Simplified use of JDBC.
- * </p>
  * <p>
- * The central class is <tt>Database</tt>.
+ * The central class is {@link de.ufinke.cubaja.sql.Database Database}.
  * In an application independent from existing database connections, 
- * use the constructor with a <tt>DatabaseConfig</tt> parameter
- * and call the <tt>createQuery</tt> for <tt>select</tt> statements
- * or <tt>createUpdate</tt> for <tt>insert</tt>, <tt>update</tt>
- * or <tt>delete</tt> statements.
- * You may also call <tt>execute</tt> to execute an SQL statement a
+ * use the constructor with a {@link de.ufinke.cubaja.sql.DatabaseConfig DatabaseConfig} parameter
+ * and call {@link de.ufinke.cubaja.sql.Database#createQuery createQuery} 
+ * for <tt>select</tt> statements
+ * or {@link de.ufinke.cubaja.sql.Database#createUpdate createUpdate}
+ * for <tt>insert</tt>, <tt>update</tt> or <tt>delete</tt> statements.
+ * You may also call {@link de.ufinke.cubaja.sql.Database#execute execute}
+ * to execute an SQL statement
  * immediately.
- * </p>
  * <p>
- * Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
- * <br/>
+ * Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+ * <br>
  * Subject to 
  * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
- * See <tt>license.txt</tt> distributed with this package.
- * </p>
+ * See <tt>license.txt</tt> distributed with this library.
  */
 package de.ufinke.cubaja.sql;
