@@ -17,9 +17,9 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Collector and interpreter of SQL text.
- * The various <tt>append</tt> methods keep track 
- * of line breaks, separators and comments.
- * The result is an executable SQL.
+ * The various methods keep track 
+ * of line breaks, separators, comments and variables.
+ * The result is formatted executable SQL.
  * @author Uwe Finke
  */
 public class Sql {
@@ -259,7 +259,7 @@ public class Sql {
   }
   
   /**
-   * Returns the parsed SQL.
+   * Returns the formatted SQL.
    */
   public String toString() {
 

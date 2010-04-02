@@ -8,7 +8,7 @@ import java.sql.SQLException;
 
 /**
  * Wrapper for <tt>insert</tt>, <tt>update</tt> or <tt>delete</tt> statements.
- * An instance is created by an appropriate <tt>Database</tt> method.
+ * An instance is created by an appropriate {@link Database} method.
  * @author Uwe Finke
  */
 public class Update extends PreparedSql {

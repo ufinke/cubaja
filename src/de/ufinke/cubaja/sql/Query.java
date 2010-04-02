@@ -24,7 +24,7 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Wrapper for <tt>select</tt> statements and result sets.
- * An instance is created by an appropriate <tt>Database</tt> method.
+ * An instance is created by an appropriate {@link Database} method.
  * @author Uwe Finke
  */
 public class Query extends PreparedSql implements ColumnReader {

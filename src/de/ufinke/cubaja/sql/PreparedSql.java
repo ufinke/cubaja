@@ -22,8 +22,8 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Wrapper for a <tt>PreparedStatement</tt>.
- * Superclass of <tt>Query</tt> and <tt>Update</tt>
- * which are created by <tt>Database</tt> methods.
+ * Superclass of {@link Query} and {@link Update}
+ * which are created with appropriate {@link Database} methods.
  * @author Uwe Finke
  */
 public class PreparedSql {
