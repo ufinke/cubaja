@@ -24,53 +24,34 @@ import de.ufinke.cubaja.util.Text;
  */
 public class Sql {
 
-  static enum State {    
-    DEFAULT            (false),
-    LITERAL            (false),
-    LINE_COMMENT       (false),
-    LINE_COMMENT_START (true),
-    BLOCK_COMMENT      (false),
-    BLOCK_COMMENT_START(true),
-    BLOCK_COMMENT_END  (false),
-    VARIABLE           (false);
-    
-    boolean commentStart;
-    
-    private State(boolean commentStart) {
-      
-      this.commentStart = commentStart;
-    }
-  }
-  
   static private final Text text = new Text(Sql.class);
   
-  private char[] inBuffer;
-  private char[] outBuffer;
-  private int outLength;
+  static class ResolveData {
+    String name;
+    String value;
+  }
+
+  private StringBuilder inBuffer;
+  
+  private boolean formatted;
+  private int inPos;
+  private int inLen;
+  private StringBuilder outBuffer;
+  private boolean writeSpace;
+  
   private String string;
-  
-  private State state;
-  private boolean spacePending;
-  private boolean retainBlockComments;
-  private char literalChar;
-  
   private List<String> statementList;
   private List<String> variableList;
-  private StringBuilder variable;
+  
+  private List<ResolveData> resolveList;
   
   /**
    * Default constructor.
    */
   public Sql() {
-    
-    inBuffer = new char[1024];
-    outBuffer = new char[1024];
-    
-    statementList = new ArrayList<String>();
-    variableList = new ArrayList<String>();
-    variableList.add("*dummy*"); // position starts with 1
-    
-    state = State.DEFAULT;
+
+    inBuffer = new StringBuilder(1024);
+    resolveList = new ArrayList<ResolveData>();
   }
   
   /**
@@ -114,55 +95,211 @@ public class Sql {
     this();
     append(packageClass, sqlResource);
   }
+    
+  private void format() {
+    
+    if (formatted) {
+      return;
+    }
+
+    resolve();
+    
+    statementList = new ArrayList<String>();
+    variableList = new ArrayList<String>();
+    variableList.add("*dummy*"); // position starts with 1
+    string = null;
+    
+    writeSpace = false;
+    inPos = 0;
+    inLen = inBuffer.length();
+    outBuffer = new StringBuilder(inLen);
+    
+    while (inPos < inLen) {
+      char c = inBuffer.charAt(inPos);
+      if (Character.isWhitespace(c)) {
+        formatWhitespace();
+      } else {
+        formatNonWhitespace(c);
+      }
+    }
+    
+    formatEndStatement();
+    
+    formatted = true;
+  }
+  
+  private void formatWhitespace() {
+    
+    if (writeSpace) {
+      outBuffer.append(' ');
+      writeSpace = false;
+    }
+    
+    inPos++;
+  }
+  
+  private void formatNonWhitespace(char c) {
+    
+    writeSpace = true;
+    
+    switch (c) {
+      
+      case '\'':
+      case '\"':
+        formatLiteral(c);
+        break;
+        
+      case '-':
+        formatPossibleLineComment();
+        break;
+        
+      case '/':
+        formatPossibleBlockComment();
+        break;
+        
+      case ':':
+        formatVariable();
+        break;
+        
+      case ';':
+        formatEndStatement();
+        break;
+        
+      default:
+        outBuffer.append(c);
+        inPos++;
+    }
+  }
+  
+  private void formatLiteral(char delimiter) {
+
+    int end = inPos + 1;
+    while (end < inLen && inBuffer.charAt(end) != delimiter) {
+      end++;
+    }
+    if (end < inLen) {
+      end++;
+    }
+    outBuffer.append(inBuffer.subSequence(inPos, end));
+    inPos = end;
+  }
+  
+  private void formatPossibleLineComment() {
+    
+    int nextPos = inPos + 1;
+    
+    if (nextPos >= inLen || inBuffer.charAt(nextPos) != '-') {
+      outBuffer.append('-');
+      inPos = nextPos;
+      return;
+    }
+    
+    boolean end = false;
+    while (! end) {
+      char c = inBuffer.charAt(nextPos++);
+      end = (c == '\n') || (c == '\r') || (nextPos >= inLen);
+    }
+    inPos = nextPos;
+  }
+  
+  private void formatPossibleBlockComment() {
+    
+    int nextPos = inPos + 1;
+    
+    if (nextPos >= inLen || inBuffer.charAt(nextPos) != '*') {
+      outBuffer.append('/');
+      inPos = nextPos;
+      return;
+    }
+    
+    nextPos++;
+    if (nextPos < inLen && inBuffer.charAt(nextPos) == '+') { // Oracle optimizer hint: /*+xxx */
+      outBuffer.append('/');
+      outBuffer.append('*');
+      inPos = nextPos;
+      return;
+    }
+    
+    boolean end = (nextPos >= inLen);
+    while (! end) {
+      if (inBuffer.charAt(nextPos) == '*') {
+        nextPos++;
+        end = (nextPos >= inLen || inBuffer.charAt(nextPos) == '/'); 
+      } else {
+        nextPos++;
+        end = (nextPos >= inLen);
+      }
+    }
+    inPos = nextPos;
+  }
+  
+  private void formatVariable() {
+    
+    inPos++;
+    int nextPos = inPos;
+    while (nextPos < inLen && Character.isJavaIdentifierPart(inBuffer.charAt(nextPos))) {
+      nextPos++;
+    }
+    variableList.add(inBuffer.substring(inPos, nextPos));
+    
+    outBuffer.append('?');
+    
+    inPos = nextPos;
+  }
+  
+  private void formatEndStatement() {
+    
+    writeSpace = false;
+    inPos++;
+    
+    if (outBuffer.length() > 0) {
+      statementList.add(outBuffer.toString());    
+      outBuffer.setLength(0);
+    }    
+  }
   
   /**
    * Returns the parsed SQL.
    */
   public String toString() {
+
+    format();
     
     if (string == null) {
-      
-      StringBuilder sb = new StringBuilder();
-      
-      for (int i = 0; i < statementList.size(); i++) {
-        if (sb.length() > 0) {
-          sb.append("; ");
-        }
-        sb.append(statementList.get(i));
+      switch (statementList.size()) {
+        case 0:
+          string = "";
+          break;
+        case 1:
+          string = statementList.get(0);
+          break;
+        default:
+          int len = statementList.size() * 2;
+          for (int i = 0; i < statementList.size(); i++) {
+            len += statementList.get(i).length();
+          }
+          StringBuilder sb = new StringBuilder(len);
+          sb.append(statementList.get(0));
+          for (int i = 1; i < statementList.size(); i++) {
+            sb.append("; ");
+            sb.append(statementList.get(i));
+          }
+          string = sb.toString();
       }
-      
-      if (outLength > 0) {
-        if (sb.length() > 0) {
-          sb.append("; ");
-        }
-        sb.append(outBuffer, 0, outLength);
-      }
-      
-      string = sb.toString();
     }
     
     return string;
   }
   
-  private void saveStatement() {
-    
-    if (outLength > 0) {
-      statementList.add(String.valueOf(outBuffer, 0, outLength));
-      outLength = 0;
-    }    
-    spacePending = false;
-  }
-  
   List<String> getStatements() {
-    
-    saveStatement();
+
+    format();
     return statementList;
   }
   
   String getSingleStatement() throws SQLException {
     
-    saveStatement();
-    
+    format();
     switch (statementList.size()) {
       case 0:
         throw new SQLException(text.get("noStatement"));
@@ -174,39 +311,15 @@ public class Sql {
   }
   
   boolean hasVariables() {
-    
-    storeVariable();
-    
+
+    format();
     return variableList.size() > 1;
   }
   
   List<String> getVariables() {
 
-    storeVariable();
-    
+    format();
     return variableList;
-  }
-  
-  private void storeVariable() {
-
-    if (variable != null) {
-      variableList.add(variable.toString());
-      variable = null;
-    }
-  }
-  
-  /**
-   * Sets flag whether to retain block comments.
-   * You need this method to pass optimizer hints
-   * to an Oracle database (Oracle camouflages hints as comments). 
-   * Default behavior is to remove comments.
-   * @param retainBlockComments
-   * @return this
-   */
-  public Sql retainBlockComments(boolean retainBlockComments) {
-    
-    this.retainBlockComments = retainBlockComments;
-    return this;
   }
   
   /**
@@ -219,14 +332,11 @@ public class Sql {
     if (line == null) {
       return this;
     }
+
+    formatted = false;
     
-    int length = line.length();
-    if (length >= inBuffer.length) {
-      inBuffer = new char[length + 1];
-    }
-    line.getChars(0, length, inBuffer, 0);
-    inBuffer[length] = '\n';
-    append(inBuffer, length + 1);
+    inBuffer.append(line);
+    inBuffer.append('\n');
     
     return this;
   }
@@ -239,10 +349,14 @@ public class Sql {
    */
   public Sql append(Reader reader) throws IOException {
 
-    int length = reader.read(inBuffer);
+    formatted = false;
+    
+    char[] array = new char[1024];
+    
+    int length = reader.read(array);
     while (length > 0) {
-      append(inBuffer, length);
-      length = reader.read(inBuffer);
+      inBuffer.append(array, 0, length);
+      length = reader.read(array);
     }
     
     return this;
@@ -251,15 +365,21 @@ public class Sql {
   /**
    * Appends lines from a resource.
    * <p>
-   * The SQL must be written in a separate file within a java source package
-   * (usually the package where the class which uses the SQL belongs to).
-   * We have to specify a class within that package as parameter. 
+   * The SQL must be written in a separate file within a java source package.
+   * The <tt>packageClass</tt> parameter specifies
+   * a class which is located in the same package as the SQL resource. 
    * This may be any class, but usually it will be the class which uses
-   * the SQL.
+   * the SQL (then the parameter simply is '<tt>getClass()</tt>').
+   * <p>
    * The file name's extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains only the
-   * plain file name without extension and without path.
-   * The resource must be coded in <tt>UTF-8</tt>.
+   * The <tt>sqlResource</tt> parameter contains the file name without extension
+   * (the extension is appended by this method automatically).
+   * There is no prefix or path required when the resource resides in the same package
+   * as the <tt>packageClass</tt>. The resource is loaded following the rules
+   * defined by {@link java.lang.Class#getResourceAsStream(String) getResourceAsStream}.
+   * <p>
+   * To be platform independent on runtime, the resource must be coded in <tt>UTF-8</tt>.
+   * Don't forget to customize your development editor.
    * @param packageClass
    * @param sqlResource
    * @return this
@@ -302,22 +422,22 @@ public class Sql {
       return this;
     }
     
-    StringBuilder sb = new StringBuilder(128);
+    formatted = false;
     
     for (int i = 0; i < value.length; i++) {
       if (i > 0) {
-        sb.append(", ");
+        inBuffer.append(", ");
       }
       if (value[i] instanceof Number) {
-        sb.append(value[i].toString());
+        inBuffer.append(value[i].toString());
       } else {
-        sb.append('\'');
-        sb.append(value[i].toString());
-        sb.append('\'');
+        inBuffer.append('\'');
+        inBuffer.append(value[i].toString());
+        inBuffer.append('\'');
       }
     }
     
-    return append(sb.toString());
+    return this;
   }
   
   /**
@@ -330,7 +450,7 @@ public class Sql {
    * @param value
    * @return this
    */
-  public Sql appendList(Collection<?> value) {
+  public Sql appendList(Collection<Object> value) {
 
     if (value == null) {
       return this;
@@ -353,16 +473,16 @@ public class Sql {
       return this;
     }
     
-    StringBuilder sb = new StringBuilder(128);
+    formatted = false;
     
     for (int i = 0; i < value.length; i++) {
       if (i > 0) {
-        sb.append(", ");
+        inBuffer.append(", ");
       }
-      sb.append(value[i]);
+      inBuffer.append(value[i]);
     }
 
-    return append(sb.toString());
+    return this;
   }
   
   /**
@@ -374,18 +494,19 @@ public class Sql {
    */
   public Sql appendUpdate(String... variables) throws SQLException {
     
-    StringBuilder sb = new StringBuilder(256);
+    formatted = false;
     
-    String separator = "set ";
+    String separator = " set ";
     for (String variable : variables) {
-      sb.append(separator);
-      sb.append(variable);
-      sb.append(" = :");
-      sb.append(variable);
+      inBuffer.append(separator);
+      inBuffer.append(variable);
+      inBuffer.append(" = :");
+      inBuffer.append(variable);
       separator = ", ";
     }
+    inBuffer.append(' ');
     
-    return append(sb.toString());
+    return this;
   }
   
   /**
@@ -397,188 +518,132 @@ public class Sql {
    */
   public Sql appendInsert(String... variables) throws SQLException {
 
-    StringBuilder sb = new StringBuilder(256);
+    formatted = false;
     
     String separator = " (";
     for (String variable : variables) {
-      sb.append(separator);
-      sb.append(variable);
+      inBuffer.append(separator);
+      inBuffer.append(variable);
       separator = ", ";
     }
     separator = ") values (:";
     for (String variable : variables) {
-      sb.append(separator);
-      sb.append(variable);
+      inBuffer.append(separator);
+      inBuffer.append(variable);
       separator = ", :";
     }
-    sb.append(") ");
+    inBuffer.append(") ");
     
-    return append(sb.toString());
+    return this;
   }
   
-  private void append(char[] in, int length) {
-    
-    string = null;
-    
-    char[] out = outBuffer;
-    int pos = outLength;
-    
-    for (int i = 0; i < length; i++) {
-      
-      char c = in[i];
-      boolean accept = true;
-      boolean removeLastChar = false;
+  /**
+   * Sets a property to a value.
+   * Properties like '<tt>${<i>name</i>}</tt> are replaced by the value
+   * before the formatted statement is retrieved.
+   * @param name
+   * @param value
+   * @return this
+   */
+  public Sql resolve(String name, String value) {
 
-      switch (state) {
-        
-        case VARIABLE:
-          if (Character.isJavaIdentifierPart(c)) {
-            variable.append(c);
-          } else {
-            storeVariable();
-            state = State.DEFAULT;
-          }
-          break;
-        
-        case LINE_COMMENT_START:
-          if (c != '-') {
-            state = State.DEFAULT;
-          }
-          break;
-          
-        case BLOCK_COMMENT_START:
-          if (c != '*' || retainBlockComments) {
-            state = State.DEFAULT;
-          }
-          break;
-      }
-      
-      switch (state) {
-      
-        case DEFAULT:
-          switch (c) {
-            case ' ':
-            case '\t':
-            case '\r':
-            case '\n':
-              accept = false;
-              spacePending = true;
-              break;
-            case '\'':
-            case '\"':
-              literalChar = c;
-              state = State.LITERAL;
-              break;
-            case '-':
-              state = State.LINE_COMMENT_START;
-              break;
-            case '/':
-              state = State.BLOCK_COMMENT_START;
-              break;
-            case ':':
-              c = '?';
-              variable = new StringBuilder(32);
-              state = State.VARIABLE;
-              break;
-            case ';':
-              accept = false;
-              outLength = pos;
-              saveStatement();
-              pos = 0;
-              break;
-          }
-          break;
-          
-        case LITERAL:
-          if (literalChar == c) {
-            state = State.DEFAULT;
-          }
-          break;
-          
-        case LINE_COMMENT:
-          accept = false;
-          switch (c) {
-            case '\r':
-            case '\n':
-              state = State.DEFAULT;
-              break;
-          }
-          break;
-          
-        case LINE_COMMENT_START:
-          state = State.LINE_COMMENT;
-          accept = false;
-          removeLastChar = true;
-          break;
-          
-        case BLOCK_COMMENT:
-          accept = false;
-          switch (c) {
-            case '*':
-              state = State.BLOCK_COMMENT_END;
-              break;
-          }
-          break;
-          
-        case BLOCK_COMMENT_START:
-          state = State.DEFAULT;
-          state = State.BLOCK_COMMENT;
-          accept = false;
-          removeLastChar = true;
-          break;
-          
-        case BLOCK_COMMENT_END:
-          accept = false;
-          switch (c) {
-            case '/':
-              state = State.DEFAULT;
-              break;
-            case '*':
-              break;
-            default:
-              state = State.BLOCK_COMMENT;
-          }
-          break;
-          
-        case VARIABLE:
-          accept = false;
-          break;
-      }
-      
-      if (accept) {
+    formatted = false;
 
-        if (spacePending) {
-          if (pos == out.length) {
-            out = enlargeBuffer();
-          }
-          out[pos++] = ' ';
-          spacePending = false;
-        }
-        
-        if (pos == out.length) {
-          out = enlargeBuffer();
-        }
-        out[pos++] = c;
-        
-      } else if (removeLastChar) {
-        
-        pos--;
-        while (pos >= 0 && out[pos] == ' ') {
-          pos--;
-          spacePending = true;
-        }
-        
+    StringBuilder sb = new StringBuilder(name.length() + 3);
+    sb.append('$');
+    sb.append('{');
+    sb.append(name);
+    sb.append('}');
+    
+    ResolveData data = new ResolveData();
+    data.name = sb.toString();
+    data.value = value;
+    
+    resolveList.add(data);
+    
+    return this;
+  }
+  
+  /**
+   * Sets a property to a generated collection value.
+   * The array elements are formatted as in {@link #appendList(Object[]) appendList},
+   * then {@link #resolve(String, String) resolve} is called.
+   * @param name
+   * @param value
+   * @return this
+   */
+  public Sql resolve(String name, Object[] value) {
+    
+    if (value == null) {
+      return this;
+    }
+    
+    StringBuilder sb = new StringBuilder(250);
+    
+    for (int i = 0; i < value.length; i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      if (value[i] instanceof Number) {
+        sb.append(value[i].toString());
+      } else {
+        sb.append('\'');
+        sb.append(value[i].toString());
+        sb.append('\'');
       }
     }
     
-    outLength = pos;
+    return resolve(name, sb.toString());
   }
   
-  private char[] enlargeBuffer() {
+  /**
+   * Sets a property to a generated collection value.
+   * The collection elements are formatted as in {@link #appendList(Collection) appendList},
+   * then {@link #resolve(String, String) resolve} is called.
+   * @param name
+   * @param value
+   * @return this
+   */
+  public Sql resolve(String name, Collection<Object> value) {
     
-    char[] newOut = new char[outBuffer.length << 1];
-    System.arraycopy(outBuffer, 0, newOut, 0, outBuffer.length);
-    outBuffer = newOut;
-    return newOut;
+    return resolve(name, value.toArray());
+  }
+  
+  /**
+   * Sets a property to a generated collection value.
+   * The collection elements are formatted as in {@link #appendList(int[]) appendList},
+   * then {@link #resolve(String, String) resolve} is called.
+   * @param name
+   * @param value
+   * @return this
+   */
+  public Sql resolve(String name, int[] value) {
+    
+    if (value == null) {
+      return this;
+    }
+    
+    StringBuilder sb = new StringBuilder(100);
+    
+    for (int i = 0; i < value.length; i++) {
+      if (i > 0) {
+        sb.append(", ");
+      }
+      sb.append(value[i]);
+    }
+
+    return resolve(name, sb.toString());
+  }
+  
+  private void resolve() {
+
+    for (ResolveData rd : resolveList) {
+      int index = inBuffer.indexOf(rd.name);
+      while (index >= 0) {
+        int end = index + rd.name.length();
+        inBuffer.replace(index, end, rd.value);
+        index = inBuffer.indexOf(rd.name, index);
+      }
+    }
   }
 }
