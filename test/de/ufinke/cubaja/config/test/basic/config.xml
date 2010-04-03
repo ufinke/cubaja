@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<config enumValue="a"
+        byteValue="101"
+        shortValue="102"
+        intValue="103"
+        longValue="104"
+        floatValue="1,23"
+        doubleValue="4,56"
+        charValue="x"
+        booleanValue="true"
+        byte_object_value="-101"
+        short_object_value="-102"
+        int_object_value="-103"
+        long_object_value="-104"
+        float_object_value="-1,23"
+        double_object_value="-4,56"
+        char_object_value="x"
+        boolean_object_value="false"
+        stringValue="hello"
+        dateValue="2010-04-03"
+        classValue="java.lang.String"
+        interfaceValue="de.ufinke.cubaja.config.test.basic.TestInterfaceImpl">
+  <sub numbers="1, 2"/>
+  <bigIntegerValue>12345</bigIntegerValue>
+  <bigDecimalValue>-12345,67</bigDecimalValue>
+</config>

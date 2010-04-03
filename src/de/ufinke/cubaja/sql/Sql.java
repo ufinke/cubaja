@@ -429,7 +429,9 @@ public class Sql {
       throw new IOException(text.get("resourceNotFound", sb.toString()));
     }
     
-    append(new BufferedReader(new InputStreamReader(new BufferedInputStream(stream), "UTF-8")));
+    Reader reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(stream), "UTF-8"));
+    append(reader);
+    reader.close();
     
     return this;
   }
