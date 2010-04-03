@@ -67,6 +67,18 @@ public class PreparedSql {
   }
   
   /**
+   * Closes the statement.
+   * @throws SQLException
+   */
+  public void close() throws SQLException {
+    
+    if (statement != null) {
+      statement.close();
+      statement = null;
+    }
+  }
+  
+  /**
    * Retrieves the positions of a named variable.
    * @param name
    * @return positions of the variable, beginning with <tt>1</tt>
@@ -230,10 +242,10 @@ public class PreparedSql {
    * @param value
    * @throws SQLException
    */
-  public void setCharacter(String name, char value) throws SQLException {
+  public void setChar(String name, char value) throws SQLException {
     
     for (int i : getVariablePositions(name)) {
-      setCharacter(i, value);
+      setChar(i, value);
     }
   }
   
@@ -243,7 +255,7 @@ public class PreparedSql {
    * @param value
    * @throws SQLException
    */
-  public void setCharacter(int position, char value) throws SQLException {
+  public void setChar(int position, char value) throws SQLException {
     
     setString(position, String.valueOf(value));
   }
@@ -254,10 +266,10 @@ public class PreparedSql {
    * @param value
    * @throws SQLException
    */
-  public void setCharacter(String name, Character value) throws SQLException {
+  public void setChar(String name, Character value) throws SQLException {
     
     for (int i : getVariablePositions(name)) {
-      setCharacter(i, value);
+      setChar(i, value);
     }
   }
   
@@ -267,7 +279,7 @@ public class PreparedSql {
    * @param value
    * @throws SQLException
    */
-  public void setCharacter(int position, Character value) throws SQLException {
+  public void setChar(int position, Character value) throws SQLException {
     
     changed = true;
     if (value == null) {

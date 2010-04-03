@@ -99,11 +99,7 @@ public class Query extends PreparedSql implements ColumnReader {
   public void close() throws SQLException {
 
     closeResultSet();
-    
-    if (statement != null) {
-      statement.close();
-      statement = null;
-    }
+    super.close();
   }
   
   public int getColumnCount() throws SQLException {
