@@ -12,7 +12,7 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.*;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -26,16 +26,12 @@ public class Sql {
 
   static private final Text text = new Text(Sql.class);
   
-  static class ResolveData {
-    String name;
-    String value;
-  }
-
-  private StringBuilder inBuffer;
+  private StringBuilder appendBuffer;
   
   private boolean formatted;
   private int inPos;
   private int inLen;
+  private StringBuilder inBuffer;
   private StringBuilder outBuffer;
   private boolean writeSpace;
   
@@ -43,15 +39,15 @@ public class Sql {
   private List<String> statementList;
   private List<String> variableList;
   
-  private List<ResolveData> resolveList;
+  private Map<String, String> resolveMap;
   
   /**
    * Default constructor.
    */
   public Sql() {
 
-    inBuffer = new StringBuilder(1024);
-    resolveList = new ArrayList<ResolveData>();
+    appendBuffer = new StringBuilder(1024);
+    resolveMap = new LinkedHashMap<String, String>();
   }
   
   /**
@@ -102,12 +98,17 @@ public class Sql {
       return;
     }
 
-    resolve();
-    
     statementList = new ArrayList<String>();
     variableList = new ArrayList<String>();
     variableList.add("*dummy*"); // position starts with 1
     string = null;
+    
+    if (resolveMap.size() == 0) {
+      inBuffer = appendBuffer;
+    } else {
+      inBuffer = new StringBuilder(appendBuffer);
+      resolve();
+    }
     
     writeSpace = false;
     inPos = 0;
@@ -124,6 +125,9 @@ public class Sql {
     }
     
     formatEndStatement();
+
+    inBuffer = null;
+    outBuffer = null;
     
     formatted = true;
   }
@@ -335,8 +339,8 @@ public class Sql {
 
     formatted = false;
     
-    inBuffer.append(line);
-    inBuffer.append('\n');
+    appendBuffer.append(line);
+    appendBuffer.append('\n');
     
     return this;
   }
@@ -355,7 +359,7 @@ public class Sql {
     
     int length = reader.read(array);
     while (length > 0) {
-      inBuffer.append(array, 0, length);
+      appendBuffer.append(array, 0, length);
       length = reader.read(array);
     }
     
@@ -426,14 +430,14 @@ public class Sql {
     
     for (int i = 0; i < value.length; i++) {
       if (i > 0) {
-        inBuffer.append(", ");
+        appendBuffer.append(", ");
       }
       if (value[i] instanceof Number) {
-        inBuffer.append(value[i].toString());
+        appendBuffer.append(value[i].toString());
       } else {
-        inBuffer.append('\'');
-        inBuffer.append(value[i].toString());
-        inBuffer.append('\'');
+        appendBuffer.append('\'');
+        appendBuffer.append(value[i].toString());
+        appendBuffer.append('\'');
       }
     }
     
@@ -477,9 +481,9 @@ public class Sql {
     
     for (int i = 0; i < value.length; i++) {
       if (i > 0) {
-        inBuffer.append(", ");
+        appendBuffer.append(", ");
       }
-      inBuffer.append(value[i]);
+      appendBuffer.append(value[i]);
     }
 
     return this;
@@ -498,13 +502,13 @@ public class Sql {
     
     String separator = " set ";
     for (String variable : variables) {
-      inBuffer.append(separator);
-      inBuffer.append(variable);
-      inBuffer.append(" = :");
-      inBuffer.append(variable);
+      appendBuffer.append(separator);
+      appendBuffer.append(variable);
+      appendBuffer.append(" = :");
+      appendBuffer.append(variable);
       separator = ", ";
     }
-    inBuffer.append(' ');
+    appendBuffer.append(' ');
     
     return this;
   }
@@ -522,17 +526,17 @@ public class Sql {
     
     String separator = " (";
     for (String variable : variables) {
-      inBuffer.append(separator);
-      inBuffer.append(variable);
+      appendBuffer.append(separator);
+      appendBuffer.append(variable);
       separator = ", ";
     }
     separator = ") values (:";
     for (String variable : variables) {
-      inBuffer.append(separator);
-      inBuffer.append(variable);
+      appendBuffer.append(separator);
+      appendBuffer.append(variable);
       separator = ", :";
     }
-    inBuffer.append(") ");
+    appendBuffer.append(") ");
     
     return this;
   }
@@ -555,11 +559,7 @@ public class Sql {
     sb.append(name);
     sb.append('}');
     
-    ResolveData data = new ResolveData();
-    data.name = sb.toString();
-    data.value = value;
-    
-    resolveList.add(data);
+    resolveMap.put(sb.toString(), value);
     
     return this;
   }
@@ -637,12 +637,13 @@ public class Sql {
   
   private void resolve() {
 
-    for (ResolveData rd : resolveList) {
-      int index = inBuffer.indexOf(rd.name);
+    for (Map.Entry<String, String> entry : resolveMap.entrySet()) {
+      String key = entry.getKey();
+      int index = inBuffer.indexOf(key);
       while (index >= 0) {
-        int end = index + rd.name.length();
-        inBuffer.replace(index, end, rd.value);
-        index = inBuffer.indexOf(rd.name, index);
+        int end = index + key.length();
+        inBuffer.replace(index, end, entry.getValue());
+        index = inBuffer.indexOf(key, index);
       }
     }
   }
