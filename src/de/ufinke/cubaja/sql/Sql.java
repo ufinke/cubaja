@@ -12,7 +12,9 @@ import java.io.Reader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import de.ufinke.cubaja.util.Text;
 
 /**
@@ -33,7 +35,6 @@ public class Sql {
   private int inLen;
   private StringBuilder inBuffer;
   private StringBuilder outBuffer;
-  private boolean writeSpace;
   
   private String string;
   private List<String> statementList;
@@ -110,7 +111,6 @@ public class Sql {
       resolve();
     }
     
-    writeSpace = false;
     inPos = 0;
     inLen = inBuffer.length();
     outBuffer = new StringBuilder(inLen);
@@ -118,10 +118,9 @@ public class Sql {
     while (inPos < inLen) {
       char c = inBuffer.charAt(inPos);
       if (Character.isWhitespace(c)) {
-        formatWhitespace();
-      } else {
-        formatNonWhitespace(c);
+        c = ' ';
       }
+      formatChar(c);
     }
     
     formatEndStatement();
@@ -132,19 +131,7 @@ public class Sql {
     formatted = true;
   }
   
-  private void formatWhitespace() {
-    
-    if (writeSpace) {
-      outBuffer.append(' ');
-      writeSpace = false;
-    }
-    
-    inPos++;
-  }
-  
-  private void formatNonWhitespace(char c) {
-    
-    writeSpace = true;
+  private void formatChar(char c) {
     
     switch (c) {
       
@@ -168,11 +155,47 @@ public class Sql {
       case ';':
         formatEndStatement();
         break;
+
+      case ' ':
+        formatSpace();
+        break;
+
+      case ',':
+      case ')':
+        formatNoSpacePrefix(c);
+        break;
         
       default:
         outBuffer.append(c);
         inPos++;
     }
+  }
+  
+  private void formatSpace() {
+    
+    if (outBuffer.length() > 0) {
+      char p = outBuffer.charAt(outBuffer.length() - 1);
+      switch (p) {
+        case ' ':
+        case '(':
+          break;
+        default:
+          outBuffer.append(' ');
+      }
+    }
+    inPos++;
+  }
+  
+  private void formatNoSpacePrefix(char c) {
+    
+    if (outBuffer.length() > 0) {
+      int pos = outBuffer.length() - 1;
+      if (outBuffer.charAt(pos) == ' ') {
+        outBuffer.setLength(pos);
+      }
+    }
+    outBuffer.append(c);
+    inPos++;
   }
   
   private void formatLiteral(char delimiter) {
@@ -227,12 +250,10 @@ public class Sql {
     boolean end = (nextPos >= inLen);
     while (! end) {
       if (inBuffer.charAt(nextPos) == '*') {
-        nextPos++;
-        end = (nextPos >= inLen || inBuffer.charAt(nextPos) == '/'); 
-      } else {
-        nextPos++;
-        end = (nextPos >= inLen);
+        end = (nextPos + 1 >= inLen || inBuffer.charAt(++nextPos) == '/');
       }
+      nextPos++;
+      end |= (nextPos >= inLen);
     }
     inPos = nextPos;
   }
@@ -253,8 +274,11 @@ public class Sql {
   
   private void formatEndStatement() {
     
-    writeSpace = false;
     inPos++;
+
+    while (outBuffer.length() > 0 && outBuffer.charAt(outBuffer.length() - 1) == ' ') {
+      outBuffer.setLength(outBuffer.length() - 1);
+    }
     
     if (outBuffer.length() > 0) {
       statementList.add(outBuffer.toString());    
