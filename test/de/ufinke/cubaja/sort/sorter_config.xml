@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<config records="1000">
+
+  <sort log="true"
+        logInterval="10"/>
+
+</config>

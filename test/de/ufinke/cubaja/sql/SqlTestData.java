@@ -1,8 +1,8 @@
-package de.ufinke.cubaja.sql.test.basic;
+package de.ufinke.cubaja.sql;
 
 import java.util.*;
 
-public class Data {
+public class SqlTestData {
 
   private int intField;
   private double decimalField;
@@ -11,7 +11,7 @@ public class Data {
   private Date dateField;
   private Date timestampField;
 
-  public Data() {
+  public SqlTestData() {
 
   }
 

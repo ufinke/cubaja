@@ -1,4 +1,4 @@
-package de.ufinke.cubaja.config.test.basic;
+package de.ufinke.cubaja.config;
 
 public interface TestInterface {
 

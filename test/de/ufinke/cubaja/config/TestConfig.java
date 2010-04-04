@@ -1,9 +1,9 @@
-package de.ufinke.cubaja.config.test.basic;
+package de.ufinke.cubaja.config;
 
 import java.util.*;
 import java.math.*;
 
-public class Config {
+public class TestConfig {
 
   private TestEnum enumValue;
   private boolean booleanValue;
@@ -28,9 +28,9 @@ public class Config {
   private BigDecimal bigDecimalValue;
   private Class<?> classValue;
   private TestInterface interfaceValue;
-  private SubConfig sub;
+  private TestSubConfig sub;
 
-  public Config() {
+  public TestConfig() {
 
   }
 
@@ -254,12 +254,12 @@ public class Config {
     this.interfaceValue = interfaceValue;
   }
 
-  public SubConfig getSub() {
+  public TestSubConfig getSub() {
 
     return sub;
   }
 
-  public void setSub(SubConfig sub) {
+  public void setSub(TestSubConfig sub) {
 
     this.sub = sub;
   }

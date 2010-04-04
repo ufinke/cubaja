@@ -1,13 +1,12 @@
-package de.ufinke.cubaja.sql.test.basic;
+package de.ufinke.cubaja.sql;
 
 import de.ufinke.cubaja.config.*;
-import de.ufinke.cubaja.sql.*;
 
-public class Config {
+public class SqlTestConfig {
 
   private DatabaseConfig database;
 
-  public Config() {
+  public SqlTestConfig() {
 
   }
 

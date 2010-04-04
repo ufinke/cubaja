@@ -1,54 +1,43 @@
-package de.ufinke.cubaja.sql.test.basic;
+package de.ufinke.cubaja.sql;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import de.ufinke.cubaja.*;
 import de.ufinke.cubaja.config.*;
-import de.ufinke.cubaja.sql.*;
 import java.util.*;
 
-public class Main extends TestClass {
+public class SqlTest {
 
+  static private TestEnvironment environment;
+  
+  @BeforeClass
+  static public void environment() throws Exception {
+    
+    environment = new TestEnvironment("sql");
+  }
+    
   private Database database;
   private Date date;
   private Date timestamp;
   
   @Test
-  public void testBasic() {
+  public void basicTest() throws Exception {
     
-    try {
-      createDates();
-      connect();
-      createTable();
-      insertSomeRows();
-      selectOneRow();
-      disconnect();
-    } catch (Throwable t) {
-      t.printStackTrace();
-      fail(t.getMessage());
-    }
+    connect();
+    createTable();
+    insertSomeRows();
+    selectOneRow();
+    selectCursor();
+    disconnect();
   }
-  
+
   private void connect() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(getResourceName("config"));
-    Config config = configurator.configure(new Config());
+    configurator.setBaseName(environment.getBaseName("config"));
+    configurator.addPropertyProvider(environment.getProperties());
+    SqlTestConfig config = configurator.configure(new SqlTestConfig());
     database = new Database(config.getDatabase());
-  }
-  
-  private void disconnect() throws Exception {
-    
-    database.close();
-  }
-  
-  private void createTable() throws Exception {
-
-    database.execute("drop table basic_data", 1051);
-    database.execute(new Sql(getClass(), "create_table"));
-  }
-  
-  private void createDates() {
     
     Calendar cal = Calendar.getInstance();
     
@@ -68,6 +57,17 @@ public class Main extends TestClass {
     timestamp = cal.getTime();
   }
   
+  private void disconnect() throws Exception {
+    
+    database.close();
+  }
+  
+  private void createTable() throws Exception {
+
+    database.execute("drop table basic_data", 1051);
+    database.execute(new Sql(getClass(), "create_table"));
+  }
+  
   private void insertSomeRows() throws Exception {
     
     Sql sql = new Sql().
@@ -82,9 +82,9 @@ public class Main extends TestClass {
     
     Update insert = database.createUpdate(sql);
 
-    Data data = null;
+    SqlTestData data = null;
     
-    data = new Data();
+    data = new SqlTestData();
     data.setIntField(1);
     data.setDecimalField(1.23);
     data.setCharField('x');
@@ -94,7 +94,7 @@ public class Main extends TestClass {
     insert.setVariables(data);
     insert.addBatch();
     
-    data = new Data();
+    data = new SqlTestData();
     data.setIntField(2);
     data.setDecimalField(2.23);
     data.setCharField('y');
@@ -112,13 +112,29 @@ public class Main extends TestClass {
   
   private void selectOneRow() throws Exception {
     
-    Data data = database.select("select * from basic_data where int_field = 1", Data.class);
+    SqlTestData data = database.select("select * from basic_data where int_field = 1", SqlTestData.class);
     assertEquals(1, data.getIntField());
     assertEquals(1.23, data.getDecimalField(), 0.0001);
     assertEquals('x', data.getCharField());
     assertEquals("hello", data.getStringField());
     assertEquals(date, data.getDateField());
     assertEquals(timestamp, data.getTimestampField());
+  }
+  
+  private void selectCursor() throws Exception {
+
+    Sql sql = new Sql(getClass(), "select");
+    sql.resolve("fromConstant", "1");
+    sql.resolve("toConstant", "100");
+    
+    int sum = 0;
+    Query query = database.createQuery(sql);
+    for (SqlTestData data : query.cursor(SqlTestData.class)) {
+      sum += data.getIntField();
+    }
+    query.close();
+    
+    assertEquals(3, sum);
   }
   
 }

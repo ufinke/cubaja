@@ -1,10 +1,10 @@
-package de.ufinke.cubaja.config.test.basic;
+package de.ufinke.cubaja.config;
 
-public class SubConfig {
+public class TestSubConfig {
 
   private int[] numbers;
 
-  public SubConfig() {
+  public TestSubConfig() {
 
   }
 

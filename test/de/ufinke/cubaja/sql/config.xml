@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+
+<config>
+
+  <database driver="${sqlDriver}"
+            url="${sqlUrl}"
+            user="${sqlUser}"
+            password="${sqlPassword}"
+            log="true"/>
+            
+</config>

@@ -1,36 +1,27 @@
-package de.ufinke.cubaja.config.test.basic;
+package de.ufinke.cubaja.config;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import de.ufinke.cubaja.*;
-import de.ufinke.cubaja.config.*;
 import java.util.*;
 import java.math.*;
 
-public class Main extends TestClass {
+public class ConfiguratorTest {
 
-  private Config config;
+  static private TestEnvironment environment;
+
+  @BeforeClass
+  static public void environment() throws Exception {
+    
+    environment = new TestEnvironment("config");
+  }
   
   @Test
-  public void testBasic() {
-    
-    try {
-      readConfig();
-      compareValues();
-    } catch (Throwable t) {
-      t.printStackTrace();
-      fail(t.getMessage());
-    }
-  }
-  
-  private void readConfig() throws Exception {
+  public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(getResourceName("config"));
-    config = configurator.configure(new Config());
-  }
-  
-  private void compareValues() {
+    configurator.setBaseName(environment.getBaseName("basic_config"));
+    TestConfig config = configurator.configure(new TestConfig());
     
     assertEquals(TestEnum.A, config.getEnumValue());
     assertEquals(101, config.getByteValue());
@@ -56,7 +47,7 @@ public class Main extends TestClass {
     assertEquals(new BigInteger("12345"), config.getBigIntegerValue());
     assertEquals(new BigDecimal("-12345.67"), config.getBigDecimalValue());
     
-    SubConfig sub = config.getSub();
+    TestSubConfig sub = config.getSub();
     int[] numbers = sub.getNumbers();
     assertEquals(2, numbers.length);
     assertEquals(1, numbers[0]);

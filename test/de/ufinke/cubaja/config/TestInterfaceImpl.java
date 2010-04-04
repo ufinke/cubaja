@@ -1,4 +1,5 @@
-package de.ufinke.cubaja.config.test.basic;
+package de.ufinke.cubaja.config;
+
 
 public class TestInterfaceImpl implements TestInterface {
 
