@@ -9,35 +9,40 @@ import java.util.*;
 public class SqlTest {
 
   static private TestEnvironment environment;
-  
+  static private Database database;
+    
   @BeforeClass
   static public void environment() throws Exception {
     
     environment = new TestEnvironment("sql");
-  }
-    
-  private Database database;
-  private Date date;
-  private Date timestamp;
-  
-  @Test
-  public void basicTest() throws Exception {
-    
-    connect();
-    createTable();
-    insertSomeRows();
-    selectOneRow();
-    selectCursor();
-    disconnect();
-  }
-
-  private void connect() throws Exception {
     
     Configurator configurator = new Configurator();
     configurator.setBaseName(environment.getBaseName("config"));
     configurator.addPropertyProvider(environment.getProperties());
     SqlTestConfig config = configurator.configure(new SqlTestConfig());
     database = new Database(config.getDatabase());
+  }
+
+  @AfterClass
+  static public void disconnect() throws Exception {
+
+    database.close();
+  }
+  
+  @Test
+  public void basicTest() throws Exception {
+
+    setConstants();
+    createTable();
+    insertSomeRows();
+    selectOneRow();
+    selectCursor();
+  }
+
+  private Date date;
+  private Date timestamp;
+  
+  public void setConstants() throws Exception {
     
     Calendar cal = Calendar.getInstance();
     
@@ -55,11 +60,6 @@ public class SqlTest {
     cal.set(Calendar.MINUTE, 21);
     cal.set(Calendar.SECOND, 22);
     timestamp = cal.getTime();
-  }
-  
-  private void disconnect() throws Exception {
-    
-    database.close();
   }
   
   private void createTable() throws Exception {

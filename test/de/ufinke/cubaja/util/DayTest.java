@@ -53,4 +53,70 @@ public class DayTest {
     assertEquals(31, day.day());
   }
   
+  @Test
+  public void addWorkdays() {
+    
+    Day day = new Day(2010, 4, 3);
+    day.addWorkdays(5, holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(12, day.day());
+    
+    day = new Day(2010, 4, 1);
+    day.addWorkdays(-5, holidays);
+    assertEquals(2010, day.year());
+    assertEquals(3, day.month());
+    assertEquals(25, day.day());
+  }
+  
+  @Test
+  public void addYears() {
+    
+    Day day = new Day(2010, 4, 3);
+    day.addYears(4);
+    assertEquals(2014, day.year());
+    assertEquals(4, day.month());
+    assertEquals(3, day.day());
+  }
+  
+  @Test
+  public void adjustFirstDayOfMonth() {
+    
+    Day day = new Day(2059, 1, 15);
+    day.adjustFirstDayOfMonth();
+    assertEquals(2059, day.year());
+    assertEquals(1, day.month());
+    assertEquals(1, day.day());
+  }
+  
+  @Test
+  public void adjustFirstDayOfYear() {
+    
+    Day day = new Day(2056, 12, 6);
+    day.adjustFirstDayOfMonth();
+    assertEquals(2056, day.year());
+    assertEquals(12, day.month());
+    assertEquals(1, day.day());
+  }
+  
+  @Test
+  public void adjustLastDayOfMonth() {
+    
+    Day day = new Day(2059, 2, 15);
+    day.adjustLastDayOfMonth();
+    assertEquals(2059, day.year());
+    assertEquals(2, day.month());
+    assertEquals(28, day.day());
+  }
+  
+  @Test
+  public void adjustLastDayOfYear() {
+    
+    Day day = new Day(2056, 2, 6);
+    day.adjustLastDayOfYear();
+    assertEquals(2056, day.year());
+    assertEquals(12, day.month());
+    assertEquals(31, day.day());
+  }
+  
 }
