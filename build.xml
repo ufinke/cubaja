@@ -83,7 +83,9 @@
     	<fileset dir="${dist}/src">
     		<include name="**/*.properties"/>
       </fileset>
-      <fileset file="./license.txt"/>
+      <fileset dir="${dist}/misc">
+        <include name="license.txt"/>
+      </fileset>
   		<manifest>
   			<attribute name="Project-Name" value="${ant.project.name}"/>
   			<attribute name="Project-Version" value="${version}"/>
@@ -97,18 +99,19 @@
 	
 	<target name="zip" depends="jar, doc">
 	
-    <delete dir="${dist}/classes"/>
-    
     <mkdir dir="${dist}/info"/>
     <copy todir="${dist}/info">
-      <fileset dir=".">
+      <fileset dir="${dist}/misc">
         <include name="license.txt"/>
+        <include name="overview.html"/>
       </fileset>
     </copy>
     
     <zip destfile="${dist}/${tag}.zip">
       <fileset dir="../../dist">
         <include name="${ant.project.name}_${version}/**"/>
+        <exclude name="${ant.project.name}_${version}/classes/**"/>
+        <exclude name="${ant.project.name}_${version}/misc/**"/>
       </fileset>
     </zip>
     
