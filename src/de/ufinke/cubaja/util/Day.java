@@ -129,12 +129,13 @@ public class Day extends GregorianCalendar implements Externalizable {
 
   /**
    * Compares this object to a <tt>Date</tt>.
+   * The comparation takes place without the time components of the date.
    * @param date
    * @return see <tt>java.util.Comparator</tt>
    */
   public int compareTo(Date date) {
     
-    return getTime().compareTo(date);
+    return compareTo(new Day(date));
   }
   
   /**
@@ -427,7 +428,7 @@ public class Day extends GregorianCalendar implements Externalizable {
    */
   public Day adjustNextHoliday(HolidayConfig config) {
 
-    while (config.isHoliday(this)) {
+    while (config.isWorkday(this)) {
       add(DATE, 1);
     }
     return this;
@@ -441,7 +442,7 @@ public class Day extends GregorianCalendar implements Externalizable {
    */
   public Day adjustPreviousHoliday(HolidayConfig config) {
     
-    while (config.isHoliday(this)) {
+    while (config.isWorkday(this)) {
       add(DATE, -1);
     }
     return this;

@@ -4,6 +4,7 @@ import org.junit.*;
 import static org.junit.Assert.*;
 import de.ufinke.cubaja.*;
 import de.ufinke.cubaja.config.*;
+import java.util.*;
 
 public class DayTest {
   
@@ -20,6 +21,17 @@ public class DayTest {
     holidays = configurator.configure(new HolidayConfig());
   }
     
+  @Test
+  public void dateConstructor() {
+    
+    Date date = new Date();
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    Day dayA = new Day(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
+    Day dayB = new Day(date);
+    assertEquals(dayA, dayB);
+  }
+  
   @Test
   public void addDays() {
     
@@ -117,6 +129,167 @@ public class DayTest {
     assertEquals(2056, day.year());
     assertEquals(12, day.month());
     assertEquals(31, day.day());
+  }
+  
+  @Test
+  public void adjustNextHoliday() {
+    
+    Day day = new Day(2010, 3, 30);
+    day.adjustNextHoliday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(2, day.day());
+  }
+  
+  @Test
+  public void adjustNextWeekday() {
+    
+    Day day = new Day(2010, 3, 30);
+    day.adjustNextWeekday(Weekday.MONDAY);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(5, day.day());
+  }
+  
+  @Test
+  public void adjustNextWorkday() {
+    
+    Day day = new Day(2010, 4, 1);
+    day.adjustNextWorkday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(1, day.day());
+    
+    day = new Day(2010, 4, 2);
+    day.adjustNextWorkday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(6, day.day());
+  }
+  
+  @Test
+  public void adjustPreviousHoliday() {
+    
+    Day day = new Day(2010, 3, 30);
+    day.adjustPreviousHoliday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(3, day.month());
+    assertEquals(28, day.day());
+  }
+  
+  @Test
+  public void adjustPreviousWeekday() {
+    
+    Day day = new Day(2010, 3, 30);
+    day.adjustPreviousWeekday(Weekday.MONDAY);
+    assertEquals(2010, day.year());
+    assertEquals(3, day.month());
+    assertEquals(29, day.day());
+  }
+  
+  @Test
+  public void adjustPreviousWorkday() {
+    
+    Day day = new Day(2010, 4, 1);
+    day.adjustPreviousWorkday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(1, day.day());
+    
+    day = new Day(2010, 4, 2);
+    day.adjustPreviousWorkday(holidays);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(1, day.day());
+  }
+  
+  @Test
+  public void compareDate() {
+    
+    Date date = new Date();
+    
+    Day day = new Day(date);
+    assertEquals(0, day.compareTo(date));
+    
+    day.addDays(1);
+    assertEquals(1, day.compareTo(date));
+    
+    day.addDays(-2);
+    assertEquals(-1, day.compareTo(date));
+  }
+  
+  @Test
+  public void testClone() {
+    
+    Day day = new Day();
+    Day clone = day.clone();
+    assertEquals(day, clone);
+  }
+  
+  @Test
+  public void components() {
+    
+    Day day = new Day(2010, 4, 5);
+    assertEquals(2010, day.year());
+    assertEquals(4, day.month());
+    assertEquals(5, day.day());
+    assertEquals(Weekday.MONDAY, day.getWeekday());
+  }
+  
+  @Test
+  public void dayCount() {
+    
+    Day dayA = new Day(2010, 4, 5);
+    
+    Day dayB = new Day(2010, 5, 4);
+    assertEquals(29, dayA.dayCount(dayB));
+    
+    Day dayC = new Day(2010, 3, 5);
+    assertEquals(-31, dayA.dayCount(dayC));
+    
+    Day dayD = dayA.clone().addYears(2);
+    assertEquals(731, dayA.dayCount(dayD));
+  }
+  
+  @Test
+  public void firstDayOfMonth() {
+    
+    Day day = new Day(2010, 4, 5);
+    assertFalse(day.isFirstDayOfMonth());
+    
+    day = new Day(2010, 4, 1);
+    assertTrue(day.isFirstDayOfMonth());
+  }
+  
+  @Test
+  public void lastDayOfMonth() {
+    
+    Day day = new Day(2010, 4, 5);
+    assertFalse(day.isLastDayOfMonth());
+    
+    day = new Day(2010, 4, 30);
+    assertTrue(day.isLastDayOfMonth());
+    
+    day = new Day(2010, 2, 28);
+    assertTrue(day.isLastDayOfMonth());
+    
+    day = new Day(2012, 2, 28);
+    assertFalse(day.isLastDayOfMonth());
+    
+    day = new Day(2012, 2, 29);
+    assertTrue(day.isLastDayOfMonth());
+  }
+  
+  @Test
+  public void workdayHoliday() {
+    
+    Day day = new Day(2010, 4, 5);
+    assertTrue(day.isHoliday(holidays));
+    assertFalse(day.isWorkday(holidays));
+    
+    day = new Day(2010, 4, 6);
+    assertFalse(day.isHoliday(holidays));
+    assertTrue(day.isWorkday(holidays));
   }
   
 }
