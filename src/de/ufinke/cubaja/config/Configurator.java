@@ -12,7 +12,7 @@ import java.util.Stack;
 
 /**
  * Configuration main class.
- * <p/>
+ * <p>
  * When the <tt>configure</tt> method is invoked,
  * and no <tt>NULL</tt> property provider
  * had been added, 
@@ -57,7 +57,7 @@ public class Configurator {
     processEscape = true;
     processProperties = true;
     
-    baseName = System.getProperty("net.sf.batchelor.config.baseName", "config");
+    baseName = System.getProperty("de.ufinke.cubaja.config.baseName", "config");
     loader = new DefaultResourceLoader();
     
     parameterManager = new ParameterManager();
@@ -97,7 +97,7 @@ public class Configurator {
   
   /**
    * Returns a shared map.
-   * <p/>
+   * <p>
    * The map is shared between the
    * application (can be accessed with this method)
    * and all implementors of the {@link StartElementHandler} interface.
@@ -112,12 +112,12 @@ public class Configurator {
   
   /**
    * Sets the base name of XML and property documents.
-   * <p/>
+   * <p>
    * The base name is the name of the XML document to be parsed,
    * without the '<tt>.xml</tt>' extension.
    * There may be an optional properties file with the same 
    * name (and extension '<tt>.properties</tt>').
-   * <p/>
+   * <p>
    * If there is no explicit base name, the name '<tt>config</tt>'
    * will be used by default; with '<tt>config.xml</tt>' as XML document name
    * and '<tt>config.properties</tt>' as name of the 
@@ -143,12 +143,13 @@ public class Configurator {
   
   /**
    * Sets an individual <tt>ResourceLoader</tt>.
-   * <p/>
+   * <p>
    * If no resource loader is explicitly specified,
-   * <tt>Configurator</tt> uses a default resource loader
+   * <tt>Configurator</tt> uses {@link DefaultResourceLoader}
    * which tries to get the XML parser's input from a resource
    * (see {@link java.lang.ClassLoader ClassLoader}) 
    * or from a file in the file system.
+   * The base directory of the implicitly set default resource loader is not set.
    * @param loader an individual resource loader
    */
   public void setResourceLoader(ResourceLoader loader) {
@@ -189,7 +190,7 @@ public class Configurator {
   
   /**
    * Adds a standard property provider.
-   * <p/>
+   * <p>
    * With this method, the sequence of the basic property providers can be set explicitly.
    * @param type the provider's type
    */
@@ -316,7 +317,7 @@ public class Configurator {
   
   /**
    * Adds a parameter factory finder.
-   * <p/>
+   * <p>
    * An individual <tt>ParameterFactoryFinder</tt>
    * may be set to support special parameter types.
    * The instances will be invoked in the descending order of
@@ -333,9 +334,9 @@ public class Configurator {
   
   /**
    * Sets the date pattern.
-   * <p/>
+   * <p>
    * The default pattern is <tt>yyyy-MM-dd</tt>.
-   * <p/>
+   * <p>
    * The pattern may also be set in the XML document
    * with the attribute <tt>datePattern</tt>
    * in a <tt>configSettings</tt> element.
@@ -358,7 +359,7 @@ public class Configurator {
   
   /**
    * Sets constant values for boolean <tt>true</tt>.
-   * <p/>
+   * <p>
    * Default values are <tt>true</tt>, <tt>yes</tt> and <tt>on</tt>.
    * @param trueValues The constants representing <tt>true</tt>
    */
@@ -369,7 +370,7 @@ public class Configurator {
   
   /**
    * Sets constants for boolean <tt>false</tt>.
-   * <p/>
+   * <p>
    * Default values are <tt>false</tt>, <tt>no</tt> and <tt>off</tt>.
    * @param falseValues The constants representing <tt>false</tt>.
    */
@@ -380,16 +381,16 @@ public class Configurator {
 
   /**
    * Specifies the decimal point character.
-   * <p/>
+   * <p>
    * By default, or if the passed Character is <tt>null</tt>,
    * both point and comma are treated as 
    * decimal point characters.
-   * <p/>
+   * <p>
    * If the decimal point character (point or comma) is set explicitly,
    * the other character (comma or point) is 
    * considered to be a grouping character and is ignored
    * when parsing numeric values.
-   * <p/>
+   * <p>
    * The decimal point character may also be set in the XML document
    * with the attribute <tt>decimalPoint</tt>
    * in a <tt>configSettings</tt> element.
@@ -402,9 +403,9 @@ public class Configurator {
   
   /**
    * Enables or disables processing of escape sequences.
-   * <p/>
+   * <p>
    * By default, escape sequence processing is enabled.
-   * <p/>
+   * <p>
    * The switch may also be set in the XML document
    * with the attribute <tt>processEscape</tt>
    * in a <tt>configSettings</tt> element.
@@ -417,9 +418,9 @@ public class Configurator {
   
   /**
    * Enables or disables properties resolving.
-   * <p/>
+   * <p>
    * By default, properties resolving is enabled.
-   * <p/>
+   * <p>
    * The switch may also be set in the XML document
    * with the attribute <tt>processProperties</tt>
    * in a <tt>configSettings</tt> element.

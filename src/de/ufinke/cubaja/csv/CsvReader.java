@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.config.ConfigException;
-import de.ufinke.cubaja.io.ColumnReader;
-import de.ufinke.cubaja.io.RowIterator;
+import de.ufinke.cubaja.util.ColumnReader;
 import de.ufinke.cubaja.util.NoSuchEnumException;
+import de.ufinke.cubaja.util.RowIterator;
 import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 

@@ -594,10 +594,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
              | (buffer[pos++] & 0xFF) << 16
              | (buffer[pos++] & 0xFF) << 8
              | (buffer[pos++] & 0xFF);
-    long result = low;
-    result |= (high << 32);
     position = pos;
-    return result;
+    return (((long) high) << 32) | (low & 0xFFFFFFFFL);
   }
 
   /**

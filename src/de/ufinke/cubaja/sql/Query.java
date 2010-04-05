@@ -18,8 +18,8 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
-import de.ufinke.cubaja.io.ColumnReader;
-import de.ufinke.cubaja.io.RowIterator;
+import de.ufinke.cubaja.util.ColumnReader;
+import de.ufinke.cubaja.util.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
 /**

@@ -1,11 +1,10 @@
 // Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
-package de.ufinke.cubaja.io;
+package de.ufinke.cubaja.util;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import de.ufinke.cubaja.util.IteratorException;
 
 /**
  * <tt>Iterator</tt> over rows of a <tt>ColumnReader</tt>.
