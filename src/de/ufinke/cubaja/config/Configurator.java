@@ -145,11 +145,13 @@ public class Configurator {
    * Sets an individual <tt>ResourceLoader</tt>.
    * <p>
    * If no resource loader is explicitly specified,
-   * <tt>Configurator</tt> uses {@link DefaultResourceLoader}
+   * <tt>Configurator</tt> uses a default resource loader
    * which tries to get the XML parser's input from a resource
    * (see {@link java.lang.ClassLoader ClassLoader}) 
    * or from a file in the file system.
-   * The base directory of the implicitly set default resource loader is not set.
+   * <p>
+   * If you want to load from file system and include XML files with resource names relative to
+   * a base directory, use {@link FileResourceLoader}.
    * @param loader an individual resource loader
    */
   public void setResourceLoader(ResourceLoader loader) {
