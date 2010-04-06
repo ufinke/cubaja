@@ -58,7 +58,7 @@ public class Type {
   }
   
   /**
-   * Defines a type by it's class.
+   * Defines a type by its class.
    * @param type
    */
   public Type(Class<?> type) {
@@ -142,7 +142,7 @@ public class Type {
   }
   
   /**
-   * Returns the type's memory size in words.
+   * Returns the types memory size in words.
    * <tt>long</tt> and <tt>double</tt> have size <tt>2</tt>,
    * <tt>void</tt> has size <tt>0</tt>
    * and all other types have size <tt>1</tt>.

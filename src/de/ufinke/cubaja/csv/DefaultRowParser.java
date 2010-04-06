@@ -219,7 +219,7 @@ public class DefaultRowParser implements RowParser {
   }
   
   /**
-   * Returns whether all column data have zero length.
+   * Tells whether all column data have zero length.
    */
   public boolean isEmptyRow() {
     

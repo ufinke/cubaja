@@ -5,7 +5,7 @@ package de.ufinke.cubaja.cafebabe;
 
 /**
  * Constants representing bit values.
- * Access flags may be combined with a logical <tt>or</tt> operand.
+ * Access flags may be combined with a logical OR operand.
  * @author Uwe Finke
  */
 public interface AccessFlags {

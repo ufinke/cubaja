@@ -340,7 +340,7 @@ public class HolidayConfig {
     }
 
     /**
-     * Returns the holiday's name.
+     * Returns the holidays name.
      * @return name
      */
     public String getName() {

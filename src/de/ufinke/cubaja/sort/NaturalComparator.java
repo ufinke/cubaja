@@ -21,7 +21,7 @@ public class NaturalComparator<D extends Comparable<? super D>> implements Compa
   }
   
   /**
-   * Returns the compare value as defined by <tt>Comparator</tt>.
+   * Returns the comparison result as defined by <tt>Comparator</tt>.
    * A <tt>null</tt> value is less than any other value.
    * @return <tt>&lt;=-1</tt> (a &lt; b), <tt>0</tt> (a = b), or <tt>&gt;=1</tt> (a &gt; b)  
    */

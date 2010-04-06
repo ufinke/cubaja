@@ -208,7 +208,7 @@ public class DatabaseConfig {
   }
   
   /**
-   * Returns whether activities should be log.
+   * Signals whether activities should be log.
    * By default, logging is not enabled.
    * @return log flag
    */

@@ -124,7 +124,7 @@ public abstract class Executor {
   }
 
   /**
-   * Does the application's work.
+   * Does the work.
    * This method has to be implemented in a subclass;
    * it is called by <tt>start</tt>.
    * @throws Exception

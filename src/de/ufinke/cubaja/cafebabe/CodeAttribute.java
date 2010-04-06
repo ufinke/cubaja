@@ -17,7 +17,7 @@ import de.ufinke.cubaja.util.Text;
  * <p>
  * Java instructions are added to the code by calling 
  * methods which generate the opcodes and their parameters.
- * Like in assembler languages, labels may be defined to mark branch target points.
+ * Just as in assembler languages, labels may be defined to mark branch target points.
  * Local variables may be identified by their index number, or by name.
  * Constant pool entries are added automatically when needed.
  * <p>

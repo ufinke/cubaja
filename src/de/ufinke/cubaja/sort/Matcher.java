@@ -12,7 +12,8 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Matches any number of sorted sources.
- * All sources must have been previously sorted by key in the same order.
+ * <p>
+ * All sources have to be previously sorted by key in the same order.
  * If applicable, use the same <tt>Comparator</tt> for sorting and matching.
  * Keys may be <tt>null</tt>;
  * the <tt>Comparator</tt> should allow for <tt>null</tt> values
@@ -21,7 +22,7 @@ import de.ufinke.cubaja.util.Text;
  * The distinct keys are presented to the application by an <tt>Iterator</tt> in an ascending order
  * (ascending as defined by the <tt>Comparator</tt>). 
  * For every key, the application can get the matching data objects from the {@link MatchSource} instances.
- * The <tt>Matcher</tt> ensures that any matching data objects that are not read from the
+ * The <tt>Matcher</tt> ensures that any matching data objects which are not read from the
  * <tt>MatchSource</tt> are skipped before the next key in sequence is determined,
  * which is the lowest next key of all sources.
  * @author Uwe Finke

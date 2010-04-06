@@ -29,7 +29,7 @@ public class Update extends PreparedSql {
 
   /**
    * Executes the statement immediately.
-   * Calls the <tt>PreparedStatement</tt>'s <tt>executeUpdate</tt> method.
+   * Calls the <tt>PreparedStatement</tt>s <tt>executeUpdate</tt> method.
    * @return number of concerned rows.
    * @throws SQLException
    */
@@ -40,12 +40,12 @@ public class Update extends PreparedSql {
   
   /**
    * Adds a row to a bulk operation.
-   * If the configuration's <tt>batchSize</tt> value
+   * If the configurations <tt>batchSize</tt> value
    * has been reached, this method  
-   * calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method
+   * calls the <tt>PreparedStatement</tt>s <tt>executeBatch</tt> method
    * automatically.
    * After that, the
-   * <tt>PreparedStatement</tt>'s <tt>addBatch</tt> method is called.
+   * <tt>PreparedStatement</tt>s <tt>addBatch</tt> method is called.
    * @return number of concerned rows (result from <tt>executeBatch</tt>)
    * @throws SQLException
    */
@@ -70,7 +70,7 @@ public class Update extends PreparedSql {
   
   /**
    * Writes the rows supplied by <tt>addBatch</tt> to the database.
-   * Calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method.
+   * Calls the <tt>PreparedStatement</tt>s <tt>executeBatch</tt> method.
    * @return number of concerned rows (not including the result of intermediate calls triggered automatically by <tt>addBatch</tt>)
    * @throws SQLException
    */

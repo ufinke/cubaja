@@ -9,7 +9,7 @@ import java.util.Map;
  * Provider of <tt>ElementFactory</tt>s.
  * A configuration node which implements this interface is able to choose
  * the source of subordinate node instances dynamically.
- * This feature is needed when the classes that represent XML sub-elements
+ * This feature is needed when the classes which represent XML sub-elements
  * are not known at compile time, e.g. when they depend on other configuration parameters.
  * @author Uwe Finke
  */

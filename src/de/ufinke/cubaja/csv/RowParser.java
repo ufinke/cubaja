@@ -49,7 +49,7 @@ public interface RowParser {
   public int getColumnCount();
   
   /**
-   * Returns whether all columns are empty.
+   * Tells whether all columns are empty.
    * @return flag
    */
   public boolean isEmptyRow();

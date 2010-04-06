@@ -22,7 +22,7 @@ public class Day extends GregorianCalendar implements Externalizable {
 
   /**
    * Creates a <tt>Date</tt> set to midnight of the current day.
-   * @return today's <tt>Day</tt> instance
+   * @return today <tt>Day</tt> instance
    */
   static public Date today() {
     
@@ -107,7 +107,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Writes this object's values to a stream.
+   * Writes this objects values to a stream.
    */
   public void writeExternal(ObjectOutput out) throws IOException {
 
@@ -117,7 +117,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
 
   /**
-   * Reads this object's values from a stream.
+   * Reads this objects values from a stream.
    */
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -139,7 +139,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this object's year value.
+   * Returns this objects year value.
    * @return year
    */
   public int year() {
@@ -148,7 +148,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this object's month value, ranging from <tt>1</tt> to <tt>12</tt>.
+   * Returns this objects month value, ranging from <tt>1</tt> to <tt>12</tt>.
    * @return month
    */
   public int month() {
@@ -157,7 +157,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this object's day of month value.
+   * Returns this objects day of month value.
    * @return day of month
    */
   public int day() {
@@ -224,7 +224,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns whether this day is the first day of a month.
+   * Tells whether this day is the first day of a month.
    * @return flag
    */
   public boolean isFirstDayOfMonth() {
@@ -233,7 +233,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns whether this day is the last day of a month.
+   * Tells whether this day is the last day of a month.
    * @return flag
    */
   public boolean isLastDayOfMonth() {
@@ -242,7 +242,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns whether this day is the first day of a year.
+   * Tells whether this day is the first day of a year.
    * @return flag
    */
   public boolean isFirstDayOfYear() {
@@ -251,7 +251,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns wheter this day is the last day of a year.
+   * Tells whether this day is the last day of a year.
    * @return flag
    */
   public boolean isLastDayOfYear() {

@@ -80,7 +80,7 @@ public class Sql {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The file names extension must be <tt>sql</tt> (lower case).
    * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass
@@ -399,7 +399,7 @@ public class Sql {
    * This may be any class, but usually it will be the class which uses
    * the SQL (then the parameter simply is '<tt>getClass()</tt>').
    * <p>
-   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The file names extension must be <tt>sql</tt> (lower case).
    * The <tt>sqlResource</tt> parameter contains the file name without extension
    * (the extension is appended by this method automatically).
    * There is no prefix or path required when the resource resides in the same package

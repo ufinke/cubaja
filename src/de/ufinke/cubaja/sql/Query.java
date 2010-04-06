@@ -67,7 +67,7 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Returns the result set's meta data.
+   * Returns the result sets meta data.
    * @return meta data
    * @throws SQLException
    */
@@ -778,7 +778,7 @@ public class Query extends PreparedSql implements ColumnReader {
   /**
    * Reads a single row and closes the result set.
    * @param <D>
-   * @param clazz the data object's class
+   * @param clazz the data objects class
    * @return data object
    * @throws SQLException
    */

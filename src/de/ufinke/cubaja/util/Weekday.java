@@ -38,7 +38,7 @@ public enum Weekday {
   }
   
   /**
-   * Returns the weekday's name.
+   * Returns the weekday name.
    * The name is localized according to resource bundle entries.
    */
   public String toString() {
@@ -56,7 +56,7 @@ public enum Weekday {
   static private Text text;
   
   /**
-   * Returns a date's weekday.
+   * Returns the weekday of a date.
    * @param date
    * @return weekday
    */
@@ -68,7 +68,7 @@ public enum Weekday {
   }
   
   /**
-   * Returns the calendar value's weekday.
+   * Returns a weekday corresponding to a calendar value.
    * @param cal
    * @return weekday
    */

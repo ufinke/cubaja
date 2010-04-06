@@ -20,12 +20,12 @@ import de.ufinke.cubaja.util.Text;
  * <tt>Sorter</tt> implements the appropriate <tt>Iterable</tt>.
  * <p>
  * The implementation uses up to 3 threads:
- * the first is the application's thread that adds and retrieves
+ * the first is the application thread that adds and retrieves
  * objects, the second sorts and merges arrays and the third
  * handles IO to and from a temporary file (if needed).
  * <p>
  * It is strongly recommended to control the maximum heap size
- * with the JVM's <tt>Xmx</tt> runtime parameter.
+ * with the JVM <tt>Xmx</tt> runtime parameter.
  * A value of about <tt>1000M</tt> should be sufficient 
  * to sort over 100 million medium sized objects, 
  * assumed that the application doesn't need much heap space

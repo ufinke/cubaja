@@ -4,13 +4,13 @@
 package de.ufinke.cubaja.sql;
 
 /**
- * Interface needed internally for <tt>PreparedSql.setVariables()</tt>.
+ * Interface needed internally for bytecode generation.
  * @author Uwe Finke
  */
 public interface VariableSetter {
 
   /**
-   * Sets variables of a prepared statement to data object's values.
+   * Sets variables of a prepared statement to data objects values.
    * @param ps
    * @param dataObject
    * @throws Exception

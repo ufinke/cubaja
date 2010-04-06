@@ -43,7 +43,7 @@ public class ConfigException extends SAXException {
   /**
    * Returns message text.
    * If this object has no own message text, the
-   * cause's message text is returned.
+   * message text of the cause is returned.
    * @return message text
    */
   public String getMessage() {
@@ -58,7 +58,7 @@ public class ConfigException extends SAXException {
   /**
    * Returns localized message text.
    * If this object has no own localized message text, the
-   * cause's localized message text is returned.
+   * localized message text of the cause is returned.
    * @return message text
    */
   public String getLocalizedMessage() {

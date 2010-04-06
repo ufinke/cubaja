@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * Internally needed interface.
+ * Interface needed internally for bytecode generation.
  * @author Uwe Finke
  */
 public interface ObjectWriter {

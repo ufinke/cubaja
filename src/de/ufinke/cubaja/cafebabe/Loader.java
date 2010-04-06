@@ -16,7 +16,7 @@ import java.io.FileOutputStream;
  * by {@link java.lang.ClassLoader#loadClass loadClass}.
  * <p>
  * There may be a system property <tt>de.ufinke.cubaja.cafebabe.dump</tt> with a
- * path name in it's value. If present, the 'loaded' bytecode will be dumped into that
+ * path name as its value. If the property exists, the 'loaded' bytecode will be dumped into the given
  * directory.
  * <p>
  * Because of the dependencies between <tt>setGenerator</tt> and
@@ -28,7 +28,7 @@ public class Loader extends ClassLoader {
   /**
    * Convenience method to generate and load a class.
    * <p>
-   * Creates a <tt>Loader</tt> with the <tt>generator</tt>'s <tt>ClassLoader</tt> as parent loader
+   * Creates a <tt>Loader</tt> with the <tt>generator</tt>s <tt>ClassLoader</tt> as parent loader
    * and passes the <tt>generator</tt> to it.
    * The name of the generated class is <tt>'Generated'</tt> plus
    * the given <tt>nameSuffix</tt>es, each separated by a hyphen.

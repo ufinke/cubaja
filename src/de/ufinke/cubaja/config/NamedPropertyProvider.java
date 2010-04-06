@@ -17,8 +17,8 @@ public interface NamedPropertyProvider {
 
   /**
    * Returns a property value.
-   * @param name the property's name
-   * @param parms name/value-pairs specified by <tt>configProperty</tt>'s <tt>parm</tt> sub-elements
+   * @param name the name of the property
+   * @param parms name/value-pairs specified by <tt>parm</tt> sub-elements of <tt>configProperty</tt>
    * @return the property value
    * @throws ConfigException
    */

@@ -10,21 +10,21 @@ import java.lang.annotation.Target;
 
 /**
  * Defines the pattern of attribute value or element content strings.
- * <p/>
- * When a <tt>Pattern</tt> annotation is present for a setter / adder
- * method of a basic parameter type, the XML's attribute value or normalized element content string
- * is checked against the specified pattern by means of the <tt>String</tt>'s
+ * <p>
+ * When a <tt>Pattern</tt> annotation exists for a setter / adder
+ * method of a basic parameter type, the XML attribute value or normalized element content string
+ * is checked against the specified pattern by means of the <tt>String</tt>s
  * <tt>matches</tt> method.
  * If the value doesn't match the regular expression of the pattern, an exception will be thrown.
  * The message includes the hint. If no hint is specified, the original pattern string will be used.
  * <p/>
  * For element nodes, there is no pattern check.
- * <p/>
+ * <p>
  * For <tt>java.util.Date</tt> parameter types, the pattern is not a regular expression.
  * It is used for parsing
- * and must be formed according
- * to the rules of <tt>java.text.SimpleDateFormat</tt>.
- * <p/>
+ * and has to be formed according
+ * to the rules of {@link java.text.SimpleDateFormat}.
+ * <p>
  * For numeric parameter types, the pattern is not used for parsing but
  * can be used to limit values to an explicit number of digits.  
  * @author Uwe Finke

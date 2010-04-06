@@ -169,7 +169,7 @@ public class SortConfig {
   }
 
   /**
-   * Determines if sort activities should be logged.
+   * Determines if sort activities shall be logged.
    * Default is no logging.
    * If logging is set to <tt>true</tt>
    * debug and trace messages are written
@@ -221,7 +221,7 @@ public class SortConfig {
    * before it is written to temporary file.
    * When retrieving the sorted objects (during the get phase)
    * the presorted runs are merged.
-   * The number of objects which is hold by the JVM's heap
+   * The number of objects which is hold by the JVM heap
    * is approximately two times the run size.
    * Default run size is 131072.
    * @param runSize
@@ -244,7 +244,7 @@ public class SortConfig {
    * Sets the block size in bytes for temporary file.
    * Serialized objects are written to disk in a block of bytes.
    * The content of the internal buffer is written
-   * when the buffer's size exceeds the block size.
+   * when the buffers size exceeds the block size.
    * Default block size is <tt>15360</tt> (15K).
    * As result, the effective block size is between 15K and 16K for normal sized data objects.
    * @param blockSize

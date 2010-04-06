@@ -43,7 +43,7 @@ public class GenMethod implements Generatable, AccessFlags {
   }
   
   /**
-   * Gives access to the method's code.
+   * Gives access to the methods code.
    * @return code attribute
    */
   public CodeAttribute getCode() {

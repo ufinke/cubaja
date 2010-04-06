@@ -87,7 +87,7 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Signals whether this source matches the <tt>Matcher</tt>'s key.
+   * Tells whether this source matches the <tt>Matcher</tt>s key.
    * @return <tt>true</tt> when matching, <tt>false</tt> otherwise
    */
   public boolean matches() {

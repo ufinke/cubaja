@@ -27,7 +27,7 @@ import java.io.OutputStream;
  * read operation reads data from. The position increments 
  * automatically when reading or writing.
  * The size is the maximum count of filled bytes within the buffer; 
- * it may be less than it's capacity.
+ * it may be less than its capacity.
  * The size is set automatically during write operations
  * according to the resulting position.
  * Read operations never can read beyond the size. If such happens,
@@ -152,7 +152,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   
   /**
    * Retrieves the current size.
-   * The buffer's size is determined by the highest reached position.
+   * The buffers size is determined by the highest reached position.
    * There are some methods which reset the size to zero.
    * @return size
    */
@@ -176,7 +176,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
    * It is expected to be <tt>0 <= from <= to <= size</tt>.
    * If <tt>from = 0</tt>, then size and position are both set to the <tt>to</tt> value.
    * If <tt>from > 0</tt>, then all bytes between from (inclusive) and to (exclusive) 
-   * are copied to the buffer's beginning; size and position are set to the amount of copied
+   * are copied to the buffers beginning; size and position are set to the amount of copied
    * bytes.
    * @param from
    * @param to
@@ -205,7 +205,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Copies the buffer's content up to the current size to a byte array.
+   * Copies the buffers content up to the current size to a byte array.
    * @return byte array
    */
   public byte[] toByteArray() {
@@ -491,7 +491,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
 
   /**
-   * Advances the buffer's position.
+   * Advances the buffers position.
    */
   public int skipBytes(int n) throws IOException {
 
@@ -682,8 +682,8 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
 
   /**
    * Reads up to <tt>len</tt> bytes from a stream into this buffer.
-   * The starting position within this buffer is it's current position.
-   * The stream's <tt>read(byte[] b, int off, int len)</tt> method
+   * The starting position within this buffer is its current position.
+   * The streams <tt>read(byte[] b, int off, int len)</tt> method
    * is called repeatedly until all bytes requested with the 
    * <tt>len</tt> parameter are read or a <tt>-1</tt> is returned from the stream.
    * @param in

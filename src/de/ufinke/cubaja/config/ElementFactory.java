@@ -8,8 +8,7 @@ import java.lang.reflect.Method;
 
 /**
  * Dynamic factory for an element node instance.
- * An instance must be supplied by a superior element node instance
- * which implements {@link ElementFactoryProvider}.
+ * An instance is supplied by an implementation of {@link ElementFactoryProvider}.
  * @author Uwe Finke
  */
 public interface ElementFactory {

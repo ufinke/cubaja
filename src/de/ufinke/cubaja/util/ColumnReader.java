@@ -8,7 +8,7 @@ import java.math.BigInteger;
 import java.util.Date;
 
 /**
- * Common interface for classes that read rows and columns.
+ * Common interface for classes which read rows and columns.
  * @author Uwe Finke
  */
 public interface ColumnReader {
@@ -381,7 +381,7 @@ public interface ColumnReader {
    * column names. See {@link de.ufinke.cubaja.util.Util#createMethodName createMethodName} 
    * for details.
    * The setter methods must have a <tt>void</tt> return type and exactly one parameter
-   * of a type supported by one of the source's <tt>read</tt> 
+   * of a type supported by one of the sources <tt>read</tt> 
    * methods.
    * @param <D> data type
    * @param clazz

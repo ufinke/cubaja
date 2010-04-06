@@ -286,7 +286,7 @@ public class Util {
   }
   
   /**
-   * Returns the file's path.
+   * Returns the file path.
    * Returns the canonical path, or - in case of failure - the absolute path.
    * @param file
    * @return path

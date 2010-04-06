@@ -35,7 +35,7 @@ import de.ufinke.cubaja.util.Util;
  * <p>
  * The position of the first column is <tt>1</tt>, not <tt>0</tt>.
  * <p>
- * The first row is read automatically if the configuration's
+ * The first row is read automatically if the configurations
  * <tt>hasHeaderRow</tt> method returns <tt>true</tt>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
@@ -72,8 +72,8 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Constructor with configuration.
-   * When using this constructor,
-   * we have to set the configuration's file property.
+   * If you use this constructor,
+   * you have to set the configurations <tt>file</tt> property.
    * @param config
    * @throws IOException
    * @throws ConfigException
@@ -223,7 +223,7 @@ public class CsvReader implements ColumnReader {
   }
   
   /**
-   * Returns whether the retrieved row is empty.
+   * Tells whether the retrieved row is empty.
    * A row is assumed to be empty when all valid column data have zero length.
    * @return flag
    * @throws CsvException

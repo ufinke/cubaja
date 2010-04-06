@@ -42,7 +42,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>header</tt></td>
- *     <td align="left" valign="top">the exact content of this column's header line</td>
+ *     <td align="left" valign="top">the exact content of this columns header line</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>

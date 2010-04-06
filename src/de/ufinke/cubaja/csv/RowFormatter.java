@@ -22,7 +22,7 @@ public interface RowFormatter {
   public void init(Writer out, CsvConfig config) throws IOException, CsvException;
   
   /**
-   * Terminate a row.
+   * Terminates a row.
    * Normally, the formatter starts a new line.
    * @throws IOException
    * @throws CsvException
@@ -30,7 +30,7 @@ public interface RowFormatter {
   public void writeRow() throws IOException, CsvException;
   
   /**
-   * Write a column including any needed separator and escape characters.
+   * Writes a column including any needed separator and escape characters.
    * @param content
    * @throws IOException
    * @throws CsvException

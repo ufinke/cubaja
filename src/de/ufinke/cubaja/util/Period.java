@@ -63,7 +63,7 @@ public class Period implements Externalizable, Comparable<Period> {
   }
   
   /**
-   * Returns the object's content as string.
+   * Returns the objects content as string.
    */
   public String toString() {
 

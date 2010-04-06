@@ -36,8 +36,8 @@ public class CsvWriter {
   
   /**
    * Constructor with configuration.
-   * When using this constructor,
-   * we have to set the configuration's file property.
+   * If you use this constructor,
+   * you have to set the configurations <tt>file</tt> property.
    * @param config
    * @throws IOException
    * @throws ConfigException

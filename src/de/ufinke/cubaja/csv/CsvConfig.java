@@ -538,7 +538,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns whether the CSV input has a header row. This is <tt>true</tt>
+   * Tells whether the CSV input has a header row. This is <tt>true</tt>
    * when we set the header attribute explicitly to <tt>true</tt>, or when
    * we define a header property on at least one column and the header attribute
    * is not set explicitly to <tt>false</tt>.

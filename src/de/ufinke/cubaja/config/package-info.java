@@ -15,20 +15,27 @@
  * An arbitrary configuration object represents
  * an XML element. Like XML elements, the element node objects may be nested.
  * For every type of XML element, we code a separate class.
- * These classes have 'setter' and 'adder' methods; that is, their names begin
+ * These classes have 'setter' and 'adder' methods; their names begin
  * with <tt>set</tt> or <tt>add</tt>, followed by the name of an XML attribute
- * or the tag name of an XML element. The difference between setter and adder methods is, 
+ * or the tag name of an XML element. The difference between setter and adder methods is 
  * that setters may be invoked only once (for an attribute value or a unique subelement),
  * whereas adders may be invoked any number of times. 
  * Within an adder method, the passed parameter is typically added to a collection.
  * <p>
  * Setter and adder methods must have a <tt>void</tt> return type and exactly one
  * parameter. Builtin supported parameter types are
- * <tt>Enum</tt>s, all primitive types and their corresponding object classes, 
- * <tt>String</tt>, <tt>java.util.Date</tt>, <tt>java.math.BigInteger</tt>,
- * <tt>java.math.BigDecimal</tt>, <tt>Class</tt> and interfaces.
+ * <ul>
+ *   <li>all primitive types and their corresponding object classes</li>
+ *   <li><tt>String</tt></li> 
+ *   <li><tt>java.util.Date</li>
+ *   <li><tt>java.math.BigInteger</tt></li>
+ *   <li><tt>java.math.BigDecimal</tt></li>
+ *   <li><tt>Enum</tt>s</li>
+ *   <li><tt>Class</tt></li>
+ *   <li>interface implementing classes</li>
+ * </ul>
  * Other types with a public parameterless constructor are considered to be element nodes.
- * Those types need not to extend or implement supertypes or interfaces.
+ * Those types do not need to extend or implement supertypes or interfaces.
  * But if such a type implements 
  * {@link de.ufinke.cubaja.config.StartElementHandler StartElementHandler},
  * {@link de.ufinke.cubaja.config.EndElementHandler} 
@@ -46,10 +53,10 @@
  * into separate trimmed strings. The strings are processed in the same way as single values
  * and collected in an array.
  * <p>
- * The application passes it's root configuration object to the
+ * The application passes its root configuration object to the
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
  * method of a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
- * Before doing so, the 
+ * Before processing, the 
  * {@link de.ufinke.cubaja.config.Configurator Configurator} may be customized,
  * e.g. by setting the base name of the XML source,
  * applying properties, setting patterns, or providing 
@@ -71,7 +78,7 @@
  * The properties search order is defined by the order of  
  * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
- * if they where not defined explicitly and there is no <tt>NULL</tt> property provider.
+ * if they were not defined explicitly and there is no <tt>NULL</tt> property provider.
  * The default order is as follows:
  * <ol>
  *   <li>
@@ -129,8 +136,8 @@
  * <p>
  * Named property providers are defined by the application, or within the XML. For the latter,
  * code an element '<tt>configPropertyProvider</tt>' with the attributes
- * '<tt>name</tt>' (the provider's name) and '<tt>class</tt>' (the implementing class name).
- * The class must be in the classpath.
+ * '<tt>name</tt>' (the name of the provider) and '<tt>class</tt>' (the implementing class name).
+ * The class has to be in the classpath.
  * <p>
  * <b>Includes</b>
  * <p>
@@ -141,7 +148,7 @@
  * </p>
  * <b>Settings</b>
  * <p>
- * There is another special element named <tt>configSettings</tt> to set the parser's behaviour.
+ * There is another special element named <tt>configSettings</tt> to set the parsers behaviour.
  * Possible attributes are
  * <ol>
  *   <li>

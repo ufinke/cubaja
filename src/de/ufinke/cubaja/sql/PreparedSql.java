@@ -935,7 +935,7 @@ public class PreparedSql {
 
   /**
    * Sets variables to values provided in a data object.
-   * The data object's class must have getter methods 
+   * The data objects class must have getter methods 
    * with names matching to variable names.
    * @param dataObject
    * @throws Exception

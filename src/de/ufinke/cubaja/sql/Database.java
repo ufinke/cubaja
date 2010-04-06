@@ -121,7 +121,7 @@ public class Database {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The file names extension must be <tt>sql</tt> (lower case).
    * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * <p>
@@ -213,7 +213,7 @@ public class Database {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The file names extension must be <tt>sql</tt> (lower case).
    * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass
@@ -282,7 +282,7 @@ public class Database {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file name's extension must be <tt>sql</tt> (lower case).
+   * The file names extension must be <tt>sql</tt> (lower case).
    * The <tt>sqlResource</tt> parameter contains only the
    * plain file name without extension and without path.
    * @param packageClass

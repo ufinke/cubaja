@@ -11,9 +11,9 @@ import java.lang.annotation.Target;
 /**
  * Marks an element or attribute as mandatory.
  * <p/>
- * When we want to force specification of an element
+ * When you intend to force specification of an element
  * or an attribute in the XML document,
- * we can mark the appropriate setter or adder method in our
+ * you should mark the appropriate setter or adder method in our
  * element node class 
  * with this annotation.
  * @author Uwe Finke

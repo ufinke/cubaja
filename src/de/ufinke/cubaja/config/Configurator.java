@@ -16,7 +16,7 @@ import java.util.Stack;
  * When the <tt>configure</tt> method is invoked,
  * and no <tt>NULL</tt> property provider
  * had been added, 
- * all not already specified default propery providers are
+ * all default property providers not already specified are
  * added automatically in the order 
  * <tt>SYSTEM</tt>, <tt>BASE_PROPERTIES</tt>,
  * <tt>BASE_XML</tt>, and <tt>ENVIRONMENT</tt>.
@@ -146,7 +146,7 @@ public class Configurator {
    * <p>
    * If no resource loader is explicitly specified,
    * <tt>Configurator</tt> uses a default resource loader
-   * which tries to get the XML parser's input from a resource
+   * which tries to get the XML parsers input from a resource
    * (see {@link java.lang.ClassLoader ClassLoader}) 
    * or from a file in the file system.
    * <p>
@@ -194,7 +194,7 @@ public class Configurator {
    * Adds a standard property provider.
    * <p>
    * With this method, the sequence of the basic property providers can be set explicitly.
-   * @param type the provider's type
+   * @param type the type of the provider
    */
   public void addPropertyProvider(PropertyProviderType type) {
     
@@ -436,7 +436,7 @@ public class Configurator {
   /**
    * Parses the XML document and sets the root element values.
    * @param <T> the type of our root element
-   * @param rootNode our application's root element
+   * @param rootNode the object representing the root element
    * @return the root element
    * @throws ConfigException
    */

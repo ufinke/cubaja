@@ -40,7 +40,7 @@ public class CollectingErrorHandler implements ErrorHandler {
   }
   
   /**
-   * Returns whether the list contains errors.
+   * Tells whether the list contains errors.
    * @return flag
    */
   public boolean hasErrors() {
