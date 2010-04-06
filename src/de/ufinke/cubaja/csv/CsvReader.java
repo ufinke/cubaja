@@ -86,7 +86,7 @@ public class CsvReader implements ColumnReader {
 
   /**
    * Constructor with implicit default configuration.
-   * With this constructor, we don't have defined columns.
+   * With this constructor, there are no columns defined.
    * @param reader
    * @throws CsvException
    */

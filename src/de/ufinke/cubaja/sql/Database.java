@@ -19,7 +19,7 @@ import de.ufinke.cubaja.util.Text;
  * autocommit is <tt>false</tt>.
  * This is different from default JDBC behaviour.
  * <p>
- * If we specify <tt>log='true'</tt> 
+ * If <tt>log='true'</tt> is specified 
  * in the configuration, statements will be logged
  * using the Apache CommonsLogging framework.
  * In the log message, each <tt>Database</tt>

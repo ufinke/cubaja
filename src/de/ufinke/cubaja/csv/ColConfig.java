@@ -229,7 +229,7 @@ public class ColConfig {
   /**
    * Returns the trim property.
    * If not specified,
-   * we get the global trim property from <tt>CsvConfig</tt>
+   * the global trim property from <tt>CsvConfig</tt> is returned.
    * @return trim
    */
   public Boolean isTrim() {
@@ -252,7 +252,7 @@ public class ColConfig {
   /**
    * Returns the decimal point character.
    * If not specified,
-   * we get the global character from <tt>CsvConfig</tt>.
+   * the global character from <tt>CsvConfig</tt> is returned.
    * @return <tt>null</tt>, point or comma.
    */
   public Character getDecimalChar() {
@@ -291,7 +291,7 @@ public class ColConfig {
   /**
    * Returns the date format.
    * If not specified,
-   * we get the global date format from <tt>CsvConfig</tt>.
+   * the global date format from <tt>CsvConfig</tt> is returns.
    * @return date format
    */
   public SimpleDateFormat getDateFormat() {
@@ -314,7 +314,7 @@ public class ColConfig {
   /**
    * Returns the constant representing the boolean value <tt>true</tt>.
    * If not specified,
-   * we get the global constant from <tt>CsvConfig</tt>.
+   * the global constant from <tt>CsvConfig</tt> is returned.
    * @return true value
    */
   public String getTrueValue() {
@@ -337,7 +337,7 @@ public class ColConfig {
   /**
    * Returns the constant representing the boolean value <tt>false</tt>.
    * If not specified,
-   * we get the global constant from <tt>CsvConfig</tt>.
+   * the global constant from <tt>CsvConfig</tt> is returned.
    * @return false value
    */
   public String getFalseValue() {
@@ -390,7 +390,7 @@ public class ColConfig {
   
   /**
    * Returns the list with replacement definitions.
-   * If there are no replacement definitions, we get <tt>null</tt>.
+   * If there are no replacement definitions, the method returns <tt>null</tt>.
    * @return list
    */
   public List<ReplaceConfig> getReplaceList() {

@@ -3,8 +3,16 @@
 
 package de.ufinke.cubaja.cafebabe;
 
+/**
+ * Bytecode generation exception.
+ * @author Uwe Finke
+ */
 public class CafebabeException extends Exception {
 
+  /**
+   * Constructor.
+   * @param message
+   */
   public CafebabeException(String message) {
     
     super(message);

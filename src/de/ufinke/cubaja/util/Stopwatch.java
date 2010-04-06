@@ -51,7 +51,7 @@ public class Stopwatch {
    * Returns the elapsed time in milliseconds.
    * This method may be called more than once.
    * The start time is always the instantiation time of this object.
-   * If we have supplied a message in the constructor, 
+   * If there has been a message defined in the constructor, 
    * this method will log an end message together with the elapsed time.
    * @return millis
    */

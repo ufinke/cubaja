@@ -14,7 +14,7 @@
  * <p>
  * An arbitrary configuration object represents
  * an XML element. Like XML elements, the element node objects may be nested.
- * For every type of XML element, we code a separate class.
+ * For every type of XML element, there is a corresponding class.
  * These classes have 'setter' and 'adder' methods; their names begin
  * with <tt>set</tt> or <tt>add</tt>, followed by the name of an XML attribute
  * or the tag name of an XML element. The difference between setter and adder methods is 
@@ -121,8 +121,8 @@
  * A call to {@link de.ufinke.cubaja.config.Configurator#pushBaseProperties pushBaseProperties} 
  * pushes the base providers
  * (with properties file and XML defined properties) created by the previous call to
- * {@link de.ufinke.cubaja.config.Configurator#configure configure} onto the stack before we let
- * {@link de.ufinke.cubaja.config.Configurator#configure configure} parse the next XML document. 
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure} onto the stack before the next call to
+ * {@link de.ufinke.cubaja.config.Configurator#configure configure} parses the next XML document. 
  * There is a corresponding method
  * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popBaseProperties} 
  * to pop the providers off the stack.

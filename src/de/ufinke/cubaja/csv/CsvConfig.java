@@ -336,7 +336,7 @@ public class CsvConfig {
   /**
    * Creates a <tt>Reader</tt>. This method is called by the
    * <tt>CsvReader</tt> constructor without a <tt>Reader</tt> parameter.
-   * If we use this constructor, the file name must have been set. The charset
+   * When using this constructor, the file name must have been set. The charset
    * property is also used if specified.
    * 
    * @return reader
@@ -362,7 +362,7 @@ public class CsvConfig {
   /**
    * Creates a <tt>Writer</tt>. This method is called by the
    * <tt>CsvWriter</tt> constructor without a <tt>Writer</tt> parameter.
-   * If we use this constructor, the file name must have been set. The charset
+   * When using this constructor, the file name must have been set. The charset
    * property is also used if specified.
    * 
    * @return writer
@@ -539,8 +539,8 @@ public class CsvConfig {
 
   /**
    * Tells whether the CSV input has a header row. This is <tt>true</tt>
-   * when we set the header attribute explicitly to <tt>true</tt>, or when
-   * we define a header property on at least one column and the header attribute
+   * when the header attribute has been explicitly set to <tt>true</tt>, or when
+   * there is a header property defined on at least one column and the header attribute
    * is not set explicitly to <tt>false</tt>.
    * 
    * @return flag
