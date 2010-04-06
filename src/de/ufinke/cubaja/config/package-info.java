@@ -10,7 +10,7 @@
  * <p>
  * The central class of this package is {@link de.ufinke.cubaja.config.Configurator Configurator}.
  * <p>
- * <b>Configuration Objects</b>
+ * <b>Configuration objects</b>
  * <p>
  * An arbitrary configuration object represents
  * an XML element. Like XML elements, the element node objects may be nested.
@@ -27,7 +27,7 @@
  * <ul>
  *   <li>all primitive types and their corresponding object classes</li>
  *   <li><tt>String</tt></li> 
- *   <li><tt>java.util.Date</li>
+ *   <li><tt>java.util.Date</tt></li>
  *   <li><tt>java.math.BigInteger</tt></li>
  *   <li><tt>java.math.BigDecimal</tt></li>
  *   <li><tt>Enum</tt>s</li>
