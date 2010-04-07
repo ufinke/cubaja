@@ -118,12 +118,12 @@
  * and pushed onto the stack. When 
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
  * finishes, it is popped off the stack.
- * A call to {@link de.ufinke.cubaja.config.Configurator#pushBaseProperties pushXMLProperties} 
+ * A call to {@link de.ufinke.cubaja.config.Configurator#pushXMLProperties pushXMLProperties} 
  * pushes the actual provider
  * onto the stack before the next call to
  * {@link de.ufinke.cubaja.config.Configurator#configure configure} parses the next XML document. 
  * There is a corresponding method
- * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popXMLProperties} 
+ * {@link de.ufinke.cubaja.config.Configurator#popXMLProperties popXMLProperties} 
  * to pop a provider off the stack.
  * <p>
  * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
