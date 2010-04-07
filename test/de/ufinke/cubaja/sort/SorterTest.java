@@ -30,7 +30,7 @@ public class SorterTest {
   private void doSort() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(environment.getBaseName("sorter_config"));
+    configurator.setName(environment.getBaseName("sorter_config"));
     SorterTestConfig config = configurator.configure(new SorterTestConfig());
     
     Comparator<Integer> comparator = new NaturalComparator<Integer>();

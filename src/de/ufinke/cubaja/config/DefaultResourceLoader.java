@@ -17,12 +17,32 @@ class DefaultResourceLoader implements ResourceLoader {
 
   static private Text text = new Text(DefaultResourceLoader.class);
   
+  private String base;
+  
   /**
    * Constructor.
    */
   public DefaultResourceLoader() {
-    
+  
+    base = System.getProperty("de.ufinke.cubaja.config.base", "");
+    checkBase();
   }
+  
+  void setBase(String base) {
+    
+    this.base = base;
+    checkBase();
+  }
+
+  private void checkBase() {
+    
+    if (base == null) {
+      base = "";
+    }
+    if (base.length() > 0 && base.charAt(base.length() - 1) != '/') {
+      base = base + "/";
+    }
+  }  
 
   /**
    * Loads XML from a resource or from file system.
@@ -32,6 +52,8 @@ class DefaultResourceLoader implements ResourceLoader {
     if (resourceName == null || resourceName.length() == 0) {
       throw new ConfigException(text.get("noResourceName"));
     }
+    
+    resourceName = base + resourceName;
     
     InputStream stream = getClass().getClassLoader().getResourceAsStream(resourceName);
     if (stream == null) {

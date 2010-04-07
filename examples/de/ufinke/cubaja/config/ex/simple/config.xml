@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+
+<config dateFrom="2010-01-01" 
+        dateTo="2010-01-31">
+        
+  <database driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/cubaja"
+            user="cubaja"
+            password="test"
+            log="true"/>
+            
+  <output name="~/temp/cubaja/examples/config/output.txt"/>
+  
+</config>

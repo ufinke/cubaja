@@ -1,4 +1,4 @@
-// Copyright (c) 2008, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -16,14 +16,21 @@ import java.util.Properties;
 import org.xml.sax.InputSource;
 import de.ufinke.cubaja.util.Text;
 
-class ResourcePropertyProvider implements PropertyProvider {
+class ConfigPropertyProvider implements PropertyProvider {
 
-  static private Text text = new Text(ResourcePropertyProvider.class);
+  static private Text text = new Text(ConfigPropertyProvider.class);
   
   private Properties properties;
   
-  ResourcePropertyProvider(ResourceLoader loader, String resourceName, boolean mandatory) throws ConfigException {
+  ConfigPropertyProvider() {
   
+  }
+  
+  void load(ResourceLoader loader) throws ConfigException {
+    
+    String resourceName = "config.properties";
+    boolean mandatory = false;
+    
     properties = new Properties();
     
     try {      

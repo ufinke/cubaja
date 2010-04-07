@@ -20,7 +20,7 @@ public class ConfiguratorTest {
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(environment.getBaseName("basic_config"));
+    configurator.setName(environment.getBaseName("basic_config"));
     TestConfig config = configurator.configure(new TestConfig());
     
     assertEquals(TestEnum.A, config.getEnumValue());

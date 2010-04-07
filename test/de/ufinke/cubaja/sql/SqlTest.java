@@ -17,7 +17,7 @@ public class SqlTest {
     environment = new TestEnvironment("sql");
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(environment.getBaseName("config"));
+    configurator.setName(environment.getBaseName("config"));
     configurator.addPropertyProvider(environment.getProperties());
     SqlTestConfig config = configurator.configure(new SqlTestConfig());
     database = new Database(config.getDatabase());

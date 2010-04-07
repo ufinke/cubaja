@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -18,23 +18,22 @@ import java.util.Stack;
  * had been added, 
  * all default property providers not already specified are
  * added automatically in the order 
- * <tt>SYSTEM</tt>, <tt>BASE_PROPERTIES</tt>,
- * <tt>BASE_XML</tt>, and <tt>ENVIRONMENT</tt>.
+ * <tt>SYSTEM</tt>,
+ * <tt>CONFIG</tt> and 
+ * <tt>XML</tt>, 
+ * <tt>ENVIRONMENT</tt>.
  * @author Uwe Finke
  */
 public class Configurator {
 
-  private String baseName;
+  private String name;
   private ResourceLoader loader;
   
   private Stack<XMLPropertyProvider> baseXMLStack;
-  private Stack<PropertyProvider> baseResourceStack;
-  private XMLPropertyProvider lastBaseXMLProvider;
-  private PropertyProvider lastBaseResourceProvider;
-  private PropertyProvider dummyProvider;
+  private XMLPropertyProvider lastXmlProvider;
   
-  private PropertyProvider baseXMLProvider;
-  private PropertyProvider baseResourceProvider;  
+  private PropertyProvider xmlProvider;
+  private ConfigPropertyProvider configProvider;  
   private EnvironmentPropertyProvider environmentProvider;
   private SystemPropertyProvider systemProvider;
   private boolean nullProvider;  
@@ -57,7 +56,7 @@ public class Configurator {
     processEscape = true;
     processProperties = true;
     
-    baseName = System.getProperty("de.ufinke.cubaja.config.baseName", "config");
+    name = System.getProperty("de.ufinke.cubaja.config.baseName", "config");
     loader = new DefaultResourceLoader();
     
     parameterManager = new ParameterManager();
@@ -78,14 +77,6 @@ public class Configurator {
           i++;
         }
         return result;
-      }
-    };
-    
-    dummyProvider = new PropertyProvider() {
-      
-      public String getProperty(String key) {
-        
-        return null;
       }
     };
   }
@@ -111,34 +102,33 @@ public class Configurator {
   }
   
   /**
-   * Sets the base name of XML and property documents.
+   * Sets the name of the XML document.
    * <p>
-   * The base name is the name of the XML document to be parsed,
-   * without the '<tt>.xml</tt>' extension.
-   * There may be an optional properties file with the same 
-   * name (and extension '<tt>.properties</tt>').
+   * If the name doesn't end with <tt>.xml</tt>, the extension will be
+   * added automatically.
    * <p>
-   * If there is no explicit base name, the name '<tt>config</tt>'
-   * will be used by default; with '<tt>config.xml</tt>' as XML document name
-   * and '<tt>config.properties</tt>' as name of the 
-   * optional base properties file.
-   * @param baseName the XML document name without file name extension
+   * If there is no explicit name, the name '<tt>config.xml</tt>'
+   * will be used by default.
+   * @param name the XML document name
    */
-  public void setBaseName(String baseName) {
+  public void setName(String name) {
     
-    if (baseName.endsWith(".xml")) {
-      baseName = baseName.substring(0, baseName.length() - 4);
+    if (name == null) {
+      name = "config";
     }
-    this.baseName = baseName;
+    if (! name.toLowerCase().endsWith(".xml")) {
+      name = name + ".xml";
+    }
+    this.name = name;
   }
   
   /**
-   * Returns the XML document base name.
-   * @return the base name
+   * Returns the XML document name.
+   * @return the XML name
    */
-  public String getBaseName() {
+  public String getName() {
     
-    return baseName;
+    return name;
   }
   
   /**
@@ -207,33 +197,18 @@ public class Configurator {
         
         break;
         
-      case BASE_PROPERTIES:
+      case CONFIG:
         
-        baseResourceStack = new Stack<PropertyProvider>();
-        
-        baseResourceProvider = new PropertyProvider() {
-          
-          public String getProperty(String key) throws ConfigException {
-            
-            String result = null;
-            Stack<PropertyProvider> stack = getBaseResourceStack();
-            int i = stack.size() - 1;
-            while (result == null && i >= 0) {
-              result = stack.get(i).getProperty(key);
-              i--;
-            }
-            return result;
-          }
-        };
-        addPropertyProvider(baseResourceProvider);
+        configProvider = new ConfigPropertyProvider();
+        addPropertyProvider(configProvider);
         
         break;
         
-      case BASE_XML:
+      case XML:
         
         baseXMLStack = new Stack<XMLPropertyProvider>();
         
-        baseXMLProvider = new PropertyProvider() {
+        xmlProvider = new PropertyProvider() {
           
           public String getProperty(String key) throws ConfigException {
             
@@ -247,7 +222,7 @@ public class Configurator {
             return result;
           }
         };
-        addPropertyProvider(baseXMLProvider);
+        addPropertyProvider(xmlProvider);
         
         break;
         
@@ -271,11 +246,6 @@ public class Configurator {
     return baseXMLStack;
   }
   
-  Stack<PropertyProvider> getBaseResourceStack() {
-    
-    return baseResourceStack;
-  }
-  
   private void finishProviders() throws ConfigException {
     
     if (nullProvider) {
@@ -286,12 +256,12 @@ public class Configurator {
       addPropertyProvider(PropertyProviderType.SYSTEM);
     }
     
-    if (baseResourceProvider == null) {
-      addPropertyProvider(PropertyProviderType.BASE_PROPERTIES);
+    if (configProvider == null) {
+      addPropertyProvider(PropertyProviderType.CONFIG);
     }
     
-    if (baseXMLProvider == null) {
-      addPropertyProvider(PropertyProviderType.BASE_XML);
+    if (xmlProvider == null) {
+      addPropertyProvider(PropertyProviderType.XML);
     }
     
     if (environmentProvider == null) {
@@ -300,21 +270,19 @@ public class Configurator {
   }
 
   /**
-   * Pushes last <tt>configure</tt> properties onto the stack.
+   * Pushes XML properties of last <tt>configure</tt> onto the stack.
    */
-  public void pushBaseProperties() {
+  public void pushXMLProperties() {
     
-    baseXMLStack.push(lastBaseXMLProvider);
-    baseResourceStack.push(lastBaseResourceProvider);
+    baseXMLStack.push(lastXmlProvider);
   }
   
   /**
-   * Pops properties off the stack.
+   * Pops XML properties off the stack.
    */
-  public void popBaseProperties() {
+  public void popXMLProperties() {
     
-    lastBaseXMLProvider = baseXMLStack.pop();
-    lastBaseResourceProvider = baseResourceStack.pop();
+    lastXmlProvider = baseXMLStack.pop();
   }
   
   /**
@@ -443,10 +411,11 @@ public class Configurator {
   public <T> T configure(T rootNode) throws ConfigException {
     
     finishProviders();
-    lastBaseXMLProvider = new XMLPropertyProvider();
-    lastBaseResourceProvider = (baseResourceProvider == null) ? 
-        dummyProvider : new ResourcePropertyProvider(loader, baseName + ".properties", false);
-    pushBaseProperties();
+    lastXmlProvider = new XMLPropertyProvider();
+    pushXMLProperties();
+    if (configProvider != null) {
+      configProvider.load(loader);
+    }
     
     SAXHandler saxHandler = new SAXHandler();
     
@@ -454,15 +423,15 @@ public class Configurator {
     saxHandler.setInfoMap(infoMap);
     saxHandler.setRootNode(rootNode);
     saxHandler.setLoader(loader);
-    saxHandler.setXMLProperties(lastBaseXMLProvider);
+    saxHandler.setXMLProperties(lastXmlProvider);
     saxHandler.setPropertyProvider(masterProvider);
     saxHandler.setNamedProviderMap(namedProviderMap);
     saxHandler.setProcessEscape(processEscape);
     saxHandler.setProcessProperties(processProperties);
     
-    saxHandler.parse(getBaseName() + ".xml");
+    saxHandler.parse(name);
     
-    popBaseProperties();
+    popXMLProperties();
     
     return rootNode;
   }

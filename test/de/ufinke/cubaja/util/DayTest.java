@@ -17,7 +17,7 @@ public class DayTest {
     environment = new TestEnvironment("util");
     
     Configurator configurator = new Configurator();
-    configurator.setBaseName(environment.getBaseName("holiday_config"));
+    configurator.setName(environment.getBaseName("holiday_config"));
     holidays = configurator.configure(new HolidayConfig());
   }
     

@@ -23,16 +23,16 @@
  * Within an adder method, the passed parameter is typically added to a collection.
  * <p>
  * Setter and adder methods must have a <tt>void</tt> return type and exactly one
- * parameter. Builtin supported parameter types are
+ * parameter. Built-in supported parameter types are
  * <ul>
  *   <li>all primitive types and their corresponding object classes</li>
  *   <li><tt>String</tt></li> 
  *   <li><tt>java.util.Date</tt></li>
  *   <li><tt>java.math.BigInteger</tt></li>
  *   <li><tt>java.math.BigDecimal</tt></li>
- *   <li><tt>Enum</tt>s</li>
- *   <li><tt>Class</tt></li>
- *   <li>interface implementing classes</li>
+ *   <li><tt>Enum</tt> types</li>
+ *   <li><tt>Class</tt> (the parameter is a class name)</li>
+ *   <li>any interfaces (the parameter is the name of an implementing class)</li>
  * </ul>
  * Other types with a public parameterless constructor are considered to be element nodes.
  * Those types do not need to extend or implement supertypes or interfaces.
@@ -87,13 +87,13 @@
  *     System properties.
  *   </li>
  *   <li>
- *     <tt>BASE_PROPERTIES</tt>
+ *     <tt>CONFIG</tt>
  *     <br>
- *     Properties in an optional file <tt><i>baseName</i>.properties</tt>
- *     corresponding to the XML source <tt><i>baseName</i>.xml</tt>.
+ *     Properties in an optional resource <tt>config.properties</tt>
+ *     which is loaded by the resource loader.
  *   </li>
  *   <li>
- *     <tt>BASE_XML</tt>
+ *     <tt>XML</tt>
  *     <br>
  *     Properties defined in the XML document with the special element
  *     <br>
@@ -110,22 +110,21 @@
  * more than once on a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
  * This is useful when a big configuration should be split into several independent files
  * (e.g. technical and end-user responsibility) and the same basic settings should be used.
- * The providers for the property types 
- * <tt>BASE_PROPERTIES</tt> and <tt>BASE_XML</tt> are stored in stacks.
+ * The provider for property type 
+ * <tt>XML</tt> is stored in a stack.
  * The properties are searched from the top of the stack downward.
  * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure} 
- * the actual base providers are initialized
- * and pushed to the stack. When 
+ * the actual XML provider is initialized
+ * and pushed onto the stack. When 
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
- * finishes, they are popped off the stack.
- * A call to {@link de.ufinke.cubaja.config.Configurator#pushBaseProperties pushBaseProperties} 
- * pushes the base providers
- * (with properties file and XML defined properties) created by the previous call to
- * {@link de.ufinke.cubaja.config.Configurator#configure configure} onto the stack before the next call to
+ * finishes, it is popped off the stack.
+ * A call to {@link de.ufinke.cubaja.config.Configurator#pushBaseProperties pushXMLProperties} 
+ * pushes the actual provider
+ * onto the stack before the next call to
  * {@link de.ufinke.cubaja.config.Configurator#configure configure} parses the next XML document. 
  * There is a corresponding method
- * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popBaseProperties} 
- * to pop the providers off the stack.
+ * {@link de.ufinke.cubaja.config.Configurator#popBaseProperties popXMLProperties} 
+ * to pop a provider off the stack.
  * <p>
  * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
  * are not part of the search sequence.

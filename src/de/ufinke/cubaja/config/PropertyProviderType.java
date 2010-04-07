@@ -19,17 +19,17 @@ public enum PropertyProviderType {
   /**
    * Properties file property provider.
    * <p/>
-   * The properties are specified in the optional file <tt><i>baseName</i>.properties</tt>.
-   * <tt><i>baseName</i></tt> is the same name as for the XML document, but with another extension.
+   * The properties are specified in the optional file <tt>config.properties</tt>.
+   * If this resource exists, its content is loaded by the <tt>ResourceLoader</tt>.
    */
-  BASE_PROPERTIES,
+  CONFIG,
   
   /**
    * XML property provider.
    * <p/>
    * The properties are specified with name-/value-pairs in <tt>configProperty</tt> elements.
    */
-  BASE_XML,
+  XML,
   
   /**
    * Environment variables property provider.
