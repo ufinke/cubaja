@@ -139,6 +139,8 @@ public class Configurator {
    * which tries to get the XML parsers input from a resource
    * (see {@link java.lang.ClassLoader ClassLoader}) 
    * or from a file in the file system.
+   * If the default resource loader finds a system property <tt>de.ufinke.cubaja.config.base</tt>
+   * then all resource names will be prefixed with the properties value.
    * <p>
    * If you want to load from file system and include XML files with resource names relative to
    * a base directory, use {@link FileResourceLoader}.
