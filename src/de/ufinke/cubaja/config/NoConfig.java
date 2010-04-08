@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * which have names starting with <tt>set</tt> or <tt>add</tt>,
  * have a <tt>void</tt> return type and exactly one parameter,
  * are selected for automatic setting of attribute or element values.
- * When you have methods which meet these conditions but don't want to be
+ * When you have methods which meet these conditions but do not want to be
  * used them in automatic configuration processing, you should mark them
  * with this annotation.
  * @author Uwe Finke

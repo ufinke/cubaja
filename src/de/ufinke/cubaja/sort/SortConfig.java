@@ -169,9 +169,9 @@ public class SortConfig {
   }
 
   /**
-   * Determines if sort activities shall be logged.
+   * Determines whether sort activities shall be logged.
    * Default is no logging.
-   * If logging is set to <tt>true</tt>
+   * If logging is set to <tt>true</tt> then
    * debug and trace messages are written
    * to logger <tt>de.ufinke.cubaja.sort.Sorter</tt>.
    * @param log

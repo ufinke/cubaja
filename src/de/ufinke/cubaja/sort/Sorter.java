@@ -12,8 +12,9 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Sorts an arbitrary number of objects.
- * If the objects don't fit into memory,
- * pre-sorted runs with serialized objects are written
+ * <p>
+ * If the number of objects exceeds the estimated number which should fit into memory,
+ * presorted runs with serialized objects are written
  * to a temporary file.
  * An object is put to the sorter with the <tt>add</tt> method.
  * Sorted objects are retrieved with an iterator;

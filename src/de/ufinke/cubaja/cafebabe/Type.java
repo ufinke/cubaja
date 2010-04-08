@@ -142,7 +142,7 @@ public class Type {
   }
   
   /**
-   * Returns the types memory size in words.
+   * Returns the type's memory size in words.
    * <tt>long</tt> and <tt>double</tt> have size <tt>2</tt>,
    * <tt>void</tt> has size <tt>0</tt>
    * and all other types have size <tt>1</tt>.

@@ -228,7 +228,7 @@ public class Util {
   /**
    * Returns the enum constant of the specified enum type with the specified name.
    * If name is <tt>null</tt> or has a length of 0, then the result is <tt>null</tt>.
-   * If name doesn't match an enum constant, there will be a second try with
+   * If name does not match an enum constant, there will be a second try with
    * the uppercase value of name.  
    * @param <E> the enum type
    * @param enumType the enum type

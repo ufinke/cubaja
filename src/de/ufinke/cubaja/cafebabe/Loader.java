@@ -28,7 +28,7 @@ public class Loader extends ClassLoader {
   /**
    * Convenience method to generate and load a class.
    * <p>
-   * Creates a <tt>Loader</tt> with the <tt>generator</tt>s <tt>ClassLoader</tt> as parent loader
+   * Creates a <tt>Loader</tt> with the <tt>generator</tt>'s <tt>ClassLoader</tt> as parent loader
    * and passes the <tt>generator</tt> to it.
    * The name of the generated class is <tt>'Generated'</tt> plus
    * the given <tt>nameSuffix</tt>es, each separated by a hyphen.

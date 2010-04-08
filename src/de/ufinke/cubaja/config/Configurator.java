@@ -19,8 +19,8 @@ import java.util.Stack;
  * all default property providers not already specified are
  * added automatically in the order 
  * <tt>SYSTEM</tt>,
- * <tt>CONFIG</tt> and 
- * <tt>XML</tt>, 
+ * <tt>CONFIG</tt>,
+ * <tt>XML</tt>,
  * <tt>ENVIRONMENT</tt>.
  * @author Uwe Finke
  */
@@ -92,7 +92,7 @@ public class Configurator {
    * The map is shared between the
    * application (can be accessed with this method)
    * and all implementors of the {@link StartElementHandler} interface.
-   * With the map, arbitrary information can be passed between element node instances.
+   * With the map, arbitrary information may be passed between element node instances.
    * There is one map per <tt>Configurator</tt> instance.
    * @return the shared map
    */  
@@ -104,7 +104,7 @@ public class Configurator {
   /**
    * Sets the name of the XML document.
    * <p>
-   * If the name doesn't end with <tt>.xml</tt>, the extension will be
+   * If the name does not end with '<tt>.xml</tt>', the extension will be
    * added automatically.
    * <p>
    * If there is no explicit name, the name '<tt>config.xml</tt>'
@@ -136,11 +136,11 @@ public class Configurator {
    * <p>
    * If no resource loader is explicitly specified,
    * <tt>Configurator</tt> uses a default resource loader
-   * which tries to get the XML parsers input from a resource
+   * which tries to get the XML parser's input from a resource
    * (see {@link java.lang.ClassLoader ClassLoader}) 
    * or from a file in the file system.
    * If the default resource loader finds a system property <tt>de.ufinke.cubaja.config.base</tt>
-   * then all resource names will be prefixed with the properties value.
+   * then all resource names will be prefixed with the value of that system property.
    * <p>
    * If you want to load from file system and include XML files with resource names relative to
    * a base directory, use {@link FileResourceLoader}.
@@ -389,9 +389,9 @@ public class Configurator {
   }
   
   /**
-   * Enables or disables properties resolving.
+   * Enables or disables property resolving.
    * <p>
-   * By default, properties resolving is enabled.
+   * By default, property resolving is enabled.
    * <p>
    * The switch may also be set in the XML document
    * with the attribute <tt>processProperties</tt>

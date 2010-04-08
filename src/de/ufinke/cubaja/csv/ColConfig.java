@@ -42,7 +42,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>header</tt></td>
- *     <td align="left" valign="top">the exact content of this columns header line</td>
+ *     <td align="left" valign="top">the exact content of this column's header line</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -162,7 +162,7 @@ public class ColConfig {
   }
 
   /**
-   * Returns the columns name.
+   * Returns the column's name.
    * @return name
    */
   public String getName() {
@@ -171,7 +171,7 @@ public class ColConfig {
   }
 
   /**
-   * Sets the columns name.
+   * Sets the column's name.
    * @param name
    */
   @Mandatory
@@ -199,7 +199,7 @@ public class ColConfig {
   }
 
   /**
-   * Returns the columns position.
+   * Returns the column's position.
    * @return position
    */
   public int getPosition() {
@@ -213,7 +213,7 @@ public class ColConfig {
   }
   
   /**
-   * Sets the columns position.
+   * Sets the column's position.
    * The position of the leftmost column is 1, not 0.
    * @param position
    * @throws ConfigException

@@ -12,7 +12,7 @@ package de.ufinke.cubaja.sort;
 public interface KeyFactory<D, K> {
 
   /**
-   * Creates the key object which is subject to a comparator.
+   * Creates the key object which is subject to a <tt>Comparator</tt>.
    * @param data the data object
    * @return the key, may be <tt>null</tt>
    */

@@ -302,7 +302,7 @@ public class CsvConfig {
    * @param columnName
    * @return position
    * @throws CsvException
-   *         if name doesn't exist
+   *         if name does not exist
    */
   public int getColumnPosition(String columnName) throws CsvException {
 

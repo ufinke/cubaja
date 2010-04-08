@@ -10,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
  * Application main class template.
  * <p>
  * Usage: Implement a subclass, create an instance of it in the <tt>main</tt> method
- * and call {@link #start start}.
+ * and call {@link #start start}!
  * @author Uwe Finke
  */
 public abstract class Executor {

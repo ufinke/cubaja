@@ -107,7 +107,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Writes this objects values to a stream.
+   * Writes this object's values to a stream.
    */
   public void writeExternal(ObjectOutput out) throws IOException {
 
@@ -117,7 +117,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
 
   /**
-   * Reads this objects values from a stream.
+   * Reads this object's values from a stream.
    */
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -139,7 +139,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this objects year value.
+   * Returns this object's year value.
    * @return year
    */
   public int year() {
@@ -148,7 +148,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this objects month value, ranging from <tt>1</tt> to <tt>12</tt>.
+   * Returns this object's month value, ranging from <tt>1</tt> to <tt>12</tt>.
    * @return month
    */
   public int month() {
@@ -157,7 +157,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Returns this objects day of month value.
+   * Returns this object's day of month value.
    * @return day of month
    */
   public int day() {

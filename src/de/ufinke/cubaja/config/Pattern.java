@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * method of a basic parameter type, the XML attribute value or normalized element content string
  * is checked against the specified pattern by means of the <tt>String</tt>s
  * <tt>matches</tt> method.
- * If the value doesn't match the regular expression of the pattern, an exception will be thrown.
+ * If the value does not match the regular expression of the pattern, an exception will be thrown.
  * The message includes the hint. If no hint is specified, the original pattern string will be used.
  * <p/>
  * For element nodes, there is no pattern check.

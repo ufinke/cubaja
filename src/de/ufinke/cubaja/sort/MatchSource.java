@@ -29,7 +29,7 @@ public final class MatchSource<D> {
    * (see {@link #matches matches})
    * before calling this method.
    * @return a data object
-   * @throws NoSuchElementException if the data doesn't match the key
+   * @throws NoSuchElementException if the data does not match the key
    */
   public D get() throws NoSuchElementException {
     
@@ -42,7 +42,7 @@ public final class MatchSource<D> {
   
   /**
    * Returns an iterator over all matching data objects.
-   * This iterator doesn't support the <tt>remove</tt> method.
+   * This iterator does not support the <tt>remove</tt> method.
    * @return an iterator
    */
   public Iterable<D> getAll() {
@@ -87,7 +87,7 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Tells whether this source matches the <tt>Matcher</tt>s key.
+   * Tells whether this source matches the <tt>Matcher</tt>'s key.
    * @return <tt>true</tt> when matching, <tt>false</tt> otherwise
    */
   public boolean matches() {

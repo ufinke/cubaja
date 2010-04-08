@@ -11,8 +11,8 @@ import de.ufinke.cubaja.config.Mandatory;
  * A <tt>ColConfig</tt>
  * may contain any number of replacement definitions.
  * For every definition, 
- * the retrieved column content string is 
- * replaced using method <tt>replaceAll</tt> of class <tt>String</tt>.
+ * the replacement of the retrieved column content string is 
+ * delegated to {@link java.lang.String#replaceAll String.replaceAll}.
  * <p>
  * XML attributes and subelements:
  * <blockquote>

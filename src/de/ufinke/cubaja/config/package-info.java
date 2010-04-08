@@ -46,8 +46,8 @@
  * An attribute value will be passed to the actual element node object
  * as the appropriate parameter type when processing the starting XML element tag.
  * Element content (subelements) 
- * are also passed with the appropriate type to the adder / setter method when
- * processing the XML elements end tag. 
+ * is also passed with the appropriate type to the adder / setter method when
+ * processing the XML element's end tag. 
  * In case the parameter type is an array of the types listed above,
  * the attribute value or element content may be a comma separated list which is split 
  * into separate trimmed strings. The strings are processed in the same way as single values
@@ -58,10 +58,10 @@
  * method of a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
  * Before processing, the 
  * {@link de.ufinke.cubaja.config.Configurator Configurator} may be customized,
- * e.g. by setting the base name of the XML source,
+ * e.g. by setting the name of the XML source,
  * applying properties, setting patterns, or providing 
  * {@link de.ufinke.cubaja.config.ParameterFactoryFinder ParameterFactoryFinder}s
- * for our own parameter types.  
+ * for your own parameter types.  
  * <p>
  * <b>Properties</b>
  * <p>
@@ -75,7 +75,7 @@
  * {@link de.ufinke.cubaja.config.PropertyProviderType PropertyProviderType}. 
  * Additionally, you can write your own providers or pass an instance of <tt>java.util.Properties</tt>.
  * <p>
- * The properties search order is defined by the order of  
+ * The properties' search order is defined by the order of  
  * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
  * if they were not defined explicitly and there is no <tt>NULL</tt> property provider.
@@ -113,7 +113,7 @@
  * The provider for property type 
  * <tt>XML</tt> is stored in a stack.
  * The properties are searched from the top of the stack downward.
- * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure} 
+ * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure},
  * the actual XML provider is initialized
  * and pushed onto the stack. When 
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
@@ -147,14 +147,14 @@
  * </p>
  * <b>Settings</b>
  * <p>
- * There is another special element named <tt>configSettings</tt> to set the parsers behaviour.
+ * There is another special element named <tt>configSettings</tt> to set the parser's behaviour.
  * Possible attributes are
  * <ol>
  *   <li>
  *     <tt>datePattern</tt>
  *     <br>
  *     The date pattern for parsing date values.
- *     For a description how to code the pattern see <tt>java.text.SimpleDateFormat</tt>.
+ *     For a description how to code the pattern see {@link java.text.SimpleDateFormat}.
  *     Default is <tt>yyyy-MM-dd</tt>.
  *   </li>
  *   <li>
