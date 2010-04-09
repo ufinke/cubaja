@@ -1,8 +1,9 @@
 package de.ufinke.cubaja.config.ex.simple;
 
-import de.ufinke.cubaja.sql.*;
-import de.ufinke.cubaja.io.*;
-import java.util.*;
+import java.util.Date;
+import de.ufinke.cubaja.io.FileConfig;
+import de.ufinke.cubaja.sql.DatabaseConfig;
+import de.ufinke.cubaja.config.*;
 
 public class Config {
 
@@ -40,6 +41,7 @@ public class Config {
     return database;
   }
 
+  @Mandatory
   public void setDatabase(DatabaseConfig database) {
 
     this.database = database;
