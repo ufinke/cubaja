@@ -777,6 +777,8 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a single row and closes the result set.
+   * Throws an exception if the result set contains more than one row.
+   * Returns <tt>null</tt> if the result set is empty.
    * @param <D>
    * @param clazz the data objects class
    * @return data object
@@ -786,7 +788,10 @@ public class Query extends PreparedSql implements ColumnReader {
     
     if (nextRow()) {
       D result = readRow(clazz);
-      closeResultSet();
+      if (nextRow()) {
+        closeResultSet();
+        throw new SQLException(text.get("selectSingle"));
+      }
       return result;
     } else {
       return null;
