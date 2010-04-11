@@ -67,6 +67,7 @@
     <copy todir="${dist}/javadoc">
       <fileset dir="${dist}/misc">
         <include name="cubaja_logo_075.jpeg"/>
+        <include name="guide.pdf"/>
       </fileset>
     </copy>
     
@@ -135,6 +136,7 @@
     <copy todir="${dist}/javadoc">
       <fileset dir="./misc">
         <include name="cubaja_logo_075.jpeg"/>
+        <include name="guide.pdf"/>
       </fileset>
     </copy>
     
