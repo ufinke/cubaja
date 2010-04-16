@@ -2,10 +2,10 @@
 
 <config>
 
-  <database driver="${sqlDriver}"
-            url="${sqlUrl}"
-            user="${sqlUser}"
-            password="${sqlPassword}"
+  <database driver="com.mysql.jdbc.Driver"
+            url="jdbc:mysql://localhost:3306/cubaja"
+            user="cubaja"
+            password="test"
             log="true"/>
             
 </config>

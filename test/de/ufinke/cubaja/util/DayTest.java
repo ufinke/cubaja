@@ -2,22 +2,19 @@ package de.ufinke.cubaja.util;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import de.ufinke.cubaja.*;
 import de.ufinke.cubaja.config.*;
 import java.util.*;
 
 public class DayTest {
   
-  static private TestEnvironment environment;
   static private HolidayConfig holidays;
   
   @BeforeClass
   static public void environment() throws Exception {
     
-    environment = new TestEnvironment("util");
-    
     Configurator configurator = new Configurator();
-    configurator.setName(environment.getBaseName("holiday_config"));
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/util"));
+    configurator.setName("holiday_config");
     holidays = configurator.configure(new HolidayConfig());
   }
     

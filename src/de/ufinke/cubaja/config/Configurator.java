@@ -56,7 +56,7 @@ public class Configurator {
     processEscape = true;
     processProperties = true;
     
-    name = System.getProperty("de.ufinke.cubaja.config.baseName", "config");
+    name = System.getProperty("de.ufinke.cubaja.config.name", "config.xml");
     loader = new DefaultResourceLoader();
     
     parameterManager = new ParameterManager();
@@ -114,9 +114,8 @@ public class Configurator {
   public void setName(String name) {
     
     if (name == null) {
-      name = "config";
-    }
-    if (! name.toLowerCase().endsWith(".xml")) {
+      name = "config.xml";
+    } else if (! name.toLowerCase().endsWith(".xml")) {
       name = name + ".xml";
     }
     this.name = name;

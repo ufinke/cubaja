@@ -2,23 +2,18 @@ package de.ufinke.cubaja.sql;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import de.ufinke.cubaja.*;
 import de.ufinke.cubaja.config.*;
 import java.util.*;
 
 public class SqlTest {
 
-  static private TestEnvironment environment;
   static private Database database;
     
   @BeforeClass
   static public void environment() throws Exception {
     
-    environment = new TestEnvironment("sql");
-    
     Configurator configurator = new Configurator();
-    configurator.setName(environment.getBaseName("config"));
-    configurator.addPropertyProvider(environment.getProperties());
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/sql"));
     SqlTestConfig config = configurator.configure(new SqlTestConfig());
     database = new Database(config.getDatabase());
   }

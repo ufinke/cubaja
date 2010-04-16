@@ -2,35 +2,17 @@ package de.ufinke.cubaja.sort;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import de.ufinke.cubaja.*;
 import de.ufinke.cubaja.config.*;
 import java.util.*;
 
 public class SorterTest {
 
-  static private TestEnvironment environment;
-  
-  @BeforeClass
-  static public void environment() throws Exception {
-    
-    environment = new TestEnvironment("sort");
-  }
-    
   @Test
-  public void sort() {
-    
-    try {
-      doSort();
-    } catch (Throwable e) {
-      e.printStackTrace();
-      fail(e.getMessage());
-    }
-  }
-  
-  private void doSort() throws Exception {
+  public void sort() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setName(environment.getBaseName("sorter_config"));
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/sort"));
+    configurator.setName("sorter_config");
     SorterTestConfig config = configurator.configure(new SorterTestConfig());
     
     Comparator<Integer> comparator = new NaturalComparator<Integer>();

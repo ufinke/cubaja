@@ -2,25 +2,17 @@ package de.ufinke.cubaja.config;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import de.ufinke.cubaja.*;
 import java.util.*;
 import java.math.*;
 
 public class ConfiguratorTest {
 
-  static private TestEnvironment environment;
-
-  @BeforeClass
-  static public void environment() throws Exception {
-    
-    environment = new TestEnvironment("config");
-  }
-  
   @Test
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setName(environment.getBaseName("basic_config"));
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config"));
+    configurator.setName("basic_config");
     TestConfig config = configurator.configure(new TestConfig());
     
     assertEquals(TestEnum.A, config.getEnumValue());

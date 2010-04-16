@@ -682,7 +682,7 @@ public class CsvWriter {
     if (value == null) {
       writeNull(position);
     } else {
-      writeBuffer(position, Util.format(value, colConfig.getScale(), colConfig.getDecimalChar(), colConfig.isTrim()));
+      writeBuffer(position, Util.format(value, colConfig.getScale(), colConfig.getWriterDecimalChar(), colConfig.isTrim()));
     }
   }
   
