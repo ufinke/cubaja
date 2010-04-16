@@ -161,7 +161,8 @@ public class Query extends PreparedSql implements ColumnReader {
 
   public BigInteger readBigInteger(int columnPosition) throws SQLException {
 
-    return readBigDecimal(columnPosition).toBigInteger();
+    BigDecimal bd = readBigDecimal(columnPosition);
+    return (bd == null) ? null : bd.toBigInteger();
   }
 
   public boolean readBoolean(String columnName) throws SQLException {
@@ -764,7 +765,7 @@ public class Query extends PreparedSql implements ColumnReader {
     } catch (SQLException sqle) {
       throw sqle;
     } catch (Exception e) {
-      SQLException ex = new SQLException(text.get("createObject", e.toString()));
+      SQLException ex = new SQLException(text.get("createObject", clazz.getName()));
       ex.initCause(e);
       throw ex;
     }

@@ -137,4 +137,14 @@ public class SqlTest {
     assertEquals(3, sum);
   }
   
+  @Test
+  public void testNulls() throws Exception {
+    
+    database.execute("drop table null_data", 1051);
+    database.execute(new Sql(getClass(), "create_null_table"));
+    
+    SqlTestNullData data = database.select("select * from null_data", SqlTestNullData.class);
+    assertNull(data.getIntField());
+  }
+  
 }
