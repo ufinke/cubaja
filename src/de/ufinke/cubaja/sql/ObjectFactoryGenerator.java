@@ -18,6 +18,7 @@ import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
 import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
+import de.ufinke.cubaja.util.WarnMode;
 
 class ObjectFactoryGenerator implements Generator {
 
@@ -76,7 +77,7 @@ class ObjectFactoryGenerator implements Generator {
     factoryMap = new HashMap<Class<?>, ObjectFactory>();
   }
   
-  ObjectFactory getFactory(Class<?> dataClass) throws Exception {
+  ObjectFactory getFactory(Class<?> dataClass, WarnMode warnMode) throws Exception {
 
     ObjectFactory factory = factoryMap.get(dataClass);
     if (factory != null) {
@@ -96,6 +97,7 @@ class ObjectFactoryGenerator implements Generator {
     }    
     if (builtin == null) {
       createSetterMap(dataClass);
+      checkSetterMap(dataClass, warnMode);
     }
     
     Class<?> factoryClass = Loader.createClass(this, "QueryObjectFactory", dataClass);
@@ -207,11 +209,24 @@ class ObjectFactoryGenerator implements Generator {
         }
       }
     }
+  }
+  
+  private void checkSetterMap(Class<?> clazz, WarnMode warnMode) throws SQLException {
     
-    if (config.isLog()) {
-      for (SearchEntry entry : searchMap.values()) {
-        if (! entry.setterFound) {
-          getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
+    if (warnMode == WarnMode.IGNORE) {
+      return;
+    }
+    
+    for (SearchEntry entry : searchMap.values()) {
+      if (! entry.setterFound) {
+        switch (warnMode) {
+          case WARN:
+            if (config.isLog()) {
+              getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
+            }
+            break;
+          case ERROR:
+            throw new SQLException(text.get("noSetter", clazz.getName(), entry.name));
         }
       }
     }
