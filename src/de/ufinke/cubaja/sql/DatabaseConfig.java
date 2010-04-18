@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.Properties;
 import de.ufinke.cubaja.config.Mandatory;
 import de.ufinke.cubaja.util.Text;
+import de.ufinke.cubaja.util.WarnMode;
 
 /**
  * Configuration parameters needed for a database connection.
@@ -89,6 +90,13 @@ import de.ufinke.cubaja.util.Text;
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>batchSize</tt></td>
  *     <td align="left" valign="top">maximum number of native <tt>addBatch</tt> operations; default is <tt>8191</tt> (an <tt>Update</tt> instance calls <tt>executeBatch</tt> automatically when this limit is reached)</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>warnMode</tt></td>
+ *     <td align="left" valign="top">action when there is no setter for result column; valid values are <tt>ignore</tt>, <tt>warn</tt> (the default) or <tt>error</tt></td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -193,6 +201,7 @@ public class DatabaseConfig {
   private int fetchSize;
   private int batchSize;
   private boolean log;
+  private WarnMode warnMode;
   private Database database;
 
   /**
@@ -205,6 +214,7 @@ public class DatabaseConfig {
     fetchSize = 4095;
     batchSize = 8191;
     log = false;
+    warnMode = WarnMode.WARN;
   }
   
   /**
@@ -227,6 +237,24 @@ public class DatabaseConfig {
   public void setLog(boolean log) {
   
     this.log = log;
+  }  
+
+  /**
+   * Returns the warn mode.
+   * @return warn mode
+   */
+  public WarnMode getWarnMode() {
+  
+    return warnMode;
+  }
+
+  /**
+   * Sets the warn mode.
+   * @param warnMode
+   */
+  public void setWarnMode(WarnMode warnMode) {
+  
+    this.warnMode = warnMode;
   }
 
   /**

@@ -21,7 +21,6 @@ import java.sql.Timestamp;
 import de.ufinke.cubaja.util.ColumnReader;
 import de.ufinke.cubaja.util.RowIterator;
 import de.ufinke.cubaja.util.Text;
-import de.ufinke.cubaja.util.WarnMode;
 
 /**
  * Wrapper for <tt>select</tt> statements and result sets.
@@ -39,12 +38,10 @@ public class Query extends PreparedSql implements ColumnReader {
   private ObjectFactoryGenerator generator;
   private Class<?> dataClass;
   private ObjectFactory objectFactory; 
-  private WarnMode warnMode;
   
   Query(PreparedStatement statement, Sql sql, DatabaseConfig config) {
   
     super(statement, sql, config);
-    warnMode = WarnMode.ERROR;
   }
   
   private void execute() throws SQLException {
@@ -759,7 +756,7 @@ public class Query extends PreparedSql implements ColumnReader {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectFactoryGenerator(getMetaData(), config);
+          generator = new ObjectFactoryGenerator(getMetaData());
         }
         objectFactory = generator.getFactory(clazz, warnMode);
         dataClass = clazz;
@@ -800,18 +797,5 @@ public class Query extends PreparedSql implements ColumnReader {
     } else {
       return null;
     }
-  }
-  
-  /**
-   * Sets the warn mode.
-   * Controls the behaviour when a column has no corresponding setter method
-   * in the <tt>Class</tt> supplied by 
-   * {@link cursor} or {@link readRow}.
-   * Default is <tt>ERROR</tt>.
-   * @param warnMode
-   */
-  public void setWarnMode(WarnMode warnMode) {
-    
-    this.warnMode = warnMode;
   }
 }

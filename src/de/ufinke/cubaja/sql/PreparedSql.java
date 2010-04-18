@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import de.ufinke.cubaja.util.Text;
+import de.ufinke.cubaja.util.WarnMode;
 
 /**
  * Wrapper for a <tt>PreparedStatement</tt>.
@@ -42,6 +43,7 @@ public class PreparedSql {
    * Configuration.
    */
   protected DatabaseConfig config;
+  protected WarnMode warnMode;
   
   private List<String> variableList;
   private Map<String, int[]> variableMap;
@@ -63,6 +65,7 @@ public class PreparedSql {
     this.sql = sql;
     this.config = config;
     
+    warnMode = config.getWarnMode();
     variableList = sql.getVariables();
   }
   
@@ -953,6 +956,19 @@ public class PreparedSql {
     }
     
     variableSetter.setVariables(this, dataObject);
+  }
+  
+  /**
+   * Sets the warn mode.
+   * Controls the behaviour when a column has no corresponding setter method
+   * in the <tt>Class</tt> supplied by 
+   * {@link cursor} or {@link readRow}.
+   * Default is the value in {@link DatabaseConfig}.
+   * @param warnMode
+   */
+  public void setWarnMode(WarnMode warnMode) {
+    
+    this.warnMode = warnMode;
   }
 
 }

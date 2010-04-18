@@ -67,12 +67,10 @@ class ObjectFactoryGenerator implements Generator {
   private Map<String, SearchEntry> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
-  private DatabaseConfig config;
   private Log logger;
   
-  ObjectFactoryGenerator(ResultSetMetaData metaData, DatabaseConfig config) throws SQLException {
+  ObjectFactoryGenerator(ResultSetMetaData metaData) throws SQLException {
   
-    this.config = config;
     createSearchMap(metaData);
     factoryMap = new HashMap<Class<?>, ObjectFactory>();
   }
@@ -221,9 +219,7 @@ class ObjectFactoryGenerator implements Generator {
       if (! entry.setterFound) {
         switch (warnMode) {
           case WARN:
-            if (config.isLog()) {
-              getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
-            }
+            getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
             break;
           case ERROR:
             throw new SQLException(text.get("noSetter", clazz.getName(), entry.name));
