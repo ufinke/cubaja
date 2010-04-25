@@ -412,8 +412,12 @@ class SAXHandler extends DefaultHandler2 {
       ElementFactoryProvider provider = (ElementFactoryProvider) parentElement.getNode();
       ElementFactory ef = provider.getFactory(element.getName(), createAttributeMap(atts));
       if (ef != null) {
-        parentMethod = new MethodProxy(ef.getMethod());
-        factory = new ElementParameterFactory(ef.getElement(parentMethod.getAnnotations()));
+        try {
+          parentMethod = new MethodProxy(ef.getMethod());
+          factory = new ElementParameterFactory(ef.getElement(parentMethod.getAnnotations()));
+        } catch (Exception e) {
+          throw new ConfigException(e);
+        }
       }
     }
     

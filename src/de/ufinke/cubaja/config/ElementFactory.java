@@ -17,14 +17,14 @@ public interface ElementFactory {
    * Returns the element node instance.
    * @param annotations
    * @return element node
-   * @throws ConfigException
+   * @throws Exception
    */
-  public Object getElement(Annotation[] annotations) throws ConfigException;
+  public Object getElement(Annotation[] annotations) throws Exception;
   
   /**
    * Returns the setter or adder method of the parent node.
    * @return method
-   * @throws ConfigException
+   * @throws Exception
    */
-  public Method getMethod() throws ConfigException;
+  public Method getMethod() throws Exception;
 }

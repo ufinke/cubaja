@@ -53,6 +53,7 @@ class ObjectFactoryGenerator implements Generator {
   }
   
   static private final Text text = new Text(ObjectFactoryGenerator.class);
+  static private final Log logger = LogFactory.getLog(ObjectFactoryGenerator.class);
   
   static private final Type objectType = new Type(Object.class);
   static private final Type voidType = new Type(Void.TYPE);
@@ -67,7 +68,6 @@ class ObjectFactoryGenerator implements Generator {
   private Map<String, SearchEntry> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
-  private Log logger;
   
   ObjectFactoryGenerator(ResultSetMetaData metaData) throws SQLException {
   
@@ -219,20 +219,12 @@ class ObjectFactoryGenerator implements Generator {
       if (! entry.setterFound) {
         switch (warnMode) {
           case WARN:
-            getLogger().debug(text.get("noSetter", clazz.getName(), entry.name));
+            logger.warn(text.get("noSetter", clazz.getName(), entry.name));
             break;
           case ERROR:
             throw new SQLException(text.get("noSetter", clazz.getName(), entry.name));
         }
       }
     }
-  }
-  
-  private Log getLogger() {
-    
-    if (logger == null) {
-      logger = LogFactory.getLog(ObjectFactoryGenerator.class);
-    }
-    return logger;
   }
 }
