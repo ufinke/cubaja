@@ -104,7 +104,6 @@
     <copy todir="${dist}/info">
       <fileset dir="${dist}/misc">
         <include name="license.txt"/>
-        <include name="overview.html"/>
       </fileset>
     </copy>
     
