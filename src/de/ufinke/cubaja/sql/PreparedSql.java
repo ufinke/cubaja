@@ -962,7 +962,7 @@ public class PreparedSql {
    * Sets the warn mode.
    * Controls the behaviour when a column has no corresponding setter method
    * in the <tt>Class</tt> supplied by 
-   * {@link cursor} or {@link readRow}.
+   * {@link Query#cursor(Class) cursor} or {@link Query#readRow(Class) cursor}.
    * Default is the value in {@link DatabaseConfig}.
    * @param warnMode
    */
