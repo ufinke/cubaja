@@ -10,14 +10,14 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import de.ufinke.cubaja.config.ConfigException;
 import de.ufinke.cubaja.io.FileConfig;
 import de.ufinke.cubaja.util.Text;
+import de.ufinke.cubaja.util.Util;
 
 /**
  * Global configuration properties.
@@ -199,8 +199,7 @@ public class CsvConfig {
   private String rowSeparator;
 
   private List<ColConfig> columnList;
-  private Map<String, Integer> nameMap;
-  private Set<String> columnSet;
+  private Map<String, ColConfig> columnMap;
   private boolean headerDefined;
 
   /**
@@ -209,14 +208,13 @@ public class CsvConfig {
   public CsvConfig() {
 
     columnList = new ArrayList<ColConfig>();
+    columnMap = new HashMap<String, ColConfig>();
     addCol(new ColConfig(true)); // dummy column; positions start with 1
   }
 
   void initPositions() {
 
-    nameMap = new HashMap<String, Integer>();
-
-    boolean mustRearrange = false;
+    boolean reorder = false;
 
     int nextPosition = 0; // first list entry is dummy / default
 
@@ -226,49 +224,29 @@ public class CsvConfig {
       if (colPosition == 0) {
         col.setInternalPosition(nextPosition);
       } else if (colPosition != nextPosition) {
-        mustRearrange = true;
+        reorder = true;
       }
       nextPosition = col.getPosition() + 1;
+    }
 
-      if (!col.isDummyColumn()) {
-        nameMap.put(col.getName(), col.getPosition());
+    if (! reorder) {
+      return;
+    }
+
+    Comparator<ColConfig> comparator = new Comparator<ColConfig>() {
+
+      public int compare(ColConfig a, ColConfig b) {
+
+        return Util.compare(a.getPosition(), b.getPosition());
       }
-    }
+    };
 
-    if (mustRearrange) {
-      rearrange();
-    }
-
-    columnSet = null;
-  }
-
-  private void rearrange() {
-
-    Map<Integer, ColConfig> map = new HashMap<Integer, ColConfig>();
-
-    for (ColConfig col : columnList) {
-      map.put(col.getPosition(), col);
-    }
-
-    List<Integer> posList = new ArrayList<Integer>(map.keySet());
-    Collections.sort(posList);
-
-    List<ColConfig> newList = new ArrayList<ColConfig>();
-    int expected = 0;
-    for (int key : posList) {
-      while (expected < key) {
-        newList.add(columnList.get(0));
-        expected++;
-      }
-      newList.add(columnList.get(key));
-    }
-
-    columnList.clear();
-    columnList.addAll(newList);
+    Collections.sort(columnList, comparator);
   }
 
   /**
    * Returns a column configuration for a column identified by name.
+   * The result is <tt>null</tt> if there is no column with the given name.
    * 
    * @param columnName
    * @return column config
@@ -276,11 +254,12 @@ public class CsvConfig {
    */
   public ColConfig getColConfig(String columnName) throws CsvException {
 
-    return getColConfig(getColumnPosition(columnName));
+    return columnMap.get(columnName);
   }
 
   /**
    * Returns a column configuration for a column identified by position.
+   * The result is <tt>0</tt> if there is no column with the given index.
    * 
    * @param index
    * @return column config
@@ -291,11 +270,11 @@ public class CsvConfig {
     return columnList.get(configIndex);
   }
 
-  Map<String, Integer> getNameMap() {
-
-    return nameMap;
+  Map<String, ColConfig> getColumnMap() {
+    
+    return columnMap;
   }
-
+  
   /**
    * Returns the position of a column identified by name.
    * 
@@ -306,11 +285,11 @@ public class CsvConfig {
    */
   public int getColumnPosition(String columnName) throws CsvException {
 
-    Integer index = nameMap.get(columnName);
-    if (index == null) {
+    ColConfig col = getColConfig(columnName);
+    if (col == null) {
       throw new CsvException(text.get("undefinedName", columnName));
     }
-    return index;
+    return col.getPosition();
   }
 
   /**
@@ -345,18 +324,7 @@ public class CsvConfig {
    */
   public Reader createReader() throws IOException, ConfigException {
 
-    if (fileConfig == null) {
-      if (fileName == null) {
-        throw new ConfigException(text.get("noFileName"));
-      }
-      fileConfig = new FileConfig();
-      fileConfig.setName(fileName);
-      if (charset != null) {
-        fileConfig.setCharset(charset);
-      }
-    }
-
-    return fileConfig.createReader();
+    return getFile().createReader();
   }
 
   /**
@@ -371,6 +339,17 @@ public class CsvConfig {
    */
   public Writer createWriter() throws IOException, ConfigException {
 
+    return getFile().createWriter();
+  }
+  
+  /**
+   * Returns a <tt>FileConfig</tt>.
+   * @return file config
+   * @throws ConfigException
+   *         if the <tt>file</tt> attribute is not set
+   */
+  public FileConfig getFile() throws ConfigException {
+    
     if (fileConfig == null) {
       if (fileName == null) {
         throw new ConfigException(text.get("noFileName"));
@@ -381,8 +360,8 @@ public class CsvConfig {
         fileConfig.setCharset(charset);
       }
     }
-
-    return fileConfig.createWriter();
+    
+    return fileConfig;
   }
 
   /**
@@ -622,18 +601,14 @@ public class CsvConfig {
     column.setCsvConfig(this);
     headerDefined |= (column.getHeader() != null);
     columnList.add(column);
+    if (! column.isDummyColumn()) {
+      columnMap.put(column.getName(), column);
+    }
   }
 
   void addCol(String name, String header) {
 
-    if (columnSet == null) {
-      columnSet = new HashSet<String>();
-      for (ColConfig col : columnList) {
-        columnSet.add(col.getName());
-      }
-    }
-
-    if (columnSet.contains(name)) {
+    if (columnMap.containsKey(name)) {
       return;
     }
 
@@ -641,8 +616,6 @@ public class CsvConfig {
     col.setName(name);
     col.setHeader(header);
     addCol(col);
-
-    columnSet.add(name);
   }
 
   /**

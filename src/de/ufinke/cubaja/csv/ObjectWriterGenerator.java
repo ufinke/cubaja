@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -46,9 +46,9 @@ class ObjectWriterGenerator implements Generator {
   private Class<?> lastClass;
   private ObjectWriter lastWriter;
   
-  ObjectWriterGenerator(Map<String, Integer> nameMap) {
+  ObjectWriterGenerator(Map<String, ColConfig> colMap) {
   
-    createSearchMap(nameMap);
+    createSearchMap(colMap);
     writerMap = new HashMap<Class<?>, ObjectWriter>();
   }
   
@@ -107,12 +107,12 @@ class ObjectWriterGenerator implements Generator {
     code.returnVoid();
   }  
   
-  private void createSearchMap(Map<String, Integer> nameMap) {
+  private void createSearchMap(Map<String, ColConfig> colMap) {
     
-    searchMap = new HashMap<String, Integer>(nameMap.size() << 1);
+    searchMap = new HashMap<String, Integer>(colMap.size() << 1);
     
-    for (Map.Entry<String, Integer> entry : nameMap.entrySet()) {
-      searchMap.put(Util.createMethodName(entry.getKey(), "get"), entry.getValue());
+    for (Map.Entry<String, ColConfig> entry : colMap.entrySet()) {
+      searchMap.put(Util.createMethodName(entry.getKey(), "get"), entry.getValue().getPosition());
     }
   }
   

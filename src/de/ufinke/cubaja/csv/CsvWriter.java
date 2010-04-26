@@ -785,7 +785,7 @@ public class CsvWriter {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectWriterGenerator(config.getNameMap());
+          generator = new ObjectWriterGenerator(config.getColumnMap());
         }
         objectWriter = generator.getWriter(clazz);
         dataClass = clazz;

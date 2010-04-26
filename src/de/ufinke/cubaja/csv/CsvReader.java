@@ -750,7 +750,7 @@ public class CsvReader implements ColumnReader {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectFactoryGenerator(config.getNameMap());
+          generator = new ObjectFactoryGenerator(config.getColumnMap());
         }
         objectFactory = generator.getFactory(clazz);
         dataClass = clazz;

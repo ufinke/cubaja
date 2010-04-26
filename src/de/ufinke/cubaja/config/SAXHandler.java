@@ -447,7 +447,7 @@ class SAXHandler extends DefaultHandler2 {
         node = parameterManager.createParameter(factory, element.getName(), parentMethod);
       } catch (Exception e) {
         String clazz = parentMethod.getMethod().getParameterTypes()[0].getName();
-        throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()));
+        throw new ConfigException(text.get("createNode", clazz, element.getName(), e.toString()), e);
       }
       element.setKind(NODE);
     } else {

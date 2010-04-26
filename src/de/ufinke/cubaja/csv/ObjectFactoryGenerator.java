@@ -47,9 +47,9 @@ class ObjectFactoryGenerator implements Generator {
   private Class<?> lastClass;
   private ObjectFactory lastFactory;
   
-  ObjectFactoryGenerator(Map<String, Integer> nameMap) {
+  ObjectFactoryGenerator(Map<String, ColConfig> colMap) {
   
-    createSearchMap(nameMap);
+    createSearchMap(colMap);
     factoryMap = new HashMap<Class<?>, ObjectFactory>();
   }
   
@@ -120,12 +120,12 @@ class ObjectFactoryGenerator implements Generator {
     code.returnReference(); // returns duplicated data object
   }  
   
-  private void createSearchMap(Map<String, Integer> nameMap) {
+  private void createSearchMap(Map<String, ColConfig> colMap) {
     
-    searchMap = new HashMap<String, Integer>(nameMap.size() << 1);
+    searchMap = new HashMap<String, Integer>(colMap.size() << 1);
     
-    for (Map.Entry<String, Integer> entry : nameMap.entrySet()) {
-      searchMap.put(Util.createMethodName(entry.getKey(), "set"), entry.getValue());
+    for (Map.Entry<String, ColConfig> entry : colMap.entrySet()) {
+      searchMap.put(Util.createMethodName(entry.getKey(), "set"), entry.getValue().getPosition());
     }
   }
   
