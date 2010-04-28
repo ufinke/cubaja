@@ -70,28 +70,25 @@ public class CsvWriter {
     out = writer;
     this.config = config;
     
-    config.initPositions();
-    
     formatter = config.getFormatter();
     formatter.init(out, config);
-    buffer = new ColumnBuffer(config.getColumnList().size());
+    List<ColConfig> columnList = config.getColumnList();
+    buffer = new ColumnBuffer(columnList.size());
     
     if (config.hasHeaderRow()) {
-      writeHeaderRow();
+      writeHeaderRow(columnList);
     }
   }
   
-  private void writeHeaderRow() throws IOException, CsvException {
+  private void writeHeaderRow(List<ColConfig> columnList) throws IOException, CsvException {
 
-    List<ColConfig> columnList = config.getColumnList();
-    
-    for (int i = 1; i < columnList.size(); i++) {
+    for (int i = 0; i < columnList.size(); i++) {
       ColConfig col = columnList.get(i);
       String header = col.getHeader();
       if (header == null) {
         header = col.getName();
       }
-      write(i, header);
+      write(col.getPosition(), header);
     }
     
     nextRow();
@@ -175,7 +172,7 @@ public class CsvWriter {
    */
   public void write(String columnName, String value) throws IOException, CsvException {
     
-    write(getColumnPosition(columnName), value);
+    write(config.getColumnPosition(columnName), value);
   }
   
   /**
@@ -785,7 +782,7 @@ public class CsvWriter {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectWriterGenerator(config.getColumnMap());
+          generator = new ObjectWriterGenerator(config.getNameMap());
         }
         objectWriter = generator.getWriter(clazz);
         dataClass = clazz;

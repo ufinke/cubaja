@@ -198,6 +198,7 @@ public class CsvConfig {
   private RowFormatter formatter;
   private String rowSeparator;
 
+  private ColConfig defaultColConfig;
   private Map<Integer, ColConfig> positionMap;
   private Map<String, ColConfig> nameMap;
   private int lastPosition;
@@ -210,6 +211,18 @@ public class CsvConfig {
   public CsvConfig() {
 
     nameMap = new HashMap<String, ColConfig>();
+    setDefaultColConfig(new ColConfig());
+  }
+  
+  /**
+   * Sets a customized default column configuration.
+   * A standard default column configuration is created by the constructor.
+   * @param defaultColConfig
+   */
+  public void setDefaultColConfig(ColConfig defaultColConfig) {
+    
+    defaultColConfig.setCsvConfig(this);
+    this.defaultColConfig = defaultColConfig;
   }
 
   /**
@@ -227,7 +240,7 @@ public class CsvConfig {
 
   /**
    * Returns a column configuration for a column identified by position.
-   * The result is <tt>null</tt> if there is no column with the given index.
+   * Returns the default column configuration if there is no column with the given index.
    * 
    * @param position
    * @return column config
@@ -237,7 +250,13 @@ public class CsvConfig {
     if (positionMap == null) {
       buildPositionMap();
     }
-    return positionMap.get(position);
+    
+    ColConfig colConfig = positionMap.get(position);
+    if (colConfig == null) {
+      colConfig = defaultColConfig;
+    }
+    
+    return colConfig;
   }
   
   private void buildPositionMap() {
@@ -247,6 +266,11 @@ public class CsvConfig {
     for (ColConfig col : getColumnList()) {
       positionMap.put(col.getPosition(), col);
     }
+  }
+  
+  Map<String, ColConfig> getNameMap() {
+    
+    return nameMap;
   }
 
   /**
