@@ -33,9 +33,9 @@ import de.ufinke.cubaja.util.Util;
  * When a column is empty, the read methods for numeric primitive types
  * return <tt>0</tt>; read methods for objects types return <tt>null</tt>.
  * <p>
- * The position of the first column is <tt>1</tt>, not <tt>0</tt>.
+ * Like with JDBC result sets, the position of the first column is <tt>1</tt>, not <tt>0</tt>.
  * <p>
- * The first row is read automatically if the configurations
+ * The first row is read automatically if the configuration's
  * <tt>hasHeaderRow</tt> method returns <tt>true</tt>.
  * In this case, column positions are determined automatically
  * when the column configuration contains a header definition.
@@ -113,7 +113,6 @@ public class CsvReader implements ColumnReader {
     errorHandler = new DefaultErrorHandler();
     
     readHeaderRow();
-    config.initPositions();
   }
   
   private void readHeaderRow() throws IOException, CsvException {
@@ -750,7 +749,7 @@ public class CsvReader implements ColumnReader {
     try {
       if (dataClass != clazz) {
         if (generator == null) {
-          generator = new ObjectFactoryGenerator(config.getColumnMap());
+          generator = new ObjectFactoryGenerator(config.getNameMap());
         }
         objectFactory = generator.getFactory(clazz);
         dataClass = clazz;

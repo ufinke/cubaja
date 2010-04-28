@@ -124,10 +124,10 @@ public class ColConfig {
 
   static private final Text text = new Text(ColConfig.class);
   
-  private boolean dummyColumn;
   private String name;
   private String header;
   private int position;
+  private int sequence;
   private Boolean trim;
   private Character decimalChar;
   private Integer scale;
@@ -146,18 +146,9 @@ public class ColConfig {
 
   }
   
-  ColConfig(boolean dummyColumn) {
-    
-    this.dummyColumn = dummyColumn;
-  }
-  
-  boolean isDummyColumn() {
-    
-    return dummyColumn;
-  }
-  
   void setCsvConfig(CsvConfig csvConfig) {
     
+    sequence = csvConfig.getSequence();
     this.csvConfig = csvConfig;
   }
 
@@ -177,11 +168,14 @@ public class ColConfig {
   @Mandatory
   public void setName(String name) {
 
+    if (csvConfig != null) {
+      csvConfig.replaceName(name, this);
+    }
     this.name = name;
   }
 
   /**
-   * Returns the expected column header.
+   * Returns the column header.
    * @return header
    */
   public String getHeader() {
@@ -190,7 +184,7 @@ public class ColConfig {
   }
 
   /**
-   * Sets the expected column header.
+   * Sets the column header.
    * @param header
    */
   public void setHeader(String header) {
@@ -207,11 +201,6 @@ public class ColConfig {
     return position;
   }
   
-  void setInternalPosition(int position) {
-    
-    this.position = position;
-  }
-  
   /**
    * Sets the column's position.
    * The position of the leftmost column is 1, not 0.
@@ -223,9 +212,22 @@ public class ColConfig {
     if (position < 1) {
       throw new ConfigException(text.get("invalidPosition"));
     }
-    this.position = position;
+    setInternalPosition(position);
   }
 
+  void setInternalPosition(int position) {
+    
+    if (csvConfig != null) {
+      sequence = csvConfig.getSequence();
+    }    
+    this.position = position;
+  }
+  
+  int getSequence() {
+    
+    return sequence;
+  }
+  
   /**
    * Returns the trim property.
    * If not specified,

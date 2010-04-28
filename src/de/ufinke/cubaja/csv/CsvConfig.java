@@ -198,8 +198,10 @@ public class CsvConfig {
   private RowFormatter formatter;
   private String rowSeparator;
 
-  private List<ColConfig> columnList;
-  private Map<String, ColConfig> columnMap;
+  private Map<Integer, ColConfig> positionMap;
+  private Map<String, ColConfig> nameMap;
+  private int lastPosition;
+  private int sequence;
   private boolean headerDefined;
 
   /**
@@ -207,41 +209,7 @@ public class CsvConfig {
    */
   public CsvConfig() {
 
-    columnList = new ArrayList<ColConfig>();
-    columnMap = new HashMap<String, ColConfig>();
-    addCol(new ColConfig(true)); // dummy column; positions start with 1
-  }
-
-  void initPositions() {
-
-    boolean reorder = false;
-
-    int nextPosition = 0; // first list entry is dummy / default
-
-    for (ColConfig col : columnList) {
-
-      int colPosition = col.getPosition();
-      if (colPosition == 0) {
-        col.setInternalPosition(nextPosition);
-      } else if (colPosition != nextPosition) {
-        reorder = true;
-      }
-      nextPosition = col.getPosition() + 1;
-    }
-
-    if (! reorder) {
-      return;
-    }
-
-    Comparator<ColConfig> comparator = new Comparator<ColConfig>() {
-
-      public int compare(ColConfig a, ColConfig b) {
-
-        return Util.compare(a.getPosition(), b.getPosition());
-      }
-    };
-
-    Collections.sort(columnList, comparator);
+    nameMap = new HashMap<String, ColConfig>();
   }
 
   /**
@@ -254,27 +222,33 @@ public class CsvConfig {
    */
   public ColConfig getColConfig(String columnName) throws CsvException {
 
-    return columnMap.get(columnName);
+    return nameMap.get(columnName);
   }
 
   /**
    * Returns a column configuration for a column identified by position.
-   * The result is <tt>0</tt> if there is no column with the given index.
+   * The result is <tt>null</tt> if there is no column with the given index.
    * 
-   * @param index
+   * @param position
    * @return column config
    */
-  public ColConfig getColConfig(int index) {
+  public ColConfig getColConfig(int position) {
 
-    int configIndex = (index < 1 || index >= columnList.size()) ? 0 : index;
-    return columnList.get(configIndex);
-  }
-
-  Map<String, ColConfig> getColumnMap() {
-    
-    return columnMap;
+    if (positionMap == null) {
+      buildPositionMap();
+    }
+    return positionMap.get(position);
   }
   
+  private void buildPositionMap() {
+    
+    positionMap = new HashMap<Integer, ColConfig>();
+    
+    for (ColConfig col : getColumnList()) {
+      positionMap.put(col.getPosition(), col);
+    }
+  }
+
   /**
    * Returns the position of a column identified by name.
    * 
@@ -600,34 +574,53 @@ public class CsvConfig {
 
     column.setCsvConfig(this);
     headerDefined |= (column.getHeader() != null);
-    columnList.add(column);
-    if (! column.isDummyColumn()) {
-      columnMap.put(column.getName(), column);
+    if (column.getPosition() == 0) {
+      column.setInternalPosition(lastPosition + 1);
     }
+    lastPosition = column.getPosition();
+    nameMap.put(column.getName(), column);
   }
 
-  void addCol(String name, String header) {
+  int getSequence() {
 
-    if (columnMap.containsKey(name)) {
-      return;
-    }
-
-    ColConfig col = new ColConfig();
-    col.setName(name);
-    col.setHeader(header);
-    addCol(col);
+    positionMap = null;
+    return ++sequence;
   }
-
+  
+  void replaceName(String newName, ColConfig column) {
+    
+    nameMap.remove(column.getName());
+    nameMap.put(newName, column);
+    positionMap = null;
+  }
+  
   /**
-   * Returns the list of defined columns.
+   * Returns a list of columns.
+   * The list is sorted by the column's position.
    * 
    * @return list
    */
   public List<ColConfig> getColumnList() {
 
-    return columnList;
+    List<ColConfig> list = new ArrayList<ColConfig>(nameMap.values());
+    
+    Comparator<ColConfig> comparator = new Comparator<ColConfig>() {
+      
+      public int compare(ColConfig a, ColConfig b) {
+        
+        int result = Util.compare(a.getPosition(), b.getPosition());
+        if (result == 0) {
+          result = Util.compare(a.getSequence(), b.getSequence());
+        }
+        return result;
+      }
+    };
+    
+    Collections.sort(list, comparator);
+    
+    return list;
   }
-
+  
   /**
    * Returns the formatter for <tt>CsvWriter</tt> output.
    * 
