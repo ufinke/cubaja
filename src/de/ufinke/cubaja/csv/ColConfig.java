@@ -148,7 +148,6 @@ public class ColConfig {
   
   void setCsvConfig(CsvConfig csvConfig) {
     
-    sequence = csvConfig.getSequence();
     this.csvConfig = csvConfig;
   }
 
@@ -218,7 +217,7 @@ public class ColConfig {
   void setInternalPosition(int position) {
     
     if (csvConfig != null) {
-      sequence = csvConfig.getSequence();
+      sequence = csvConfig.getSequence(position); // last setting wins when there are position duplicates
     }    
     this.position = position;
   }

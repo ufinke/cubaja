@@ -199,9 +199,10 @@ public class CsvConfig {
   private String rowSeparator;
 
   private ColConfig defaultColConfig;
-  private Map<Integer, ColConfig> positionMap;
+  private ColConfig[] positionArray;
   private Map<String, ColConfig> nameMap;
   private int lastPosition;
+  private int maxPosition;
   private int sequence;
   private boolean headerDefined;
 
@@ -247,24 +248,27 @@ public class CsvConfig {
    */
   public ColConfig getColConfig(int position) {
 
-    if (positionMap == null) {
-      buildPositionMap();
+    if (positionArray == null) {
+      buildPositionArray();
     }
     
-    ColConfig colConfig = positionMap.get(position);
-    if (colConfig == null) {
-      colConfig = defaultColConfig;
+    if (position < 0 || position >= positionArray.length) {
+      return defaultColConfig;
     }
     
-    return colConfig;
+    return positionArray[position];
   }
   
-  private void buildPositionMap() {
+  private void buildPositionArray() {
     
-    positionMap = new HashMap<Integer, ColConfig>();
+    positionArray = new ColConfig[maxPosition + 1];
+    
+    for (int i = 0; i < positionArray.length; i++) {
+      positionArray[i] = defaultColConfig;
+    }
     
     for (ColConfig col : getColumnList()) {
-      positionMap.put(col.getPosition(), col);
+      positionArray[col.getPosition()] = col;
     }
   }
   
@@ -599,15 +603,16 @@ public class CsvConfig {
     column.setCsvConfig(this);
     headerDefined |= (column.getHeader() != null);
     if (column.getPosition() == 0) {
-      column.setInternalPosition(lastPosition + 1);
+      column.setInternalPosition(lastPosition + 1); // includes callback to getSequence()
     }
     lastPosition = column.getPosition();
     nameMap.put(column.getName(), column);
   }
 
-  int getSequence() {
+  int getSequence(int position) {
 
-    positionMap = null;
+    positionArray = null;
+    maxPosition = Math.max(maxPosition, position);
     return ++sequence;
   }
   
@@ -615,7 +620,7 @@ public class CsvConfig {
     
     nameMap.remove(column.getName());
     nameMap.put(newName, column);
-    positionMap = null;
+    positionArray = null;
   }
   
   /**

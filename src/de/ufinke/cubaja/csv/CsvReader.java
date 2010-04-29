@@ -131,7 +131,14 @@ public class CsvReader implements ColumnReader {
     
     if (config.getHeader() != null && config.getHeader().booleanValue()) {
       for (String header : headers) {
-        config.addCol(createAutoHeaderName(header), header);
+        String name = createAutoHeaderName(header);
+        if (config.getColConfig(name) == null) {
+          ColConfig col = new ColConfig();
+          col = new ColConfig();
+          col.setName(name);
+          col.setHeader(header);
+          config.addCol(col);
+        }
       }
     }
     
@@ -141,10 +148,11 @@ public class CsvReader implements ColumnReader {
     }
     
     for (ColConfig col : config.getColumnList()) {
-      if (col.getPosition() == 0 && col.getHeader() != null) {
-        Integer position = headerMap.get(col.getHeader());
+      String header = col.getHeader();
+      if (header != null) {
+        Integer position = headerMap.get(header);
         if (position == null) {
-          throw new CsvException(text.get("headerNotFound", col.getHeader()), parser.getLineCount(), 0, row);
+          throw new CsvException(text.get("headerNotFound", header), parser.getLineCount(), 0, row);
         }
         col.setInternalPosition(position);
       }
