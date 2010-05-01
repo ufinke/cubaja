@@ -45,7 +45,7 @@ public class CsvWriter {
    */
   public CsvWriter(CsvConfig config) throws ConfigException, IOException, CsvException {
     
-    this(config.createWriter(), config);
+    this(config.getFile().createWriter(), config);
   }
   
   /**

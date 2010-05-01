@@ -9,5 +9,11 @@ package de.ufinke.cubaja.csv;
  */
 public interface ObjectWriter {
 
+  /**
+   * Writes an object into the writer's buffer.
+   * @param writer
+   * @param dataObject
+   * @throws Exception
+   */
   public void writeObject(CsvWriter writer, Object dataObject) throws Exception;
 }

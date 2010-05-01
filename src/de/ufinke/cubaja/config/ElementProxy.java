@@ -98,22 +98,26 @@ class ElementProxy {
     
     this.node = node;
     
-    for (Class<?> implementedInterface : node.getClass().getInterfaces()) {
-      if (StartElementHandler.class.isAssignableFrom(implementedInterface)) {
-        startElement = true;
+    Class<?> clazz = node.getClass();
+    while (clazz != null) {
+      for (Class<?> implementedInterface : clazz.getInterfaces()) {
+        if (StartElementHandler.class.isAssignableFrom(implementedInterface)) {
+          startElement = true;
+        }
+        if (EndElementHandler.class.isAssignableFrom(implementedInterface)) {
+          endElement = true;
+        }
+        if (ParameterFactoryProvider.class.isAssignableFrom(implementedInterface)) {
+          factoryProvider = true;
+        }
+        if (ParameterFactoryFinder.class.isAssignableFrom(implementedInterface)) {
+          factoryFinder = true;
+        }
+        if (ElementFactoryProvider.class.isAssignableFrom(implementedInterface)) {
+          elementProvider = true;
+        }
       }
-      if (EndElementHandler.class.isAssignableFrom(implementedInterface)) {
-        endElement = true;
-      }
-      if (ParameterFactoryProvider.class.isAssignableFrom(implementedInterface)) {
-        factoryProvider = true;
-      }
-      if (ParameterFactoryFinder.class.isAssignableFrom(implementedInterface)) {
-        factoryFinder = true;
-      }
-      if (ElementFactoryProvider.class.isAssignableFrom(implementedInterface)) {
-        elementProvider = true;
-      }
+      clazz = clazz.getSuperclass();
     }
     
     methodMap = new HashMap<String, MethodProxy>();

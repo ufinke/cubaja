@@ -3,9 +3,6 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,9 +120,26 @@ import de.ufinke.cubaja.util.Util;
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>header</tt></td>
- * <td align="left" valign="top">see description of method
- * {@link de.ufinke.cubaja.csv.CsvConfig#setHeader(java.lang.Boolean) setHeader}
- * </td>
+ * <td align="left" valign="top">flag whether there is a header row (default: <tt>false</tt>)</td>
+ * <td align="center" valign="top">A</td>
+ * <td align="center" valign="top"></td>
+ * <td align="center" valign="top">x</td>
+ * </tr>
+ * <tr bgcolor="#eeeeff">
+ * <td align="left" valign="top"><tt>autoCol</tt></td>
+ * <td align="left" valign="top">flag whether there is a header row
+ * and columns shall be automatically created according to the header row's content
+ * (default: <tt>false</tt>)</td>
+ * <td align="center" valign="top">A</td>
+ * <td align="center" valign="top"></td>
+ * <td align="center" valign="top">x</td>
+ * </tr>
+ * </tr>
+ * <tr bgcolor="#eeeeff">
+ * <td align="left" valign="top"><tt>headerMatch</tt></td>
+ * <td align="left" valign="top">flag whether there is a header row
+ * and column positions depend on the position of their defined header text within the header row
+ * (default: <tt>false</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>
@@ -193,7 +207,9 @@ public class CsvConfig {
   private String falseValue;
   private Integer scale;
 
-  private Boolean header;
+  private boolean header;
+  private boolean autoCol;
+  private boolean headerMatch;
 
   private RowFormatter formatter;
   private String rowSeparator;
@@ -204,7 +220,6 @@ public class CsvConfig {
   private int lastPosition;
   private int maxPosition;
   private int sequence;
-  private boolean headerDefined;
 
   /**
    * Constructor.
@@ -223,6 +238,7 @@ public class CsvConfig {
   public void setDefaultColConfig(ColConfig defaultColConfig) {
     
     defaultColConfig.setCsvConfig(this);
+    defaultColConfig.setInternalPosition(0);
     this.defaultColConfig = defaultColConfig;
   }
 
@@ -232,9 +248,8 @@ public class CsvConfig {
    * 
    * @param columnName
    * @return column config
-   * @throws CsvException
    */
-  public ColConfig getColConfig(String columnName) throws CsvException {
+  public ColConfig getColConfig(String columnName) {
 
     return nameMap.get(columnName);
   }
@@ -242,6 +257,7 @@ public class CsvConfig {
   /**
    * Returns a column configuration for a column identified by position.
    * Returns the default column configuration if there is no column with the given index.
+   * The position property of the default column is <tt>0</tt>.
    * 
    * @param position
    * @return column config
@@ -256,16 +272,13 @@ public class CsvConfig {
       return defaultColConfig;
     }
     
-    return positionArray[position];
+    ColConfig result = positionArray[position];
+    return (result == null) ? defaultColConfig : result;
   }
   
   private void buildPositionArray() {
     
     positionArray = new ColConfig[maxPosition + 1];
-    
-    for (int i = 0; i < positionArray.length; i++) {
-      positionArray[i] = defaultColConfig;
-    }
     
     for (ColConfig col : getColumnList()) {
       positionArray[col.getPosition()] = col;
@@ -314,36 +327,6 @@ public class CsvConfig {
     this.charset = charset;
   }
 
-  /**
-   * Creates a <tt>Reader</tt>. This method is called by the
-   * <tt>CsvReader</tt> constructor without a <tt>Reader</tt> parameter.
-   * When using this constructor, the file name must have been set. The charset
-   * property is also used if specified.
-   * 
-   * @return reader
-   * @throws IOException
-   * @throws ConfigException
-   */
-  public Reader createReader() throws IOException, ConfigException {
-
-    return getFile().createReader();
-  }
-
-  /**
-   * Creates a <tt>Writer</tt>. This method is called by the
-   * <tt>CsvWriter</tt> constructor without a <tt>Writer</tt> parameter.
-   * When using this constructor, the file name must have been set. The charset
-   * property is also used if specified.
-   * 
-   * @return writer
-   * @throws IOException
-   * @throws ConfigException
-   */
-  public Writer createWriter() throws IOException, ConfigException {
-
-    return getFile().createWriter();
-  }
-  
   /**
    * Returns a <tt>FileConfig</tt>.
    * @return file config
@@ -423,7 +406,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the parser. By default, this is a <tt>DefaultRowParser</tt>.
+   * Returns the parser. By default, this is a {@link DefaultRowParser}.
    * 
    * @return parser
    */
@@ -438,6 +421,9 @@ public class CsvConfig {
   /**
    * Returns the global decimal point character. By default, both point and
    * comma are decimal point characters.
+   * <p>
+   * For <tt>CsvWriter</tt>, the default decimal point character 
+   * depends on the default <tt>Locale</tt>.
    * 
    * @return decimal point charcter
    */
@@ -459,7 +445,8 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the decimal point character.
+   * Sets the global decimal point character.
+   * Should be point or comma; other values may lead to unpredictable results.
    * 
    * @param decimalChar
    */
@@ -479,8 +466,8 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the global date format. By default, the date format depends on the
-   * localized package properties.
+   * Returns the global date format. 
+   * The default pattern is <tt>yyyy-MM-dd</tt>.
    * 
    * @return date format
    */
@@ -493,8 +480,8 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the trim property. When set, column content is trimmed before
-   * further processing. Note that on read operations that require parsing the
+   * Returns the global trim property. When set, column content is trimmed before
+   * further processing. Note that on read operations which parse numbers, the
    * content is always trimmed. By default, the trim property is
    * <tt>false</tt>.
    * 
@@ -520,57 +507,111 @@ public class CsvConfig {
 
   /**
    * Tells whether the CSV input has a header row. This is <tt>true</tt>
-   * when the header attribute has been explicitly set to <tt>true</tt>, or when
-   * there is a header property defined on at least one column and the header attribute
-   * is not set explicitly to <tt>false</tt>.
+   * if any of the {@link #setHeader(boolean) header}, the
+   * {@link #setAutoCol(boolean) autoCol} 
+   * or the {@link #setHeaderMatch(boolean) headerMatch} properties is <tt>true</tt>.
    * 
    * @return flag
    */
   public boolean hasHeaderRow() {
 
-    return (header == null) ? headerDefined : header.booleanValue();
-  }
-
-  /**
-   * Returns the explicitly set header attribute. May be <tt>null</tt> if
-   * the attribute has not been set.
-   * 
-   * @return header attribute
-   */
-  public Boolean getHeader() {
-
-    return header;
+    return header || autoCol || headerMatch;
   }
 
   /**
    * Signals whether the CSV source or target has a header row.
    * <p>
-   * When this attribute is set to <tt>true</tt>, the first input row 
-   * read by <tt>CsvReader</tt> is
-   * used to define all (or additional) columns. The name attribute of the
-   * automatically defined columns is derived from the column content. For the
-   * name attribute, all non-identifier characters (that is,
-   * <tt>Character.isJavaIdentifierPart</tt> returns <tt>false</tt> for
-   * this character) are replaced by an underscore. The header attribute of
-   * those columns is the original column content. If the generated name matches
-   * an already existing column name, this column is not added automatically.
-   * <p>
-   * When this attribute is set to <tt>false</tt>, the first row is not
-   * processed as header row even if some <tt>col</tt> definitions contain a
-   * <tt>header</tt> attribute.
-   * <p>
-   * When this attribute isn't set at all, the first row is considered to be
-   * a header row if any <tt>col</tt> definition has a <tt>header</tt>
-   * attribute.
-   * <p>
-   * A <tt>CsvWriter</tt> automatically writes a header row
-   * if this attribute is set to <tt>true</tt>.
+   * When this attribute is set to <tt>true</tt>, 
+   * a <tt>CsvReader</tt> does not treat the first row's content as data,
+   * and a <tt>CsvWriter</tt> will automatically write a header row.
    * 
    * @param header
    */
-  public void setHeader(Boolean header) {
+  public void setHeader(boolean header) {
 
     this.header = header;
+  }
+  
+  /**
+   * Sets the <tt>autoCol</tt> property.
+   * <p>
+   * If set to <tt>true</tt>, a <tt>CsvReader</tt> will
+   * configure columns automatically. The column names and positions are 
+   * derived from the header row's content.
+   * Within a derived column name, non-Java characters are replaced by underlines.
+   * The derived column name is in lower case letters.
+   * <p>
+   * If a <tt>ColConfig</tt> with the same name has been already defined,
+   * it will not be replaced.
+   * <p>
+   * An automatically added <tt>ColConfig</tt> instance is of the same class
+   * as the {@link #setDefaultColConfig(ColConfig) default column}.
+   * 
+   * @param autoCol
+   */
+  public void setAutoCol(boolean autoCol) {
+    
+    this.autoCol = autoCol;
+  }
+  
+  /**
+   * Returns the <tt>autoCol</tt> property.
+   * 
+   * @return flag
+   */
+  public boolean isAutoCol() {
+    
+    return autoCol;
+  }
+  
+  void addAutoCol(String header, int position) throws CsvException {
+    
+    char[] buffer = new char[header.length()];
+    for (int i = 0; i < buffer.length; i++) {
+      char c = header.charAt(i);
+      buffer[i] = Character.isJavaIdentifierPart(c) ? c : '_';
+    }
+    String name = String.valueOf(buffer);
+    
+    if (nameMap.get(name) != null) {
+      return;
+    }
+    
+    ColConfig col = null;
+    try {
+      col = defaultColConfig.getClass().newInstance();
+    } catch (Exception e) {
+      throw new CsvException(text.get("createAutoCol"), e);
+    }
+    col.setName(name);
+    col.setInternalPosition(position);
+    
+    addCol(col);
+  }
+
+  /**
+   * Sets the <tt>headerMatch</tt> property.
+   * If set to <tt>true</tt>, a <tt>CsvReader</tt> will
+   * identify the columns' position by header text.
+   * If there is any column with a {@link ColConfig#setHeader(String) header} property
+   * and that header text is not found within the header row,
+   * an exception will be thrown.
+   * 
+   * @param headerMatch
+   */
+  public void setHeaderMatch(boolean headerMatch) {
+    
+    this.headerMatch = headerMatch;
+  }
+  
+  /**
+   * Returns the <tt>headerMatch</tt> property.
+   * 
+   * @return flag
+   */
+  public boolean isHeaderMatch() {
+    
+    return headerMatch;
   }
 
   /**
@@ -601,14 +642,18 @@ public class CsvConfig {
   public void addCol(ColConfig column) {
 
     column.setCsvConfig(this);
-    headerDefined |= (column.getHeader() != null);
     if (column.getPosition() == 0) {
       column.setInternalPosition(lastPosition + 1); // includes callback to getSequence()
     }
     lastPosition = column.getPosition();
     nameMap.put(column.getName(), column);
   }
-
+  
+  /*
+   * Multiple ColConfig instances may share the same position.
+   * Within the position array (see buildPositionArray), 
+   * the column with the highest sequence number wins.
+   */
   int getSequence(int position) {
 
     positionArray = null;
@@ -620,7 +665,6 @@ public class CsvConfig {
     
     nameMap.remove(column.getName());
     nameMap.put(newName, column);
-    positionArray = null;
   }
   
   /**
@@ -665,7 +709,7 @@ public class CsvConfig {
 
   /**
    * Sets the formatter for <tt>CsvWriter</tt> output. Default is
-   * <tt>DefaultRowFormatter</tt>.
+   * {@link DefaultRowFormatter}.
    * 
    * @param formatter
    */
@@ -747,7 +791,8 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the number of fractional digits for decimal numbers.
+   * Returns the global number of fractional digits for decimal numbers.
+   * 
    * @return scale
    */
   public Integer getScale() {
@@ -759,8 +804,9 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the number of fractional digits for decimal numbers.
+   * Sets the global number of fractional digits for decimal numbers.
    * Default is <tt>2</tt>.
+   * 
    * @param scale
    */
   public void setScale(Integer scale) {

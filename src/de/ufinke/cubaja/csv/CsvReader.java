@@ -24,26 +24,29 @@ import de.ufinke.cubaja.util.Util;
  * Rows are read in a loop by calling {@link #nextRow nextRow}
  * until the result is <tt>false</tt>.
  * <p>
- * For every row, the column contents may be read as the type needed in the application.
+ * For every row, the column's content may be read as the type needed by the application.
  * Alternatively, a complete row may be read as data object with method {@link #readRow readRow}.
  * An even more convenient way to read a complete CSV file is
  * the {@link #cursor cursor} method, which combines
- * the call to <tt>nextRow</tt> and <tt>readRow</tt> in an automatic loop.
+ * the call to <tt>nextRow</tt> and <tt>readRow</tt> within an automatic loop.
  * <p>
  * When a column is empty, the read methods for numeric primitive types
  * return <tt>0</tt>; read methods for objects types return <tt>null</tt>.
  * <p>
- * Like with JDBC result sets, the position of the first column is <tt>1</tt>, not <tt>0</tt>.
+ * For compatibility with JDBC result sets and the <tt>sql</tt> package, 
+ * the position of the first column is <tt>1</tt>, not <tt>0</tt>.
  * <p>
  * The first row is read automatically if the configuration's
- * <tt>hasHeaderRow</tt> method returns <tt>true</tt>.
- * In this case, column positions are determined automatically
- * when the column configuration contains a header definition.
- * The content of an automatically read header
- * row is accessible before the first explicit call to <tt>nextRow</tt>. 
+ * {@link CsvConfig#hasHeaderRow hasHeaderRow} method returns <tt>true</tt>.
+ * Special processing is performed when
+ * {@link CsvConfig#setAutoCol(boolean) autoCol}
+ * or {@link CsvConfig#setHeaderMatch(boolean) headerMatch} is set to <tt>true</tt>.
+ * An application may access the content of an automatically read header row
+ * immediately after instantiation of the <tt>CsvReader</tt> without an explicit call
+ * to <tt>nextRow</tt>.
  * <p>
- * Most methods may throw a <tt>CsvException</tt>, e.g. as a result of parsing errors.
- * An exception is thrown if there is an attempt to
+ * Most methods may throw a {@link CsvException}, e.g. as a result of parsing errors.
+ * An exception will also be thrown if there is an attempt to
  * read any data after a call to <tt>nextRow</tt>
  * returned <tt>false</tt>, or after the reader was closed.
  * @author Uwe Finke
@@ -81,7 +84,7 @@ public class CsvReader implements ColumnReader {
    */
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
-    this(config.createReader(), config);
+    this(config.getFile().createReader(), config);
   }
 
   /**
@@ -112,14 +115,12 @@ public class CsvReader implements ColumnReader {
     rowFilter = config.getRowFilter();
     errorHandler = new DefaultErrorHandler();
     
-    readHeaderRow();
+    if (config.hasHeaderRow()) {
+      processHeaderRow();
+    }
   }
   
-  private void readHeaderRow() throws IOException, CsvException {
-    
-    if (! config.hasHeaderRow()) {
-      return;
-    }
+  private void processHeaderRow() throws IOException, CsvException {
     
     if (! nextRow()) {
       return;
@@ -127,24 +128,27 @@ public class CsvReader implements ColumnReader {
     
     rowCount--;
     
-    String[] headers = readColumns();
-    
-    if (config.getHeader() != null && config.getHeader().booleanValue()) {
-      for (String header : headers) {
-        String name = createAutoHeaderName(header);
-        if (config.getColConfig(name) == null) {
-          ColConfig col = new ColConfig();
-          col = new ColConfig();
-          col.setName(name);
-          col.setHeader(header);
-          config.addCol(col);
-        }
-      }
+    if (config.isAutoCol()) {
+      processAutoCol();
     }
     
+    if (config.isHeaderMatch()) {
+      processHeaderMatch();
+    }
+  }
+  
+  private void processAutoCol() throws CsvException {
+    
+    for (int i = 1; i <= getColumnCount(); i++) {
+      config.addAutoCol(readString(i), i);
+    }
+  }
+  
+  private void processHeaderMatch() throws CsvException {
+    
     Map<String, Integer> headerMap = new HashMap<String, Integer>();
-    for (int i = headers.length - 1; i >= 0; i--) { // backward because on duplicate headers we prefer the leftmost column
-      headerMap.put(headers[i], i + 1);
+    for (int i = getColumnCount(); i >= 0; i--) { // backward because on duplicate headers we prefer the leftmost column
+      headerMap.put(readString(i), i);
     }
     
     for (ColConfig col : config.getColumnList()) {
@@ -157,18 +161,6 @@ public class CsvReader implements ColumnReader {
         col.setInternalPosition(position);
       }
     }
-  }
-  
-  private String createAutoHeaderName(String header) {
-    
-    char[] buffer = new char[header.length()];
-    
-    for (int i = 0; i < buffer.length; i++) {
-      char c = header.charAt(i);
-      buffer[i] = Character.isJavaIdentifierPart(c) ? c : '_';
-    }
-    
-    return String.valueOf(buffer);
   }
   
   /**
