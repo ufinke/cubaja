@@ -2,7 +2,10 @@
 
 <project name="cubaja" default="zip">
 	
-	<property name="version" value="1.1.0"/>
+  <property name="majorVersion" value="1"/>
+  <property name="minorVersion" value="1"/>
+  <property name="release" value="0"/>
+	<property name="version" value="${majorVersion}.${minorVersion}.${release}"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>
@@ -79,7 +82,7 @@
 			<format property="TIME" pattern="yyyy-MM-dd HH:mm"/>
 		</tstamp>
 		    
-    <jar destfile="${dist}/${tag}.jar">
+    <jar destfile="${dist}/${ant.project.name}_${majorVersion}.jar">
       <fileset dir="${dist}/classes"/>
     	<fileset dir="${dist}/src">
     		<include name="**/*.properties"/>

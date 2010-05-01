@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Merges an arbitrary number of sorted sources.
- * After the sources are defined with a constructor,
+ * After the sources have been defined with a constructor,
  * the merged objects are retrieved by an iterator.
  * @author Uwe Finke
  * @param <D> data type
