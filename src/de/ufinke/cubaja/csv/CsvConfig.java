@@ -566,6 +566,8 @@ public class CsvConfig {
   
   void addAutoCol(String header, int position) throws CsvException {
     
+    header = header.toLowerCase();
+    
     char[] buffer = new char[header.length()];
     for (int i = 0; i < buffer.length; i++) {
       char c = header.charAt(i);
@@ -573,17 +575,18 @@ public class CsvConfig {
     }
     String name = String.valueOf(buffer);
     
-    if (nameMap.get(name) != null) {
+    ColConfig col = nameMap.get(name);
+    if (col != null) {
       return;
     }
     
-    ColConfig col = null;
     try {
       col = defaultColConfig.getClass().newInstance();
     } catch (Exception e) {
       throw new CsvException(text.get("createAutoCol"), e);
     }
     col.setName(name);
+    col.setHeader(header);
     col.setInternalPosition(position);
     
     addCol(col);

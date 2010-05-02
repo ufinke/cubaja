@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<config>
+
+  <configInclude define="sub">
+    <foo bar="${bar}"/>
+  </configInclude>
+  
+  <configProperty name="bar" value="1"/>
+  <configInclude include="sub"/>
+  
+  <configProperty name="bar" value="2"/>
+  <configInclude include="sub"/>
+  
+</config>

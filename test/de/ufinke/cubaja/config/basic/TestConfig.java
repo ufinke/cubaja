@@ -1,4 +1,4 @@
-package de.ufinke.cubaja.config;
+package de.ufinke.cubaja.config.basic;
 
 import java.util.*;
 import java.math.*;

@@ -1,6 +1,8 @@
-package de.ufinke.cubaja.config;
+package de.ufinke.cubaja.config.basic;
 
 import org.junit.*;
+import de.ufinke.cubaja.config.Configurator;
+import de.ufinke.cubaja.config.FileResourceLoader;
 import static org.junit.Assert.*;
 import java.util.*;
 import java.math.*;
@@ -11,7 +13,7 @@ public class ConfiguratorTest {
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config"));
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/basic"));
     configurator.setName("basic_config");
     TestConfig config = configurator.configure(new TestConfig());
     

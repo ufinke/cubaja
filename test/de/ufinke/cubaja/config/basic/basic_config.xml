@@ -20,7 +20,7 @@
         stringValue="hello"
         dateValue="2010-04-03"
         classValue="java.lang.String"
-        interfaceValue="de.ufinke.cubaja.config.TestInterfaceImpl">
+        interfaceValue="de.ufinke.cubaja.config.basic.TestInterfaceImpl">
   <sub numbers="1, 2"/>
   <bigIntegerValue>12345</bigIntegerValue>
   <bigDecimalValue>-12345,67</bigDecimalValue>
