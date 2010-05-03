@@ -195,8 +195,10 @@ class SAXHandler extends DefaultHandler2 {
   private ElementProxy peekElement() {
     
     ElementProxy element = elementStack.peek();
-    if (element.getKind() == INCLUDED_ROOT) {
-      element = elementStack.get(elementStack.size() - 2);
+    int offset = 1;
+    while (element.getKind() == INCLUDED_ROOT) {
+      offset++;
+      element = elementStack.get(elementStack.size() - offset);
     }
     return element;
   }
