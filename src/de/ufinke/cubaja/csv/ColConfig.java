@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -150,6 +150,15 @@ public class ColConfig {
     
     this.csvConfig = csvConfig;
   }
+  
+  /**
+   * Returns the parent <tt>CsvConfig</tt>.
+   * @return config parent node
+   */
+  protected CsvConfig getParent() {
+    
+    return csvConfig;
+  }
 
   /**
    * Returns the column's name.
@@ -235,8 +244,8 @@ public class ColConfig {
    */
   public Boolean isTrim() {
 
-    if (trim == null) {
-      trim = csvConfig.getTrim();
+    if (trim == null && csvConfig != null) {
+      return csvConfig.getTrim();
     }
     return trim;
   }
@@ -258,15 +267,15 @@ public class ColConfig {
    */
   public Character getDecimalChar() {
 
-    if (decimalChar == null) {
-      decimalChar = csvConfig.getDecimalChar();
+    if (decimalChar == null && csvConfig != null) {
+      return csvConfig.getDecimalChar();
     }
     return decimalChar;
   }
   
   Character getWriterDecimalChar() {
     
-    if (decimalChar == null) {
+    if (decimalChar == null && csvConfig != null) {
       return csvConfig.getWriterDecimalChar();
     }
     return decimalChar;
@@ -297,8 +306,8 @@ public class ColConfig {
    */
   public SimpleDateFormat getDateFormat() {
 
-    if (dateFormat == null) {
-      dateFormat = csvConfig.getDateFormat();
+    if (dateFormat == null && csvConfig != null) {
+      return csvConfig.getDateFormat();
     }
     return dateFormat;
   }
@@ -320,8 +329,8 @@ public class ColConfig {
    */
   public String getTrueValue() {
 
-    if (trueValue == null) {
-      trueValue = csvConfig.getTrueValue();
+    if (trueValue == null && csvConfig != null) {
+      return csvConfig.getTrueValue();
     }
     return trueValue;
   }
@@ -343,8 +352,8 @@ public class ColConfig {
    */
   public String getFalseValue() {
 
-    if (falseValue == null) {
-      falseValue = csvConfig.getFalseValue();
+    if (falseValue == null && csvConfig != null) {
+      return csvConfig.getFalseValue();
     }
     return falseValue;
   }
@@ -405,8 +414,8 @@ public class ColConfig {
    */
   public Integer getScale() {
 
-    if (scale == null) {
-      scale = csvConfig.getScale();
+    if (scale == null && csvConfig != null) {
+      return csvConfig.getScale();
     }
     return scale;
   }
