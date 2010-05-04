@@ -607,6 +607,12 @@ class SAXHandler extends DefaultHandler2 {
       element.setKind(PROPERTY_PROVIDER);
       String provider = resolve(atts.getValue(providerIndex), false);
       NamedPropertyValue entry = new NamedPropertyValue(name, provider);
+      for (int i = 0; i < atts.getLength(); i++) {
+        String parmName = atts.getLocalName(i);
+        if (! (parmName.equals("name") || parmName.equals("provider"))) {
+          entry.addParm(parmName, atts.getValue(i));
+        }
+      }
       propertyStack.push(entry);
     }
   }
