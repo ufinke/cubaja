@@ -64,7 +64,7 @@ class ConstantPool implements Generatable {
   
   int addClass(Type type) {
 
-    String className = type.getClassName();    
+    String className = type.getClassName();
     int utf8Index = addUtf8(className);
     return addEntry(new ConstantEntryClass(utf8Index), 1);
   }

@@ -84,17 +84,15 @@ enum ObjectFactoryType {
   
 // --- parameter finder -------------------------------------------------------
   
-  static private final Map<Class<?>, ObjectFactoryType> parameterMap = createParameterMap();
+  static private final Map<Class<?>, ObjectFactoryType> parameterMap;
   
-  static private Map<Class<?>, ObjectFactoryType> createParameterMap() {
+  static {
     
-    Map<Class<?>, ObjectFactoryType> map = new HashMap<Class<?>, ObjectFactoryType>(32);
+    parameterMap = new HashMap<Class<?>, ObjectFactoryType>(32);
     
     for (ObjectFactoryType type : ObjectFactoryType.values()) {
-      map.put(type.getClazz(), type);
+      parameterMap.put(type.getClazz(), type);
     }
-    
-    return map;
   }
   
   static ObjectFactoryType getType(Class<?> parameterClazz) {

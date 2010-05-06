@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -407,17 +407,15 @@ enum ObjectFactoryType {
   
 // --- parameter finder -------------------------------------------------------
   
-  static private final Map<TypeCombination, ObjectFactoryType> parameterMap = createParameterMap();
+  static private final Map<TypeCombination, ObjectFactoryType> parameterMap;
   
-  static private Map<TypeCombination, ObjectFactoryType> createParameterMap() {
+  static {
     
-    Map<TypeCombination, ObjectFactoryType> map = new HashMap<TypeCombination, ObjectFactoryType>(512);
+    parameterMap = new HashMap<TypeCombination, ObjectFactoryType>(512);
     
     for (ObjectFactoryType type : ObjectFactoryType.values()) {
-      map.put(type.getCombination(), type);
+      parameterMap.put(type.getCombination(), type);
     }
-    
-    return map;
   }
   
   static ObjectFactoryType getType(TypeCombination combination) {

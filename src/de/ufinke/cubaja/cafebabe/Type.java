@@ -12,7 +12,9 @@ import java.util.Map;
  */
 public class Type {
 
-  {
+  static private final Map<String, String> primitiveMap;
+  
+  static {
     primitiveMap = new HashMap<String, String>(16);
     primitiveMap.put(Byte.TYPE.getName(), "B");
     primitiveMap.put(Character.TYPE.getName(), "C");
@@ -25,16 +27,11 @@ public class Type {
     primitiveMap.put(Boolean.TYPE.getName(), "Z");
   }
   
-  static private Map<String, String> primitiveMap;
-  
   private int dimensions;
-  private String componentName;
   private String className;
   private String descriptor;
   private String parameterName;
   private int size;
-  private boolean sizeInitialized;
-  private int hashCode;
   
   /**
    * Defines a type by name.
@@ -42,7 +39,7 @@ public class Type {
    */
   public Type(String type) {
   
-    componentName = type;
+    initValues(type);
   }
   
   /**
@@ -67,7 +64,7 @@ public class Type {
       dimensions++;
       type = type.getComponentType();
     }
-    componentName = type.getName();
+    initValues(type.getName());
   }
   
   /**
@@ -88,7 +85,7 @@ public class Type {
    */
   public Type(GenClass type) {
 
-    componentName = type.getName();
+    initValues(type.getName());
   }
   
   /**
@@ -103,6 +100,40 @@ public class Type {
     this.parameterName = parameterName;
   }
   
+  private void initValues(String componentName) {
+
+    className = componentName.replace('.', '/');
+    
+    descriptor = primitiveMap.get(componentName);    
+    if (descriptor == null || dimensions > 0) {
+      StringBuilder sb = new StringBuilder(100);
+      for (int i = 0; i < dimensions; i++) {
+        sb.append('[');
+      }
+      if (descriptor == null) {
+        sb.append('L');
+        sb.append(className);
+        sb.append(';');
+      } else {
+        sb.append(descriptor);
+      }
+      descriptor = sb.toString();
+    }
+    
+    size = 1;
+    if (descriptor.length() == 1) {
+      switch (descriptor.charAt(0)) {
+        case 'V':
+          size = 0;
+          break;
+        case 'D':
+        case 'J':
+          size = 2;
+          break;
+      }
+    }
+  }
+  
   /**
    * Tests equality to another <tt>Type</tt> instance.
    * A type instance equals to another if both have the same descriptor.
@@ -114,7 +145,7 @@ public class Type {
     }
     
     Type other = (Type) o;
-    return getDescriptor().equals(other.getDescriptor());
+    return descriptor.equals(other.descriptor);
   }
   
   /**
@@ -122,10 +153,7 @@ public class Type {
    */
   public int hashCode() {
     
-    if (hashCode == 0) {
-      hashCode = getDescriptor().hashCode();
-    }
-    return hashCode;
+    return descriptor.hashCode();
   }
   
   /**
@@ -133,12 +161,7 @@ public class Type {
    */
   public String toString() {
     
-    return getDescriptor();
-  }
-  
-  String getParameterName() {
-    
-    return parameterName;
+    return descriptor;
   }
   
   /**
@@ -150,53 +173,22 @@ public class Type {
    */
   public int getSize() {
 
-    if (! sizeInitialized) {
-      size = 1;
-      String descriptor = getDescriptor();
-      if (descriptor.length() == 1) {
-        switch (descriptor.charAt(0)) {
-          case 'V':
-            size = 0;
-            break;
-          case 'D':
-          case 'J':
-            size = 2;
-            break;
-        }
-      }
-      sizeInitialized = true;
-    }
-    
     return size;
-  }
-  
-  String getClassName() {
-
-    if (className == null && dimensions == 0 && primitiveMap.get(componentName) == null) {
-      className = componentName.replace('.', '/');
-    }
-    return className;
   }
   
   String getDescriptor() {
     
-    if (descriptor == null) {
-      descriptor = primitiveMap.get(componentName);
-      if (descriptor == null || dimensions > 0) {
-        StringBuilder sb = new StringBuilder(100);
-        for (int i = 0; i < dimensions; i++) {
-          sb.append('[');
-        }
-        if (descriptor == null) {
-          sb.append('L');
-          sb.append(getClassName());
-          sb.append(';');
-        } else {
-          sb.append(descriptor);
-        }
-        descriptor = sb.toString();
-      }
-    }
     return descriptor;
   }
+  
+  String getClassName() {
+
+    return className;
+  }
+  
+  String getParameterName() {
+    
+    return parameterName;
+  }
+  
 }

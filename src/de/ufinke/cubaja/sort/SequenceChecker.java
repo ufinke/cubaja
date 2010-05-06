@@ -59,7 +59,7 @@ public class SequenceChecker<D> implements Iterable<D> {
     }
   }
   
-  static private int id;
+  static private volatile int id;
   
   static private synchronized int getId() {
     

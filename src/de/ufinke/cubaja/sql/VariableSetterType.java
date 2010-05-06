@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -76,17 +76,15 @@ enum VariableSetterType {
   
 //--- parameter finder -------------------------------------------------------
   
-  static private final Map<Class<?>, VariableSetterType> map = createMap();
+  static private final Map<Class<?>, VariableSetterType> map;
   
-  static Map<Class<?>, VariableSetterType> createMap() {
+  static {
     
-    Map<Class<?>, VariableSetterType> map = new HashMap<Class<?>, VariableSetterType>(64);
+    map = new HashMap<Class<?>, VariableSetterType>(64);
     
     for (VariableSetterType type : VariableSetterType.values()) {
       map.put(type.getSetterType(), type);
     }
-    
-    return map;
   }
   
   static VariableSetterType getType(Class<?> parm) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -28,7 +28,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class Database {
 
-  static private int id = 0;
+  static private volatile int id = 0;
   
   static private synchronized int getId() {
     

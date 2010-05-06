@@ -28,7 +28,7 @@ final class SortManager {
 
   static final Text text = new Text(Sorter.class);
 
-  static private int id = 0;
+  static private volatile int id = 0;
 
   static private synchronized int getId() {
 

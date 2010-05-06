@@ -43,17 +43,8 @@ public enum Weekday {
    */
   public String toString() {
     
-    if (string == null) {
-      if (text == null) {
-        text = new Text(Weekday.class);
-      }
-      string = text.get(name()); 
-    }
-    
     return string;
   }
-  
-  static private Text text;
   
   /**
    * Returns the weekday of a date.
@@ -74,25 +65,19 @@ public enum Weekday {
    */
   static public Weekday getWeekday(Calendar cal) {
     
-    if (weekdayMap == null) {
-      createWeekdayMap();
-    }
-    
     return weekdayMap[cal.get(Calendar.DAY_OF_WEEK)];
   }
   
   static private Weekday[] weekdayMap;
   
-  static private synchronized void createWeekdayMap() {
-    
-    if (weekdayMap != null) {
-      return;
-    }
+  static {
     
     weekdayMap = new Weekday[8];
+    Text text = new Text(Weekday.class);
     
     for (Weekday weekday : Weekday.values()) {
       weekdayMap[weekday.calendarConstant] = weekday;
+      weekday.string = text.get(weekday.name());
     }
   }
   
