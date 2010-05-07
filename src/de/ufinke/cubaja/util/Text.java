@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -15,7 +15,6 @@ import java.util.ResourceBundle;
 public class Text {
 
   private String bundleName;
-  private Locale locale;
   private ResourceBundle bundle;
   
   /**
@@ -26,7 +25,7 @@ public class Text {
   public Text(String bundleName, Locale locale) {
   
     this.bundleName = bundleName;
-    this.locale = locale;
+    bundle = ResourceBundle.getBundle(bundleName, locale);
   }
   
   /**
@@ -41,7 +40,7 @@ public class Text {
   /**
    * Constructor with the using class and a locale.
    * <p/>
-   * The bundle name is derived from the class package name
+   * The bundle name is derived from the class' package name
    * suffixed with '<tt>.text</tt>'.
    * @param usingClass the using class
    * @param locale locale
@@ -54,7 +53,7 @@ public class Text {
   /**
    * Constructor with the using class and the default locale.
    * <p/>
-   * The bundle name is derived from the class package name
+   * The bundle name is derived from the class' package name
    * suffixed with '<tt>.text</tt>'.
    * @param usingClass the using class
    */
@@ -70,14 +69,6 @@ public class Text {
    * @return a string
    */
   public String get(String key, Object... args) {
-    
-    if (bundle == null) {
-      try {          
-        bundle = ResourceBundle.getBundle(bundleName, locale);
-      } catch (MissingResourceException mre) {
-        return getErrorText("Bundle not found", key, args);
-      }
-    }
     
     try {
       String rawText = bundle.getString(key);
