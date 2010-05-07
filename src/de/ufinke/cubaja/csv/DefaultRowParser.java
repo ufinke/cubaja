@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -63,13 +63,15 @@ public class DefaultRowParser implements RowParser {
     return row;
   }
   
-  private String parseSimple() throws IOException {
+  private String parseSimple() throws CsvException, IOException {
 
     String line = lineReader.readLine();
     if (line == null) {
       count = 0;
       return null;
     }
+    
+    line = editRow(line);
     
     char sep = separator;
     
@@ -115,6 +117,8 @@ public class DefaultRowParser implements RowParser {
       count = 0;
       return null;
     }
+    
+    line = editRow(line);
     
     char sep = separator;
     char esc = escapeChar;
@@ -200,6 +204,19 @@ public class DefaultRowParser implements RowParser {
     count = i;
     
     return line;
+  }
+
+  /**
+   * Gives subclasses the opportunity to change the row.
+   * This method is performed before column parsing.
+   * The default implementation simply returns the passed argument.
+   * @param in original row
+   * @return edited raw row
+   * @throws CsvException
+   */
+  protected String editRow(String in) throws CsvException {
+    
+    return in;
   }
   
   /**
