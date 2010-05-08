@@ -32,9 +32,6 @@ class ObjectWriterGenerator implements Generator {
     }
   }
   
-  static private final Type objectType = new Type(Object.class);
-  static private final Type voidType = new Type(Void.TYPE);
-  static private final Type intType = new Type(Integer.TYPE);
   static private final Type objectWriterType = new Type(ObjectWriter.class);
   static private final Type csvWriterType = new Type(CsvWriter.class);
   static private final Type exceptionType = new Type(Exception.class);
@@ -79,11 +76,11 @@ class ObjectWriterGenerator implements Generator {
   
   public GenClass generate(String className) throws Exception {
 
-    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, objectType, objectWriterType);
+    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, Type.OBJECT, objectWriterType);
     
     genClass.createDefaultConstructor();
     
-    GenMethod method = genClass.createMethod(ACC_PUBLIC, voidType, "writeObject", csvWriterType, objectType);
+    GenMethod method = genClass.createMethod(ACC_PUBLIC, Type.VOID, "writeObject", csvWriterType, Type.OBJECT);
     method.addException(exceptionType);
     generateCode(method.getCode());    
     
@@ -101,7 +98,7 @@ class ObjectWriterGenerator implements Generator {
       code.loadConstant(getter.position);      
       code.loadLocalReference(3); // data object
       code.invokeVirtual(dataClassType, getter.returnType, getter.name); // get
-      code.invokeVirtual(csvWriterType, voidType, "write", intType, getter.writerType.getType());
+      code.invokeVirtual(csvWriterType, Type.VOID, "write", Type.INT, getter.writerType.getType());
     }
     
     code.returnVoid();

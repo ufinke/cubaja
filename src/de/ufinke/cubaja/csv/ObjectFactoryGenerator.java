@@ -32,10 +32,6 @@ class ObjectFactoryGenerator implements Generator {
     }
   }
   
-  static private final Type objectType = new Type(Object.class);
-  static private final Type clazzType = new Type(Class.class);
-  static private final Type voidType = new Type(Void.TYPE);
-  static private final Type intType = new Type(Integer.TYPE);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
   static private final Type csvReaderType = new Type(CsvReader.class);
   static private final Type csvExceptionType = new Type(CsvException.class);
@@ -80,11 +76,11 @@ class ObjectFactoryGenerator implements Generator {
   
   public GenClass generate(String className) throws Exception {
 
-    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, objectType, objectFactoryType);
+    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, Type.OBJECT, objectFactoryType);
     
     genClass.createDefaultConstructor();
     
-    GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "createObject", csvReaderType);
+    GenMethod method = genClass.createMethod(ACC_PUBLIC, Type.OBJECT, "createObject", csvReaderType);
     method.addException(csvExceptionType);
     generateCode(method.getCode());    
     
@@ -95,7 +91,7 @@ class ObjectFactoryGenerator implements Generator {
     
     code.newObject(dataClassType);
     code.duplicate(); // required for setter or return
-    code.invokeSpecial(dataClassType, voidType, "<init>");
+    code.invokeSpecial(dataClassType, Type.VOID, "<init>");
     
     for (SetterEntry setter : setterMap.values()) {
       
@@ -108,12 +104,12 @@ class ObjectFactoryGenerator implements Generator {
       code.loadConstant(setter.position);
       if (setter.readerType.needsClass()) {
         code.loadConstant(setter.dataType);
-        code.invokeVirtual(csvReaderType, readerType, readerMethod, intType, clazzType);
+        code.invokeVirtual(csvReaderType, readerType, readerMethod, Type.INT, Type.CLASS);
         code.cast(setter.dataType);
-        code.invokeVirtual(dataClassType, voidType, setter.name, setter.dataType);
+        code.invokeVirtual(dataClassType, Type.VOID, setter.name, setter.dataType);
       } else {
-        code.invokeVirtual(csvReaderType, readerType, readerMethod, intType);
-        code.invokeVirtual(dataClassType, voidType, setter.name, setter.dataType);
+        code.invokeVirtual(csvReaderType, readerType, readerMethod, Type.INT);
+        code.invokeVirtual(dataClassType, Type.VOID, setter.name, setter.dataType);
       }
     }
     

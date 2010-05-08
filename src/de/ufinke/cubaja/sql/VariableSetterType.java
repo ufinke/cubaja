@@ -3,6 +3,25 @@
 
 package de.ufinke.cubaja.sql;
 
+import static de.ufinke.cubaja.sql.Types.T_ARRAY;
+import static de.ufinke.cubaja.sql.Types.T_BIG_DECIMAL;
+import static de.ufinke.cubaja.sql.Types.T_BIG_INTEGER;
+import static de.ufinke.cubaja.sql.Types.T_BLOB;
+import static de.ufinke.cubaja.sql.Types.T_BOOLEAN_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_BYTE_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_CHAR_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_CLOB;
+import static de.ufinke.cubaja.sql.Types.T_DOUBLE_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_FLOAT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_INT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_LONG_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_REF;
+import static de.ufinke.cubaja.sql.Types.T_SHORT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_SQL_DATE;
+import static de.ufinke.cubaja.sql.Types.T_TIME;
+import static de.ufinke.cubaja.sql.Types.T_TIMESTAMP;
+import static de.ufinke.cubaja.sql.Types.T_URL;
+import static de.ufinke.cubaja.sql.Types.T_UTIL_DATE;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
@@ -18,60 +37,55 @@ import de.ufinke.cubaja.cafebabe.Type;
 
 enum VariableSetterType {
 
-  ARRAY          (Array.class         , "Array"),
-  BIG_DECIMAL    (BigDecimal.class    , "BigDecimal"),
-  BIG_INTEGER    (BigInteger.class    , "BigInteger"),
-  BLOB           (Blob.class          , "Blob"),
-  BOOLEAN        (Boolean.TYPE        , "Boolean"),
-  BOOLEAN_OBJECT (Boolean.class       , "Boolean"),
-  BYTE           (Byte.TYPE           , "Byte"),
-  BYTE_OBJECT    (Byte.class          , "Byte"),
-  CHAR           (Character.TYPE      , "Char"),
-  CHAR_OBJECT    (Character.class     , "Char"),
-  CLOB           (Clob.class          , "Clob"),
-  DATE           (java.sql.Date.class , "Date"),
-  DOUBLE         (Double.TYPE         , "Double"),
-  DOUBLE_OBJECT  (Double.class        , "Double"),
-  FLOAT          (Float.TYPE          , "Float"),
-  FLOAT_OBJECT   (Float.class         , "Float"),
-  INT            (Integer.TYPE        , "Int"),
-  INT_OBJECT     (Integer.class       , "Int"),
-  LONG           (Long.TYPE           , "Long"),
-  LONG_OBJECT    (Long.class          , "Long"),
-  OBJECT         (Object.class        , "Object"),
-  REF            (Ref.class           , "Ref"),
-  SHORT          (Short.TYPE          , "Short"),
-  SHORT_OBJECT   (Short.class         , "Short"),
-  STRING         (String.class        , "String"),
-  TIME           (Time.class          , "Time"),
-  TIMESTAMP      (Timestamp.class     , "Timestamp"),
-  UTIL_DATE      (java.util.Date.class, "Timestamp"),
-  URL            (URL.class           , "URL");
+  ARRAY          (Array.class         , T_ARRAY         , "setArray"),
+  BIG_DECIMAL    (BigDecimal.class    , T_BIG_DECIMAL   , "setBigDecimal"),
+  BIG_INTEGER    (BigInteger.class    , T_BIG_INTEGER   , "setBigInteger"),
+  BLOB           (Blob.class          , T_BLOB          , "setBlob"),
+  BOOLEAN        (Boolean.TYPE        , Type.BOOLEAN    , "setBoolean"),
+  BOOLEAN_OBJECT (Boolean.class       , T_BOOLEAN_OBJECT, "setBoolean"),
+  BYTE           (Byte.TYPE           , Type.BYTE       , "setByte"),
+  BYTE_OBJECT    (Byte.class          , T_BYTE_OBJECT   , "setByte"),
+  CHAR           (Character.TYPE      , Type.CHAR       , "setChar"),
+  CHAR_OBJECT    (Character.class     , T_CHAR_OBJECT   , "setChar"),
+  CLOB           (Clob.class          , T_CLOB          , "setClob"),
+  DATE           (java.sql.Date.class , T_SQL_DATE      , "setDate"),
+  DOUBLE         (Double.TYPE         , Type.DOUBLE     , "setDouble"),
+  DOUBLE_OBJECT  (Double.class        , T_DOUBLE_OBJECT , "setDouble"),
+  FLOAT          (Float.TYPE          , Type.FLOAT      , "setFloat"),
+  FLOAT_OBJECT   (Float.class         , T_FLOAT_OBJECT  , "setFloat"),
+  INT            (Integer.TYPE        , Type.INT        , "setInt"),
+  INT_OBJECT     (Integer.class       , T_INT_OBJECT    , "setInt"),
+  LONG           (Long.TYPE           , Type.LONG       , "setLong"),
+  LONG_OBJECT    (Long.class          , T_LONG_OBJECT   , "setLong"),
+  OBJECT         (Object.class        , Type.OBJECT     , "setObject"),
+  REF            (Ref.class           , T_REF           , "setRef"),
+  SHORT          (Short.TYPE          , Type.SHORT      , "setShort"),
+  SHORT_OBJECT   (Short.class         , T_SHORT_OBJECT  , "setShort"),
+  STRING         (String.class        , Type.STRING     , "setString"),
+  TIME           (Time.class          , T_TIME          , "setTime"),
+  TIMESTAMP      (Timestamp.class     , T_TIMESTAMP     , "setTimestamp"),
+  UTIL_DATE      (java.util.Date.class, T_UTIL_DATE     , "setTimestamp"),
+  URL            (URL.class           , T_URL           , "setURL");
   
-  private Class<?> setterType;
-  private String setterMethod;
-  private Type genType;
+  private Class<?> clazz;
+  private String method;
+  private Type type;
   
-  private VariableSetterType(Class<?> setterType, String setterMethod) {
+  private VariableSetterType(Class<?> clazz, Type type, String method) {
   
-    this.setterType = setterType;
-    this.setterMethod = "set" + setterMethod;
-    genType = new Type(setterType);
-  }
-  
-  public Class<?> getSetterType() {
-    
-    return setterType;
+    this.clazz = clazz;
+    this.type = type;
+    this.method = method;
   }
   
   public String getSetterMethod() {
     
-    return setterMethod;
+    return method;
   }
   
   public Type getGenType() {
     
-    return genType;
+    return type;
   }
   
 //--- parameter finder -------------------------------------------------------
@@ -83,7 +97,7 @@ enum VariableSetterType {
     map = new HashMap<Class<?>, VariableSetterType>(64);
     
     for (VariableSetterType type : VariableSetterType.values()) {
-      map.put(type.getSetterType(), type);
+      map.put(type.clazz, type);
     }
   }
   

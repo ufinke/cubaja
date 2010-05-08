@@ -110,7 +110,7 @@ public class GenClass implements Generatable, AccessFlags {
     CodeAttribute code = constructor.getCode();
     
     code.loadLocalReference(0);
-    code.invokeSpecial(superClass, new Type(Void.TYPE), "<init>");
+    code.invokeSpecial(superClass, Type.VOID, "<init>");
     code.returnVoid();
   }
   

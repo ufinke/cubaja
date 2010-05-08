@@ -32,9 +32,6 @@ class VariableSetterGenerator implements Generator {
     }
   }
   
-  static private final Type objectType = new Type(Object.class);
-  static private final Type voidType = new Type(Void.TYPE);
-  static private final Type intType = new Type(Integer.TYPE);
   static private final Type exceptionType = new Type(Exception.class);
   static private final Type variableSetterType = new Type(VariableSetter.class);
   static private final Type preparedSqlType = new Type(PreparedSql.class);
@@ -101,11 +98,11 @@ class VariableSetterGenerator implements Generator {
   
   public GenClass generate(String className) throws Exception {
 
-    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, objectType, variableSetterType);
+    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, Type.OBJECT, variableSetterType);
     
     genClass.createDefaultConstructor();
     
-    GenMethod method = genClass.createMethod(ACC_PUBLIC, voidType, "setVariables", preparedSqlType, objectType);
+    GenMethod method = genClass.createMethod(ACC_PUBLIC, Type.VOID, "setVariables", preparedSqlType, Type.OBJECT);
     method.addException(exceptionType);
     generateCode(method.getCode());
     
@@ -124,7 +121,7 @@ class VariableSetterGenerator implements Generator {
       code.loadConstant(entry.position);
       code.loadLocalReference(3);
       code.invokeVirtual(dataClassType, type.getGenType(), entry.getterMethod); // get
-      code.invokeVirtual(preparedSqlType, voidType, type.getSetterMethod(), intType, type.getGenType()); // set
+      code.invokeVirtual(preparedSqlType, Type.VOID, type.getSetterMethod(), Type.INT, type.getGenType()); // set
     }
     
     code.returnVoid();

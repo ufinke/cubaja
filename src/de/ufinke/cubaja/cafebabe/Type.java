@@ -27,6 +27,66 @@ public class Type {
     primitiveMap.put(Boolean.TYPE.getName(), "Z");
   }
   
+  /**
+   * Type representing <tt>void</tt>.
+   */
+  static public final Type VOID = new Type(Void.TYPE);
+  
+  /**
+   * Type representing <tt>boolean</tt>.
+   */
+  static public final Type BOOLEAN = new Type(Boolean.TYPE);
+  
+  /**
+   * Type representing <tt>byte</tt>.
+   */
+  static public final Type BYTE = new Type(Byte.TYPE);
+  
+  /**
+   * Type representing <tt>short</tt>.
+   */
+  static public final Type SHORT = new Type(Short.TYPE);
+  
+  /**
+   * Type representing <tt>int</tt>.
+   */
+  static public final Type INT = new Type(Integer.TYPE);
+  
+  /**
+   * Type representing <tt>long</tt>.
+   */
+  static public final Type LONG = new Type(Long.TYPE);
+  
+  /**
+   * Type representing <tt>float</tt>.
+   */
+  static public final Type FLOAT = new Type(Float.TYPE);
+  
+  /**
+   * Type representing <tt>double</tt>.
+   */
+  static public final Type DOUBLE = new Type(Double.TYPE);
+  
+  /**
+   * Type representing <tt>char</tt>.
+   */
+  static public final Type CHAR = new Type(Character.TYPE);
+  
+  /**
+   * Type representing <tt>String</tt>.
+   */
+  static public final Type STRING = new Type(String.class);
+  
+  /**
+   * Type representing <tt>Object</tt>.
+   */
+  static public final Type OBJECT = new Type(Object.class);
+  
+  /**
+   * Type representing <tt>Class</tt>.
+   */
+  static public final Type CLASS = new Type(Class.class);
+  
   private int dimensions;
   private String className;
   private String descriptor;

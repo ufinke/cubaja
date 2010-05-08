@@ -55,9 +55,6 @@ class ObjectFactoryGenerator implements Generator {
   static private final Text text = new Text(ObjectFactoryGenerator.class);
   static private final Log logger = LogFactory.getLog(ObjectFactoryGenerator.class);
   
-  static private final Type objectType = new Type(Object.class);
-  static private final Type voidType = new Type(Void.TYPE);
-  static private final Type intType = new Type(Integer.TYPE);
   static private final Type objectFactoryType = new Type(ObjectFactory.class);
   static private final Type queryType = new Type(Query.class);
   static private final Type sqlExceptionType = new Type(SQLException.class);
@@ -109,11 +106,11 @@ class ObjectFactoryGenerator implements Generator {
   
   public GenClass generate(String className) throws Exception {
 
-    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, objectType, objectFactoryType);
+    GenClass genClass = new GenClass(ACC_PUBLIC | ACC_FINAL, className, Type.OBJECT, objectFactoryType);
     
     genClass.createDefaultConstructor();
     
-    GenMethod method = genClass.createMethod(ACC_PUBLIC, objectType, "createObject", queryType);
+    GenMethod method = genClass.createMethod(ACC_PUBLIC, Type.OBJECT, "createObject", queryType);
     method.addException(sqlExceptionType);
     
     if (builtin == null) {
@@ -129,7 +126,7 @@ class ObjectFactoryGenerator implements Generator {
     
     code.newObject(dataClassType);
     code.duplicate(); // required for setter or return
-    code.invokeSpecial(dataClassType, voidType, "<init>");
+    code.invokeSpecial(dataClassType, Type.VOID, "<init>");
     
     for (SetterEntry setter : setterMap.values()) {
       
@@ -140,9 +137,9 @@ class ObjectFactoryGenerator implements Generator {
       
       code.loadLocalReference(1);
       code.loadConstant(setter.position);
-      code.invokeVirtual(queryType, parmType, type.getReaderMethod(), intType);
+      code.invokeVirtual(queryType, parmType, type.getReaderMethod(), Type.INT);
       
-      code.invokeVirtual(dataClassType, voidType, setter.name, parmType); // operates on duplicated data object
+      code.invokeVirtual(dataClassType, Type.VOID, setter.name, parmType); // operates on duplicated data object
     }
     
     code.returnReference(); // returns duplicated data object
@@ -152,7 +149,7 @@ class ObjectFactoryGenerator implements Generator {
     
     code.loadLocalReference(1); // query
     code.loadConstant(1); // column #1
-    code.invokeVirtual(queryType, dataClassType, builtin.getReaderMethod(), intType);
+    code.invokeVirtual(queryType, dataClassType, builtin.getReaderMethod(), Type.INT);
     code.returnReference();
   }
   
