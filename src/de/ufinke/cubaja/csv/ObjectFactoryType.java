@@ -12,43 +12,43 @@ import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {
 
-  // CONSTANT(clazz, isPrimitive, needsClass, methodName, priority)
-  BOOLEAN       (Boolean.TYPE    , true , false, "Boolean"      , 19),
-  BYTE          (Byte.TYPE       , true , false, "Byte"         , 18),
-  SHORT         (Short.TYPE      , true , false, "Short"        , 17),
-  CHAR          (Character.TYPE  , true , false, "Char"         , 16),
-  INT           (Integer.TYPE    , true , false, "Int"          , 15),
-  LONG          (Long.TYPE       , true , false, "Long"         , 14),
-  FLOAT         (Float.TYPE      , true , false, "Float"        , 13),
-  DOUBLE        (Double.TYPE     , true , false, "Double"       , 12),
-  BOOLEAN_OBJECT(Boolean.class   , false, false, "BooleanObject", 11),
-  BYTE_OBJECT   (Byte.class      , false, false, "ByteObject"   , 10),
-  SHORT_OBJECT  (Short.class     , false, false, "ShortObject"  ,  9),
-  CHAR_OBJECT   (Character.class , false, false, "CharObject"   ,  8),
-  INT_OBJECT    (Integer.class   , false, false, "IntObject"    ,  7),
-  LONG_OBJECT   (Long.class      , false, false, "LongObject"   ,  6),
-  FLOAT_OBJECT  (Float.class     , false, false, "FloatObject"  ,  5),
-  DOUBLE_OBJECT (Double.class    , false, false, "DoubleObject" ,  4),
-  STRING        (String.class    , false, false, "String"       ,  1),
-  DATE          (Date.class      , false, false, "Date"         , 20),
-  BIG_INTEGER   (BigInteger.class, false, false, "BigInteger"   ,  3),
-  BIG_DECIMAL   (BigDecimal.class, false, false, "BigDecimal"   ,  2),
-  ENUM          (Enum.class      , false, true , "Enum"         , 21);
+  // CONSTANT(clazz, type, isPrimitive, needsClass, methodName, priority)
+  BOOLEAN       (Boolean.TYPE    , Type.BOOLEAN              , true , false, "readBoolean"      , 19),
+  BYTE          (Byte.TYPE       , Type.BYTE                 , true , false, "readByte"         , 18),
+  SHORT         (Short.TYPE      , Type.SHORT                , true , false, "readShort"        , 17),
+  CHAR          (Character.TYPE  , Type.CHAR                 , true , false, "readChar"         , 16),
+  INT           (Integer.TYPE    , Type.INT                  , true , false, "readInt"          , 15),
+  LONG          (Long.TYPE       , Type.LONG                 , true , false, "readLong"         , 14),
+  FLOAT         (Float.TYPE      , Type.FLOAT                , true , false, "readFloat"        , 13),
+  DOUBLE        (Double.TYPE     , Type.DOUBLE               , true , false, "readDouble"       , 12),
+  BOOLEAN_OBJECT(Boolean.class   , new Type(Boolean.class)   , false, false, "readBooleanObject", 11),
+  BYTE_OBJECT   (Byte.class      , new Type(Byte.class)      , false, false, "readByteObject"   , 10),
+  SHORT_OBJECT  (Short.class     , new Type(Short.class)     , false, false, "readShortObject"  ,  9),
+  CHAR_OBJECT   (Character.class , new Type(Character.class) , false, false, "readCharObject"   ,  8),
+  INT_OBJECT    (Integer.class   , new Type(Integer.class)   , false, false, "readIntObject"    ,  7),
+  LONG_OBJECT   (Long.class      , new Type(Long.class)      , false, false, "readLongObject"   ,  6),
+  FLOAT_OBJECT  (Float.class     , new Type(Float.class)     , false, false, "readFloatObject"  ,  5),
+  DOUBLE_OBJECT (Double.class    , new Type(Double.class)    , false, false, "readDoubleObject" ,  4),
+  STRING        (String.class    , Type.STRING               , false, false, "readString"       ,  1),
+  DATE          (Date.class      , new Type(Date.class)      , false, false, "readDate"         , 20),
+  BIG_INTEGER   (BigInteger.class, new Type(BigInteger.class), false, false, "readBigInteger"   ,  3),
+  BIG_DECIMAL   (BigDecimal.class, new Type(BigDecimal.class), false, false, "readBigDecimal"   ,  2),
+  ENUM          (Enum.class      , new Type(Enum.class)      , false, true , "readEnum"         , 21);
   
   private Class<?> clazz;
   private Type type;
   private boolean primitive;
   private boolean needsClass;
-  private String readerMethod;
+  private String method;
   private int priority;
   
-  private ObjectFactoryType(Class<?> clazz, boolean primitive, boolean needsClass, String method, int priority) {
+  private ObjectFactoryType(Class<?> clazz, Type type, boolean primitive, boolean needsClass, String method, int priority) {
     
     this.clazz = clazz;
-    type = new Type(clazz);
+    this.type = type;
     this.primitive = primitive;
     this.needsClass = needsClass;
-    readerMethod = "read" + method;
+    this.method = method;
     this.priority = priority;
   }
   
@@ -64,7 +64,7 @@ enum ObjectFactoryType {
   
   String getReaderMethod() {
     
-    return readerMethod;
+    return method;
   }
   
   boolean isPrimitive() {

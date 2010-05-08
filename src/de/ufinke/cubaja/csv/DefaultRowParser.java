@@ -71,8 +71,6 @@ public class DefaultRowParser implements RowParser {
       return null;
     }
     
-    line = editRow(line);
-    
     char sep = separator;
     
     int[] start = startArray;
@@ -117,8 +115,6 @@ public class DefaultRowParser implements RowParser {
       count = 0;
       return null;
     }
-    
-    line = editRow(line);
     
     char sep = separator;
     char esc = escapeChar;
@@ -206,19 +202,6 @@ public class DefaultRowParser implements RowParser {
     return line;
   }
 
-  /**
-   * Gives subclasses the opportunity to change the row.
-   * This method is performed before column parsing.
-   * The default implementation simply returns the passed argument.
-   * @param in original row
-   * @return edited raw row
-   * @throws CsvException
-   */
-  protected String editRow(String in) throws CsvException {
-    
-    return in;
-  }
-  
   /**
    * Returns number of columns of current row.
    */
