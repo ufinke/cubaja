@@ -26,7 +26,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class Sql {
 
-  static private final Text text = new Text(Sql.class);
+  static private final Text text = Text.getPackageInstance(Sql.class);
   
   private StringBuilder appendBuffer;
   

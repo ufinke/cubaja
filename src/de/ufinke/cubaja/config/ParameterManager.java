@@ -17,7 +17,7 @@ import de.ufinke.cubaja.util.Text;
 
 class ParameterManager implements ParameterFactoryFinder {
   
-  static Text text = new Text(ParameterManager.class);
+  static Text text = Text.getPackageInstance(ParameterManager.class);
   
   static class NodeFactory implements ParameterFactory {
     

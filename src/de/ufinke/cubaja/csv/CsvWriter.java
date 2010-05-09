@@ -19,7 +19,7 @@ import de.ufinke.cubaja.util.Util;
  */
 public class CsvWriter {
 
-  static private Text text = new Text(CsvWriter.class);
+  static private Text text = Text.getPackageInstance(CsvWriter.class);
   
   private Writer out;
   private CsvConfig config;

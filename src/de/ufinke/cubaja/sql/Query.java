@@ -29,7 +29,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class Query extends PreparedSql implements ColumnReader {
 
-  static private final Text text = new Text(Query.class);
+  static private final Text text = Text.getPackageInstance(Query.class);
   
   private ResultSet resultSet;
   private ResultSetMetaData metaData;

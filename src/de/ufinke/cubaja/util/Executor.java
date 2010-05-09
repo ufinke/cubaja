@@ -16,7 +16,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class Executor {
 
   static private Log logger = LogFactory.getLog(Executor.class);
-  static private Text text = new Text(Executor.class);
+  static private Text text = Text.getPackageInstance(Executor.class);
   
   /**
    * Exit code <tt>0</tt>.

@@ -72,7 +72,7 @@ import de.ufinke.cubaja.config.Mandatory;
  */
 public class HolidayConfig {
 
-  static Text text = new Text(HolidayConfig.class);
+  static Text text = Text.getPackageInstance(HolidayConfig.class);
   
   // ----- HolidayCalendar ------------------------------------------------------------------------
   

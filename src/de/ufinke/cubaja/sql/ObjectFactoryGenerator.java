@@ -52,7 +52,7 @@ class ObjectFactoryGenerator implements Generator {
     }
   }
   
-  static private final Text text = new Text(ObjectFactoryGenerator.class);
+  static private final Text text = Text.getPackageInstance(ObjectFactoryGenerator.class);
   static private final Log logger = LogFactory.getLog(ObjectFactoryGenerator.class);
   
   static private final Type objectFactoryType = new Type(ObjectFactory.class);

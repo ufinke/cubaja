@@ -113,7 +113,7 @@ import de.ufinke.cubaja.util.WarnMode;
  */
 public class DatabaseConfig {
 
-  static private Text text = new Text(DatabaseConfig.class);
+  static private Text text = Text.getPackageInstance(DatabaseConfig.class);
   
   /**
    * Property sub-element of a database configuration element.

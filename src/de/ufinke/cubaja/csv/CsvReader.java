@@ -53,7 +53,7 @@ import de.ufinke.cubaja.util.Util;
  */
 public class CsvReader implements ColumnReader {
 
-  static private final Text text = new Text(CsvReader.class);
+  static private final Text text = Text.getPackageInstance(CsvReader.class);
   
   private CsvConfig config;
   private Reader in;

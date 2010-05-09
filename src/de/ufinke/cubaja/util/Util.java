@@ -17,7 +17,7 @@ import java.util.Date;
  */
 public class Util {
 
-  static private Text text = new Text(Util.class);
+  static private Text text = Text.getPackageInstance(Util.class);
   
   static private double P_FACTOR[] = new double[] {
     1.0,

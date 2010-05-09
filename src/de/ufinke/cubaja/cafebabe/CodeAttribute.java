@@ -239,7 +239,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class CodeAttribute implements Generatable {
 
-  static private Text text = new Text(CodeAttribute.class);
+  static private Text text = Text.getPackageInstance(CodeAttribute.class);
   
   private ConstantPool constantPool;
   private int nameIndex;

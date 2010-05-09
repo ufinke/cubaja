@@ -26,7 +26,7 @@ final class SortManager {
   static private final int DEFAULT_BLOCK_SIZE = 1024 * 15;
   static private final int MINIMUM_BLOCK_SIZE = 1024 * 7;
 
-  static final Text text = new Text(Sorter.class);
+  static final Text text = Text.getPackageInstance(Sorter.class);
 
   static private volatile int id = 0;
 

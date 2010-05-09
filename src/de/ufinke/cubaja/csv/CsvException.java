@@ -11,7 +11,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class CsvException extends Exception {
 
-  static private final Text text = new Text(CsvException.class);
+  static private final Text text = Text.getPackageInstance(CsvException.class);
   
   private String message;
   private int lineNumber;

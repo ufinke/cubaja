@@ -19,7 +19,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class DefaultRowParser implements RowParser {
 
-  static private final Text text = new Text(DefaultRowParser.class);
+  static private final Text text = Text.getPackageInstance(DefaultRowParser.class);
   
   private char separator;
   private char escapeChar;

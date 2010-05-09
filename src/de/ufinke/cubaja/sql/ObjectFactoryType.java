@@ -3,6 +3,28 @@
 
 package de.ufinke.cubaja.sql;
 
+import static de.ufinke.cubaja.sql.Types.T_ARRAY;
+import static de.ufinke.cubaja.sql.Types.T_BIG_DECIMAL;
+import static de.ufinke.cubaja.sql.Types.T_BIG_INTEGER;
+import static de.ufinke.cubaja.sql.Types.T_BLOB;
+import static de.ufinke.cubaja.sql.Types.T_BOOLEAN_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_BYTE_ARRAY;
+import static de.ufinke.cubaja.sql.Types.T_BYTE_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_CHAR_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_CLOB;
+import static de.ufinke.cubaja.sql.Types.T_DOUBLE_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_FLOAT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_INPUT_STREAM;
+import static de.ufinke.cubaja.sql.Types.T_INT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_LONG_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_READER;
+import static de.ufinke.cubaja.sql.Types.T_REF;
+import static de.ufinke.cubaja.sql.Types.T_SHORT_OBJECT;
+import static de.ufinke.cubaja.sql.Types.T_SQL_DATE;
+import static de.ufinke.cubaja.sql.Types.T_TIME;
+import static de.ufinke.cubaja.sql.Types.T_TIMESTAMP;
+import static de.ufinke.cubaja.sql.Types.T_URL;
+import static de.ufinke.cubaja.sql.Types.T_UTIL_DATE;
 import static java.sql.Types.ARRAY;
 import static java.sql.Types.BIGINT;
 import static java.sql.Types.BINARY;
@@ -44,7 +66,6 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 import de.ufinke.cubaja.cafebabe.Type;
-import static de.ufinke.cubaja.sql.Types.*;
 
 enum ObjectFactoryType {
 

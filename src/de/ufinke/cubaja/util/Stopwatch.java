@@ -14,7 +14,7 @@ import org.apache.commons.logging.LogFactory;
 public class Stopwatch {
 
   static private Log logger = LogFactory.getLog(Stopwatch.class);
-  static private Text text = new Text(Stopwatch.class);
+  static private Text text = Text.getPackageInstance(Stopwatch.class);
   
   private long startMillis;
   private String message;

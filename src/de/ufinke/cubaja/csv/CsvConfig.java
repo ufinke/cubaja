@@ -188,7 +188,7 @@ import de.ufinke.cubaja.util.Util;
  */
 public class CsvConfig {
 
-  static private final Text text = new Text(CsvConfig.class);
+  static private final Text text = Text.getPackageInstance(CsvConfig.class);
 
   private String fileName;
   private String charset;

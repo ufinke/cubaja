@@ -11,7 +11,7 @@ import de.ufinke.cubaja.util.Util;
 
 class ElementProxy {
 
-  static private Text text = new Text(ElementProxy.class);
+  static private Text text = Text.getPackageInstance(ElementProxy.class);
   static private String EMPTY_STRING = "";
   
   private String name;

@@ -29,7 +29,7 @@ import de.ufinke.cubaja.util.WarnMode;
  */
 public class PreparedSql {
 
-  static private final Text text = new Text(PreparedSql.class);
+  static private final Text text = Text.getPackageInstance(PreparedSql.class);
   
   /**
    * PreparedStatement.

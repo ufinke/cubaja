@@ -16,7 +16,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class SequenceChecker<D> implements Iterable<D> {
 
-  static Text text = new Text(SequenceChecker.class);
+  static Text text = Text.getPackageInstance(SequenceChecker.class);
   
   static private class SequenceIterator<E> implements Iterator<E> {
     

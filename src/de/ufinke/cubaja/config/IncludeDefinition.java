@@ -9,7 +9,7 @@ import de.ufinke.cubaja.util.Text;
 
 class IncludeDefinition {
 
-  static private Text text = new Text(IncludeDefinition.class);
+  static private Text text = Text.getPackageInstance(IncludeDefinition.class);
   
   private String name;
   private StringBuilder sb;

@@ -57,7 +57,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class FileConfig {
 
-  static private Text text = new Text(FileConfig.class);
+  static private Text text = Text.getPackageInstance(FileConfig.class);
   
   private String name;
   private Charset charset;

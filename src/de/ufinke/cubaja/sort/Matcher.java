@@ -30,7 +30,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public final class Matcher<K> implements Iterable<K> {
 
-  static Text text = new Text(Matcher.class);
+  static Text text = Text.getPackageInstance(Matcher.class);
   
   Comparator<? super K> comparator;
   List<InternalMatchSource<?, K>> sourceList;

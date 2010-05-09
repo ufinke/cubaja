@@ -4,7 +4,9 @@
 package de.ufinke.cubaja.util;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -14,6 +16,29 @@ import java.util.ResourceBundle;
  */
 public class Text {
 
+  static private final Map<Package, Text> packageMap;
+
+  static {
+    
+    packageMap = new HashMap<Package, Text>();
+  }
+  
+  /**
+   * Returns a <tt>Text</tt> instance unique to the package.
+   * @param clazz
+   * @return package <tt>Text</tt> instance
+   */
+  static public synchronized Text getPackageInstance(Class<?> clazz) {
+  
+    Package pack = clazz.getPackage();
+    Text text = packageMap.get(pack);
+    if (text == null) {
+      text = Text.getPackageInstance(clazz);
+      packageMap.put(pack, text);
+    }
+    return text;
+  }
+  
   private String bundleName;
   private ResourceBundle bundle;
   

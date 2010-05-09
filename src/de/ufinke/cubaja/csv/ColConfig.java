@@ -122,7 +122,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class ColConfig {
 
-  static private final Text text = new Text(ColConfig.class);
+  static private final Text text = Text.getPackageInstance(ColConfig.class);
   
   private String name;
   private String header;

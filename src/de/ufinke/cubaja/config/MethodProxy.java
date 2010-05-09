@@ -10,7 +10,7 @@ import de.ufinke.cubaja.util.Text;
 
 class MethodProxy {
 
-  static private Text text = new Text(MethodProxy.class);
+  static private Text text = Text.getPackageInstance(MethodProxy.class);
   
   private Method method;
   private Class<?> type;

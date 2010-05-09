@@ -52,7 +52,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     CLOSED
   }
   
-  static private final Text text = new Text(Sorter.class);
+  static private final Text text = Text.getPackageInstance(Sorter.class);
   
   private final SortManager manager;
   private State state;

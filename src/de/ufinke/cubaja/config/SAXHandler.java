@@ -32,7 +32,7 @@ import de.ufinke.cubaja.util.Text;
 
 class SAXHandler extends DefaultHandler2 {
 
-  static private Text text = new Text(SAXHandler.class);
+  static private Text text = Text.getPackageInstance(SAXHandler.class);
   
   private ResourceLoader loader;
   private XMLPropertyProvider xmlProperties;

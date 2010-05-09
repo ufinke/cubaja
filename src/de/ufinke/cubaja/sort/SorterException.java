@@ -11,7 +11,7 @@ import de.ufinke.cubaja.util.Text;
  */
 public class SorterException extends RuntimeException {
 
-  static private Text text = new Text(SorterException.class);
+  static private Text text = Text.getPackageInstance(SorterException.class);
   
   /**
    * Constructor with forwarded cause.

@@ -35,7 +35,7 @@ public class Database {
     return ++id;
   }
   
-  static private final Text text = new Text(Database.class);
+  static private final Text text = Text.getPackageInstance(Database.class);
   
   private Connection connection;
   private DatabaseConfig config;

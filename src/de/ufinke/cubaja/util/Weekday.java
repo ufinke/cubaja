@@ -73,7 +73,7 @@ public enum Weekday {
   static {
     
     weekdayMap = new Weekday[8];
-    Text text = new Text(Weekday.class);
+    Text text = Text.getPackageInstance(Weekday.class);
     
     for (Weekday weekday : Weekday.values()) {
       weekdayMap[weekday.calendarConstant] = weekday;

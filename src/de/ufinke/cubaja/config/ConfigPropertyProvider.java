@@ -18,7 +18,7 @@ import de.ufinke.cubaja.util.Text;
 
 class ConfigPropertyProvider implements PropertyProvider {
 
-  static private Text text = new Text(ConfigPropertyProvider.class);
+  static private Text text = Text.getPackageInstance(ConfigPropertyProvider.class);
   
   private Properties properties;
   

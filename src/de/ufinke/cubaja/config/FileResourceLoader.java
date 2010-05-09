@@ -20,7 +20,7 @@ import de.ufinke.cubaja.util.Util;
  */
 public class FileResourceLoader implements ResourceLoader {
 
-  static private Text text = new Text(FileResourceLoader.class);
+  static private Text text = Text.getPackageInstance(FileResourceLoader.class);
   
   private File homeDirectory;
   

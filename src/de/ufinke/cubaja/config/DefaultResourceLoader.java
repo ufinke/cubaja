@@ -15,7 +15,7 @@ import de.ufinke.cubaja.util.Text;
  */
 class DefaultResourceLoader implements ResourceLoader {
 
-  static private Text text = new Text(DefaultResourceLoader.class);
+  static private Text text = Text.getPackageInstance(DefaultResourceLoader.class);
   
   private String base;
   
