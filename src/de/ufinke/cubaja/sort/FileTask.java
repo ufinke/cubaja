@@ -210,7 +210,7 @@ final class FileTask implements Runnable {
     
     raf.seek(blockPosition);
     buffer.reset();
-    buffer.transferFrom(raf, blockLength);
+    buffer.transferFullyFrom(raf, blockLength);
     
     int blockEnd = blockLength - 4;
     buffer.setPosition(blockEnd);

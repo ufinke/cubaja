@@ -655,7 +655,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Copies the content starting at current position to a stream without resetting this buffer.
+   * Copies the content starting at current position to an <tt>OutputStream</tt> without resetting this buffer.
    * @param out
    * @param len
    * @throws IOException
@@ -668,12 +668,12 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
 
   /**
-   * Copies the content starting at current position to a data output without resetting this buffer.
+   * Copies the content starting at current position to a <tt>DataOutput</tt> without resetting this buffer.
    * @param out
    * @param len
    * @throws IOException
    */
-  public void transferTo(DataOutput out, int len) throws IOException {
+  public void transferFullyTo(DataOutput out, int len) throws IOException {
     
     int pos = newReadPosition(len);
     out.write(buffer, position, len);
@@ -681,14 +681,14 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
 
   /**
-   * Reads up to <tt>len</tt> bytes from a stream into this buffer.
+   * Reads up to <tt>len</tt> bytes from an <tt>InputStream</tt> into this buffer.
    * The starting position within this buffer is its current position.
-   * The streams <tt>read(byte[] b, int off, int len)</tt> method
+   * The stream's <tt>read(byte[] b, int off, int len)</tt> method
    * is called repeatedly until all bytes requested with the 
    * <tt>len</tt> parameter are read or a <tt>-1</tt> is returned from the stream.
    * @param in
    * @param len
-   * @return number of bytes which had effectively been read
+   * @return number of bytes effectively been read
    * @throws IOException
    */
   public int transferFrom(InputStream in, int len) throws IOException {
@@ -719,12 +719,12 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
   }
   
   /**
-   * Reads exactly <tt>len</tt> bytes from a data input into this buffer.
+   * Reads exactly <tt>len</tt> bytes from a <tt>DataInput</tt> into this buffer.
    * @param in
    * @param len
    * @throws IOException
    */
-  public void transferFrom(DataInput in, int len) throws IOException {
+  public void transferFullyFrom(DataInput in, int len) throws IOException {
 
     int pos = newWritePosition(len);
     in.readFully(buffer, position, len);
