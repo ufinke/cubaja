@@ -33,7 +33,7 @@ public class Text {
     Package pack = clazz.getPackage();
     Text text = packageMap.get(pack);
     if (text == null) {
-      text = Text.getPackageInstance(clazz);
+      text = new Text(clazz);
       packageMap.put(pack, text);
     }
     return text;
