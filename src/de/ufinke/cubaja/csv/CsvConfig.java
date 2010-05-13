@@ -120,8 +120,7 @@ import de.ufinke.cubaja.util.Util;
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>nullValue</tt></td>
- * <td align="left" valign="top">replacement for <tt>null</tt> (default: empty column is <tt>null</tt>)
- * (default: <tt>false</tt>)</td>
+ * <td align="left" valign="top">replacement for <tt>null</tt> (default: empty column is <tt>null</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
  * <td align="center" valign="top">x</td>

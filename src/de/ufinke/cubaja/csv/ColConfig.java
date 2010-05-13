@@ -21,7 +21,7 @@ import de.ufinke.cubaja.util.Text;
  * When there is no header,
  * the position is the position
  * of the previously defined column plus one.
- * The position of the first column is <tt>1</tt>, not <tt>0</tt>.
+ * The position of the first column is <tt>1</tt>, not <tt>0</tt> (for compatibility with JDBC).
  * <p>
  * XML attributes and subelements:
  * <blockquote>
@@ -49,7 +49,7 @@ import de.ufinke.cubaja.util.Text;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>position</tt></td>
- *     <td align="left" valign="top">the position of this column, starting with <tt>1</tt> for the first column (default: position of the previous column plus one; or - in case the <tt>header</tt> attribute is defined - derived from the column position of the first row which matches the header constant)</td>
+ *     <td align="left" valign="top">the position of this column, starting with <tt>1</tt> for the first column (default: position of the previous column plus one; or - in case the <tt>headerMatch</tt> feature of {@link CsvConfig#setHeaderMatch(boolean) CsvConfig} is enabled - derived from the column position of the first row which matches the header constant)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>

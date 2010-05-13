@@ -3,8 +3,8 @@
 <project name="cubaja" default="zip">
 	
   <property name="majorVersion" value="1"/>
-  <property name="minorVersion" value="1"/>
-  <property name="release" value="3"/>
+  <property name="minorVersion" value="2"/>
+  <property name="release" value="0"/>
 	<property name="version" value="${majorVersion}.${minorVersion}.${release}"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
