@@ -97,6 +97,13 @@ import de.ufinke.cubaja.util.Text;
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>nullValue</tt></td>
+ *     <td align="left" valign="top">replacement for <tt>null</tt> (default: global <tt>nullValue</tt> attribute of {@link de.ufinke.cubaja.csv.CsvConfig CsvConfig})</td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>editor</tt></td>
  *     <td align="left" valign="top">class name of a {@link de.ufinke.cubaja.csv.ColumnEditor ColumnEditor} implementation</td>
  *     <td align="center" valign="top">A</td>
@@ -134,6 +141,7 @@ public class ColConfig {
   private SimpleDateFormat dateFormat;
   private String trueValue;
   private String falseValue;
+  private String nullValue;
   private ColumnEditor editor;
   private List<ReplaceConfig> replaceList;
   
@@ -428,6 +436,30 @@ public class ColConfig {
   public void setScale(Integer scale) {
 
     this.scale = scale;
+  }
+  
+  /**
+   * Retrieves the replacement for <tt>null</tt> values.
+   * A {@link CsvReader} replaces the content of an empty column with this value.
+   * A {@link CsvWriter} replaces <tt>null</tt> by this value. 
+   * @return null value
+   */
+  public String getNullValue() {
+    
+    if (nullValue == null && csvConfig != null) {
+      return csvConfig.getNullValue();
+    }
+    return nullValue;
+  }
+  
+  /**
+   * Sets the replacement value for <tt>null</tt>.
+   * By default, <tt>null</tt> values remain <tt>null<tt>.
+   * @param nullValue
+   */
+  public void setNullValue(String nullValue) {
+    
+    this.nullValue = nullValue;
   }
 
 }

@@ -1,6 +1,8 @@
 package de.ufinke.cubaja.io;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.InputStream;
 
 public class FixedMainframeInput implements MainframeInput {
 

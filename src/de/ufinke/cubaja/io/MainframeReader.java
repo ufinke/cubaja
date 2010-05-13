@@ -1,6 +1,6 @@
 package de.ufinke.cubaja.io;
 
-import java.nio.charset.*;
+import java.nio.charset.Charset;
 
 public class MainframeReader {
 

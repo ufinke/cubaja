@@ -72,18 +72,16 @@ public class CsvWriter {
     
     formatter = config.getFormatter();
     formatter.init(out, config);
-    List<ColConfig> columnList = config.getColumnList();
-    buffer = new ColumnBuffer(columnList.size());
+    buffer = new ColumnBuffer(config);
     
     if (config.hasHeaderRow()) {
-      writeHeaderRow(columnList);
+      writeHeaderRow(config);
     }
   }
   
-  private void writeHeaderRow(List<ColConfig> columnList) throws IOException, CsvException {
+  private void writeHeaderRow(CsvConfig config) throws IOException, CsvException {
 
-    for (int i = 0; i < columnList.size(); i++) {
-      ColConfig col = columnList.get(i);
+    for (ColConfig col : config.getColumnList()) {
       String header = col.getHeader();
       if (header == null) {
         header = col.getName();

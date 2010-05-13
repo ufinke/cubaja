@@ -104,7 +104,7 @@ import de.ufinke.cubaja.util.Util;
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>trueValue</tt></td>
- * <td align="left" valign="top">values representing boolean <tt>true</tt>
+ * <td align="left" valign="top">value representing boolean <tt>true</tt>
  * (default: <tt>true</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
@@ -112,7 +112,15 @@ import de.ufinke.cubaja.util.Util;
  * </tr>
  * <tr bgcolor="#eeeeff">
  * <td align="left" valign="top"><tt>falseValue</tt></td>
- * <td align="left" valign="top">values representing boolean <tt>false</tt>
+ * <td align="left" valign="top">value representing boolean <tt>false</tt>
+ * (default: <tt>false</tt>)</td>
+ * <td align="center" valign="top">A</td>
+ * <td align="center" valign="top"></td>
+ * <td align="center" valign="top">x</td>
+ * </tr>
+ * <tr bgcolor="#eeeeff">
+ * <td align="left" valign="top"><tt>nullValue</tt></td>
+ * <td align="left" valign="top">replacement for <tt>null</tt> (default: empty column is <tt>null</tt>)
  * (default: <tt>false</tt>)</td>
  * <td align="center" valign="top">A</td>
  * <td align="center" valign="top"></td>
@@ -205,6 +213,7 @@ public class CsvConfig {
   private SimpleDateFormat dateFormat;
   private String trueValue;
   private String falseValue;
+  private String nullValue;
   private Integer scale;
 
   private boolean header;
@@ -791,6 +800,27 @@ public class CsvConfig {
   public void setFalseValue(String falseValue) {
 
     this.falseValue = falseValue;
+  }
+  
+  /**
+   * Retrieves the replacement for <tt>null</tt> values.
+   * A {@link CsvReader} replaces the content of an empty column with this value.
+   * A {@link CsvWriter} replaces <tt>null</tt> by this value. 
+   * @return null value
+   */
+  public String getNullValue() {
+    
+    return nullValue;
+  }
+  
+  /**
+   * Sets the replacement value for <tt>null</tt>.
+   * By default, <tt>null</tt> values remain <tt>null<tt>.
+   * @param nullValue
+   */
+  public void setNullValue(String nullValue) {
+    
+    this.nullValue = nullValue;
   }
 
   /**

@@ -239,7 +239,12 @@ public class DefaultRowParser implements RowParser {
     if (escapeDefined && escapeArray[index]) {
       return removeDoubleEscape(index);
     } else {
-      return row.substring(startArray[index], endArray[index]);
+      int start = startArray[index];
+      int end = endArray[index];
+      if (start == end) {
+        return null;
+      }
+      return row.substring(start, end);
     }
   }
   
