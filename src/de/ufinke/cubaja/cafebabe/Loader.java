@@ -34,7 +34,7 @@ public class Loader extends ClassLoader {
    * the given <tt>nameSuffix</tt>es, each separated by a hyphen.
    * If a <tt>nameSuffix</tt> is of type <tt>Class</tt>, the class name
    * is used as nameSuffix.
-   * Dots in a <tt>nameSuffix</tt> are replaced by hyphens.
+   * Dots in a <tt>nameSuffix</tt> are replaced by underlines.
    * @param generator
    * @param nameSuffix
    * @return generated class

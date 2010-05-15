@@ -99,7 +99,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     
     capacity = DEFAULT_CAPACITY;
     growthCapacity = capacity;
-    buffer = new byte[capacity]; 
+    buffer = new byte[capacity];
   }
   
   /**
@@ -685,7 +685,7 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
    * The starting position within this buffer is its current position.
    * The stream's <tt>read(byte[] b, int off, int len)</tt> method
    * is called repeatedly until all bytes requested with the 
-   * <tt>len</tt> parameter are read or a <tt>-1</tt> is returned from the stream.
+   * <tt>len</tt> parameter are read or <tt>-1</tt> is returned from the stream.
    * @param in
    * @param len
    * @return number of bytes effectively been read
@@ -730,5 +730,5 @@ public class RandomAccessBuffer implements DataInput, DataOutput {
     in.readFully(buffer, position, len);
     position = pos;
   }
-
+  
 }
