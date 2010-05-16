@@ -3,12 +3,21 @@
 
 package de.ufinke.cubaja.io;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import de.ufinke.cubaja.util.Text;
 
+/**
+ * Reads mainframe data.
+ * <p>
+ * Method <tt>fillBuffer</tt> reads an amount of bytes into an internal buffer.
+ * The various <tt>read</tt> methods retrieve data from the buffer.
+ * The position advances automatically.
+ * @author Uwe Finke
+ */
 public class MainframeInput {
 
   static private Text text = Text.getPackageInstance(MainframeInput.class);
@@ -17,7 +26,17 @@ public class MainframeInput {
   private final Charset charset;
   private final boolean doubleByte;
   private final RandomAccessBuffer buffer;
+  private boolean eof;
   
+  /**
+   * Constructor.
+   * <p>
+   * The <tt>charset</tt> may be either a single byte or a double byte character set.
+   * Do not use a character set with a variant number of bytes for a single character
+   * (such as UTF-8)!  
+   * @param stream
+   * @param charset
+   */
   public MainframeInput(InputStream stream, Charset charset) {
   
     this.stream = stream;
@@ -26,21 +45,42 @@ public class MainframeInput {
     buffer = new RandomAccessBuffer();
   }
   
+  /**
+   * Closes the underlaying stream.
+   * @throws IOException
+   */
   public void close() throws IOException {
     
     stream.close();
   }
   
+  /**
+   * Fills the internal buffer.
+   * <p>
+   * Returns <tt>true</tt> if the given number of bytes could be read,
+   * or <tt>false</tt> when there where no more bytes to read.
+   * Throws <tt>EOFException</tt> when the stream ends before all requested bytes where read. 
+   * <p>
+   * For fixed length records, <tt>byteCount</tt> should be the record length.
+   * For variable records, the record length must be retrieved by 
+   * a separate call before the rest of the record can be read.
+   * <p>
+   * The internal buffer position is set to <tt>0</tt>.
+   * @param byteCount
+   * @return EOF flag
+   * @throws IOException
+   */
   public boolean fillBuffer(int byteCount) throws IOException {
     
     buffer.reset();
     
     int transferred = buffer.transferFrom(stream, byteCount);
     if (transferred < byteCount) {
-      if (transferred == 0) {
+      if (transferred == 0 && (! eof)) {
+        eof = true;
         return false;
       }
-      throw new IOException(text.get("prematureEOF", byteCount, transferred));
+      throw new EOFException(text.get("prematureEOF", byteCount, transferred));
     }
     
     buffer.setPosition(0);
@@ -48,41 +88,90 @@ public class MainframeInput {
     return true;
   }
   
+  /**
+   * Sets the internal buffer's position.
+   * @param offset
+   */
   public void setPosition(int offset) {
     
     buffer.setPosition(offset);
   }
   
+  /**
+   * Retrieves the internal buffer's position.
+   * @return current position
+   */
   public int getPosition() {
     
     return buffer.getPosition();
   }
   
+  /**
+   * Retrieves the record size.
+   * This is the maximum buffer position.
+   * @return record size
+   */
+  public int getSize() {
+    
+    return buffer.size();
+  }
+  
+  /**
+   * Reads a raw byte.
+   * @return value
+   * @throws IOException
+   */
   public int readUnsignedByte() throws IOException {
     
     return buffer.read();
   }
   
+  /**
+   * Reads a binary signed <tt>byte</tt> value.
+   * @return value
+   * @throws IOException
+   */
   public byte readByte() throws IOException {
     
     return buffer.readByte();
   }
   
+  /**
+   * Reads a binary <tt>short</tt> value.
+   * @return value
+   * @throws IOException
+   */
   public short readShort() throws IOException {
     
     return buffer.readShort();
   }
   
+  /**
+   * Reads a binary <tt>int</tt> value.
+   * @return value
+   * @throws IOException
+   */
   public int readInt() throws IOException {
     
     return buffer.readInt();
   }
   
+  /**
+   * Reads a binary <tt>long</tt> value.
+   * @return value
+   * @throws IOException
+   */
   public long readLong() throws IOException {
     
     return buffer.readLong();
   }
   
+  /**
+   * Reads a string.
+   * @param charCount number of characters
+   * @return value
+   * @throws IOException
+   */
   public String readString(int charCount) throws IOException {
 
     int byteCount = doubleByte ? charCount * 2 : charCount;
@@ -91,21 +180,47 @@ public class MainframeInput {
     return new String(b, charset);
   }
   
+  /**
+   * Reads a zoned <tt>int</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public int readZonedInt(int digitCount) throws IOException {
     
     return Integer.parseInt(readZoned(digitCount, 0, 9));
   }
   
+  /**
+   * Reads a zoned <tt>long</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public long readZonedLong(int digitCount) throws IOException {
     
     return Long.parseLong(readZoned(digitCount, 0, 18));
   }
   
+  /**
+   * Reads a zoned <tt>double</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public double readZonedDouble(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
     return Double.parseDouble(readZoned(integerDigitCount, fractionalDigitCount, 31));
   }
-  
+
+  /**
+   * Reads a zoned <tt>BigDecimal</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public BigDecimal readZonedBigDecimal(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
     return new BigDecimal(readZoned(integerDigitCount, fractionalDigitCount, 31));
@@ -204,21 +319,47 @@ public class MainframeInput {
     return new String(c);
   }
   
+  /**
+   * Reads a packed <tt>int</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public int readPackedInt(int digitCount) throws IOException {
     
     return Integer.parseInt(readPacked(digitCount, 0, 9));
   }
   
+  /**
+   * Reads a packed <tt>long</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public long readPackedLong(int digitCount) throws IOException {
     
     return Long.parseLong(readPacked(digitCount, 0, 18));
   }
   
+  /**
+   * Reads a packed <tt>double</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public double readPackedDouble(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
     return Double.parseDouble(readPacked(integerDigitCount, fractionalDigitCount, 31));
   }
   
+  /**
+   * Reads a packed <tt>BigDecimal</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public BigDecimal readPackedBigDecimal(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
     return new BigDecimal(readPacked(integerDigitCount, fractionalDigitCount, 31));
@@ -355,24 +496,50 @@ public class MainframeInput {
     return new String(c);
   }
   
+  /**
+   * Reads an unsigned packed <tt>int</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public int readUnsignedPackedInt(int digitCount) throws IOException {
     
     return Integer.parseInt(readUnsignedPacked(digitCount, 0, 9));
   }
   
+  /**
+   * Reads an unsigned packed <tt>long</tt> value.
+   * @param digitCount number of digits
+   * @return value
+   * @throws IOException
+   */
   public long readUnsignedPackedLong(int digitCount) throws IOException {
     
     return Long.parseLong(readUnsignedPacked(digitCount, 0, 18));
   }
   
+  /**
+   * Reads an unsigned packed <tt>double</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public double readUnsignedPackedDouble(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
-    return Double.parseDouble(readUnsignedPacked(integerDigitCount, fractionalDigitCount, 31));
+    return Double.parseDouble(readUnsignedPacked(integerDigitCount, fractionalDigitCount, 32));
   }
   
+  /**
+   * Reads an unsigned packed <tt>BigDecimal</tt> value.
+   * @param integerDigitCount number of digits before imaginary decimal point
+   * @param fractionalDigitCount number of digits after imaginary decimal point
+   * @return value
+   * @throws IOException
+   */
   public BigDecimal readUnsignedPackedBigDecimal(int integerDigitCount, int fractionalDigitCount) throws IOException {
     
-    return new BigDecimal(readUnsignedPacked(integerDigitCount, fractionalDigitCount, 31));
+    return new BigDecimal(readUnsignedPacked(integerDigitCount, fractionalDigitCount, 32));
   }
   
   private String readUnsignedPacked(int intDigits, int fracDigits, int maxDigits) throws IOException {
