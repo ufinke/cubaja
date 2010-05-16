@@ -1,3 +1,6 @@
+// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.util;
 
 import java.lang.reflect.Method;
@@ -8,6 +11,15 @@ import de.ufinke.cubaja.cafebabe.Generator;
 import de.ufinke.cubaja.cafebabe.Loader;
 import de.ufinke.cubaja.cafebabe.Type;
 
+/**
+ * Assigns values from one data object to another data object.
+ * <p>
+ * An instance is created by <tt>create</tt>.
+ * The <tt>assign</tt> method of the instance takes
+ * values from the getter methods of the source object
+ * and passes them to the matching setter methods of the target object.
+ * @author Uwe Finke
+ */
 abstract public class Assigner {
 
   static class AssignerGenerator implements Generator {
@@ -79,6 +91,13 @@ abstract public class Assigner {
     }
   }
   
+  /**
+   * Craetes an instance.
+   * @param fromClass
+   * @param toClass
+   * @return an instance
+   * @throws Exception
+   */
   static public Assigner create(final Class<?> fromClass, final Class<?> toClass) throws Exception {
     
     AssignerGenerator generator = new AssignerGenerator(fromClass, toClass);
@@ -86,9 +105,18 @@ abstract public class Assigner {
     return (Assigner) generated.newInstance();
   }
   
+  /**
+   * Protected constructor.
+   */
   protected Assigner() {
     
   }
   
+  /**
+   * Assigns values from one object to another object.
+   * @param from
+   * @param to
+   * @throws Exception
+   */
   abstract public void assign(Object from, Object to) throws Exception;
 }

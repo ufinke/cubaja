@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -77,7 +77,28 @@ public final class Matcher<K> implements Iterable<K> {
     
     return addSource(sortedSource, keySource);
   }
-
+  
+  /**
+   * Adds a source where the data type provides the key.
+   * The data type has to implement {@link KeyProvider}.
+   * @param <D> data type
+   * @param sortedSource data source
+   * @param type the data class
+   * @return an accessor to the data
+   */
+  public <D extends KeyProvider<K>> MatchSource<D> addSource(Iterable<D> sortedSource, Class<D> type) {
+    
+    KeyFactory<D, K> keySource = new KeyFactory<D, K>() {
+      
+      public K createKey(D data) {
+        
+        return data.getMatchKey();
+      }
+    };
+    
+    return addSource(sortedSource, keySource);
+  }
+  
   /**
    * Returns an <tt>Iterator</tt> over the key values.
    */

@@ -11,6 +11,11 @@ import java.util.NoSuchElementException;
 /**
  * Accessor to data objects matching to a key.
  * Instances are created by {@link Matcher}.
+ * <p>
+ * Note that the <tt>matches</tt> method may return <tt>false</tt>
+ * after any matching data is retrieved 
+ * by one of the <tt>get</tt> methods, 
+ * because these methods advance the source to the next item.
  * @author Uwe Finke
  * @param <D> data type
  */
