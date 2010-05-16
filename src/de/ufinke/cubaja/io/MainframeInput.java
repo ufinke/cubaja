@@ -13,15 +13,16 @@ public class MainframeInput {
 
   static private Text text = Text.getPackageInstance(MainframeInput.class);
   
-  private InputStream stream;
-  private Charset charset;
-  
-  private RandomAccessBuffer buffer;
+  private final InputStream stream;
+  private final Charset charset;
+  private final boolean doubleByte;
+  private final RandomAccessBuffer buffer;
   
   public MainframeInput(InputStream stream, Charset charset) {
   
     this.stream = stream;
     this.charset = charset;
+    doubleByte = "A".getBytes(charset).length == 2;
     buffer = new RandomAccessBuffer();
   }
   
@@ -82,8 +83,9 @@ public class MainframeInput {
     return buffer.readLong();
   }
   
-  public String readString(int byteCount) throws IOException {
-    
+  public String readString(int charCount) throws IOException {
+
+    int byteCount = doubleByte ? charCount * 2 : charCount;
     byte[] b = new byte[byteCount];
     buffer.readFully(b);
     return new String(b, charset);
