@@ -610,8 +610,11 @@ public class PreparedSql {
    */
   public void setBigInteger(int position, BigInteger value) throws SQLException {
     
-    changed = true;
-    statement.setBigDecimal(position, new BigDecimal(value));
+    if (value == null) {
+      setBigDecimal(position, null);
+    } else {
+      setBigDecimal(position, new BigDecimal(value));
+    }
   }
 
   /**
@@ -683,8 +686,12 @@ public class PreparedSql {
    * @throws SQLException
    */
   public void setTimestamp(int position, java.util.Date value) throws SQLException {
-    
-    setTimestamp(position, new Timestamp(value.getTime()));
+
+    if (value == null) {
+      setTimestamp(position, null);
+    } else {
+      setTimestamp(position, new Timestamp(value.getTime()));
+    }
   }
 
   /**
@@ -707,8 +714,12 @@ public class PreparedSql {
    * @throws SQLException
    */
   public void setTime(int position, java.util.Date value) throws SQLException {
-    
-    setTime(position, new Time(value.getTime()));
+
+    if (value == null) {
+      setTime(position, null);
+    } else {
+      setTime(position, new Time(value.getTime()));
+    }
   }
 
   /**
