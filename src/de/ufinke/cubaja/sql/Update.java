@@ -86,9 +86,10 @@ public class Update extends PreparedSql {
     int[] updateCount = EMPTY_UPDATE_COUNT;
     
     if (intervalBatchCount > 0) {
-      updateCount = statement.executeBatch();      
+      updateCount = statement.executeBatch();
       totalBatchCount += intervalBatchCount;
       intervalBatchCount = 0;
+      statement.clearBatch();
     }
     
     return updateCount;
