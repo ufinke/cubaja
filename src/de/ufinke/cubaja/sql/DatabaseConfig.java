@@ -89,7 +89,7 @@ import de.ufinke.cubaja.util.WarnMode;
  *     </tr>
  *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>batchSize</tt></td>
- *     <td align="left" valign="top">maximum number of native <tt>addBatch</tt> operations; default is <tt>8191</tt> (an <tt>Update</tt> instance calls <tt>executeBatch</tt> automatically when this limit is reached)</td>
+ *     <td align="left" valign="top">maximum number of native <tt>addBatch</tt> operations; default is <tt>4095</tt> (an <tt>Update</tt> instance calls <tt>executeBatch</tt> automatically when this limit is reached)</td>
  *     <td align="center" valign="top">A</td>
  *     <td align="center" valign="top"> </td>
  *     <td align="center" valign="top">x</td>
@@ -212,7 +212,7 @@ public class DatabaseConfig {
     properties = new Properties();
     autoCommit = false;
     fetchSize = 4095;
-    batchSize = 8191;
+    batchSize = 4095;
     log = false;
     warnMode = WarnMode.WARN;
   }

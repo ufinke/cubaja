@@ -23,7 +23,7 @@ public class MainframeInput {
   static private Text text = Text.getPackageInstance(MainframeInput.class);
   
   private final InputStream stream;
-  private final Charset charset;
+  private final String charset; // string because of JDK 5.0 compatibility
   private final boolean doubleByte;
   private final RandomAccessBuffer buffer;
   private boolean eof;
@@ -40,7 +40,7 @@ public class MainframeInput {
   public MainframeInput(InputStream stream, Charset charset) {
   
     this.stream = stream;
-    this.charset = charset;
+    this.charset = charset.name();
     doubleByte = "A".getBytes(charset).length == 2;
     buffer = new RandomAccessBuffer();
   }

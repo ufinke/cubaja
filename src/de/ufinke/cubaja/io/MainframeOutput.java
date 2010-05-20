@@ -29,7 +29,7 @@ public class MainframeOutput {
   static private Text text = Text.getPackageInstance(MainframeOutput.class);
   
   private final OutputStream stream;
-  private final Charset charset;
+  private final String charset; // string because of JDK 5.0 compatibility
   private final RandomAccessBuffer buffer;
   
   /**
@@ -42,7 +42,7 @@ public class MainframeOutput {
   public MainframeOutput(OutputStream stream, Charset charset) {
   
     this.stream = stream;
-    this.charset = charset;
+    this.charset = charset.name();
     buffer = new RandomAccessBuffer();
   }
   

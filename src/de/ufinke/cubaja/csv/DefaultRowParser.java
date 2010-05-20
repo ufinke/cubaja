@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.csv;
 
 import java.io.IOException;
-import java.io.LineNumberReader;
+import java.io.BufferedReader;
 import java.io.Reader;
 import de.ufinke.cubaja.util.Text;
 
@@ -25,7 +25,8 @@ public class DefaultRowParser implements RowParser {
   private char escapeChar;
   private boolean escapeDefined;
 
-  private LineNumberReader lineReader;  
+  private BufferedReader lineReader;
+  private int lineCount;
   private String row;
   
   private int count;
@@ -54,7 +55,7 @@ public class DefaultRowParser implements RowParser {
       escapeChar = config.getEscapeChar();
     }
     
-    lineReader = (in instanceof LineNumberReader) ? (LineNumberReader) in : new LineNumberReader(in);
+    lineReader = (in instanceof BufferedReader) ? (BufferedReader) in : new BufferedReader(in);
   }
 
   public String readRow() throws IOException, CsvException {
@@ -70,6 +71,7 @@ public class DefaultRowParser implements RowParser {
       count = 0;
       return null;
     }
+    lineCount++;
     
     char sep = separator;
     
@@ -115,6 +117,7 @@ public class DefaultRowParser implements RowParser {
       count = 0;
       return null;
     }
+    lineCount++;
     
     char sep = separator;
     char esc = escapeChar;
@@ -155,6 +158,7 @@ public class DefaultRowParser implements RowParser {
             if (contLine == null) {
               throw new CsvException(text.get("eofEscaped"));
             } else {
+              lineCount++;
               line = line + contLine;
               limit = line.length();
             }
@@ -215,7 +219,7 @@ public class DefaultRowParser implements RowParser {
    */
   public int getLineCount() {
     
-    return lineReader.getLineNumber();
+    return lineCount;
   }
   
   /**
