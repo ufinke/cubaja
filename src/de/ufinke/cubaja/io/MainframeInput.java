@@ -6,6 +6,7 @@ package de.ufinke.cubaja.io;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import de.ufinke.cubaja.util.Text;
@@ -36,12 +37,13 @@ public class MainframeInput {
    * (such as UTF-8)!  
    * @param stream
    * @param charset
+   * @throws UnsupportedEncodingException 
    */
-  public MainframeInput(InputStream stream, Charset charset) {
+  public MainframeInput(InputStream stream, Charset charset) throws UnsupportedEncodingException {
   
     this.stream = stream;
     this.charset = charset.name();
-    doubleByte = "A".getBytes(charset).length == 2;
+    doubleByte = "A".getBytes(this.charset).length == 2;
     buffer = new RandomAccessBuffer();
   }
   

@@ -610,7 +610,7 @@ class SAXHandler extends DefaultHandler2 {
       for (int i = 0; i < atts.getLength(); i++) {
         String parmName = atts.getLocalName(i);
         if (! (parmName.equals("name") || parmName.equals("provider"))) {
-          entry.addParm(parmName, atts.getValue(i));
+          entry.addParm(parmName, resolve(atts.getValue(i), false));
         }
       }
       propertyStack.push(entry);
