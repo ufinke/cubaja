@@ -74,6 +74,13 @@ import de.ufinke.cubaja.util.WarnMode;
  *     <td align="center" valign="top">x</td>
  *     </tr>
  *   <tr bgcolor="#eeeeff">
+ *     <td align="left" valign="top"><tt>transactionIsolation</tt></td>
+ *     <td align="left" valign="top">transaction isolation level; supported values are <tt>read_committed</tt>, <tt>read_uncommitted</tt>, <tt>repeatable_read</tt>, <tt>serializable</tt></td>
+ *     <td align="center" valign="top">A</td>
+ *     <td align="center" valign="top"> </td>
+ *     <td align="center" valign="top">x</td>
+ *     </tr>
+ *   <tr bgcolor="#eeeeff">
  *     <td align="left" valign="top"><tt>log</tt></td>
  *     <td align="left" valign="top">set to <tt>true</tt> when actions should be logged; default is <tt>false</tt></td>
  *     <td align="center" valign="top">A</td>
@@ -198,11 +205,11 @@ public class DatabaseConfig {
   private String execute;
   private Properties properties;
   private boolean autoCommit;
+  private TransactionIsolation transactionIsolation;
   private int fetchSize;
   private int batchSize;
   private boolean log;
   private WarnMode warnMode;
-  private Database database;
 
   /**
    * Constructor.
@@ -274,6 +281,25 @@ public class DatabaseConfig {
   public void setAutoCommit(boolean autoCommit) {
   
     this.autoCommit = autoCommit;
+  }
+
+  /**
+   * Returns the transaction isolation setting.
+   * By default, there is no explicit setting.
+   * @return transaction isolation
+   */
+  public TransactionIsolation getTransactionIsolation() {
+  
+    return transactionIsolation;
+  }
+
+  /**
+   * Sets the transaction isolation level.
+   * @param transactionIsolation
+   */
+  public void setTransactionIsolation(TransactionIsolation transactionIsolation) {
+  
+    this.transactionIsolation = transactionIsolation;
   }
 
   /**
@@ -457,21 +483,6 @@ public class DatabaseConfig {
     }
     
     return connection;
-  }
-  
-  /**
-   * Returns a <tt>Database</tt> instance.
-   * The instance is created on the first call to this method.
-   * Subsequent calls will return the same instance.
-   * @return database instance with connection
-   * @throws SQLException
-   */
-  public Database getDatabase() throws SQLException {
-    
-    if (database == null) {
-      database = new Database(this);
-    }
-    return database;
   }
   
 }

@@ -88,10 +88,22 @@ public class Database {
     this.config = config;
     
     connection.setAutoCommit(config.isAutoCommit());
+    if (config.getTransactionIsolation() != null) {
+      connection.setTransactionIsolation(config.getTransactionIsolation().getLevel());
+    }
     
     if (config.getExecute() != null) {
       execute(config.getExecute());
     }
+  }
+  
+  /**
+   * Returns the underlaying <tt>connection</tt> instance.
+   * @return connection
+   */
+  public Connection getConnection() {
+    
+    return connection;
   }
 
   /**
