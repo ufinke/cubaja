@@ -7,6 +7,10 @@ import java.io.*;
 import de.ufinke.cubaja.config.*;
 import java.util.*;
 
+/**
+ * File generation configuration (<i>under construction</i>).
+ * @author Uwe Finke
+ */
 public class FileGenerationConfig implements EndElementHandler {
 
   private File directory;

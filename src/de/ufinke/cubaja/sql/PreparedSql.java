@@ -663,7 +663,12 @@ public class PreparedSql {
    */
   public void setDate(int position, java.util.Date value) throws SQLException {
     
-    setDate(position, new java.sql.Date(value.getTime()));
+    if (value == null) {
+      java.sql.Date dummy = null;
+      setDate(position, dummy);
+    } else {
+      setDate(position, new java.sql.Date(value.getTime()));
+    }
   }
 
   /**
@@ -688,7 +693,8 @@ public class PreparedSql {
   public void setTimestamp(int position, java.util.Date value) throws SQLException {
 
     if (value == null) {
-      setTimestamp(position, null);
+      Timestamp dummy = null;
+      setTimestamp(position, dummy);
     } else {
       setTimestamp(position, new Timestamp(value.getTime()));
     }
@@ -716,7 +722,8 @@ public class PreparedSql {
   public void setTime(int position, java.util.Date value) throws SQLException {
 
     if (value == null) {
-      setTime(position, null);
+      Time dummy = null;
+      setTime(position, dummy);
     } else {
       setTime(position, new Time(value.getTime()));
     }
