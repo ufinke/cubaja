@@ -31,6 +31,7 @@ public class MainframeOutput {
   private final OutputStream stream;
   private final String charset; // string because of JDK 5.0 compatibility
   private final RandomAccessBuffer buffer;
+  private int recordCount;
   
   /**
    * Constructor.
@@ -41,8 +42,20 @@ public class MainframeOutput {
    */  
   public MainframeOutput(OutputStream stream, Charset charset) {
   
+    this(stream, charset.name());
+  }
+  
+  /**
+   * Constructor.
+   * <p>
+   * The <tt>charset</tt> may be either a single byte or a double byte character set.
+   * Do not use a character set with a variant number of bytes for a single character
+   * (such as UTF-8)!
+   */  
+  public MainframeOutput(OutputStream stream, String charset) {
+    
     this.stream = stream;
-    this.charset = charset.name();
+    this.charset = charset;
     buffer = new RandomAccessBuffer();
   }
   
@@ -62,6 +75,27 @@ public class MainframeOutput {
   public void drainBuffer() throws IOException {
 
     buffer.drainTo(stream);
+  }
+
+  /**
+   * Writes a record.
+   * Calls {@link #drainBuffer() drainBuffer} and increments the record count.
+   * @throws IOException
+   */
+  public void nextRecord() throws IOException {
+    
+    drainBuffer();
+    recordCount++;
+  }
+  
+  /**
+   * Returns the record count.
+   * The record count is incrementet by {@link #nextRecord() nextRecord}.
+   * @return
+   */
+  public int getRecordCount() {
+    
+    return recordCount;
   }
   
   /**

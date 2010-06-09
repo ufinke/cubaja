@@ -28,6 +28,7 @@ public class MainframeInput {
   private final boolean doubleByte;
   private final RandomAccessBuffer buffer;
   private boolean eof;
+  private int recordCount;
   
   /**
    * Constructor.
@@ -40,10 +41,25 @@ public class MainframeInput {
    * @throws UnsupportedEncodingException 
    */
   public MainframeInput(InputStream stream, Charset charset) throws UnsupportedEncodingException {
+
+    this(stream, charset.name());
+  }
   
+  /**
+   * Constructor.
+   * <p>
+   * The <tt>charset</tt> may be either a single byte or a double byte character set.
+   * Do not use a character set with a variant number of bytes for a single character
+   * (such as UTF-8)!  
+   * @param stream
+   * @param charset
+   * @throws UnsupportedEncodingException 
+   */
+  public MainframeInput(InputStream stream, String charset) throws UnsupportedEncodingException {
+    
     this.stream = stream;
-    this.charset = charset.name();
-    doubleByte = "A".getBytes(this.charset).length == 2;
+    this.charset = charset;
+    doubleByte = "A".getBytes(charset).length == 2;
     buffer = new RandomAccessBuffer();
   }
   
@@ -88,6 +104,32 @@ public class MainframeInput {
     buffer.setPosition(0);
     
     return true;
+  }
+  
+  /**
+   * Fills the internal buffer and increments record count.
+   * Calls {@link #fillBuffer(int) fillBuffer}.
+   * @param byteCount
+   * @return EOF flag
+   * @throws IOException
+   */
+  public boolean nextRecord(int byteCount) throws IOException {
+    
+    boolean result = fillBuffer(byteCount);
+    if (result) {
+      recordCount++;
+    }
+    return result;
+  }
+  
+  /**
+   * Returns the record count.
+   * The record count is incremented by {@link #nextRecord(int) nextRecord}.
+   * @return record count
+   */
+  public int getRecordCount() {
+    
+    return recordCount;
   }
   
   /**
