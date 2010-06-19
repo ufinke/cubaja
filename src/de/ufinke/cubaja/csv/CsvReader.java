@@ -210,11 +210,12 @@ public class CsvReader implements ColumnReader {
     boolean accepted = false;
     
     while (! accepted) {
-      rowCount++;
+      rowCount++; // increment in advance because of possible parser errors
       row = parser.readRow();
       eof = (row == null);
       if (eof) {
         accepted = true;
+        rowCount--; // decrement because of above increment
       } else {
         accepted = (rowFilter == null) ? true : rowFilter.acceptRow(this);
       }
