@@ -24,9 +24,9 @@ public class ConfigException extends SAXException {
    * Constructor with cause.
    * @param e cause of exception
    */
-  public ConfigException(Throwable e) {
-    
-    initCause(e);
+  public ConfigException(Exception e) {
+
+    super(e);
   }
 
   /**
@@ -34,10 +34,9 @@ public class ConfigException extends SAXException {
    * @param msg message text.
    * @param t cause of exception
    */
-  public ConfigException(String msg, Throwable t) {
+  public ConfigException(String msg, Exception e) {
     
-    super(msg);
-    initCause(t);
+    super(msg, e);
   }
 
   /**

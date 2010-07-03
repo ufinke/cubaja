@@ -131,6 +131,7 @@ class SAXHandler extends DefaultHandler2 {
     if (cause instanceof ConfigException && cause.getMessage() != null) {
       sb.append(cause.getMessage());
     } else {      
+      cause.printStackTrace();
       sb.append(cause.toString());
     }
     
