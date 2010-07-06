@@ -32,7 +32,7 @@ public class ConfigException extends SAXException {
   /**
    * Constructor with message and cause.
    * @param msg message text.
-   * @param t cause of exception
+   * @param e cause wrapped by this exception
    */
   public ConfigException(String msg, Exception e) {
     

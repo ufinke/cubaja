@@ -91,7 +91,7 @@ public class MainframeOutput {
   /**
    * Returns the record count.
    * The record count is incrementet by {@link #nextRecord() nextRecord}.
-   * @return
+   * @return record count
    */
   public int getRecordCount() {
     
