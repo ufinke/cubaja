@@ -128,8 +128,6 @@ public class CsvReader implements ColumnReader {
       return;
     }
     
-    rowCount--;
-    
     if (config.isAutoCol()) {
       processAutoCol();
     }
@@ -217,7 +215,7 @@ public class CsvReader implements ColumnReader {
         accepted = true;
         rowCount--; // decrement because of above increment
       } else {
-        accepted = (rowFilter == null) ? true : rowFilter.acceptRow(this);
+        accepted = (rowFilter == null) || rowFilter.acceptRow(this);
       }
     }
     
