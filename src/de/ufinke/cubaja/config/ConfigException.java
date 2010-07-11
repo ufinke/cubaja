@@ -1,15 +1,13 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
-
-import org.xml.sax.SAXException;
 
 /**
  * Configuration exception.
  * @author Uwe Finke
  */
-public class ConfigException extends SAXException {
+public class ConfigException extends Exception {
 
   /**
    * Constructor with message.
@@ -22,21 +20,21 @@ public class ConfigException extends SAXException {
   
   /**
    * Constructor with cause.
-   * @param e cause of exception
+   * @param t cause of exception
    */
-  public ConfigException(Exception e) {
+  public ConfigException(Throwable t) {
 
-    super(e);
+    super(t);
   }
 
   /**
    * Constructor with message and cause.
    * @param msg message text.
-   * @param e cause wrapped by this exception
+   * @param t cause wrapped by this exception
    */
-  public ConfigException(String msg, Exception e) {
+  public ConfigException(String msg, Throwable t) {
     
-    super(msg, e);
+    super(msg, t);
   }
 
   /**

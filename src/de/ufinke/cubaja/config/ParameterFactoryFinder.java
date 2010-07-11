@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -16,7 +16,7 @@ public interface ParameterFactoryFinder {
    * return <tt>null</tt>.
    * @param type the parameter type of a setter / adder method
    * @return a parameter factory or <tt>null</tt>
-   * @throws ConfigException
+   * @throws Exception
    */
-  public ParameterFactory findFactory(Class<?> type) throws ConfigException;
+  public ParameterFactory findFactory(Class<?> type) throws Exception;
 }

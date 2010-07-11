@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -20,7 +20,7 @@ public interface NamedPropertyProvider {
    * @param name the name of the property
    * @param parms name/value-pairs specified by <tt>parm</tt> sub-elements of <tt>configProperty</tt>
    * @return the property value
-   * @throws ConfigException
+   * @throws Exception
    */
-  public String getProperty(String name, Map<String, String> parms) throws ConfigException;
+  public String getProperty(String name, Map<String, String> parms) throws Exception;
 }

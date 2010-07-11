@@ -26,7 +26,7 @@ class ConfigPropertyProvider implements PropertyProvider {
   
   }
   
-  void load(ResourceLoader loader) throws ConfigException {
+  void load(ResourceLoader loader) throws Exception {
     
     String resourceName = "config.properties";
     boolean mandatory = false;

@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -11,7 +11,7 @@ public interface EndElementHandler {
 
   /**
    * Called after all attributes and sub-elements have been set.
-   * @throws ConfigException
+   * @throws Exception
    */
-  public void endElement() throws ConfigException;  
+  public void endElement() throws Exception;  
 }

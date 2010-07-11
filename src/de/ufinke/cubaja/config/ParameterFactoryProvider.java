@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -18,7 +18,7 @@ public interface ParameterFactoryProvider {
    * @param name element tag or attribute name
    * @param type parameter data type
    * @return parameter factory
-   * @throws ConfigException
+   * @throws Exception
    */
-  public ParameterFactory getFactory(String name, Class<?> type) throws ConfigException;
+  public ParameterFactory getFactory(String name, Class<?> type) throws Exception;
 }

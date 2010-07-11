@@ -67,7 +67,7 @@ public class Configurator {
     
     masterProvider = new PropertyProvider() {
       
-      public String getProperty(String key) throws ConfigException {
+      public String getProperty(String key) throws Exception {
         
         String result = null;
         int i = 0;
@@ -415,7 +415,13 @@ public class Configurator {
     lastXmlProvider = new XMLPropertyProvider();
     pushXMLProperties();
     if (configProvider != null) {
-      configProvider.load(loader);
+      try {
+        configProvider.load(loader);
+      } catch (ConfigException e) {
+        throw e;
+      } catch (Throwable t) {
+        throw new ConfigException(t);
+      }
     }
     
     SAXHandler saxHandler = new SAXHandler();

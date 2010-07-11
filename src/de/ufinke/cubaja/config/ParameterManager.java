@@ -672,7 +672,7 @@ class ParameterManager implements ParameterFactoryFinder {
     return false;
   }
   
-  ParameterFactory getFactory(Class<?> parmType) throws ConfigException {
+  ParameterFactory getFactory(Class<?> parmType) throws Exception {
     
     ParameterFactory factory = null;
     

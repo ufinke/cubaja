@@ -24,7 +24,6 @@ import java.util.Stack;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -115,8 +114,10 @@ class SAXHandler extends DefaultHandler2 {
     
     try {
       runXMLReader(resourceName);
-    } catch (Exception e) {
-      throw createException(e);
+    } catch (PassedSAXException p) {
+      throw createException(p.getCause());
+    } catch (Throwable t) {
+      throw createException(t);
     }
   }
   
@@ -124,22 +125,15 @@ class SAXHandler extends DefaultHandler2 {
 
     StringBuilder sb = new StringBuilder(500);
 
-    while (cause.getCause() != null) {
-      cause = cause.getCause();
-    }
-
-    if (cause instanceof ConfigException && cause.getMessage() != null) {
+    sb.append(cause.getClass().getName());
+    if (cause.getMessage() != null) {
+      sb.append(": ");
       sb.append(cause.getMessage());
-    } else {      
-      cause.printStackTrace();
-      sb.append(cause.toString());
     }
     
     appendLocation(sb, locatorStack.size());
     
-    ConfigException exception = new ConfigException(sb.toString());
-    exception.setStackTrace(cause.getStackTrace());
-    return exception;
+    return new ConfigException(sb.toString(), cause);
   }
   
   private void appendLocation(StringBuilder sb, int index) {
@@ -163,7 +157,7 @@ class SAXHandler extends DefaultHandler2 {
     sb.append(']');
   }
   
-  private void runXMLReader(String resourceName) throws SAXException {
+  private void runXMLReader(String resourceName) throws Exception {
       
     InputSource source = null;
     
@@ -220,16 +214,16 @@ class SAXHandler extends DefaultHandler2 {
     locatorStack.pop();
   }
   
-  public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+  public void startElement(String uri, String localName, String qName, Attributes atts) throws PassedSAXException {
 
     try {
       startElement(localName, atts);
-    } catch (NullPointerException e) {
-      throw new ConfigException(e);
+    } catch (Throwable t) {
+      throw new PassedSAXException(t);
     }
   }
   
-  private void startElement(String localName, Attributes atts) throws SAXException {
+  private void startElement(String localName, Attributes atts) throws Exception {
     
     ElementKind kind = UNKNOWN;
     if (elementStack.size() == 0) {
@@ -302,16 +296,16 @@ class SAXHandler extends DefaultHandler2 {
     elementStack.push(element);
   }
   
-  public void endElement(String uri, String localName, String qName) throws SAXException {
+  public void endElement(String uri, String localName, String qName) throws PassedSAXException {
     
     try {
       endElement();
-    } catch (Exception e) {
-      throw new ConfigException(e);
+    } catch (Throwable t) {
+      throw new PassedSAXException(t);
     }
   }
   
-  private void endElement() throws SAXException {
+  private void endElement() throws Exception {
     
     ElementProxy element = elementStack.pop();
     //System.out.println("pop  " + element.getName() + ": " + element.getKind());
@@ -337,44 +331,56 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  public void startCDATA() {
+  public void startCDATA() throws PassedSAXException {
     
-    if (includedContent) {
-      includeDefinition.addText("<![CDATA[");
-    } else {      
-      peekElement().toggleCData();
+    try {
+      if (includedContent) {
+        includeDefinition.addText("<![CDATA[");
+      } else {      
+        peekElement().toggleCData();
+      }
+    } catch (Throwable t) {
+      throw new PassedSAXException(t);
     }
   }
   
-  public void endCDATA() {
+  public void endCDATA() throws PassedSAXException {
     
-    if (includedContent) {
-      includeDefinition.addText("]]>");
-    } else {      
-      peekElement().toggleCData();
+    try {
+      if (includedContent) {
+        includeDefinition.addText("]]>");
+      } else {      
+        peekElement().toggleCData();
+      }
+    } catch (Throwable t) {
+      throw new PassedSAXException(t);
     }
   }
   
-  public void characters(char[] ch, int start, int length) {
+  public void characters(char[] ch, int start, int length) throws PassedSAXException {
     
     handleCharacters(ch, start, length);
   }
   
-  public void ignorableWhitespace(char[] ch, int start, int length) {
+  public void ignorableWhitespace(char[] ch, int start, int length) throws PassedSAXException {
     
     handleCharacters(ch, start, length);
   }
   
-  private void handleCharacters(char[] ch, int start, int length) {
+  private void handleCharacters(char[] ch, int start, int length) throws PassedSAXException {
     
-    if (includedContent) {
-      includeDefinition.addText(String.valueOf(ch, start, length));
-    } else {      
-      peekElement().addCharData(ch, start, length);
+    try {
+      if (includedContent) {
+        includeDefinition.addText(String.valueOf(ch, start, length));
+      } else {      
+        peekElement().addCharData(ch, start, length);
+      }
+    } catch (Throwable t) {
+      throw new PassedSAXException(t);
     }
   }
   
-  private void startElement(ElementProxy element, Attributes atts) throws SAXException {
+  private void startElement(ElementProxy element, Attributes atts) throws Exception {
     
     Object node = (element.getKind() == ROOT_NODE) ? rootNode : getNonRootNode(element, atts);
     
@@ -402,7 +408,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private Object getNonRootNode(ElementProxy element, Attributes atts) throws SAXException {
+  private Object getNonRootNode(ElementProxy element, Attributes atts) throws Exception {
 
     Object node = null;
     
@@ -471,7 +477,7 @@ class SAXHandler extends DefaultHandler2 {
     return map;
   }
   
-  private void setAttribute(ElementProxy element, String name, String value) throws SAXException {
+  private void setAttribute(ElementProxy element, String name, String value) throws Exception {
     
     MethodProxy method = element.findMethod(name);
     if (method == null) {
@@ -498,7 +504,7 @@ class SAXHandler extends DefaultHandler2 {
     method.invoke(name, element.getNode(), parm);
   }
   
-  private void endElement(ElementProxy element) throws SAXException {
+  private void endElement(ElementProxy element) throws Exception {
     
     Object parm = null;
     
@@ -544,7 +550,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private void startInclude(ElementProxy element, Attributes atts) throws SAXException {
+  private void startInclude(ElementProxy element, Attributes atts) throws Exception {
     
     int includeIndex = atts.getIndex("", "include");
     int defineIndex = atts.getIndex("", "define");
@@ -564,7 +570,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
 
-  private void endInclude(ElementProxy element) throws SAXException {
+  private void endInclude(ElementProxy element) throws Exception {
     
     runXMLReader(includeStack.pop()); 
   }
@@ -585,7 +591,7 @@ class SAXHandler extends DefaultHandler2 {
     includeDefinition.endElement(element.getName());
   }
   
-  private void startProperty(ElementProxy element, Attributes atts) throws ConfigException {
+  private void startProperty(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
     if (nameIndex == -1) {
@@ -618,13 +624,13 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private void endPropertyProvider(ElementProxy element) throws SAXException {
+  private void endPropertyProvider(ElementProxy element) throws Exception {
 
     NamedPropertyValue entry = propertyStack.pop();
     setXMLProperty(entry.getName(), entry.getProvider(), entry.getParms());
   }
   
-  private void startPropertyParm(ElementProxy element, Attributes atts) throws SAXException {
+  private void startPropertyParm(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
     int valueIndex = atts.getIndex("", "value");
@@ -638,7 +644,7 @@ class SAXHandler extends DefaultHandler2 {
     entry.addParm(name, value);
   }
   
-  private void startPropertyProviderDefinition(ElementProxy element, Attributes atts) throws SAXException {
+  private void startPropertyProviderDefinition(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
     int classIndex = atts.getIndex("", "class");
@@ -657,7 +663,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private void startSettings(ElementProxy element, Attributes atts) throws SAXException {
+  private void startSettings(ElementProxy element, Attributes atts) throws Exception {
 
     for (int i = 0; i < atts.getLength(); i++) {
       String name = atts.getLocalName(i);
@@ -691,7 +697,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  private String resolve(String value, boolean normalize) throws ConfigException {
+  private String resolve(String value, boolean normalize) throws Exception {
 
     if (processProperties) {      
       value = resolveProperties(value);
@@ -705,7 +711,7 @@ class SAXHandler extends DefaultHandler2 {
     return value;
   }
   
-  private String resolveProperties(String value) throws ConfigException {
+  private String resolveProperties(String value) throws Exception {
     
     if (value == null) {
       return "";
@@ -745,7 +751,7 @@ class SAXHandler extends DefaultHandler2 {
     return value;
   }  
   
-  private String resolveEscape(String value) throws ConfigException {
+  private String resolveEscape(String value) throws Exception {
     
     if (value.indexOf('\\') == -1) {
       return value;
@@ -874,7 +880,7 @@ class SAXHandler extends DefaultHandler2 {
     xmlProperties.setProperty(key, value);
   }
   
-  private void setXMLProperty(String key, String providerName, Map<String, String> parms) throws ConfigException {
+  private void setXMLProperty(String key, String providerName, Map<String, String> parms) throws Exception {
     
     NamedPropertyProvider provider = namedProviderMap.get(providerName);
     if (provider == null) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -14,7 +14,7 @@ public interface StartElementHandler {
   /**
    * Called immediately after instantiation of this node object.
    * @param sharedMap a map with shared information
-   * @throws ConfigException
+   * @throws Exception
    */
-  public void startElement(Map<Object, Object> sharedMap) throws ConfigException;  
+  public void startElement(Map<Object, Object> sharedMap) throws Exception;  
 }

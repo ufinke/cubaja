@@ -23,7 +23,7 @@ public interface ElementFactoryProvider {
    * @param tagName
    * @param attributes
    * @return element factory
-   * @throws ConfigException
+   * @throws Exception
    */
-  public ElementFactory getFactory(String tagName, Map<String, String> attributes) throws ConfigException;
+  public ElementFactory getFactory(String tagName, Map<String, String> attributes) throws Exception;
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -15,8 +15,8 @@ public interface ResourceLoader {
    * Provides an <tt>org.xml.sax.InputSource</tt> for an XML resource. 
    * @param resourceName the XML resource name
    * @return the <tt>InputSource</tt> which will be parsed
-   * @throws ConfigException
+   * @throws Exception
    */
-  public InputSource loadResource(String resourceName) throws ConfigException;
+  public InputSource loadResource(String resourceName) throws Exception;
   
 }
