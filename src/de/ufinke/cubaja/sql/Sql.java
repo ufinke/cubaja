@@ -39,6 +39,7 @@ public class Sql {
   private String string;
   private List<String> statementList;
   private List<String> variableList;
+  private boolean splitStatements;
   
   private Map<String, String> resolveMap;
   
@@ -49,6 +50,7 @@ public class Sql {
 
     appendBuffer = new StringBuilder(1024);
     resolveMap = new LinkedHashMap<String, String>();
+    splitStatements = true;
   }
   
   /**
@@ -92,6 +94,16 @@ public class Sql {
     this();
     append(packageClass, sqlResource);
   }
+  
+  /**
+   * Controls processing of semicolon.
+   * By default, the input is split into several statements when an intermediate semicolon is encountered.
+   * @param splitStatements
+   */
+  public void setSplitStatements(boolean splitStatements) {
+    
+    this.splitStatements = splitStatements;
+  }
     
   private void format() {
     
@@ -123,7 +135,7 @@ public class Sql {
       formatChar(c);
     }
     
-    formatEndStatement();
+    formatEndStatement(true);
 
     inBuffer = null;
     outBuffer = null;
@@ -153,7 +165,7 @@ public class Sql {
         break;
         
       case ';':
-        formatEndStatement();
+        formatEndStatement(splitStatements);
         break;
 
       case ' ':
@@ -262,27 +274,39 @@ public class Sql {
     
     inPos++;
     int nextPos = inPos;
+    
     while (nextPos < inLen && Character.isJavaIdentifierPart(inBuffer.charAt(nextPos))) {
       nextPos++;
     }
-    variableList.add(inBuffer.substring(inPos, nextPos));
     
-    outBuffer.append('?');
+    if (inPos != nextPos) {
+      variableList.add(inBuffer.substring(inPos, nextPos));
+      outBuffer.append('?');
+    }
     
     inPos = nextPos;
   }
   
-  private void formatEndStatement() {
+  private void formatEndStatement(boolean split) {
     
     inPos++;
+    
+    if (! split) {
+      outBuffer.append(';');
+      return;
+    }
 
     while (outBuffer.length() > 0 && outBuffer.charAt(outBuffer.length() - 1) == ' ') {
       outBuffer.setLength(outBuffer.length() - 1);
     }
     
+    if (outBuffer.length() > 0 && outBuffer.charAt(outBuffer.length() - 1) == ';') {
+      outBuffer.setLength(outBuffer.length() - 1);
+    }
+    
     if (outBuffer.length() > 0) {
       statementList.add(outBuffer.toString());    
-      outBuffer.setLength(0);
+      outBuffer.setLength(Math.min(128, inBuffer.length() - outBuffer.length()));
     }    
   }
   
