@@ -319,7 +319,7 @@ public class Sql {
     
     if (outBuffer.length() > 0) {
       statementList.add(outBuffer.toString());    
-      outBuffer.setLength(Math.min(128, inBuffer.length() - outBuffer.length()));
+      outBuffer.setLength(Math.max(128, inBuffer.length() - outBuffer.length()));
     }    
   }
   
