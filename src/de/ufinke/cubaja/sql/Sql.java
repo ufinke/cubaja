@@ -95,16 +95,6 @@ public class Sql {
     append(packageClass, sqlResource);
   }
   
-  /**
-   * Controls processing of semicolon.
-   * By default, the input is split into several statements when an intermediate semicolon is encountered.
-   * @param splitStatements
-   */
-  public void setSplitStatements(boolean splitStatements) {
-    
-    this.splitStatements = splitStatements;
-  }
-    
   private void format() {
     
     if (formatted) {
@@ -232,13 +222,36 @@ public class Sql {
       inPos = nextPos;
       return;
     }
+
+    nextPos++;
+    int instructionStart = (nextPos < inLen && inBuffer.charAt(nextPos) == '{') ? nextPos + 1 : 0;
+    int instructionEnd = 0;
     
     boolean end = false;
     while (! end) {
-      char c = inBuffer.charAt(nextPos++);
+      char c = inBuffer.charAt(nextPos);
+      if (c == '}') {
+        instructionEnd = nextPos - 1;
+      }
+      nextPos++;
       end = (c == '\n') || (c == '\r') || (nextPos >= inLen);
     }
+    
+    if (instructionEnd > instructionStart) {
+      formatInstruction(inBuffer.substring(instructionStart, instructionEnd).toLowerCase());
+    }
+    
     inPos = nextPos;
+  }
+  
+  private void formatInstruction(String instruction) {
+    
+    if (instruction.equals("split=true")) {
+      splitStatements = true;
+      formatEndStatement(true);
+    } else if (instruction.equals("split=false")) {
+      splitStatements = false;
+    }
   }
   
   private void formatPossibleBlockComment() {
