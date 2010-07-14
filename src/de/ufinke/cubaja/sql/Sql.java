@@ -125,7 +125,7 @@ public class Sql {
       formatChar(c);
     }
     
-    formatEndStatement(true);
+    storeStatement();
 
     inBuffer = null;
     outBuffer = null;
@@ -155,7 +155,7 @@ public class Sql {
         break;
         
       case ';':
-        formatEndStatement(splitStatements);
+        formatEndStatement();
         break;
 
       case ' ':
@@ -231,7 +231,7 @@ public class Sql {
     while (! end) {
       char c = inBuffer.charAt(nextPos);
       if (c == '}') {
-        instructionEnd = nextPos - 1;
+        instructionEnd = nextPos;
       }
       nextPos++;
       end = (c == '\n') || (c == '\r') || (nextPos >= inLen);
@@ -246,10 +246,10 @@ public class Sql {
   
   private void formatInstruction(String instruction) {
     
-    if (instruction.equals("split=true")) {
+    if (instruction.equals("endstatement")) {
+      storeStatement();
       splitStatements = true;
-      formatEndStatement(true);
-    } else if (instruction.equals("split=false")) {
+    } else if (instruction.equals("beginstatement")) {
       splitStatements = false;
     }
   }
@@ -295,31 +295,33 @@ public class Sql {
     if (inPos != nextPos) {
       variableList.add(inBuffer.substring(inPos, nextPos));
       outBuffer.append('?');
+    } else {
+      outBuffer.append(':');
     }
     
     inPos = nextPos;
   }
   
-  private void formatEndStatement(boolean split) {
+  private void formatEndStatement() {
     
     inPos++;
     
-    if (! split) {
+    if (splitStatements) {
+      storeStatement();
+    } else {
       outBuffer.append(';');
-      return;
     }
+  }
+  
+  private void storeStatement() {
 
     while (outBuffer.length() > 0 && outBuffer.charAt(outBuffer.length() - 1) == ' ') {
       outBuffer.setLength(outBuffer.length() - 1);
     }
     
-    if (outBuffer.length() > 0 && outBuffer.charAt(outBuffer.length() - 1) == ';') {
-      outBuffer.setLength(outBuffer.length() - 1);
-    }
-    
     if (outBuffer.length() > 0) {
       statementList.add(outBuffer.toString());    
-      outBuffer.setLength(Math.max(128, inBuffer.length() - outBuffer.length()));
+      outBuffer = new StringBuilder(Math.max(128, inBuffer.length() - outBuffer.length()));
     }    
   }
   

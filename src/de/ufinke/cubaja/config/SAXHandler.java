@@ -115,7 +115,11 @@ class SAXHandler extends DefaultHandler2 {
     try {
       runXMLReader(resourceName);
     } catch (PassedSAXException p) {
-      throw createException(p.getCause());
+      Throwable t = p.getCause();
+      while (t instanceof PassedSAXException) {
+        t = t.getCause();
+      }
+      throw createException(t);
     } catch (Throwable t) {
       throw createException(t);
     }
@@ -125,10 +129,16 @@ class SAXHandler extends DefaultHandler2 {
 
     StringBuilder sb = new StringBuilder(500);
 
-    sb.append(cause.getClass().getName());
-    if (cause.getMessage() != null) {
-      sb.append(": ");
-      sb.append(cause.getMessage());
+    if (cause instanceof ConfigException) {
+      if (cause.getMessage() != null) {
+        sb.append(cause.getMessage());
+      }
+    } else {
+      sb.append(cause.getClass().getName());
+      if (cause.getMessage() != null) {
+        sb.append(": ");
+        sb.append(cause.getMessage());
+      }
     }
     
     appendLocation(sb, locatorStack.size());
@@ -519,7 +529,11 @@ class SAXHandler extends DefaultHandler2 {
         
         MethodProxy charDataMethod = element.getCharDataMethod();
         if (charDataMethod != null) {
-          charDataMethod.invoke(element.getName(), parm, resolve(element.getCharData(), true));
+          String charData = element.getCharData();
+          if (element.mustResolve()) {
+            charData = resolve(charData, true);
+          }
+          charDataMethod.invoke(element.getName(), parm, charData);
         }
 
         if (element.isEndElement()) {
@@ -592,6 +606,11 @@ class SAXHandler extends DefaultHandler2 {
   }
   
   private void startProperty(ElementProxy element, Attributes atts) throws Exception {
+    
+    ElementProxy parent = peekElement();
+    if (parent.mustResolve()) {
+      parent.setCharData(resolve(parent.getCharData(), true));
+    }
     
     int nameIndex = atts.getIndex("", "name");
     if (nameIndex == -1) {

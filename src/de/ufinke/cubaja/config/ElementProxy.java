@@ -27,6 +27,7 @@ class ElementProxy {
   private MethodProxy charDataMethod;
   private ParameterFactory factory;
   private StringBuilder charData;
+  private boolean mustResolve;
   private boolean cdata;
   
   ElementProxy(String name, ElementKind kind) {
@@ -80,6 +81,8 @@ class ElementProxy {
         charData.append(ch[i]);
       }
     }
+    
+    mustResolve = true;
   }
   
   private void ensureCharData() {
@@ -92,6 +95,22 @@ class ElementProxy {
   String getCharData() {
     
     return charData == null ? EMPTY_STRING : charData.toString();
+  }
+  
+  void setCharData(String string) {
+    
+    if (string != null && string.length() > 0) {
+      ensureCharData();
+      charData.setLength(0);
+      charData.append(string);
+    }
+    
+    mustResolve = false;
+  }
+  
+  boolean mustResolve() {
+    
+    return mustResolve;
   }
   
   void setNode(Object node) throws ConfigException {
