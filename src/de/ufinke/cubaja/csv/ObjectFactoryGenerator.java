@@ -37,6 +37,7 @@ class ObjectFactoryGenerator implements Generator {
   static private final Type csvExceptionType = new Type(CsvException.class);
 
   private Type dataClassType;
+  private ObjectFactoryType builtin;
   private Map<String, Integer> searchMap;
   private Map<String, SetterEntry> setterMap;
   private Map<Class<?>, ObjectFactory> factoryMap;
@@ -63,7 +64,11 @@ class ObjectFactoryGenerator implements Generator {
     }
     
     dataClassType = new Type(dataClass);
-    createSetterMap(dataClass);
+    
+    builtin = ObjectFactoryType.getBuiltin(dataClass);    
+    if (builtin == null) {
+      createSetterMap(dataClass);
+    }
     
     Class<?> factoryClass = Loader.createClass(this, "CsvReaderObjectFactory", dataClass);
     lastFactory = (ObjectFactory) factoryClass.newInstance();
@@ -82,7 +87,12 @@ class ObjectFactoryGenerator implements Generator {
     
     GenMethod method = genClass.createMethod(ACC_PUBLIC, Type.OBJECT, "createObject", csvReaderType);
     method.addException(csvExceptionType);
-    generateCode(method.getCode());    
+    
+    if (builtin == null) {
+      generateCode(method.getCode());    
+    } else {
+      generateBuiltin(method.getCode());
+    }
     
     return genClass;
   }
@@ -115,6 +125,14 @@ class ObjectFactoryGenerator implements Generator {
     
     code.returnReference(); // returns duplicated data object
   }  
+  
+  private void generateBuiltin(CodeAttribute code) {
+    
+    code.loadLocalReference(1); // query
+    code.loadConstant(1); // column #1
+    code.invokeVirtual(csvReaderType, dataClassType, builtin.getReaderMethod(), Type.INT);
+    code.returnReference();
+  }
   
   private void createSearchMap(Map<String, ColConfig> colMap) {
     

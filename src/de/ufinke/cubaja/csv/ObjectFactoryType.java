@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {
@@ -82,16 +82,26 @@ enum ObjectFactoryType {
     return priority;
   }
   
+  boolean isBuiltin() {
+    
+    return ! (primitive || needsClass);
+  }
+  
 // --- parameter finder -------------------------------------------------------
   
   static private final Map<Class<?>, ObjectFactoryType> parameterMap;
+  static private final Map<Class<?>, ObjectFactoryType> builtinMap;
   
   static {
     
     parameterMap = new HashMap<Class<?>, ObjectFactoryType>(32);
+    builtinMap = new HashMap<Class<?>, ObjectFactoryType>(32);
     
     for (ObjectFactoryType type : ObjectFactoryType.values()) {
       parameterMap.put(type.getClazz(), type);
+      if (type.isBuiltin()) {
+        builtinMap.put(type.getClazz(), type);
+      }
     }
   }
   
@@ -104,4 +114,8 @@ enum ObjectFactoryType {
     return parameterMap.get(parameterClazz);
   }
   
+  static ObjectFactoryType getBuiltin(Class<?> dataClazz) {
+    
+    return builtinMap.get(dataClazz);
+  }
 }

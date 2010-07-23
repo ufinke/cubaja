@@ -22,6 +22,13 @@ import de.ufinke.cubaja.util.Text;
  * The various methods keep track 
  * of line breaks, separators, comments and variables.
  * The result is formatted executable SQL.
+ * <p>
+ * By default, this class splits consecutive statements
+ * (separated by semicolon) into a list of statements.
+ * Text between line comments <tt>--{beginStatement}</tt>
+ * and <tt>--{endStatement}</tt> are treated as a single SQL statement.
+ * These comments are necessary to process 
+ * stored procedure definitions or proprietary SQL scripts.
  * @author Uwe Finke
  */
 public class Sql {

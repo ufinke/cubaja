@@ -13,7 +13,7 @@ public class WriterTest {
     
     Configurator configurator = new Configurator();
     configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/csv"));
-    configurator.setName("writer_config");
+    configurator.setName("data_config");
     CsvConfig config = configurator.configure(new CsvConfig());
     
     Data data = new Data();
