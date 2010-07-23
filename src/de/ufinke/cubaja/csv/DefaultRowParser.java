@@ -3,18 +3,21 @@
 
 package de.ufinke.cubaja.csv;
 
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import de.ufinke.cubaja.util.Text;
 
 /**
  * Default <tt>RowParser</tt> implementation.
+ * <p>
  * If an escape character is defined, this parser supposes
  * escape character usage as described in 
  * {@link <a href="http://tools.ietf.org/html/rfc4180">rfc4180</a>},
  * with the exception that this parser allows any character to be an escape character
  * and any CR / LF combination to be a line break.
+ * A line break within an escaped field will be represented by a single LF (<tt>\n</tt>)
+ * character in the resulting string even if there was a CR / LF combination in the origin.
  * @author Uwe Finke
  */
 public class DefaultRowParser implements RowParser {
@@ -159,7 +162,7 @@ public class DefaultRowParser implements RowParser {
               throw new CsvException(text.get("eofEscaped"));
             } else {
               lineCount++;
-              line = line + contLine;
+              line = line + "\n" + contLine;
               limit = line.length();
             }
           }

@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.*;
+import java.util.Map;
 import de.ufinke.cubaja.cafebabe.Type;
 
 enum ObjectFactoryType {

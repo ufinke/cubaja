@@ -45,7 +45,7 @@ public class ReaderTest {
   @Test
   public void builtinTest() throws Exception {
     
-    String line = "hello World";
+    String line = "hello world";
     
     StringReader sr = new StringReader(line);
     CsvReader reader = new CsvReader(sr);
@@ -53,6 +53,25 @@ public class ReaderTest {
     for (String string : reader.cursor(String.class)) {
       assertEquals(line, string);
     }
+    
+    reader.close();
+  }
+  
+  @Test
+  public void escapeTest() throws Exception {
+    
+    CsvConfig config = new CsvConfig();
+    config.setSeparator(',');
+    config.setEscapeChar('#');
+    
+    String line = "123,#hello,\nworld#,#hello\r\nagain,\r\n\r\nworld#\n";
+    
+    StringReader sr = new StringReader(line);
+    CsvReader reader = new CsvReader(sr, config);
+    reader.nextRow();
+    assertEquals(123, reader.readInt(1));
+    assertEquals("hello,\nworld", reader.readString(2));
+    assertEquals("hello\nagain,\n\nworld", reader.readString(3));
     
     reader.close();
   }
