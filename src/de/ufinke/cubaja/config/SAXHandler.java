@@ -625,6 +625,7 @@ class SAXHandler extends DefaultHandler2 {
     }
     
     if (valueIndex > -1) {
+      name = resolve(name, false);
       String value = resolve(atts.getValue(valueIndex), false); 
       setXMLProperty(name, value);
     }
