@@ -653,23 +653,16 @@ public class CsvConfig {
   public void addCol(ColConfig column) {
 
     column.setCsvConfig(this);
+
     if (column.getPosition() == 0) {
-      column.setInternalPosition(lastPosition + 1); // includes callback to getSequence()
+      column.setInternalPosition(lastPosition + 1);
     }
     lastPosition = column.getPosition();
-    nameMap.put(column.getName(), column);
-  }
-  
-  /*
-   * Multiple ColConfig instances may share the same position.
-   * Within the position array (see buildPositionArray), 
-   * the column with the highest sequence number wins.
-   */
-  int getSequence(int position) {
-
+    maxPosition = Math.max(maxPosition, lastPosition);
+    column.setSequence(++sequence);
     positionArray = null;
-    maxPosition = Math.max(maxPosition, position);
-    return ++sequence;
+    
+    nameMap.put(column.getName(), column);
   }
   
   void replaceName(String newName, ColConfig column) {

@@ -75,4 +75,38 @@ public class ReaderTest {
     
     reader.close();
   }
+  
+  @Test
+  public void positionTest() throws Exception {
+    
+    Configurator configurator = new Configurator();
+    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/csv"));
+    configurator.setName("position_config");
+    CsvConfig config = configurator.configure(new CsvConfig());
+    
+    String lines = "a;123;b;987,65\nx;456;y;-1,2";
+    
+    StringReader sr = new StringReader(lines);
+    CsvReader reader = new CsvReader(sr, config);
+    
+    int count = 0;
+    
+    for (Data data : reader.cursor(Data.class)) {
+      count++;
+      switch (count) {
+        case 1:
+          assertEquals(new BigInteger("123"), data.getBigIntegerField());
+          assertEquals(new BigDecimal("987.65"), data.getBigDecimalField());
+          break;
+        case 2:
+          assertEquals(new BigInteger("456"), data.getBigIntegerField());
+          assertEquals(new BigDecimal("-1.2"), data.getBigDecimalField());
+          break;
+      }
+    }
+
+    assertEquals(count, reader.getRowCount());
+    
+    reader.close();
+  }
 }

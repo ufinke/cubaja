@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+
+<config separator=";">
+  <col name="big_integer_field" position="2"/>
+  <col name="big_decimal_field" position="4"/>
+</config>

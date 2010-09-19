@@ -233,10 +233,12 @@ public class ColConfig {
 
   void setInternalPosition(int position) {
     
-    if (csvConfig != null) {
-      sequence = csvConfig.getSequence(position); // last setting wins when there are position duplicates
-    }    
     this.position = position;
+  }
+
+  void setSequence(int sequence) {
+    
+    this.sequence = sequence;
   }
   
   int getSequence() {

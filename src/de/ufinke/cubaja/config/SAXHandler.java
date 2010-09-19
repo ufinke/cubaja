@@ -616,7 +616,7 @@ class SAXHandler extends DefaultHandler2 {
     if (nameIndex == -1) {
       throw new ConfigException(text.get("propertyName"));
     }
-    String name = atts.getValue(nameIndex);
+    String name = resolve(atts.getValue(nameIndex), false);
     
     int valueIndex = atts.getIndex("", "value");
     int providerIndex = atts.getIndex("", "provider");
@@ -625,7 +625,6 @@ class SAXHandler extends DefaultHandler2 {
     }
     
     if (valueIndex > -1) {
-      name = resolve(name, false);
       String value = resolve(atts.getValue(valueIndex), false); 
       setXMLProperty(name, value);
     }
