@@ -10,6 +10,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,8 +43,7 @@ final class SortManager {
   private final Stopwatch stopwatch;
 
   private final SortConfig config;
-  @SuppressWarnings("rawtypes")
-  private final Comparator comparator;
+  private final Comparator<?> comparator;
   private final SortAlgorithm algorithm;
 
   private final int runSize;
@@ -62,8 +62,7 @@ final class SortManager {
 
   private volatile Throwable error;
 
-  @SuppressWarnings("rawtypes")
-  public SortManager(SortConfig config, Comparator comparator) {
+  public SortManager(SortConfig config, Comparator<?> comparator) {
 
     myId = getId();
 
@@ -116,7 +115,7 @@ final class SortManager {
     fileQueue = new ArrayBlockingQueue<Request>(queueCapacity);
     mainQueue = new ArrayBlockingQueue<Request>(queueCapacity);
         
-    executor = Executors.newCachedThreadPool();
+    executor = Executors.newCachedThreadPool(createThreadFactory());
     
     if (isDebug()) {
       putCount = new AtomicLong();
@@ -126,6 +125,19 @@ final class SortManager {
         initTimer(logger, logPrefix, "sortPut", putCount);
       }
     }
+  }
+  
+  private ThreadFactory createThreadFactory() {
+    
+    return new ThreadFactory() {
+
+      public Thread newThread(Runnable r) {
+
+        Thread thread = new Thread(r);
+        thread.setDaemon(true);
+        return thread;
+      }
+    };
   }
 
   public int id() {
@@ -138,8 +150,7 @@ final class SortManager {
     return config;
   }
 
-  @SuppressWarnings("rawtypes")
-  public Comparator getComparator() {
+  public Comparator<?> getComparator() {
 
     return comparator;
   }

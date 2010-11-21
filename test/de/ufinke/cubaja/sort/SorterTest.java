@@ -39,4 +39,27 @@ public class SorterTest {
     assertEquals(putSum, getSum);
     assertEquals(config.getRecords(), recNum);
   }
+  
+  @Test
+  public void abort() throws Exception {
+    
+    SortConfig config = new SortConfig();
+    config.setRunSize(1000);
+    config.setLog(true);
+    
+    Comparator<Integer> comparator = new NaturalComparator<Integer>();
+    Sorter<Integer> sorter = new Sorter<Integer>(comparator, config);
+    for (int i = 0; i < 10000; i++) {
+      sorter.add(i);
+    }
+    
+    int count = 0;
+    for (Integer value : sorter) {
+      count++;
+      if (count == 100) {
+        sorter.abort();
+        return;
+      }
+    }
+  }
 }
