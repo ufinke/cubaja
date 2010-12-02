@@ -413,9 +413,15 @@ class SAXHandler extends DefaultHandler2 {
       parameterManager.pushParameterFactoryFinder(finder);
     }
     
-    for (int i = 0; i < atts.getLength(); i++) {
-      setAttribute(element, atts.getLocalName(i), atts.getValue(i));
-    }
+    if (element.isDomElement()) {
+      DOMElement dom = (DOMElement) node;
+      dom.setName(element.getName());
+      dom.setAttributes(createAttributeMap(atts));
+    } else {
+      for (int i = 0; i < atts.getLength(); i++) {
+        setAttribute(element, atts.getLocalName(i), atts.getValue(i));
+      }
+    }    
   }
   
   private Object getNonRootNode(ElementProxy element, Attributes atts) throws Exception {
@@ -423,9 +429,14 @@ class SAXHandler extends DefaultHandler2 {
     Object node = null;
     
     ElementProxy parentElement = peekElement();
-    
+
     MethodProxy parentMethod = null;
     ParameterFactory factory = null;
+    
+    if (parentElement.isDomElement()) {
+      addDomText(parentElement);
+      parentMethod = new MethodProxy(DOMElement.class.getMethod("addContent", DOMContent.class));
+    }
     
     if (parentElement.isElementProvider()) {
       ElementFactoryProvider provider = (ElementFactoryProvider) parentElement.getNode();
@@ -526,14 +537,11 @@ class SAXHandler extends DefaultHandler2 {
         parm = element.getNode();
         
         element.checkMandatory();
-        
-        MethodProxy charDataMethod = element.getCharDataMethod();
-        if (charDataMethod != null) {
-          String charData = element.getCharData();
-          if (element.mustResolve()) {
-            charData = resolve(charData, true);
-          }
-          charDataMethod.invoke(element.getName(), parm, charData);
+    
+        if (element.isDomElement()) {
+          addDomText(element);
+        } else {
+          setCharData(element);
         }
 
         if (element.isEndElement()) {
@@ -561,6 +569,32 @@ class SAXHandler extends DefaultHandler2 {
     if (! (element.getKind() == ROOT_NODE)) {      
       Object parentNode = peekElement().getNode();
       element.getParentMethod().invoke(element.getName(), parentNode, parm);
+    }
+  }
+  
+  private void addDomText(ElementProxy element) throws Exception {
+    
+    String charData = element.getCharData();
+    if (element.mustResolve()) {
+      charData = resolve(charData, true);
+    }
+    if (charData.length() > 0) {
+      DOMText text = new DOMText(charData);
+      DOMElement dom = (DOMElement) (element.getNode());
+      dom.addContent(text);
+    }
+    element.resetCharData();
+  }
+  
+  private void setCharData(ElementProxy element) throws Exception {
+    
+    MethodProxy charDataMethod = element.getCharDataMethod();
+    if (charDataMethod != null) {
+      String charData = element.getCharData();
+      if (element.mustResolve()) {
+        charData = resolve(charData, true);
+      }
+      charDataMethod.invoke(element.getName(), element.getNode(), charData);
     }
   }
   

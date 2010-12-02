@@ -22,6 +22,7 @@ class ElementProxy {
   private boolean factoryProvider;
   private boolean factoryFinder;
   private boolean elementProvider;
+  private boolean domElement;
   private Map<String, MethodProxy> methodMap;
   private MethodProxy parentMethod;
   private MethodProxy charDataMethod;
@@ -108,6 +109,12 @@ class ElementProxy {
     mustResolve = false;
   }
   
+  void resetCharData() {
+    
+    charData = null;
+    mustResolve = false;
+  }
+  
   boolean mustResolve() {
     
     return mustResolve;
@@ -119,6 +126,9 @@ class ElementProxy {
     
     Class<?> clazz = node.getClass();
     while (clazz != null) {
+      if (clazz == DOMElement.class) {
+        domElement = true;
+      }
       for (Class<?> implementedInterface : clazz.getInterfaces()) {
         if (StartElementHandler.class.isAssignableFrom(implementedInterface)) {
           startElement = true;
@@ -146,6 +156,11 @@ class ElementProxy {
         checkMethod(method);
       }
     }
+  }
+  
+  boolean isDomElement() {
+    
+    return domElement;
   }
   
   boolean isStartElement() {
