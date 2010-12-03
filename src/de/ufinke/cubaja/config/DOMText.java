@@ -49,9 +49,7 @@ public class DOMText extends DOMContent {
     for (int i = 0; i < text.length(); i++) {
       char c = text.charAt(i);
       if (Character.isWhitespace(c)) {
-        if (whitespacePending) {
-          whitespacePending = true;
-        }
+        whitespacePending = true;
       } else {
         if (whitespacePending) {
           sb.append(' ');

@@ -471,6 +471,19 @@ class ParameterManager implements ParameterFactoryFinder {
     }
   }
   
+  static class DOMFactory implements ParameterFactory {
+    
+    public Object createParameter(String value, Class<?> type, Annotation[] annotations) throws Exception {
+      
+      return new DOMElement();
+    }
+    
+    public boolean isNode() {
+      
+      return true;
+    }
+  }
+  
   private Map<Class<?>, ParameterFactory> parameterFactoryMap;
   private Stack<ParameterFactoryFinder> finderStack;
   private Map<Class<?>, Class<?>> primitivesMap;
@@ -515,6 +528,7 @@ class ParameterManager implements ParameterFactoryFinder {
     parameterFactoryMap.put(Date.class, new DateFactory(this));
     parameterFactoryMap.put(Class.class, new ClassFactory(this));
     parameterFactoryMap.put(InterfaceFactory.class, new InterfaceFactory(this));
+    parameterFactoryMap.put(DOMContent.class, new DOMFactory());
   }
   
   void pushParameterFactoryFinder(ParameterFactoryFinder finder) {

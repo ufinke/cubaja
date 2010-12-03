@@ -52,4 +52,20 @@ public class DOMElement extends DOMContent {
     this.content.add(content);
   }
   
+  public String getAttribute(String name) {
+    
+    return attributes.get(name);
+  }
+  
+  public String getAttribute(String name, String defaultValue) {
+    
+    String result = getAttribute(name);
+    return (result == null) ? defaultValue : result;
+  }
+  
+  public void setAttribute(String name, String value) {
+    
+    attributes.put(name, value);
+  }
+  
 }
