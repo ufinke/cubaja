@@ -3,15 +3,15 @@
 <project name="cubaja" default="zip">
 	
   <property name="majorVersion" value="1"/>
-  <property name="minorVersion" value="3"/>
-  <property name="release" value="0_alpha_1"/>
+  <property name="minorVersion" value="2"/>
+  <property name="release" value="8"/>
 	<property name="version" value="${majorVersion}.${minorVersion}.${release}"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
 	<property name="revision" value="HEAD"/>
   <property name="dist" value="../../dist/${tag}"/>
 	<property name="lib" value="../../lib"/>
   <!-- <property name="jdkdoc" value="http://java.sun.com/j2se/1.5.0/docs/api"/> -->
-  <property name="jdkdoc" value="http://java.sun.com/javase/6/docs/api"/>
+  <property name="jdkdoc" value="http://download.oracle.com/javase/6/docs/api/"/>
   
 	<path id="lib">
 		<pathelement path="${lib}/commons-logging.jar"/>
