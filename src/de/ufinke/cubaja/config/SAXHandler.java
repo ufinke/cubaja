@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -576,7 +576,7 @@ class SAXHandler extends DefaultHandler2 {
     
     String charData = element.getCharData();
     if (element.mustResolve()) {
-      charData = resolve(charData, true);
+      charData = resolve(charData, false);
     }
     if (charData.length() > 0) {
       DOMText text = new DOMText(charData);
