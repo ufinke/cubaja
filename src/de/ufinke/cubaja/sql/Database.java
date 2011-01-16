@@ -268,7 +268,10 @@ public class Database {
    */
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
     
-    return createQuery(sql).select(clazz);
+    Query query = createQuery(sql);
+    D result = query.select(clazz);
+    query.close();
+    return result;
   }
   
   /**
