@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -94,15 +94,23 @@ public class SortConfig {
   }  
 
   /**
-   * Returns the sort algorithm.
+   * Creates and returns a new instance of the sort algorithm.
    * @return algorithm
    */
   public SortAlgorithm getAlgorithm() {
 
+    // create a new instance on every call
+    // because parallel running Sorter instances may use the same SortConfig
+    
     if (algorithm == null) {
-      algorithm = new Quicksort();
+      return new Quicksort();
     }
-    return algorithm;
+    
+    try {
+      return algorithm.getClass().newInstance();
+    } catch (Exception e) {
+      throw new SorterException(e);
+    }
   }
 
   /**
