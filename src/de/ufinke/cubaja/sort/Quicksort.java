@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -14,44 +14,32 @@ public class Quicksort implements SortAlgorithm {
 
   static private final int INSERTION_THRESHOLD = 7;
   
-  private final Random random;
-  @SuppressWarnings("rawtypes")
-  private Comparator comparator;
-  
   /**
   * Constructor.
   */
   public Quicksort() {
    
-   random = new Random();
   }
   
   @SuppressWarnings("rawtypes")
-  public void setComparator(final Comparator comparator) {
-    
-    this.comparator = comparator;
-  }
-  
-  public void sort(final Object[] array, final int size) {
+  public void sort(final Object[] array, final int size, final Comparator comparator) {
 
-   sort(array, 0, size - 1);
+    sort(array, 0, size - 1, comparator, new Random());
   }
   
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private void sort(final Object[] array, int left, int right) {
+  private void sort(final Object[] array, int left, int right, final Comparator comparator, final Random random) {
   
-   final Comparator comparator = this.comparator;
-   
    while (right > left) {
      
      if ((right - left) <= INSERTION_THRESHOLD) {
        
-       insertionSort(array, left, right);
+       insertionSort(array, left, right, comparator);
        left = right;
        
      } else {
        
-       findBestPivot(array, left, right);
+       findBestPivot(array, left, right, random);
        
        Object pivot = array[right];
        int leftIndex = left - 1;
@@ -74,10 +62,10 @@ public class Quicksort implements SortAlgorithm {
        array[leftIndex] = pivot;
        
        if ((leftIndex - left) < (right - leftIndex)) {
-         sort(array, left, leftIndex - 1);
+         sort(array, left, leftIndex - 1, comparator, random);
          left = leftIndex + 1;
        } else {
-         sort(array, leftIndex + 1, right);
+         sort(array, leftIndex + 1, right, comparator, random);
          right = leftIndex - 1;
        }
      }
@@ -86,9 +74,7 @@ public class Quicksort implements SortAlgorithm {
   }
   
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private void insertionSort(final Object[] array, final int left, final int right) {
-   
-   final Comparator comparator = this.comparator;
+  private void insertionSort(final Object[] array, final int left, final int right, final Comparator comparator) {
    
    int j;
    int i = left + 1;
@@ -105,7 +91,7 @@ public class Quicksort implements SortAlgorithm {
    }
   }
   
-  private void findBestPivot(final Object[] array, final int left, final int right) {
+  private void findBestPivot(final Object[] array, final int left, final int right, final Random random) {
   
    final int median = left + random.nextInt(right - left + 1);
    swap(array, right, median);

@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -13,15 +13,14 @@ public interface SortAlgorithm {
 
   /**
    * Sorts an array of objects.
+   * Important: This method may be called in parallel from several threads.
+   * Implementations should work with local variables only;
+   * avoid member variables!
    * @param array
    * @param size
-   */
-  public void sort(Object[] array, int size);
-  
-  /**
-   * Sets the comparator.
    * @param comparator
    */
   @SuppressWarnings("rawtypes")
-  public void setComparator(Comparator comparator);
+  public void sort(Object[] array, int size, Comparator comparator);
+  
 }

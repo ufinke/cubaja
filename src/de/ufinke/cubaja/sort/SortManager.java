@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -81,7 +81,6 @@ final class SortManager {
     logInterval = config.getLogInterval() * 1000;
 
     algorithm = config.getAlgorithm();
-    algorithm.setComparator(comparator);
 
     int blockSize = config.getBlockSize();
     if (blockSize == 0) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -186,7 +186,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private Iterator<Object> getSimpleIterator() {
 
     manager.addPutCount(size);
-    manager.getAlgorithm().sort(array, size);
+    manager.getAlgorithm().sort(array, size, manager.getComparator());
     manager.switchState();
     
     return new SortArray(array, size);

@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 final class SortTask implements Runnable {
 
   private final SortManager manager;
-  private final SortAlgorithm algorithm;
   
   private boolean loop;
   private boolean fileTaskStarted;
@@ -22,7 +21,6 @@ final class SortTask implements Runnable {
   public SortTask(SortManager manager) {
     
     this.manager = manager;
-    algorithm = manager.getAlgorithm();
     arrayList = new ArrayList<SortArray>(manager.getArrayCount());
   }
   
@@ -109,7 +107,7 @@ final class SortTask implements Runnable {
   
   private void sortArray(final SortArray sortArray) throws Exception {
 
-    algorithm.sort(sortArray.getArray(), sortArray.getSize());
+    manager.getAlgorithm().sort(sortArray.getArray(), sortArray.getSize(), manager.getComparator());
 
     arrayList.add(sortArray);
     

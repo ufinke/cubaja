@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -12,11 +12,6 @@ import java.util.Comparator;
  */
 public class Mergesort implements SortAlgorithm {
 
-  private Object[] entries;
-  private Object[] temp;
-  @SuppressWarnings("rawtypes")
-  private Comparator comparator;
-  
   /**
    * Constructor.
    */
@@ -25,36 +20,23 @@ public class Mergesort implements SortAlgorithm {
   }
   
   @SuppressWarnings("rawtypes")
-  public void setComparator(final Comparator comparator) {
-    
-    this.comparator = comparator;
-  }
-  
-  public void sort(final Object[] array, final int size) {
+  public void sort(final Object[] array, final int size, final Comparator comparator) {
 
     if (size == 0) {
       return;
     }
     
-    entries = array;
-    
-    if (temp == null && temp.length < size) {
-      temp = new Object[size];
-    }
-    
-    mergesort(0, size - 1);
+    Object[] temp = new Object[size];
+    mergesort(array, temp, 0, size - 1, comparator);
   }
   
-  @SuppressWarnings("unchecked")
-  private void mergesort(final int left, final int right) {
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private void mergesort(final Object[] entries, final Object[] temp, final int left, final int right, final Comparator comparator) {
     
     if (right <= left) {
       return;
     }
 
-    final Object[] entries = this.entries;
-    final Object[] temp = this.temp;
-    
     int i = left;
     boolean sorted = true;
     while (sorted && (i < right)) {
@@ -66,8 +48,8 @@ public class Mergesort implements SortAlgorithm {
     
     final int middle = (left + right) / 2;
     
-    mergesort(left, middle);
-    mergesort(middle + 1, right);
+    mergesort(entries, temp, left, middle, comparator);
+    mergesort(entries, temp, middle + 1, right, comparator);
     
     System.arraycopy(entries, left, temp, left, right - left + 1);
     
