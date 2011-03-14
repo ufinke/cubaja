@@ -40,6 +40,7 @@ public class SorterTest {
     assertEquals(config.getRecords(), recNum);
   }
   
+  @SuppressWarnings("unused")
   @Test
   public void abort() throws Exception {
     

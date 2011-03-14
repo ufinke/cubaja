@@ -164,6 +164,27 @@ public class Util {
   }
   
   /**
+   * Tests if two objects which may be <tt>null</tt> are equal.
+   * If both parameters are <tt>null</tt> the result is <tt>true</tt>.
+   * @param <D>
+   * @param a
+   * @param b
+   * @return <tt>true</tt> or <tt>false</tt>
+   */
+  static public <D extends Object> boolean isEqual(D a, D b) {
+    
+    if (a == null) {
+      return b == null;
+    }
+    
+    if (b == null) {
+      return false;
+    }
+    
+    return a.equals(b);
+  }
+  
+  /**
    * Returns a method name derived from a string.
    * <p/>
    * The result consists of the prefix, followed by

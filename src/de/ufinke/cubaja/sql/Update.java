@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -19,12 +19,18 @@ public class Update extends PreparedSql {
   private int intervalBatchCount;
   private int totalBatchCount;
   private boolean resetBatchCount;
+  private BatchGroup batchGroup;
   
   Update(PreparedStatement statement, Sql sql, DatabaseConfig config) {
     
     super(statement, sql, config);
     
     batchSize = config.getBatchSize();
+  }
+  
+  void setBatchGroup(BatchGroup batchGroup) {
+    
+    this.batchGroup = batchGroup;
   }
 
   /**
@@ -47,6 +53,9 @@ public class Update extends PreparedSql {
    * has been reached, this method  
    * calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method
    * automatically.
+   * <p>
+   * If this <tt>Update</tt> is a member of a {@link BatchGroup},
+   * the result will always be an empty array.
    * @return array of number of concerned rows (result from <tt>executeBatch</tt>)
    * @throws SQLException
    */
@@ -62,7 +71,11 @@ public class Update extends PreparedSql {
     
     int[] updateCount = EMPTY_UPDATE_COUNT;    
     if (intervalBatchCount == batchSize) {
-      updateCount = doExecuteBatch();
+      if (batchGroup == null) {
+        updateCount = doExecuteBatch();
+      } else {
+        batchGroup.executeBatch();
+      }
     }    
     return updateCount;
   }
@@ -70,6 +83,9 @@ public class Update extends PreparedSql {
   /**
    * Writes the rows supplied by <tt>addBatch</tt> to the database.
    * Calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method.
+   * <p>
+   * If this <tt>Update</tt> is a member of a {@link BatchGroup},
+   * the result will always be an empty array.
    * @return array of number of concerned rows (not including the result of intermediate calls triggered automatically by <tt>addBatch</tt>)
    * @throws SQLException
    */
@@ -77,10 +93,15 @@ public class Update extends PreparedSql {
 
     resetBatchCount = true;
     
-    return doExecuteBatch();
+    if (batchGroup == null) {
+      return doExecuteBatch();
+    } else {
+      batchGroup.executeBatch();
+      return EMPTY_UPDATE_COUNT;
+    }
   }
   
-  private int[] doExecuteBatch() throws SQLException {
+  int[] doExecuteBatch() throws SQLException {
     
     int[] updateCount = EMPTY_UPDATE_COUNT;
     
