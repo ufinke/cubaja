@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -61,6 +61,8 @@ public class Configurator {
     
     parameterManager = new ParameterManager();
     infoMap = new HashMap<Object, Object>();
+    
+    baseXMLStack = new Stack<XMLPropertyProvider>();
     
     namedProviderMap = new HashMap<String, NamedPropertyProvider>();
     providerSequenceList = new ArrayList<PropertyProvider>();
@@ -206,8 +208,6 @@ public class Configurator {
         break;
         
       case XML:
-        
-        baseXMLStack = new Stack<XMLPropertyProvider>();
         
         xmlProvider = new PropertyProvider() {
           
