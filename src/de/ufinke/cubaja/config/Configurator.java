@@ -275,6 +275,9 @@ public class Configurator {
    */
   public void pushXMLProperties() {
     
+    if (lastXmlProvider == null) {
+      lastXmlProvider = new XMLPropertyProvider();
+    }
     baseXMLStack.push(lastXmlProvider);
   }
   
@@ -283,6 +286,9 @@ public class Configurator {
    */
   public void popXMLProperties() {
     
+    if (baseXMLStack.size() == 0) {
+      return;
+    }
     lastXmlProvider = baseXMLStack.pop();
   }
   

@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -11,9 +11,10 @@ import de.ufinke.cubaja.util.Text;
 
 /**
  * Default <tt>ResourceLoader</tt> implementation.
+ * Loads config XML from a resource or from file system.
  * @author Uwe Finke
  */
-class DefaultResourceLoader implements ResourceLoader {
+public class DefaultResourceLoader implements ResourceLoader {
 
   static private Text text = Text.getPackageInstance(DefaultResourceLoader.class);
   
@@ -44,9 +45,6 @@ class DefaultResourceLoader implements ResourceLoader {
     }
   }  
 
-  /**
-   * Loads XML from a resource or from file system.
-   */
   public InputSource loadResource(String resourceName) throws ConfigException {
 
     if (resourceName == null || resourceName.length() == 0) {

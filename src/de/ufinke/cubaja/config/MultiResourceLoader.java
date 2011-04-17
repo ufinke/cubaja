@@ -3,11 +3,17 @@
 
 package de.ufinke.cubaja.config;
 
+import java.util.LinkedList;
+import java.util.List;
 import org.xml.sax.InputSource;
 import de.ufinke.cubaja.util.Text;
-import java.util.*;
 
 /**
+ * A <tt>ResourceLoader</tt> calling other <tt>ResourceLoader</tt>s.
+ * Any number of <tt>ResourceLoader</tt> instances may be added.
+ * On a call to <tt>loadResource</tt> the call is delegated
+ * to the previously added loaders in the sequence they where added
+ * until a loader returns an <tt>InputSource</tt>.
  * @author Uwe Finke
  */
 public class MultiResourceLoader implements ResourceLoader {
@@ -24,6 +30,10 @@ public class MultiResourceLoader implements ResourceLoader {
     loaderList = new LinkedList<ResourceLoader>();
   }
   
+  /**
+   * Adds a loader to the internal list.
+   * @param loader
+   */
   public void addResourceLoader(ResourceLoader loader) {
     
     loaderList.add(loader);
