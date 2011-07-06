@@ -23,7 +23,7 @@ import java.util.List;
  * <p>
  * This class may be useful for high volume DML when a <tt>delete</tt> has to
  * precede an <tt>insert</tt> statement
- * (e.g. as alternate strategy for '<tt>upsert</tt>' problems)
+ * (e.g. as alternate strategy for 'upsert' problems)
  * or in any other case where the execution sequence of batch DML statements matters.
  * @author Uwe Finke
  */
@@ -50,6 +50,7 @@ public class BatchGroup {
   /**
    * Sets automatic commit after <tt>executeBatch</tt>. An <tt>executeBatch</tt>
    * may be triggered automatically by one of the <tt>Update</tt> instances.
+   * Default is <tt>false</tt>.
    * 
    * @param autoCommit
    */

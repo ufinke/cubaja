@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -70,7 +70,7 @@ public class Util {
   
   /**
    * Returns the maximum value.
-   * A <tt>null</tt> value is less than any other value.
+   * A <tt>null</tt> value isn't compared.
    * If the paramter list is empty, the result is <tt>null</tt>.
    * @param <D> data type
    * @param comparables
@@ -82,8 +82,10 @@ public class Util {
     
     for (int i = 0; i < comparables.length; i++) {
       D element = comparables[i];
-      if (max.compareTo(element) < 0) {
-        max = element;
+      if (element != null) {
+        if (max == null || max.compareTo(element) < 0) {
+          max = element;
+        }
       }
     }
     
@@ -92,7 +94,7 @@ public class Util {
   
   /**
    * Returns the minimum value.
-   * A <tt>null</tt> value is less than any other value.
+   * A <tt>null</tt> value isn't compared.
    * If the paramter list is empty, the result is <tt>null</tt>.
    * @param <D> data type
    * @param comparables
@@ -104,8 +106,10 @@ public class Util {
     
     for (int i = 0; i < comparables.length; i++) {
       D element = comparables[i];
-      if (min.compareTo(element) > 0) {
-        min = element;
+      if (element != null) {
+        if (min == null || min.compareTo(element) > 0) {
+          min = element;
+        }
       }
     }
     
