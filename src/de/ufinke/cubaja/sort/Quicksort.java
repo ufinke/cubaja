@@ -41,15 +41,17 @@ public class Quicksort implements SortAlgorithm {
        
         findBestPivot(array, left, right, random);
        
-        Object pivot = array[right];
-        int leftIndex = left - 1;
-        int rightIndex = right;
+        final Object pivot = array[right];
+        int leftIndex = left;
+        int rightIndex = right - 1;
         boolean loop = true;
        
         while (loop) {
-          while (comparator.compare(array[++leftIndex], pivot) < 0) {
+          while (comparator.compare(array[leftIndex], pivot) <= 0 && leftIndex < right) {
+            leftIndex++;
           }
-          while (comparator.compare(array[--rightIndex], pivot) > 0 && rightIndex > leftIndex) {
+          while (comparator.compare(array[rightIndex], pivot) >= 0 && rightIndex > left) {
+            rightIndex--;
           }
           if (leftIndex >= rightIndex) {
             loop = false;
