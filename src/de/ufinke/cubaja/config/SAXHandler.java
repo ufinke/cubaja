@@ -722,7 +722,7 @@ class SAXHandler extends DefaultHandler2 {
       String name = atts.getLocalName(i);
       String value = atts.getValue(i);
       if (name.equals("datePattern")) {
-        parameterManager.setDatePattern(value, null);
+        parameterManager.setDatePattern(value, null, true);
       } else if (name.equals("trueValues")) {
         String[] trueValues = value.split(",");
         for (int j = 0; j < trueValues.length; j++) {

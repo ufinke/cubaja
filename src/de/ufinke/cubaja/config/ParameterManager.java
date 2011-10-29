@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -373,7 +373,7 @@ class ParameterManager implements ParameterFactoryFinder {
       
       Pattern pattern = null;
       int i = 0;
-      while (pattern == null && i < annotations.length) {
+      while (parameterManager.useIndividualDatePattern() && pattern == null && i < annotations.length) {
         if (Pattern.class.isAssignableFrom(annotations[i].getClass())) {
           pattern = (Pattern) annotations[i];
         }
@@ -393,6 +393,8 @@ class ParameterManager implements ParameterFactoryFinder {
         if (pattern != null) {
           if (pattern.hint().length() > 0) {
             hint = pattern.hint();
+          } else {
+            hint = format.toPattern();
           }
         }
         throw new ConfigException(text.get("parmDate", hint));
@@ -489,6 +491,7 @@ class ParameterManager implements ParameterFactoryFinder {
   private Map<Class<?>, Class<?>> primitivesMap;
   private SimpleDateFormat dateFormat;
   private String dateHint;
+  private boolean dateFormatSetBySettings;
   private String[] trueValues;
   private String[] falseValues;
   private Character decimalPoint;
@@ -549,10 +552,11 @@ class ParameterManager implements ParameterFactoryFinder {
     finderStack.pop();
   }
   
-  void setDatePattern(String pattern, String hint) {
+  void setDatePattern(String pattern, String hint, boolean dateFormatSetBySettings) {
     
     dateFormat = new SimpleDateFormat(pattern);
     dateHint = (hint == null) ? dateFormat.toPattern() : hint;
+    this.dateFormatSetBySettings = dateFormatSetBySettings;
   }
   
   SimpleDateFormat getDateFormat() {
@@ -563,6 +567,11 @@ class ParameterManager implements ParameterFactoryFinder {
   String getDateHint() {
     
     return dateHint;
+  }
+  
+  boolean useIndividualDatePattern() {
+    
+    return ! dateFormatSetBySettings;
   }
   
   void setTrueValues(String[] trueValues) {

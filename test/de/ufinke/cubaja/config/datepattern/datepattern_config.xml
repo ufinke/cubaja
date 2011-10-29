@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<config>
+  <date_a>2000-12-31</date_a>
+  <date_b>15.06.2001</date_b>
+  <configSettings datePattern="yyyyMMdd"/>
+  <!-- ignore individual @Pattern("dd.MM.yyyy") because of configSettings -->
+  <date_c>20110427</date_c>
+</config>

@@ -322,7 +322,7 @@ public class Configurator {
    */
   public void setDatePattern(String pattern, String hint) {
     
-    parameterManager.setDatePattern(pattern, hint);
+    parameterManager.setDatePattern(pattern, hint, false);
   }
   
   /**
