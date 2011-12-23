@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -34,6 +34,7 @@ public final class Matcher<K> implements Iterable<K> {
   
   Comparator<? super K> comparator;
   List<InternalMatchSource<?, K>> sourceList;
+  private Iterator<K> iterator;
   
   /**
    * Constructor.
@@ -104,7 +105,15 @@ public final class Matcher<K> implements Iterable<K> {
    */
   public Iterator<K> iterator() {
     
-    return new Iterator<K>() {
+    if (iterator == null) {
+      createIterator();
+    }
+    return iterator;
+  }
+  
+  private void createIterator() {
+    
+    iterator = new Iterator<K>() {
 
       private K matchKey;
       private boolean hasMatchKey;

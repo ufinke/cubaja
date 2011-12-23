@@ -61,6 +61,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   private int size;
   
   private boolean sortTaskStarted;
+  private Iterator<D> iterator;
   
   /**
    * Constructor with default configuration.
@@ -148,19 +149,23 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
     }
     state = State.GET;
 
-    try {
-      return createIterator(); 
-    } catch (Exception e) {
-      throw new SorterException(e);
+    if (iterator == null) {
+      try {
+        createIterator(); 
+      } catch (Exception e) {
+        throw new SorterException(e);
+      }
     }
+    
+    return iterator;
   }
   
   @SuppressWarnings({"unchecked"})
-  private Iterator<D> createIterator() {
+  private void createIterator() {
     
     final Iterator<Object> source = (sortTaskStarted) ? getQueueIterator() : getSimpleIterator();
     
-    return new Iterator<D>() {
+    iterator = new Iterator<D>() {
 
       public boolean hasNext() {
 
