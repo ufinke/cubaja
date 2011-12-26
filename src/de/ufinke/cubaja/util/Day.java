@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2011, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -107,7 +107,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
   
   /**
-   * Writes this object's values to a stream.
+   * Writes this objects values to a stream.
    */
   public void writeExternal(ObjectOutput out) throws IOException {
 
@@ -117,7 +117,7 @@ public class Day extends GregorianCalendar implements Externalizable {
   }
 
   /**
-   * Reads this object's values from a stream.
+   * Reads this objects values from a stream.
    */
   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 
@@ -534,4 +534,84 @@ public class Day extends GregorianCalendar implements Externalizable {
     return count;
   }
   
+  /**
+   * Returns the number of months between this day and another day.
+   * The other day may be in the past.
+   * Counts only complete months.
+   * <p>
+   * If a day is the last day of a month, the internal calculation day of month is set to 31.
+   * The effect is that the period between january 30th and february 28th counts as 1 month
+   * and the period between february 28th (in a non-leaf year) and march 30th counts as 0 month.
+   * @param until
+   * @return month count
+   */
+  public int monthCount(Date until) {
+    
+    return monthCount(new Day(until));
+  }
+  
+  /**
+   * Returns the number of months between this day and another day.
+   * The other day may be in the past.
+   * Counts only complete months.
+   * <p>
+   * If a day is the last day of a month, the internal calculation day of month is set to 31.
+   * The effect is that the period between january 30th and february 28th counts as 1 month
+   * and the period between february 28th (in a non-leaf year) and march 30th counts as 0 month.
+   * @param until
+   * @return month count
+   */
+  public int monthCount(Calendar until) {
+    
+    boolean swap = compareTo(until) > 0;
+    
+    Calendar from = swap ? until : this;
+    int fromYear = from.get(YEAR);
+    int fromMonth = from.get(MONTH);
+    int fromDay = from.get(DAY_OF_MONTH);
+    
+    Calendar to = swap ? this : until;
+    int toYear = to.get(YEAR);
+    int toMonth = to.get(MONTH);
+    int toDay = to.get(DAY_OF_MONTH);
+
+    if (toDay == to.getActualMaximum(DAY_OF_MONTH)) {
+      toDay = 31;
+    }
+    if (fromDay == from.getActualMaximum(DAY_OF_MONTH)) {
+      fromDay = 31;
+    }
+    
+    int count = (toYear * 12 + toMonth) - (fromYear * 12 + fromMonth);
+    if (toDay < fromDay) {
+      count--;
+    }
+    
+    if (swap) {
+      count *= -1;
+    }
+    return count;
+  }
+
+  /**
+   * Returns the number of years between this day and another day.
+   * The other day may be in the past;
+   * @param until
+   * @return year count
+   */
+  public int yearCount(Date until) {
+    
+    return yearCount(new Day(until));
+  }
+  
+  /**
+   * Returns the number of years between this day and another day.
+   * The other day may be in the past;
+   * @param until
+   * @return year count
+   */
+  public int yearCount(Calendar until) {
+    
+    return monthCount(until) / 12;
+  }
 }

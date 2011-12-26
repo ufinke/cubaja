@@ -15,31 +15,29 @@ class AbstractIterableWorker<E> implements Runnable, Iterator<E> {
   private volatile boolean running;
   private E data;
   
-  public AbstractIterableWorker(AbstractIterable<E> abstractIterator, int queueSize) {
+  public AbstractIterableWorker(AbstractIterable<E> abstractIterator, int queueCapacity) {
   
     this.abstractIterator = abstractIterator;
-    queue = new LinkedBlockingQueue<E>(queueSize);
+    queue = new LinkedBlockingQueue<E>(queueCapacity);
     running = true;
   }
   
   public boolean hasNext() {
 
+    data = null;
+
     while (queue.size() == 0 && running) {
       try {
-        Thread.sleep(100);
+        Thread.sleep(10);
       } catch (Exception e) {
         throw new IteratorException(e);
       }
     }
     
-    if (running) {
-      try {
-        data = queue.take();
-      } catch (Exception e) {
-        throw new IteratorException(e);
-      }
+    if (queue.size() > 0) {
+      data = queue.poll();
     }
-    
+
     return data != null;
   }
 

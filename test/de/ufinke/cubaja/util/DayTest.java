@@ -249,6 +249,48 @@ public class DayTest {
   }
   
   @Test
+  public void monthCount() {
+    
+    Day dayA = new Day(2010, 1, 31);
+    
+    Day dayB = new Day(2010, 2, 28);
+    assertEquals(1, dayA.monthCount(dayB));
+    
+    Day dayC = new Day(2012, 2, 29);
+    assertEquals(25, dayA.monthCount(dayC));
+    assertEquals(-25, dayC.monthCount(dayA));
+    
+    Day dayD = new Day(2012, 1, 30);
+    assertEquals(23, dayA.monthCount(dayD));
+    
+    Day dayE = new Day(2012, 3, 30);
+    assertEquals(0, dayC.monthCount(dayE));
+    
+    Day dayF = new Day(2012, 5, 31);
+    assertEquals(3, dayC.monthCount(dayF));
+    
+    Day dayG = new Day(2012, 4, 30);
+    assertEquals(2, dayC.monthCount(dayG));
+    
+    Day dayH = new Day(2012, 4, 29);
+    assertEquals(1, dayC.monthCount(dayH));
+  }
+  
+  @Test
+  public void yearCount() {
+    
+    Day dayA = new Day(2010, 12, 31);
+    
+    Day dayB = new Day(2012, 12, 31);
+    assertEquals(2, dayA.yearCount(dayB));
+    assertEquals(-2, dayB.yearCount(dayA));
+    
+    Day dayC = new Day(2012, 2, 29);
+    Day dayD = new Day(2013, 2, 28);
+    assertEquals(1, dayC.yearCount(dayD));
+  }
+  
+  @Test
   public void firstDayOfMonth() {
     
     Day day = new Day(2010, 4, 5);
