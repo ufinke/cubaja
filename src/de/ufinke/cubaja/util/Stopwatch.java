@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2012, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -84,7 +84,7 @@ public class Stopwatch {
    * @param millis
    * @return formatted string
    */
-  public String format(long millis) {
+  static public String format(long millis) {
     
     StringBuilder sb = new StringBuilder(32);
 
