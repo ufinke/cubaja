@@ -220,6 +220,8 @@ class ObjectFactoryGenerator implements Generator {
             break;
           case ERROR:
             throw new SQLException(text.get("noSetter", clazz.getName(), entry.name));
+          case IGNORE:
+            break;
         }
       }
     }

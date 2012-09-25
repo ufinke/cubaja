@@ -156,7 +156,7 @@ public class CsvWriter {
     buffer.setColumn(position, value);
   }
   
-  private void writeNull(int position) throws IOException, CsvException {
+  private void writeNull(int position) throws CsvException {
     
     writeBuffer(position, "");
   }

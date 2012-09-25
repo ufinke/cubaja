@@ -72,6 +72,9 @@ final class SortTask implements Runnable {
       case CLOSE:
         close();
         break;
+        
+      default:
+        break;
     }
   }
   

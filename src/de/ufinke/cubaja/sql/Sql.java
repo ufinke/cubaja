@@ -568,7 +568,7 @@ public class Sql {
    * @param variables
    * @return this
    */
-  public Sql appendUpdate(String... variables) throws SQLException {
+  public Sql appendUpdate(String... variables) {
     
     formatted = false;
     
@@ -592,7 +592,7 @@ public class Sql {
    * @param variables
    * @return this
    */
-  public Sql appendInsert(String... variables) throws SQLException {
+  public Sql appendInsert(String... variables) {
 
     formatted = false;
     

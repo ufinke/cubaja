@@ -258,7 +258,7 @@ final class SortManager {
       if (isTrace()) {
         timer.cancel();
       }
-      debug("sortClose", stopwatch.format(stopwatch.elapsedMillis()));
+      debug("sortClose", Stopwatch.format(stopwatch.elapsedMillis()));
     }
   }
   
@@ -279,7 +279,7 @@ final class SortManager {
   public void switchState() {
     
     if (isDebug()) {
-      debug("sortSwitch", putCount.get(), stopwatch.format(stopwatch.elapsedMillis()));
+      debug("sortSwitch", putCount.get(), Stopwatch.format(stopwatch.elapsedMillis()));
       if (isTrace()) {
         timer.cancel();
         initTimer(logger, logPrefix, "sortGet", getCount);

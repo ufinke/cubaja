@@ -247,7 +247,7 @@ public class Configurator {
     return baseXMLStack;
   }
   
-  private void finishProviders() throws ConfigException {
+  private void finishProviders() {
     
     if (nullProvider) {
       return;

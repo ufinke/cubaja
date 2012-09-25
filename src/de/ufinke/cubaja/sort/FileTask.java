@@ -117,6 +117,9 @@ final class FileTask implements Runnable {
       case CLOSE:
         close();
         break;
+        
+      default:
+        break;
     }
   }
   

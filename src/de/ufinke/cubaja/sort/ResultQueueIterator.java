@@ -80,6 +80,9 @@ final class ResultQueueIterator implements Iterator<Object>, Iterable<Object> {
       case END_OF_DATA:
         endOfData = true;
         break;
+        
+      default:
+        break;
     }
   }
 }
