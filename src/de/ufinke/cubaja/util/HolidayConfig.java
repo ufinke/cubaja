@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2012, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -201,7 +201,7 @@ public class HolidayConfig {
       
       cal.clear();
       cal.set(YEAR, easter.get(YEAR));
-      cal.set(MONTH, easter.get(MONTH) - 1);
+      cal.set(MONTH, easter.get(MONTH));
       cal.set(DAY_OF_MONTH, easter.get(DAY_OF_MONTH));
       cal.add(DATE, config.getOffset());
       
@@ -237,25 +237,45 @@ public class HolidayConfig {
       return true;
     }
     
-    private Calendar computeEaster(int year) {
+    /**
+     * Formula from Wikipedia (version Heiner Lichtenberg)
+     * 
+     *  1. die Säkularzahl:                                       K(X) = X div 100
+     *  2. die säkulare Mondschaltung:                            M(K) = 15 + (3K + 3) div 4 - (8K + 13) div 25
+     *  3. die säkulare Sonnenschaltung:                          S(K) = 2 - (3K + 3) div 4
+     *  4. den Mondparameter:                                     A(X) = X mod 19
+     *  5. den Keim für den ersten Vollmond im Frühling:        D(A,M) = (19A + M) mod 30
+     *  6. die kalendarische Korrekturgröße:                    R(D,A) = (D + A div 11) div 29
+     *  7. die Ostergrenze:                                    OG(D,R) = 21 + D - R
+     *  8. den ersten Sonntag im März:                         SZ(X,S) = 7 - (X + X div 4 + S) mod 7
+     *  9. die Entfernung des Ostersonntags von der
+     *     Ostergrenze (Osterentfernung in Tagen):           OE(OG,SZ) = 7 - (OG - SZ) mod 7
+     * 10. das Datum des Ostersonntags als Märzdatum
+     *     (32. März = 1. April usw.):                              OS = OG + OE
+     *
+     * @param x year
+     * @return easter
+     */
+    private Calendar computeEaster(int x) {
       
-      int i = year % 19; 
-      int j = year / 100; 
-      int k = year % 100; 
-
-      int l = (19 * i + j - (j / 4) - ((j - ((j + 8) / 25) + 1) / 3) + 15) % 30; 
-      int m = (32 + 2 * (j % 4) + 2 * (k / 4) - l - (k % 4)) % 7; 
-      int n = l + m - 7 * ((i + 11 * l + 22 * m) / 451) + 114; 
-
-      int month = n / 31; 
-      int day = (n % 31) + 1;
+      int k = x / 100;
+      int m = 15 + (3 * k + 3) / 4 - (8 * k + 13) / 25;
+      int s = 2 - (3 * k + 3) / 4;
+      int a = x % 19;
+      int d = (19 * a + m) % 30;
+      int r = (d + a / 11) / 29;
+      int og = 21 + d - r;
+      int sz = 7 - (x + x / 4 + s) % 7;
+      int oe = 7 - (og - sz) % 7;
+      int os = og + oe;
       
-      Calendar cal = Calendar.getInstance();
-      cal.clear();
-      cal.set(YEAR, year);
-      cal.set(MONTH, month);
-      cal.set(DAY_OF_MONTH, day);
-      return cal;
+      int month = 3;
+      if (os > 31) {
+        month = 4;
+        os = os - 31;
+      }
+      
+      return new Day(x, month, os);
     }
   }
   
