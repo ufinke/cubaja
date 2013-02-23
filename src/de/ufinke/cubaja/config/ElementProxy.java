@@ -224,7 +224,7 @@ class ElementProxy {
     return node;
   }
   
-  MethodProxy findMethod(String methodName) throws ConfigException {
+  MethodProxy findMethod(String methodName) {
     
     return methodMap.get(Util.createMethodName(methodName, null));
   }

@@ -233,6 +233,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
+  @SuppressWarnings("incomplete-switch")
   private void startElement(String localName, Attributes atts) throws Exception {
     
     ElementKind kind = UNKNOWN;
@@ -315,6 +316,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
+  @SuppressWarnings("incomplete-switch")
   private void endElement() throws Exception {
     
     ElementProxy element = elementStack.pop();
@@ -525,6 +527,7 @@ class SAXHandler extends DefaultHandler2 {
     method.invoke(name, element.getNode(), parm);
   }
   
+  @SuppressWarnings("incomplete-switch")
   private void endElement(ElementProxy element) throws Exception {
     
     Object parm = null;
@@ -618,11 +621,13 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
 
+  @SuppressWarnings("unused")
   private void endInclude(ElementProxy element) throws Exception {
     
     runXMLReader(includeStack.pop()); 
   }
   
+  @SuppressWarnings("unused")
   private void endIncludeDefinition(ElementProxy element) {
     
     includeMap.put(includeDefinition.getName(), includeDefinition);
@@ -677,12 +682,14 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
+  @SuppressWarnings("unused")
   private void endPropertyProvider(ElementProxy element) throws Exception {
 
     NamedPropertyValue entry = propertyStack.pop();
     setXMLProperty(entry.getName(), entry.getProvider(), entry.getParms());
   }
   
+  @SuppressWarnings("unused")
   private void startPropertyParm(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
@@ -697,6 +704,7 @@ class SAXHandler extends DefaultHandler2 {
     entry.addParm(name, value);
   }
   
+  @SuppressWarnings("unused")
   private void startPropertyProviderDefinition(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
@@ -716,6 +724,7 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
+  @SuppressWarnings("unused")
   private void startSettings(ElementProxy element, Attributes atts) throws Exception {
 
     for (int i = 0; i < atts.getLength(); i++) {

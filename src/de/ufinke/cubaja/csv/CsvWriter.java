@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -194,7 +194,7 @@ public class CsvWriter {
     }
   }
   
-  private void set(int position, boolean value) throws IOException, CsvException {
+  private void set(int position, boolean value) throws CsvException {
     
     writeBuffer(position, value ? colConfig.getTrueValue() : colConfig.getFalseValue());
   }
@@ -253,7 +253,7 @@ public class CsvWriter {
     }
   }
   
-  private void set(int position, char value) throws IOException, CsvException {
+  private void set(int position, char value) throws CsvException {
     
     writeBuffer(position, String.valueOf(value));
   }
@@ -312,7 +312,7 @@ public class CsvWriter {
     }
   }
   
-  private void set(int position, int value) throws IOException, CsvException {
+  private void set(int position, int value) throws CsvException {
     
     writeBuffer(position, Integer.toString(value));
   }
@@ -479,7 +479,7 @@ public class CsvWriter {
     }
   }
   
-  private void set(int position, long value) throws IOException, CsvException {
+  private void set(int position, long value) throws CsvException {
     
     writeBuffer(position, Long.toString(value));
   }
@@ -538,7 +538,7 @@ public class CsvWriter {
     }
   }
   
-  private void set(int position, double value) throws IOException, CsvException {
+  private void set(int position, double value) throws CsvException {
     
     Character decimalChar = colConfig.getWriterDecimalChar();    
     writeBuffer(position, Util.format(value, colConfig.getScale(), decimalChar, colConfig.isTrim()));
