@@ -13,7 +13,7 @@ import org.xml.sax.InputSource;
  * Note that <tt>StringResourceLoader</tt> always returns its string
  * and doesn't take care of complex configurations where e.g. a <tt>PropertyProvider</tt> looks for a resource.
  * An alternative way to provide XML strings is to use 
- * {@link DefaultRecourceLoader#addString(String, String) DefaultRecourceLoader.addString}.
+ * {@link DefaultResourceLoader#addString(String, String) DefaultRecourceLoader.addString}.
  * @author Uwe Finke
  */
 public class StringResourceLoader implements ResourceLoader {
