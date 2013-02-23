@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2011, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -463,4 +463,63 @@ public class Util {
     return sb.substring(0, end + 1);
   }
   
+  /**
+   * Formats whitespace within a text.
+   * All consecutive 
+   * {@link java.lang.Character#isWhitespace(char) whitespace}  
+   * characters in a text are replaced by one single space character.
+   * Leading and trailing whitespaces are trimmed. 
+   * Returns an empty string when parameter is null.
+   * @param text
+   * @return normalized text
+   */
+  static public String normalize(String text) {
+    
+    if (text == null) {
+      return "";
+    }
+    
+    StringBuilder sb = new StringBuilder(text.length());
+    boolean whitespacePending = false;
+    
+    for (int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if (Character.isWhitespace(c)) {
+        whitespacePending = true;
+      } else {
+        if (whitespacePending) {
+          sb.append(' ');
+          whitespacePending = false;
+        }
+        sb.append(c);
+      }
+    }
+    
+    return sb.toString();
+  }
+  
+  /**
+   * Tests whether a <tt>String</tt> doesn't have content.
+   * The result is <tt>true</tt> if the input is <tt>null</tt>
+   * or the length of the trimmed string is <tt>0</tt>.
+   * @param string
+   * @return flag
+   */
+  static public boolean isEmpty(String string) {
+    
+    return string == null || string.trim().length() == 0;
+  }
+  
+  /**
+   * Tests whether a <tt>String</tt> has content.
+   * The result is <tt>true</tt> if the input is not <tt>null</tt>
+   * and the length of the trimmed string is greater than <tt>0</tt>.
+   * @param string
+   * @return flag
+   */
+  static public boolean hasContent(String string) {
+    
+    return string != null && string.trim().length() > 0;
+  }
+
 }

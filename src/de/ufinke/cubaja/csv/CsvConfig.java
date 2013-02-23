@@ -225,8 +225,8 @@ public class CsvConfig {
   private ColConfig defaultColConfig;
   private ColConfig[] positionArray;
   private Map<String, ColConfig> nameMap;
+  private List<ColConfig> columnList;
   private int lastPosition;
-  private int maxPosition;
   private int sequence;
 
   /**
@@ -235,6 +235,7 @@ public class CsvConfig {
   public CsvConfig() {
 
     nameMap = new HashMap<String, ColConfig>();
+    columnList = new ArrayList<ColConfig>();
     setDefaultColConfig(new ColConfig());
   }
   
@@ -285,9 +286,13 @@ public class CsvConfig {
   }
   
   private void buildPositionArray() {
+
+    int maxPosition = 0;
+    for (ColConfig col : columnList) {
+      maxPosition = Math.max(maxPosition, col.getPosition());
+    }
     
     positionArray = new ColConfig[maxPosition + 1];
-    
     for (ColConfig col : getColumnList()) {
       positionArray[col.getPosition()] = col;
     }
@@ -323,6 +328,7 @@ public class CsvConfig {
   public void setFile(String fileName) {
 
     this.fileName = fileName;
+    fileConfig = null;
   }
 
   /**
@@ -658,10 +664,10 @@ public class CsvConfig {
       column.setInternalPosition(lastPosition + 1);
     }
     lastPosition = column.getPosition();
-    maxPosition = Math.max(maxPosition, lastPosition);
     column.setSequence(++sequence);
     positionArray = null;
     
+    columnList.add(column);
     nameMap.put(column.getName(), column);
   }
   
@@ -679,8 +685,6 @@ public class CsvConfig {
    */
   public List<ColConfig> getColumnList() {
 
-    List<ColConfig> list = new ArrayList<ColConfig>(nameMap.values());
-    
     Comparator<ColConfig> comparator = new Comparator<ColConfig>() {
       
       public int compare(ColConfig a, ColConfig b) {
@@ -693,9 +697,9 @@ public class CsvConfig {
       }
     };
     
-    Collections.sort(list, comparator);
+    Collections.sort(columnList, comparator);
     
-    return list;
+    return columnList;
   }
   
   /**

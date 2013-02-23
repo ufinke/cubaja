@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -124,6 +124,40 @@ public class DOMElement extends DOMContent {
   public void setAttribute(String name, String value) {
     
     attributes.put(name, value);
+  }
+  
+  /**
+   * Returns an XML representation of this element.
+   */
+  public String toString() {
+    
+    StringBuilder sb = new StringBuilder(256);
+    
+    sb.append('<');
+    sb.append(name);
+    
+    for (Map.Entry<String, String> attr : attributes.entrySet()) {
+      sb.append(' ');
+      sb.append(attr.getKey());
+      sb.append('=');
+      sb.append('"');
+      sb.append(attr.getValue());
+      sb.append('"');
+    }
+    
+    if (content.size() == 0) {
+      sb.append('/');
+    } else {
+      sb.append('>');
+      for (DOMContent sub : content) {
+        sb.append(sub.toString());
+      }
+      sb.append("</");
+      sb.append(name);
+    }
+    sb.append('>');
+    
+    return sb.toString();
   }
   
 }

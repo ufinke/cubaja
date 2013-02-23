@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -9,6 +9,11 @@ import org.xml.sax.InputSource;
 
 /**
  * <tt>ResourceLoader</tt> for XML config data provided as String.
+ * <p>
+ * Note that <tt>StringResourceLoader</tt> always returns its string
+ * and doesn't take care of complex configurations where e.g. a <tt>PropertyProvider</tt> looks for a resource.
+ * An alternative way to provide XML strings is to use 
+ * {@link DefaultRecourceLoader#addString(String, String) DefaultRecourceLoader.addString}.
  * @author Uwe Finke
  */
 public class StringResourceLoader implements ResourceLoader {
