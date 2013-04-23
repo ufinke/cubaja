@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
@@ -30,7 +30,7 @@ public class MainframeOutput {
   
   private final OutputStream stream;
   private final String charset; // string because of JDK 5.0 compatibility
-  private final RandomAccessBuffer buffer;
+  private RandomAccessBuffer buffer;
   private int recordCount;
   
   /**
@@ -628,5 +628,47 @@ public class MainframeOutput {
     }
     
     return output;
+  }
+
+  /**
+   * Writes a raw byte array.
+   * @param b byte array
+   * @throws IOException
+   */
+  public void writeBytes(byte[] b) throws IOException {
+
+    buffer.write(b);
+  }
+
+  /**
+   * Writes a portion of a raw byte array.
+   * @param b byte array
+   * @param off offset within the array
+   * @param len number of bytes to write
+   * @throws IOException
+   */
+  public void writeBytes(byte[] b, int off, int len) throws IOException {
+
+    buffer.write(b, off, len);
+  }
+
+  /**
+   * Gives access to the internal buffer.
+   * Use the buffer only if you know what you're doing.
+   * @return the buffer
+   */
+  public RandomAccessBuffer getBuffer() {
+    
+    return buffer;
+  }
+  
+  /**
+   * Replaces the internal buffer.
+   * May be useful to share the buffer with other instances.
+   * @param buffer
+   */
+  public void setBuffer(RandomAccessBuffer buffer) {
+    
+    this.buffer = buffer;
   }
 }

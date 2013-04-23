@@ -67,7 +67,7 @@ public class DefaultRowParser implements RowParser {
     return row;
   }
   
-  private String parseSimple() throws CsvException, IOException {
+  private String parseSimple() throws IOException {
 
     String line = lineReader.readLine();
     if (line == null) {

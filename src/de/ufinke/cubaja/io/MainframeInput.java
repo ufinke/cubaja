@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.io;
@@ -26,7 +26,7 @@ public class MainframeInput {
   private final InputStream stream;
   private final String charset; // string because of JDK 5.0 compatibility
   private final boolean doubleByte;
-  private final RandomAccessBuffer buffer;
+  private RandomAccessBuffer buffer;
   private boolean eof;
   private int recordCount;
   
@@ -719,5 +719,70 @@ public class MainframeInput {
     
     throw new IOException(text.get("invalidNumeric", sb, offset, format));
   }
+
+  /**
+   * Advances the buffers position.
+   * @param n
+   * @return number of skipped bytes
+   * @throws IOException
+   */
+  public int skipBytes(int n) throws IOException {
+
+    return buffer.skipBytes(n);
+  }
+
+  /**
+   * Reads a raw byte array.
+   * @param count number of bytes to read
+   * @return byte array
+   * @throws IOException
+   */
+  public byte[] readBytes(int count) throws IOException {
+    
+    byte[] array = new byte[count];
+    buffer.readFully(array);
+    return array;
+  }
   
+  /**
+   * Fills a byte array.
+   * @param b array
+   * @throws IOException
+   */
+  public void readFully(byte[] b) throws IOException {
+    
+    buffer.readFully(b);
+  }
+  
+  /**
+   * Fills a portion of a byte array.
+   * @param b array
+   * @param off offset in the array
+   * @param len number of bytes
+   * @throws IOException
+   */
+  public void readFully(byte[] b, int off, int len) throws IOException {
+
+    buffer.readFully(b, off, len);
+  }
+  
+  /**
+   * Gives access to the internal buffer.
+   * Use the buffer only if you know what you're doing.
+   * @return the buffer
+   */
+  public RandomAccessBuffer getBuffer() {
+    
+    return buffer;
+  }
+  
+  /**
+   * Replaces the internal buffer.
+   * May be useful to share the buffer with other instances.
+   * @param buffer
+   */
+  public void setBuffer(RandomAccessBuffer buffer) {
+    
+    this.buffer = buffer;
+  }
 }
