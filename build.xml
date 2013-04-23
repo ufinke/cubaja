@@ -4,7 +4,7 @@
 	
   <property name="majorVersion" value="1"/>
   <property name="minorVersion" value="5"/>
-  <property name="release"      value="0"/>
+  <property name="release"      value="1"/>
 	
 	<property name="version" value="${majorVersion}.${minorVersion}.${release}"/>
 	<property name="tag" value="${ant.project.name}_${version}"/>
@@ -14,7 +14,6 @@
 	<property name="lib" value="${aeDir}/lib"/>
   <property name="jdkdoc" value="http://docs.oracle.com/javase/6/docs/api/"/>
 	<property name="svnantDir" value="${aeDir}/svnant/lib"/>
-  <property name="jdkdoc" value="http://docs.oracle.com/javase/6/docs/api/"/>
   
   <path id="path.svnant">
     <pathelement location="${svnantDir}/svnkit.jar"/>
