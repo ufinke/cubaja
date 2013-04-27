@@ -240,18 +240,18 @@ public class HolidayConfig {
     /**
      * Formula from Wikipedia (version Heiner Lichtenberg)
      * 
-     *  1. die Säkularzahl:                                       K(X) = X div 100
-     *  2. die säkulare Mondschaltung:                            M(K) = 15 + (3K + 3) div 4 - (8K + 13) div 25
-     *  3. die säkulare Sonnenschaltung:                          S(K) = 2 - (3K + 3) div 4
-     *  4. den Mondparameter:                                     A(X) = X mod 19
-     *  5. den Keim für den ersten Vollmond im Frühling:        D(A,M) = (19A + M) mod 30
-     *  6. die kalendarische Korrekturgröße:                    R(D,A) = (D + A div 11) div 29
+     *  1. die Saekularzahl:                                   K(X) = X div 100
+     *  2. die saekulare Mondschaltung:                        M(K) = 15 + (3K + 3) div 4 - (8K + 13) div 25
+     *  3. die saekulare Sonnenschaltung:                      S(K) = 2 - (3K + 3) div 4
+     *  4. den Mondparameter:                                  A(X) = X mod 19
+     *  5. den Keim für den ersten Vollmond im Fruehling:      D(A,M) = (19A + M) mod 30
+     *  6. die kalendarische Korrekturgroesse:                 R(D,A) = (D + A div 11) div 29
      *  7. die Ostergrenze:                                    OG(D,R) = 21 + D - R
-     *  8. den ersten Sonntag im März:                         SZ(X,S) = 7 - (X + X div 4 + S) mod 7
+     *  8. den ersten Sonntag im Maerz:                        SZ(X,S) = 7 - (X + X div 4 + S) mod 7
      *  9. die Entfernung des Ostersonntags von der
-     *     Ostergrenze (Osterentfernung in Tagen):           OE(OG,SZ) = 7 - (OG - SZ) mod 7
-     * 10. das Datum des Ostersonntags als Märzdatum
-     *     (32. März = 1. April usw.):                              OS = OG + OE
+     *     Ostergrenze (Osterentfernung in Tagen):             OE(OG,SZ) = 7 - (OG - SZ) mod 7
+     * 10. das Datum des Ostersonntags als Maerzdatum
+     *     (32. Maerz = 1. April usw.):                        OS = OG + OE
      *
      * @param x year
      * @return easter
