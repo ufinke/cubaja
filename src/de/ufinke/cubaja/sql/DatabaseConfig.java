@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -222,6 +222,27 @@ public class DatabaseConfig {
     batchSize = 4095;
     log = false;
     warnMode = WarnMode.WARN;
+  }
+  
+  /**
+   * Creates a clone of this object.
+   */
+  public DatabaseConfig clone() {
+    
+    DatabaseConfig clone = new DatabaseConfig();
+    
+    clone.driver = driver;
+    clone.url = url;
+    clone.execute = execute;
+    clone.properties = properties;
+    clone.autoCommit = autoCommit;
+    clone.transactionIsolation = transactionIsolation;
+    clone.fetchSize = fetchSize;
+    clone.batchSize = batchSize;
+    clone.log = log;
+    clone.warnMode = warnMode;
+    
+    return clone;
   }
   
   /**
