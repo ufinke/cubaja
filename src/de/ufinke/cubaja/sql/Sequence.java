@@ -66,7 +66,7 @@ public class Sequence {
     sqlUpdate.resolve("seqName", config.getSeqName());
     update = database.createUpdate(sqlUpdate);
     updateOldValuePos = update.getVariablePositions("old_value")[0];
-    updateOldValuePos = update.getVariablePositions("old_value")[0];
+    updateNewValuePos = update.getVariablePositions("new_value")[0];
     
     Sql sqlInsert = new Sql(getClass(), "sequence_insert");
     sqlInsert.resolve("tableName", config.getTableName());
