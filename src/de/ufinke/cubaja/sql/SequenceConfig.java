@@ -12,7 +12,7 @@ public class SequenceConfig {
   private DatabaseConfig database;
   private String tableName;
   private String seqName;
-  private short blockSize;
+  private int blockSize;
 
   public SequenceConfig() {
 
@@ -72,7 +72,7 @@ public class SequenceConfig {
     this.seqName = seqName;
   }
 
-  public short getBlockSize() {
+  public int getBlockSize() {
 
     if (blockSize == 0) {
       blockSize = 10000;
@@ -81,7 +81,7 @@ public class SequenceConfig {
     return blockSize;
   }
 
-  public void setBlockSize(short blockSize) {
+  public void setBlockSize(int blockSize) {
 
     this.blockSize = blockSize;
   }

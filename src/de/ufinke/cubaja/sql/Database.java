@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -267,10 +267,17 @@ public class Database {
    * @throws SQLException
    */
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
-    
-    Query query = createQuery(sql);
-    D result = query.select(clazz);
-    query.close();
+
+    D result = null;
+    Query query = null;
+    try {
+      query = createQuery(sql);
+      result = query.select(clazz);
+    } finally {
+      if (query != null) {
+        query.close();
+      }
+    }
     return result;
   }
   
