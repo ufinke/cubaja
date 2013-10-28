@@ -382,6 +382,7 @@ enum ObjectFactoryType {
   TIMESTAMP_STRING          (TIMESTAMP    , String.class        , Type.STRING     , "readString"         ,  5),
   TIMESTAMP_OBJECT          (TIMESTAMP    , Object.class        , Type.OBJECT     , "readObject"         , 99),
   CLOB_CLOB                 (CLOB         , Clob.class          , T_CLOB          , "readClob"           ,  1),
+  CLOB_STRING               (CLOB         , String.class        , Type.STRING     , "readString"         ,  4),
   CLOB_OBJECT               (CLOB         , Object.class        , Type.OBJECT     , "readObject"         , 99),
   BLOB_BLOB                 (BLOB         , Blob.class          , T_BLOB          , "readBlob"           ,  1),
   BLOB_OBJECT               (BLOB         , Object.class        , Type.OBJECT     , "readObject"         , 99),
