@@ -5,6 +5,7 @@ package de.ufinke.cubaja.sql;
 
 import java.sql.ResultSetMetaData;
 import de.ufinke.cubaja.util.Text;
+import org.apache.commons.logging.*;
 
 public class Sequence {
 
@@ -32,14 +33,16 @@ public class Sequence {
   private long currentLimit;
   private long maxValue;
   
+  private String string;
+  private Log logger;
+  
   public Sequence(SequenceConfig config) throws Exception {
 
     this.config = config.clone();
-    
-    open();
-  }
-  
-  private void open() throws Exception {
+
+    if (config.isLog()) {
+      logger = LogFactory.getLog(Sequence.class);
+    }
     
     database = new Database(config.getDatabase());
     
@@ -82,10 +85,32 @@ public class Sequence {
       maxValue *= 10;
     }
     maxValue--;
+    select.closeResultSet();
+  }
+  
+  public String toString() {
     
-    execLock('o');
-    execSelect();
-    database.commit();
+    if (string == null) {
+      StringBuilder sb = new StringBuilder(64);
+      sb.append("Sequence[table=");
+      try {
+        sb.append(config.getTableName());
+      } catch (Exception e) {
+        sb.append("***notSpecified***");
+      }
+      sb.append(", seqName=");
+      try {
+        sb.append(config.getSeqName());
+      } catch (Exception e) {
+        sb.append("***notSpecified***");
+      }
+      sb.append(", blockSize=");
+      sb.append(config.getBlockSize());
+      sb.append("]");
+      string = sb.toString();
+    }
+    
+    return string;
   }
   
   public void close() throws Exception {
@@ -94,7 +119,7 @@ public class Sequence {
     if (currentValue < currentLimit) {
       execInsert(currentValue, currentLimit);
     }
-    database.commit();
+    execCommit();
     
     select.close();
     lock.close();
@@ -110,7 +135,7 @@ public class Sequence {
     if (currentValue == currentLimit) {
       execLock('n');
       execSelect();
-      database.commit();
+      execCommit();
     }
     
     return ++currentValue;
@@ -120,6 +145,10 @@ public class Sequence {
     
     lock.setChar("lock_flag", flag);
     lock.executeUpdate();
+    
+    if (config.isLog()) {
+      logger.debug(toString() + " lock: " + flag);
+    }
   }
   
   private void execSelect() throws Exception {
@@ -149,6 +178,10 @@ public class Sequence {
     
     delete.setLong(deleteOldValuePos, oldValue);
     delete.executeUpdate();
+    
+    if (config.isLog()) {
+      logger.debug(toString() + " delete: " + oldValue);
+    }
   }
   
   private void execUpdate(long oldValue, long newValue) throws Exception {
@@ -156,6 +189,10 @@ public class Sequence {
     update.setLong(updateOldValuePos, oldValue);
     update.setLong(updateNewValuePos, newValue);
     update.executeUpdate();
+    
+    if (config.isLog()) {
+      logger.debug(toString() + " update: " + oldValue + " -> " + newValue);
+    }
   }
   
   private void execInsert(long firstValue, long lastValue) throws Exception {
@@ -163,5 +200,18 @@ public class Sequence {
     insert.setLong(insertFirstValuePos, firstValue);
     insert.setLong(insertLastValuePos, lastValue);
     insert.executeUpdate();
+    
+    if (config.isLog()) {
+      logger.debug(toString() + " insert: " + firstValue + " .. " + lastValue);
+    }
+  }
+  
+  private void execCommit() throws Exception {
+    
+    database.commit();
+    
+    if (config.isLog()) {
+      logger.debug(toString() + " commit");
+    }
   }
 }
