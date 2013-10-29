@@ -327,11 +327,16 @@ public class Util {
   
   /**
    * Formats a date.
+   * Returns an empty string if date is <tt>null</tt>.
    * @param date
    * @param pattern
    * @return formatted date
    */
   static public String format(Date date, String pattern) {
+    
+    if (date == null) {
+      return "";
+    }
     
     SimpleDateFormat sdf = new SimpleDateFormat(pattern);
     return sdf.format(date);
