@@ -328,7 +328,8 @@ public class ColConfig {
    */
   public void setDatePattern(String datePattern) {
 
-    this.dateFormat = new SimpleDateFormat(datePattern);
+    dateFormat = new SimpleDateFormat(datePattern);
+    dateFormat.setLenient(false);
   }
   
   /**

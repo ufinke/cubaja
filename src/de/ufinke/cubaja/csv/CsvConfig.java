@@ -477,6 +477,7 @@ public class CsvConfig {
   public void setDatePattern(String datePattern) {
 
     dateFormat = new SimpleDateFormat(datePattern);
+    dateFormat.setLenient(false);
   }
 
   /**
