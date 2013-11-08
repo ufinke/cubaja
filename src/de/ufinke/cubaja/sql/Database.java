@@ -268,16 +268,22 @@ public class Database {
    */
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
 
-    D result = null;
-    Query query = null;
-    try {
-      query = createQuery(sql);
-      result = query.select(clazz);
-    } finally {
-      if (query != null) {
-        query.close();
-      }
-    }
+    return select(new Sql(sql), clazz);
+  }
+ 
+  /**
+   * Returns a single result object from a query.
+   * @param <D>
+   * @param sql
+   * @param clazz Class of result object
+   * @return result object
+   * @throws SQLException
+   */
+  public <D> D select(Sql sql, Class<? extends D> clazz) throws SQLException {
+   
+    Query query = createQuery(sql);
+    D result = query.select(clazz);
+    query.close();
     return result;
   }
   
