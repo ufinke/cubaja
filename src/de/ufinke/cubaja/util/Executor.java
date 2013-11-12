@@ -1,4 +1,4 @@
-// Copyright (c) 2007 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2007 - 2013, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -109,7 +109,8 @@ public abstract class Executor {
    */
   protected void start() {
 
-    stopwatch = new Stopwatch(getClass().getName());
+    logMessage(false);
+    stopwatch = new Stopwatch();
     
     try {
       execute();
@@ -118,9 +119,23 @@ public abstract class Executor {
       setExitCode(EXIT_CODE_FATAL);
     }
     
-    stopwatch.elapsedMillis();
-    
+    logMessage(true);
     System.exit(exitCode);
+  }
+  
+  private void logMessage(boolean endMessage) {
+    
+    StringBuilder sb = new StringBuilder(64);
+    sb.append(getClass().getName());
+    sb.append(" - ");
+    sb.append(text.get(endMessage ? "stopwatchEnd" : "stopwatchStart"));
+    if (endMessage) {
+      sb.append(' ');
+      sb.append(Stopwatch.format(stopwatch.elapsedMillis()));
+      sb.append(')');
+    }
+    
+    logger.info(sb);
   }
 
   /**
