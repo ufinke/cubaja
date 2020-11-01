@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2013, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -210,6 +210,7 @@ public class DatabaseConfig {
   private int batchSize;
   private boolean log;
   private WarnMode warnMode;
+  private ExecFilter execFilter;
 
   /**
    * Constructor.
@@ -222,31 +223,33 @@ public class DatabaseConfig {
     batchSize = 4095;
     log = false;
     warnMode = WarnMode.WARN;
+    execFilter = new DefaultExecFilter();
   }
-  
+
   /**
    * Creates a clone of this object.
    */
   public DatabaseConfig clone() {
-    
+
     DatabaseConfig clone = new DatabaseConfig();
-    
+
     clone.driver = driver;
     clone.url = url;
     clone.execute = execute;
-    clone.properties = properties;
+    clone.properties = (Properties) properties.clone();
     clone.autoCommit = autoCommit;
     clone.transactionIsolation = transactionIsolation;
     clone.fetchSize = fetchSize;
     clone.batchSize = batchSize;
     clone.log = log;
     clone.warnMode = warnMode;
-    
+    clone.execFilter = execFilter;
+
     return clone;
   }
-  
+
   /**
-   * Signals whether activities should be log.
+   * Signals whether activities should be logged.
    * By default, logging is not enabled.
    * @return log flag
    */
@@ -490,20 +493,25 @@ public class DatabaseConfig {
       }
     }
 
-    Connection connection = null; 
     try {
-      connection = DriverManager.getConnection(url, properties);
-    } catch (SQLException sqle) {
+      return DriverManager.getConnection(url, properties);
+    } catch (Exception sqle) {
       String user = properties.getProperty("user");
-      String message = (user == null)
-                     ? text.get("connectFailedUser", url, sqle.getMessage(), user)
-                     : text.get("connectFailedNoUser", url, sqle.getMessage());
+      String message = (user == null) ? text.get("connectFailedNoUser", url, sqle.getMessage()) : text.get("connectFailedUser", url, sqle.getMessage(), user);
       SQLException ex = new SQLException(message);
       ex.initCause(sqle);
       throw ex;
     }
-    
-    return connection;
   }
-  
+
+  public ExecFilter getExecFilter() {
+
+    return execFilter;
+  }
+
+  public void setExecFilter(ExecFilter execFilter) {
+
+    this.execFilter = execFilter;
+  }
+
 }

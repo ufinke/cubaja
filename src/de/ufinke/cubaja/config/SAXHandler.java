@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2011, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -32,6 +32,9 @@ import de.ufinke.cubaja.util.Text;
 class SAXHandler extends DefaultHandler2 {
 
   static private Text text = Text.getPackageInstance(SAXHandler.class);
+  
+  static private char[] CDATA_START = "<![CDATA[".toCharArray();
+  static private char[] CDATA_END = "]]>".toCharArray();
   
   private ResourceLoader loader;
   private XMLPropertyProvider xmlProperties;
@@ -345,11 +348,15 @@ class SAXHandler extends DefaultHandler2 {
   
   public void startCDATA() throws PassedSAXException {
     
+    ElementProxy proxy = peekElement();
+    
     try {
       if (includedContent) {
         includeDefinition.addText("<![CDATA[");
+      } else if (proxy.isDomElement()) {
+        proxy.addCharData(CDATA_START, 0, CDATA_START.length);
       } else {      
-        peekElement().toggleCData();
+        proxy.toggleCData();
       }
     } catch (Throwable t) {
       throw new PassedSAXException(t);
@@ -358,11 +365,15 @@ class SAXHandler extends DefaultHandler2 {
   
   public void endCDATA() throws PassedSAXException {
     
+    ElementProxy proxy = peekElement();
+    
     try {
       if (includedContent) {
         includeDefinition.addText("]]>");
+      } else if (proxy.isDomElement()) {
+        proxy.addCharData(CDATA_END, 0, CDATA_END.length);
       } else {      
-        peekElement().toggleCData();
+        proxy.toggleCData();
       }
     } catch (Throwable t) {
       throw new PassedSAXException(t);

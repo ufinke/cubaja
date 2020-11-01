@@ -1,4 +1,4 @@
-// Copyright (c) 2011, Uwe Finke. All rights reserved.
+// Copyright (c) 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -52,7 +52,7 @@ public abstract class AbstractIterable<D> implements Iterable<D> {
    * @param data
    * @throws Exception
    */
-  protected final void add(D data) throws Exception {
+  public final void add(D data) throws Exception {
     
     iterator.add(data);
   }

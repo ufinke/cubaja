@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.cafebabe;
@@ -14,15 +14,8 @@ import java.util.List;
  */
 public class GenClass implements Generatable, AccessFlags {
 
-  static private final int majorVersion;
-  static private final int minorVersion;
-  
-  static {
-    String version = System.getProperty("java.class.version");
-    int index = version.indexOf('.');
-    majorVersion = Integer.parseInt(version.substring(0, index));
-    minorVersion = Integer.parseInt(version.substring(index + 1));
-  }
+  static private final int MAJOR_VERSION = 49; // Java 1.5
+  static private final int MINOR_VERSION = 0;
   
   private ConstantPool constantPool;
   private int accessFlags;
@@ -132,8 +125,8 @@ public class GenClass implements Generatable, AccessFlags {
         
     out.writeInt(0xCAFEBABE);
     
-    out.writeShort(minorVersion);
-    out.writeShort(majorVersion);
+    out.writeShort(MINOR_VERSION);
+    out.writeShort(MAJOR_VERSION);
     
     constantPool.generate(out);
     

@@ -111,12 +111,7 @@ public class Query extends PreparedSql implements ColumnReader {
   public int getColumnPosition(String columnName) throws SQLException {
 
     checkExec();
-    
-    Integer position = resultSet.findColumn(columnName); 
-    if (position == null) {
-      throw new SQLException(text.get("columnNotFound", columnName));
-    }
-    return position;
+    return resultSet.findColumn(columnName);
   }
 
   public int getRowCount() {

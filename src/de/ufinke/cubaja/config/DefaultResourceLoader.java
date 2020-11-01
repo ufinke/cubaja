@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2013, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -93,6 +93,10 @@ public class DefaultResourceLoader implements ResourceLoader {
   }
   
   private InputStream openFile(String fileName) {
+    
+    if (fileName.startsWith("file://")) {
+      fileName = fileName.substring(7);
+    }
     
     InputStream stream = null;
     try {

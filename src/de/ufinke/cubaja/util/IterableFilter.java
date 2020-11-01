@@ -1,3 +1,6 @@
+// Copyright (c) 2015, Uwe Finke. All rights reserved.
+// Subject to BSD License. See "license.txt" distributed with this package.
+
 package de.ufinke.cubaja.util;
 
 import java.util.ArrayList;

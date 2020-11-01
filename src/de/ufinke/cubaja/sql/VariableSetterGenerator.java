@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -57,7 +57,7 @@ class VariableSetterGenerator implements Generator {
     dataClassType = new Type(dataClass);
     createList(dataClass);
     
-    Class<?> setterClass = Loader.createClass(this, "PreparedSqlVariableSetter", dataClass);
+    Class<?> setterClass = Loader.createClass(dataClass, this, "PreparedSqlVariableSetter", dataClass);
     setter = (VariableSetter) setterClass.newInstance();
     setterMap.put(dataClass, setter);
     
@@ -70,7 +70,7 @@ class VariableSetterGenerator implements Generator {
     
     for (int i = 1; i < variableList.size(); i++) {
       String methodName = Util.createMethodName(variableList.get(i), "get");
-      variableMap.put(methodName, i);
+      variableMap.put(methodName, Integer.valueOf(i));
     }
   }
   

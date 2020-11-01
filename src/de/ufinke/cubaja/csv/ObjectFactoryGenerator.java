@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -70,7 +70,7 @@ class ObjectFactoryGenerator implements Generator {
       createSetterMap(dataClass);
     }
     
-    Class<?> factoryClass = Loader.createClass(this, "CsvReaderObjectFactory", dataClass);
+    Class<?> factoryClass = Loader.createClass(dataClass, this, "CsvReaderObjectFactory", dataClass);
     lastFactory = (ObjectFactory) factoryClass.newInstance();
     factoryMap.put(dataClass, lastFactory);
     

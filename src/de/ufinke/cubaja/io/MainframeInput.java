@@ -77,7 +77,7 @@ public class MainframeInput {
    * <p>
    * Returns <tt>true</tt> if the given number of bytes could be read,
    * or <tt>false</tt> when there where no more bytes to read.
-   * Throws <tt>EOFException</tt> when the stream ends before all requested bytes where read. 
+   * Throws <tt>EOFException</tt> when the stream ends before all requested bytes were read. 
    * <p>
    * For fixed length records, <tt>byteCount</tt> should be the record length.
    * For variable records, the record length must be retrieved by 

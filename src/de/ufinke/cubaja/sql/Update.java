@@ -1,4 +1,4 @@
-// Copyright (c) 2006 - 2011, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -113,6 +113,16 @@ public class Update extends PreparedSql {
     }
     
     return updateCount;
+  }
+  
+  /**
+   * Clears the buffer build by previous calls of addBatch.
+   * @throws SQLException
+   */
+  public void clearBatch() throws SQLException {
+    
+    statement.clearBatch();
+    intervalBatchCount = 0;
   }
   
   /**

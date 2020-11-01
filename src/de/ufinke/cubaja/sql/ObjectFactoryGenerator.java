@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
@@ -95,7 +95,8 @@ class ObjectFactoryGenerator implements Generator {
       checkSetterMap(dataClass, warnMode);
     }
     
-    Class<?> factoryClass = Loader.createClass(this, "QueryObjectFactory", dataClass);
+    Class<?> contextClass = (builtin == null) ? dataClass : getClass();
+    Class<?> factoryClass = Loader.createClass(contextClass, this, "QueryObjectFactory", dataClass);
     factory = (ObjectFactory) factoryClass.newInstance();
     factoryMap.put(dataClass, factory);
     
@@ -160,7 +161,7 @@ class ObjectFactoryGenerator implements Generator {
     searchMap = new HashMap<String, SearchEntry>();
     
     for (int i = 1; i <= size; i++) {
-      String name = metaData.getColumnName(i).toLowerCase();
+      String name = metaData.getColumnLabel(i).toLowerCase();
       SearchEntry entry = new SearchEntry(name, i, metaData.getColumnType(i));
       searchMap.put(Util.createMethodName(name, "set"), entry);
     }

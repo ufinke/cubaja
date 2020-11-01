@@ -1,4 +1,4 @@
-// Copyright (c) 2009, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -10,6 +10,11 @@ package de.ufinke.cubaja.util;
  */
 public class IteratorException extends RuntimeException {
 
+  public IteratorException(String message) {
+    
+    super(message);
+  }
+  
   public IteratorException(String message, Throwable cause) {
     
     super(message, cause);

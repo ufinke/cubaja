@@ -365,13 +365,13 @@ public class Sql {
     return string;
   }
   
-  List<String> getStatements() {
+  protected List<String> getStatements() {
 
     format();
     return statementList;
   }
   
-  String getSingleStatement() throws SQLException {
+  protected String getSingleStatement() throws SQLException {
     
     format();
     switch (statementList.size()) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sort;
@@ -40,14 +40,14 @@ final class FileTask implements Runnable {
     
     SimpleDateFormat sdf = new SimpleDateFormat("_yyyyMMdd_HHmmssSSS");
     File file = null;
-    boolean exists = true;
-    while (exists) {
+    boolean created = false;
+    while (! created) {
       StringBuilder sb = new StringBuilder(50);
       sb.append(config.getFilePrefix());
       sb.append(sdf.format(new Date()));
       sb.append(".tmp");
       file = new File(dir, sb.toString());
-      exists = file.exists();
+      created = file.createNewFile();
     }
 
     file.deleteOnExit();
