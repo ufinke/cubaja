@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -65,7 +65,7 @@ class ObjectWriterGenerator implements Generator {
     dataClassType = new Type(dataClass);
     createGetterMap(dataClass);
     
-    Class<?> writerClass = Loader.createClass(this, "CsvWriterObjectWriter", dataClass);
+    Class<?> writerClass = Loader.createClass(dataClass, this, "CsvWriterObjectWriter", dataClass);
     lastWriter = (ObjectWriter) writerClass.newInstance();
     writerMap.put(dataClass, lastWriter);
     

@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.cafebabe;
@@ -41,8 +41,13 @@ public class Loader extends ClassLoader {
    * @throws ClassNotFoundException
    */
   public static Class<?> createClass(Generator generator, Object... nameSuffix) throws ClassNotFoundException {
+  	
+  	return createClass(generator.getClass(), generator, nameSuffix);
+  }
+  
+  public static Class<?> createClass(Class<?> contextClass, Generator generator, Object... nameSuffix) throws ClassNotFoundException {
     
-    Loader loader = new Loader(generator.getClass().getClassLoader());
+    Loader loader = new Loader(contextClass.getClassLoader());
     loader.setGenerator(generator);
     
     StringBuilder sb = new StringBuilder(200);

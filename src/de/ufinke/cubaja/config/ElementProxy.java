@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -76,10 +76,10 @@ class ElementProxy {
     
     int end = start + length;
     for (int i = start; i < end; i++) {
-      if (ch[i] == '\n' && (! cdata)) {
-        charData.append(' ');
-      } else {
+      if (ch[i] != '\n' || cdata || domElement) {
         charData.append(ch[i]);
+      } else {
+        charData.append(' ');
       }
     }
     

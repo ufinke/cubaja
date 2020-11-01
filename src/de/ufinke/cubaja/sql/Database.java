@@ -1,13 +1,22 @@
-// Copyright (c) 2006 - 2013, Uwe Finke. All rights reserved.
+// Copyright (c) 2006 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.sql;
 
+import static de.ufinke.cubaja.sql.DatabaseEventType.CLOSE;
+import static de.ufinke.cubaja.sql.DatabaseEventType.COMMIT;
+import static de.ufinke.cubaja.sql.DatabaseEventType.EXECUTE;
+import static de.ufinke.cubaja.sql.DatabaseEventType.PREPARE_QUERY;
+import static de.ufinke.cubaja.sql.DatabaseEventType.PREPARE_UPDATE;
+import static de.ufinke.cubaja.sql.DatabaseEventType.REGISTER;
+import static de.ufinke.cubaja.sql.DatabaseEventType.ROLLBACK;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import de.ufinke.cubaja.util.Text;
@@ -26,13 +35,13 @@ import de.ufinke.cubaja.util.Text;
  * instance has a unique id number.
  * @author Uwe Finke
  */
-public class Database {
+public class Database implements DatabaseEventListener {
 
   static private volatile int id = 0;
   
-  static private synchronized int getId() {
+  static private synchronized Integer getId() {
     
-    return ++id;
+    return Integer.valueOf(++id);
   }
   
   static private final Text text = Text.getPackageInstance(Database.class);
@@ -40,6 +49,9 @@ public class Database {
   private Connection connection;
   private DatabaseConfig config;
   private Integer myId;
+  private String url;
+  private String user;
+  private List<DatabaseEventListener> eventListenerList;
   private Log logger;
   
   /**
@@ -70,19 +82,11 @@ public class Database {
    */
   public Database(Connection connection, DatabaseConfig config) throws SQLException {
         
-    if (config.isLog()) {
+    eventListenerList = new ArrayList<DatabaseEventListener>();
     
-      myId = getId();
-      logger = LogFactory.getLog(Database.class);
-      
-      String url = connection.getMetaData().getURL();
-      String user = connection.getMetaData().getUserName();
-      if (user == null) {
-        logger.debug(text.get("connectedNoUser", myId, url));
-      } else {
-        logger.debug(text.get("connectedUser", myId, url, user));
-      }
-    }
+    url = connection.getMetaData().getURL();
+    user = connection.getMetaData().getUserName();
+    myId = getId();
     
     this.connection = connection;
     this.config = config;
@@ -92,9 +96,35 @@ public class Database {
       connection.setTransactionIsolation(config.getTransactionIsolation().getLevel());
     }
     
+    if (config.isLog()) {
+      logger = LogFactory.getLog(Database.class);
+      addEventListener(this);
+    }
+        
     if (config.getExecute() != null) {
       execute(config.getExecute());
     }
+  }
+  
+  /**
+   * Adds a listener.
+   * A listener will be notified about database actions.
+   * The actions are the call of this method (a registration event with connection data will be fired), 
+   * commit, rollback, close, execute (for every contained statement)
+   * and prepare of query and update statements.  
+   * @param listener
+   */
+  public void addEventListener(DatabaseEventListener listener) throws SQLException {
+    
+    DatabaseEvent event = new DatabaseEvent();
+    event.setType(REGISTER);
+    event.setDatabaseId(myId);
+    event.setConnection(connection);
+    event.setText((user == null) ? text.get("connectedNoUser", myId, url) : text.get("connectedUser", myId, url, user));
+    
+    fireEvent(listener, event);
+    
+    eventListenerList.add(listener);
   }
   
   /**
@@ -179,8 +209,15 @@ public class Database {
 
     for (String stm : sql.getStatements()) {
       
-      if (logger != null) {
-        logger.debug(text.get("execute", myId, stm));
+      stm = config.getExecFilter().filterExecStatement(stm);
+      
+      if (eventListenerList.size() > 0) {
+        DatabaseEvent event = new DatabaseEvent();
+        event.setType(EXECUTE);
+        event.setDatabaseId(myId);
+        event.setStatement(stm);
+        event.setText(text.get("execute", myId, stm));
+        fireEvent(event);
       }
       
       try {
@@ -249,8 +286,13 @@ public class Database {
 
     String stm = sql.getSingleStatement();
     
-    if (logger != null) {
-      logger.debug(text.get("prepare", myId, stm));
+    if (eventListenerList.size() > 0) {
+      DatabaseEvent event = new DatabaseEvent();
+      event.setType(PREPARE_QUERY);
+      event.setDatabaseId(myId);
+      event.setStatement(stm);
+      event.setText(text.get("prepare", myId, stm));
+      fireEvent(event);
     }
     
     PreparedStatement ps = connection.prepareStatement(stm);
@@ -334,8 +376,13 @@ public class Database {
 
     String stm = sql.getSingleStatement();
     
-    if (logger != null) {
-      logger.debug(text.get("prepare", myId, stm));
+    if (eventListenerList.size() > 0) {
+      DatabaseEvent event = new DatabaseEvent();
+      event.setType(PREPARE_UPDATE);
+      event.setDatabaseId(myId);
+      event.setStatement(stm);
+      event.setText(text.get("prepare", myId, stm));
+      fireEvent(event);
     }
     
     return new Update(connection.prepareStatement(stm), sql, config);
@@ -347,8 +394,12 @@ public class Database {
    */
   public void commit() throws SQLException {
     
-    if (logger != null) {
-      logger.debug(text.get("commit", myId));
+    if (eventListenerList.size() > 0) {
+      DatabaseEvent event = new DatabaseEvent();
+      event.setType(COMMIT);
+      event.setDatabaseId(myId);
+      event.setText(text.get("commit", myId));
+      fireEvent(event);
     }
     
     connection.commit();
@@ -360,8 +411,12 @@ public class Database {
    */
   public void rollback() throws SQLException {
     
-    if (logger != null) {
-      logger.debug(text.get("rollback", myId));
+    if (eventListenerList.size() > 0) {
+      DatabaseEvent event = new DatabaseEvent();
+      event.setType(ROLLBACK);
+      event.setDatabaseId(myId);
+      event.setText(text.get("rollback", myId));
+      fireEvent(event);
     }
     
     connection.rollback();
@@ -373,11 +428,39 @@ public class Database {
    */
   public void close() throws SQLException {
 
-    if (logger != null) {
-      logger.debug(text.get("close", myId));
+    if (eventListenerList.size() > 0) {
+      DatabaseEvent event = new DatabaseEvent();
+      event.setType(CLOSE);
+      event.setDatabaseId(myId);
+      event.setText(text.get("close", myId));
+      fireEvent(event);
     }
     
     connection.close();
     connection = null;
+  }
+  
+  private void fireEvent(DatabaseEvent event) throws SQLException {
+    
+    for (DatabaseEventListener listener : eventListenerList) {
+      fireEvent(listener, event);
+    }
+  }
+  
+  private void fireEvent(DatabaseEventListener listener, DatabaseEvent event) throws SQLException {
+    
+    try {
+      event.setConnection(connection);
+      listener.handleDatabaseEvent(event);
+    } catch (Throwable t) {
+      SQLException e = new SQLException(text.get("event", t.getClass().getName()));
+      e.initCause(t);
+      throw e;
+    }
+  }
+  
+  public void handleDatabaseEvent(DatabaseEvent event) {
+    
+    logger.debug(event.getText());
   }
 }

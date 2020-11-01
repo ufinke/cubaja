@@ -1,4 +1,4 @@
-// Copyright (c) 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2010 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.util;
@@ -101,7 +101,7 @@ abstract public class Assigner {
   static public Assigner create(final Class<?> fromClass, final Class<?> toClass) throws Exception {
     
     AssignerGenerator generator = new AssignerGenerator(fromClass, toClass);
-    Class<?> generated = Loader.createClass(generator, "Assigner", fromClass, toClass);
+    Class<?> generated = Loader.createClass(toClass, generator, "Assigner", fromClass, toClass);
     return (Assigner) generated.newInstance();
   }
   

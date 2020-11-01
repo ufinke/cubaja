@@ -1,4 +1,4 @@
-// Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
+// Copyright (c) 2009 - 2020, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.csv;
@@ -176,7 +176,7 @@ public class DefaultRowParser implements RowParser {
                 nextColStart++;
               } else if (nextChar == esc) {
                 doubleEscape[i] = true;
-                endIndex++;
+                endIndex += 2;
               } else {
                 throw new CsvException(text.get("escapeInEscape"));
               }

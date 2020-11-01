@@ -16,6 +16,52 @@ public class Stopwatch {
   static private Log logger = LogFactory.getLog(Stopwatch.class);
   static private Text text = Text.getPackageInstance(Stopwatch.class);
   
+  /**
+   * Formats a duration given in milliseconds.
+   * <p>
+   * The format is <tt><i>N</i>d <i>N</i>h <i>N</i>m <i>N</i>s <i>N</i>ms</tt>
+   * where <tt>d</tt> are days, <tt>h</tt> are hours, <tt>m</tt>
+   * are minutes, <tt>s</tt> are seconds and <tt>ms</tt> are milliseconds.
+   * Seconds and larger units are part of the result only when the value of the
+   * highest unit is not <tt>0</tt>. 
+   * @param millis
+   * @return formatted string
+   */
+  static public String format(long millis) {
+    
+    StringBuilder sb = new StringBuilder(32);
+
+    long ms = millis % 1000;
+    if (millis >= 1000) {
+      millis /= 1000;
+      long s = millis % 60;
+      if (millis >= 60) {
+        millis /= 60;
+        long m = millis % 60;
+        if (millis >= 60) {
+          millis /= 60;
+          long h = millis % 24;
+          if (millis >= 24) {
+            millis /= 24;
+            long d = millis;
+            sb.append(d);
+            sb.append("d ");
+          }
+          sb.append(h);
+          sb.append("h ");
+        }
+        sb.append(m);
+        sb.append("m ");
+      }
+      sb.append(s);
+      sb.append("s ");
+    }
+    sb.append(ms);
+    sb.append("ms");
+    
+    return sb.toString();
+  }
+  
   private long startMillis;
   private String message;
   
@@ -73,49 +119,4 @@ public class Stopwatch {
     return elapsed;
   }
   
-  /**
-   * Formats a duration given in milliseconds.
-   * <p>
-   * The format is <tt><i>N</i>d <i>N</i>h <i>N</i>m <i>N</i>s <i>N</i>ms</tt>
-   * where <tt>d</tt> are days, <tt>h</tt> are hours, <tt>m</tt>
-   * are minutes, <tt>s</tt> are seconds and <tt>ms</tt> are milliseconds.
-   * Seconds and larger units are part of the result only when the value of the
-   * highest unit is not <tt>0</tt>. 
-   * @param millis
-   * @return formatted string
-   */
-  static public String format(long millis) {
-    
-    StringBuilder sb = new StringBuilder(32);
-
-    long ms = millis % 1000;
-    if (millis >= 1000) {
-      millis /= 1000;
-      long s = millis % 60;
-      if (millis >= 60) {
-        millis /= 60;
-        long m = millis % 60;
-        if (millis >= 60) {
-          millis /= 60;
-          long h = millis % 24;
-          if (millis >= 24) {
-            millis /= 24;
-            long d = millis;
-            sb.append(d);
-            sb.append("d ");
-          }
-          sb.append(h);
-          sb.append("h ");
-        }
-        sb.append(m);
-        sb.append("m ");
-      }
-      sb.append(s);
-      sb.append("s ");
-    }
-    sb.append(ms);
-    sb.append("ms");
-    
-    return sb.toString();
-  }
 }
