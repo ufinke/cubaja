@@ -4,19 +4,21 @@
 package de.ufinke.cubaja.config;
 
 /**
- * Provider of <tt>ParameterFactory</tt> instances for special types. 
+ * Provider of <code>ParameterFactory</code> instances for special types. 
  * @author Uwe Finke
  */
 public interface ParameterFactoryFinder {
 
   /**
-   * Returns a <tt>ParameterFactory</tt> for the specified type.
-   * <p/>
+   * <p>
+   * Returns a <code>ParameterFactory</code> for the specified type.
+   * </p><p>
    * If this finder can't provide an appropriate factory, it must
-   * return <tt>null</tt>.
+   * return <code>null</code>.
+   * </p>
    * @param type the parameter type of a setter / adder method
-   * @return a parameter factory or <tt>null</tt>
-   * @throws Exception
+   * @return a parameter factory or <code>null</code>
+   * @throws Exception any exception
    */
   public ParameterFactory findFactory(Class<?> type) throws Exception;
 }

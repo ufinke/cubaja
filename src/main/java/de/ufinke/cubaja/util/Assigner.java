@@ -14,8 +14,8 @@ import de.ufinke.cubaja.cafebabe.Type;
 /**
  * Assigns values from one data object to another data object.
  * <p>
- * An instance is created by <tt>create</tt>.
- * The <tt>assign</tt> method of the instance takes
+ * An instance is created by <code>create</code>.
+ * The <code>assign</code> method of the instance takes
  * values from the getter methods of the source object
  * and passes them to the matching setter methods of the target object.
  * @author Uwe Finke
@@ -93,10 +93,10 @@ abstract public class Assigner {
   
   /**
    * Craetes an instance.
-   * @param fromClass
-   * @param toClass
+   * @param fromClass class with getter methods
+   * @param toClass class with setter methods
    * @return an instance
-   * @throws Exception
+   * @throws Exception any exception
    */
   static public Assigner create(final Class<?> fromClass, final Class<?> toClass) throws Exception {
     
@@ -114,9 +114,9 @@ abstract public class Assigner {
   
   /**
    * Assigns values from one object to another object.
-   * @param from
-   * @param to
-   * @throws Exception
+   * @param from object with getter methods
+   * @param to object with setter methods
+   * @throws Exception any exception
    */
   abstract public void assign(Object from, Object to) throws Exception;
 }

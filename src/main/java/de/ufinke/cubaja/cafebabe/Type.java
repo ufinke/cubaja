@@ -28,62 +28,62 @@ public class Type {
   }
   
   /**
-   * Type representing <tt>void</tt>.
+   * Type representing <code>void</code>.
    */
   static public final Type VOID = new Type(Void.TYPE);
   
   /**
-   * Type representing <tt>boolean</tt>.
+   * Type representing <code>boolean</code>.
    */
   static public final Type BOOLEAN = new Type(Boolean.TYPE);
   
   /**
-   * Type representing <tt>byte</tt>.
+   * Type representing <code>byte</code>.
    */
   static public final Type BYTE = new Type(Byte.TYPE);
   
   /**
-   * Type representing <tt>short</tt>.
+   * Type representing <code>short</code>.
    */
   static public final Type SHORT = new Type(Short.TYPE);
   
   /**
-   * Type representing <tt>int</tt>.
+   * Type representing <code>int</code>.
    */
   static public final Type INT = new Type(Integer.TYPE);
   
   /**
-   * Type representing <tt>long</tt>.
+   * Type representing <code>long</code>.
    */
   static public final Type LONG = new Type(Long.TYPE);
   
   /**
-   * Type representing <tt>float</tt>.
+   * Type representing <code>float</code>.
    */
   static public final Type FLOAT = new Type(Float.TYPE);
   
   /**
-   * Type representing <tt>double</tt>.
+   * Type representing <code>double</code>.
    */
   static public final Type DOUBLE = new Type(Double.TYPE);
   
   /**
-   * Type representing <tt>char</tt>.
+   * Type representing <code>char</code>.
    */
   static public final Type CHAR = new Type(Character.TYPE);
   
   /**
-   * Type representing <tt>String</tt>.
+   * Type representing <code>String</code>.
    */
   static public final Type STRING = new Type(String.class);
   
   /**
-   * Type representing <tt>Object</tt>.
+   * Type representing <code>Object</code>.
    */
   static public final Type OBJECT = new Type(Object.class);
   
   /**
-   * Type representing <tt>Class</tt>.
+   * Type representing <code>Class</code>.
    */
   static public final Type CLASS = new Type(Class.class);
   
@@ -95,7 +95,7 @@ public class Type {
   
   /**
    * Defines a type by name.
-   * @param type
+   * @param type name of type
    */
   public Type(String type) {
   
@@ -105,8 +105,8 @@ public class Type {
   /**
    * Defines a type by name and gives it a name.
    * This constructor may be used to name arguments which are passed to a method.
-   * @param type
-   * @param parameterName
+   * @param type name of type
+   * @param parameterName name of argument
    */
   public Type(String type, String parameterName) {
     
@@ -116,7 +116,7 @@ public class Type {
   
   /**
    * Defines a type by its class.
-   * @param type
+   * @param type class of type
    */
   public Type(Class<?> type) {
 
@@ -130,8 +130,8 @@ public class Type {
   /**
    * Defines a type by class and gives it a name.
    * This constructor may be used to name arguments which are passed to a method.
-   * @param type
-   * @param parameterName
+   * @param type class of type
+   * @param parameterName name of argument
    */
   public Type(Class<?> type, String parameterName) {
     
@@ -141,7 +141,7 @@ public class Type {
   
   /**
    * Defines a type for a generated class.
-   * @param type
+   * @param type generated class of type
    */
   public Type(GenClass type) {
 
@@ -151,8 +151,8 @@ public class Type {
   /**
    * Defines a type for a generated class and gives it a name.
    * This constructor may be used to name arguments which are passed to a method.
-   * @param type
-   * @param parameterName
+   * @param type generated class of type
+   * @param parameterName name of argument
    */
   public Type(GenClass type, String parameterName) {
     
@@ -195,7 +195,7 @@ public class Type {
   }
   
   /**
-   * Tests equality to another <tt>Type</tt> instance.
+   * Tests equality to another <code>Type</code> instance.
    * A type instance equals to another if both have the same descriptor.
    */
   public boolean equals(Object o) {
@@ -217,7 +217,7 @@ public class Type {
   }
   
   /**
-   * Returns a <tt>String</tt> representation.
+   * Returns a <code>String</code> representation.
    */
   public String toString() {
     
@@ -226,9 +226,9 @@ public class Type {
   
   /**
    * Returns the type's memory size in words.
-   * <tt>long</tt> and <tt>double</tt> have size <tt>2</tt>,
-   * <tt>void</tt> has size <tt>0</tt>
-   * and all other types have size <tt>1</tt>.
+   * <code>long</code> and <code>double</code> have size <code>2</code>,
+   * <code>void</code> has size <code>0</code>
+   * and all other types have size <code>1</code>.
    * @return size
    */
   public int getSize() {

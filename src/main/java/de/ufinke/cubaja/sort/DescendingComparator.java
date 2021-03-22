@@ -6,7 +6,7 @@ package de.ufinke.cubaja.sort;
 import java.util.Comparator;
 
 /**
- * <tt>Comparator</tt> for descending sort order.
+ * <code>Comparator</code> for descending sort order.
  * @author Uwe Finke
  * @param <D> data type
  */
@@ -16,7 +16,7 @@ public class DescendingComparator<D> implements Comparator<D> {
   
   /**
    * Constructor.
-   * @param ascendingComparator
+   * @param ascendingComparator original comparator whose comparision result will be multiplied by -1
    */
   public DescendingComparator(Comparator<D> ascendingComparator) {
   

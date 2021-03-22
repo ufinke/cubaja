@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.sort;
 
 /**
- * Sort key extractor needed with <tt>Matcher</tt>.
+ * Sort key extractor needed with <code>Matcher</code>.
  * @author Uwe Finke
  * @param <D> data type
  * @param <K> key type
@@ -12,9 +12,9 @@ package de.ufinke.cubaja.sort;
 public interface KeyFactory<D, K> {
 
   /**
-   * Creates the key object which is subject to a <tt>Comparator</tt>.
+   * Creates the key object which is subject to a <code>Comparator</code>.
    * @param data the data object
-   * @return the key, may be <tt>null</tt>
+   * @return the key, may be <code>null</code>
    */
   public K createKey(D data);
 }

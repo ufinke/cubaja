@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a method as receiver for character data content.
- * The method must have a <tt>String</tt> parameter.
+ * The method must have a <code>String</code> parameter.
  * @author Uwe Finke
  */
 @Retention(value=RetentionPolicy.RUNTIME)

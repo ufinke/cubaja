@@ -11,7 +11,7 @@ public class NoSuchEnumException extends Exception {
 
   /**
    * Constructor.
-   * @param message
+   * @param message message text
    */
   public NoSuchEnumException(String message) {
     

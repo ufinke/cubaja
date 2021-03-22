@@ -8,10 +8,10 @@ import java.util.List;
 import org.xml.sax.InputSource;
 
 /**
- * <tt>ResourceLoader</tt> for XML config data provided as String.
+ * <code>ResourceLoader</code> for XML config data provided as String.
  * <p>
- * Note that <tt>StringResourceLoader</tt> always returns its string
- * and doesn't take care of complex configurations where e.g. a <tt>PropertyProvider</tt> looks for a resource.
+ * Note that <code>StringResourceLoader</code> always returns its string
+ * and doesn't take care of complex configurations where e.g. a <code>PropertyProvider</code> looks for a resource.
  * An alternative way to provide XML strings is to use 
  * {@link DefaultResourceLoader#addString(String, String) DefaultRecourceLoader.addString}.
  * @author Uwe Finke

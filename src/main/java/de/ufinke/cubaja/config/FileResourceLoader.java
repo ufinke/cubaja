@@ -11,7 +11,7 @@ import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
 /**
- * File reading <tt>ResourceLoader</tt>.
+ * File reading <code>ResourceLoader</code>.
  * <p>
  * If a resource name is not an absolute file name,
  * this loader will read a file relative to a
@@ -35,7 +35,7 @@ public class FileResourceLoader implements ResourceLoader {
   
   /**
    * Constructor with home directory name.
-   * @param homeDirectory
+   * @param homeDirectory directory name
    */
   public FileResourceLoader(String homeDirectory) {
     
@@ -44,7 +44,7 @@ public class FileResourceLoader implements ResourceLoader {
   
   /**
    * Constructor with home directory file.
-   * @param homeDirectory
+   * @param homeDirectory directory file
    */
   public FileResourceLoader(File homeDirectory) {
     

@@ -103,9 +103,9 @@ public class Merger<D> implements Iterable<D> {
   
   /**
    * Constructor with 2 sources.
-   * @param comparator
-   * @param leftSource
-   * @param rightSource
+   * @param comparator comparator
+   * @param leftSource first source
+   * @param rightSource second source
    */
   public Merger(Comparator<? super D> comparator, Iterable<D> leftSource, Iterable<D> rightSource) {
 
@@ -119,8 +119,8 @@ public class Merger<D> implements Iterable<D> {
    * The sources are split into sub-lists
    * until the constructor with 2 sources can be used.
    * As a result, the objects are merged from a binary tree.
-   * @param comparator
-   * @param sources
+   * @param comparator comparator
+   * @param sources list with sources to merge
    */
   public Merger(Comparator<? super D> comparator, List<Iterable<D>> sources) {
     

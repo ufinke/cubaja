@@ -25,7 +25,7 @@ public class CsvException extends Exception {
 
   /**
    * Simple constructor.
-   * @param message
+   * @param message message text
    */
   public CsvException(String message) {
 
@@ -34,8 +34,8 @@ public class CsvException extends Exception {
 
   /**
    * Simple constructor with cause.
-   * @param message
-   * @param cause
+   * @param message message text
+   * @param cause nested cause
    */
   public CsvException(String message, Throwable cause) {
 
@@ -44,10 +44,10 @@ public class CsvException extends Exception {
 
   /**
    * Constructor with row information.
-   * @param message
-   * @param lineNumber
-   * @param rowNumber
-   * @param rowContent
+   * @param message message text
+   * @param lineNumber physical line number
+   * @param rowNumber logical row number
+   * @param rowContent row content
    */
   public CsvException(String message, int lineNumber, int rowNumber, String rowContent) {
 
@@ -56,11 +56,11 @@ public class CsvException extends Exception {
 
   /**
    * Constructor with cause and row information.
-   * @param message
-   * @param cause
-   * @param lineNumber
-   * @param rowNumber
-   * @param rowContent
+   * @param message message text
+   * @param cause nested cause
+   * @param lineNumber physical line number
+   * @param rowNumber logical row number
+   * @param rowContent row content
    */
   public CsvException(String message, Throwable cause, int lineNumber, int rowNumber, String rowContent) {
 
@@ -69,13 +69,13 @@ public class CsvException extends Exception {
 
   /**
    * Constructor with row and column information.
-   * @param message
-   * @param lineNumber
-   * @param rowNumber
-   * @param rowContent
-   * @param columnNumber
-   * @param columnName
-   * @param columnContent
+   * @param message message text
+   * @param lineNumber physical line number
+   * @param rowNumber logical row number
+   * @param rowContent row content
+   * @param columnNumber column number
+   * @param columnName column name
+   * @param columnContent column content
    */
   public CsvException(String message, int lineNumber, int rowNumber, String rowContent, int columnNumber, String columnName, String columnContent) {
 
@@ -84,14 +84,14 @@ public class CsvException extends Exception {
 
   /**
    * Constructor with cause, row and column information.
-   * @param message
-   * @param cause
-   * @param lineNumber
-   * @param rowNumber
-   * @param rowContent
-   * @param columnNumber
-   * @param columnName
-   * @param columnContent
+   * @param message message text
+   * @param cause nested cause
+   * @param lineNumber physical line number
+   * @param rowNumber logical row number
+   * @param rowContent row content
+   * @param columnNumber column number
+   * @param columnName column name
+   * @param columnContent column content
    */
   public CsvException(String message, Throwable cause, int lineNumber, int rowNumber, String rowContent, int columnNumber, String columnName, String columnContent) {
 
@@ -157,7 +157,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the line number where the error occured.
-   * If not applicable, the line number is <tt>0</tt>.
+   * If not applicable, the line number is <code>0</code>.
    * @return line number
    */
   public int getLineNumber() {
@@ -167,7 +167,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the row number where the error occured.
-   * If not applicable, the row number is <tt>0</tt>.
+   * If not applicable, the row number is <code>0</code>.
    * @return row number
    */
   public int getRowNumber() {
@@ -177,7 +177,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the number of the erroneous column.
-   * If not applicable, the column number is <tt>0</tt>.
+   * If not applicable, the column number is <code>0</code>.
    * @return column number
    */
   public int getColumnNumber() {
@@ -187,7 +187,7 @@ public class CsvException extends Exception {
   
   /**
    * Returns the name of the erroneous column.
-   * If not applicable, the column name is <tt>null</tt>.
+   * If not applicable, the column name is <code>null</code>.
    * @return column name
    */
   public String getColumnName() {
@@ -197,7 +197,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the complete row in error.
-   * If not applicable, the row is <tt>null</tt>.
+   * If not applicable, the row is <code>null</code>.
    * @return row content
    */
   public String getRowContent() {
@@ -207,7 +207,7 @@ public class CsvException extends Exception {
 
   /**
    * Returns the content of the erroneous column.
-   * If not applicable, the column is <tt>null</tt>.
+   * If not applicable, the column is <code>null</code>.
    * @return column content
    */
   public String getColumnContent() {

@@ -16,9 +16,9 @@ public interface SortAlgorithm {
    * Important: This method may be called in parallel from several threads.
    * Implementations should work with local variables only;
    * avoid member variables!
-   * @param array
-   * @param size
-   * @param comparator
+   * @param array array with objects to sort
+   * @param size index of last filled array element
+   * @param comparator comparator which compares the objects in the array
    */
   @SuppressWarnings("rawtypes")
   public void sort(Object[] array, int size, Comparator comparator);

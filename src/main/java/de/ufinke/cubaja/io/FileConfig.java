@@ -20,39 +20,42 @@ import de.ufinke.cubaja.config.Mandatory;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Configuration element for files.
  * <p>
- * XML attributes and subelements:
- * <blockquote>
- * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
- *   <tr bgcolor="#ccccff">
- *     <th align="left">Name</th>
- *     <th align="left">Description</th>
- *     <th align="center">A/E</th>
- *     <th align="center">M</th>
- *     <th align="center">U</th>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>name</tt></td>
- *     <td align="left" valign="top">file name</td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top">x</td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>charset</tt></td>
- *     <td align="left" valign="top">character set name</td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
+ * Configuration element for files.
+ * </p>
+ * <table class="striped">
+ * <caption style="text-align:left">XML attributes and subelements</caption>
+ * <thead>
+ * <tr>
+ * <th scope="col" style="text-align:left">Name</th>
+ * <th scope="col" style="text-align:left">Description</th>
+ * <th scope="col" style="text-align:center">A/E</th>
+ * <th scope="col" style="text-align:center">M</th>
+ * <th scope="col" style="text-align:center">U</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td style="text-align:left"><code>name</code></td>
+ * <td style="text-align:left">file name</td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center">x</td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>charset</code></td>
+ * <td style="text-align:left">character set name</td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * </tbody>
  * </table>
- * <tt>A/E</tt>: attribute or subelement
- * <br>
- * <tt>M</tt>: mandatory
- * <br>
- * <tt>U</tt>: unique
- * </blockquote>
+ * <p>
+ * <code>A/E</code>: attribute or subelement<br>
+ * <code>M</code>: mandatory<br>
+ * <code>U</code>: unique
+ * </p>
  * @author Uwe Finke
  */
 public class FileConfig {
@@ -108,7 +111,7 @@ public class FileConfig {
   }
   
   /**
-   * Retrieves the <tt>Charset</tt> according to the charset attribute.
+   * Retrieves the <code>Charset</code> according to the charset attribute.
    * If no charset was specified, the default charset of the runtime 
    * environment is returned.
    * @return the charset
@@ -160,7 +163,7 @@ public class FileConfig {
    * All parent directories which do not already exist
    * will be allocated automatically.
    * @return an output stream
-   * @throws IOException
+   * @throws IOException when stream could not be created
    */
   public BufferedOutputStream createOutputStream() throws IOException {
     
@@ -174,7 +177,7 @@ public class FileConfig {
    * Uses the {@link #getCharset getCharset} method.
    * The writer and the underlaying stream are buffered.
    * @return a writer
-   * @throws IOException
+   * @throws IOException when writer could not be created
    */
   public BufferedWriter createWriter() throws IOException {
     
@@ -184,7 +187,7 @@ public class FileConfig {
   /**
    * Creates an input stream.
    * @return an input stream
-   * @throws IOException
+   * @throws IOException when stream could not be created
    */
   public BufferedInputStream createInputStream() throws IOException {
     
@@ -196,7 +199,7 @@ public class FileConfig {
    * Uses the {@link #getCharset getCharset} method.
    * The reader and the underlaying stream are buffered.
    * @return a reader
-   * @throws IOException
+   * @throws IOException when reader could not be created
    */
   public BufferedReader createReader() throws IOException {
     

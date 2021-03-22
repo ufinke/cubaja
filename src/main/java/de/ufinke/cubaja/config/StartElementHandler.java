@@ -14,7 +14,7 @@ public interface StartElementHandler {
   /**
    * Called immediately after instantiation of this node object.
    * @param sharedMap a map with shared information
-   * @throws Exception
+   * @throws Exception when any error occured
    */
   public void startElement(Map<Object, Object> sharedMap) throws Exception;  
 }

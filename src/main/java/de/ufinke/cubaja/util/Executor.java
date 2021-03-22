@@ -9,7 +9,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Application main class template.
  * <p>
- * Usage: Implement a subclass, create an instance of it in the <tt>main</tt> method
+ * Usage: Implement a subclass, create an instance of it in the <code>main</code> method
  * and call {@link #start start}!
  * @author Uwe Finke
  */
@@ -19,27 +19,27 @@ public abstract class Executor {
   static private Text text = Text.getPackageInstance(Executor.class);
   
   /**
-   * Exit code <tt>0</tt>.
+   * Exit code <code>0</code>.
    */
   static public final int EXIT_CODE_OK = 0;
   
   /**
-   * Exit code <tt>4</tt>.
+   * Exit code <code>4</code>.
    */
   static public final int EXIT_CODE_WARN = 4;
   
   /**
-   * Exit code <tt>8</tt>.
+   * Exit code <code>8</code>.
    */
   static public final int EXIT_CODE_ERROR = 8;
   
   /**
-   * Exit code <tt>12</tt>.
+   * Exit code <code>12</code>.
    */
   static public final int EXIT_CODE_SEVERE = 12;
   
   /**
-   * Exit code <tt>16</tt>.
+   * Exit code <code>16</code>.
    */
   static public final int EXIT_CODE_FATAL = 16;
 
@@ -65,9 +65,9 @@ public abstract class Executor {
 
   /**
    * Sets args.
-   * May be called in the <tt>main</tt> method
+   * May be called in the <code>main</code> method
    * when arguments have to be passed to the application.
-   * @param args
+   * @param args arguments
    */
   protected void setArgs(String[] args) {
 
@@ -76,7 +76,7 @@ public abstract class Executor {
 
   /**
    * Returns the stopwatch.
-   * The stopwatch is created in the <tt>start</tt> method.
+   * The stopwatch is created in the <code>start</code> method.
    * @return stopwatch
    */
   protected Stopwatch getStopwatch() {
@@ -86,8 +86,8 @@ public abstract class Executor {
   
   /**
    * Sets the exit code.
-   * Default exit code is <tt>0</tt>.
-   * @param exitCode
+   * Default exit code is <code>0</code>.
+   * @param exitCode exit code
    */
   protected void setExitCode(int exitCode) {
     
@@ -97,15 +97,15 @@ public abstract class Executor {
   /**
    * Starts the application.
    * <p>
-   * This method should be called in the static <tt>main</tt> method.
+   * This method should be called in the static <code>main</code> method.
    * <p>
    * This method writes a start message to the log, 
    * calls {@link #execute execute}, writes an end message containing
-   * the elapsed time and calls <tt>System.exit</tt>
+   * the elapsed time and calls <code>System.exit</code>
    * with the exit code.
    * <p>
    * Any Throwable is catched and logged before the application aborts.
-   * In case of abort the exit code is set to <tt>16</tt> (fatal).
+   * In case of abort the exit code is set to <code>16</code> (fatal).
    */
   protected void start() {
 
@@ -141,8 +141,8 @@ public abstract class Executor {
   /**
    * Does the work.
    * This method has to be implemented in a subclass;
-   * it is called by <tt>start</tt>.
-   * @throws Exception
+   * it is called by <code>start</code>.
+   * @throws Exception any exception
    */
   abstract protected void execute() throws Exception;
 }

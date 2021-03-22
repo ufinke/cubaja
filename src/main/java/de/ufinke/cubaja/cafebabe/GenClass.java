@@ -29,10 +29,10 @@ public class GenClass implements Generatable, AccessFlags {
   
   /**
    * Constructor.
-   * @param accessFlags
-   * @param className
-   * @param superClass
-   * @param implementedInterfaces
+   * @param accessFlags access bits
+   * @param className name of the class
+   * @param superClass type of the classes super class
+   * @param implementedInterfaces optional types of interfaces
    */
   public GenClass(int accessFlags, String className, Type superClass, Type... implementedInterfaces) {
 
@@ -55,9 +55,9 @@ public class GenClass implements Generatable, AccessFlags {
   
   /**
    * Creates a field.
-   * @param fieldAccessFlags
-   * @param type
-   * @param fieldName
+   * @param fieldAccessFlags access bits of the field
+   * @param type type of the field
+   * @param fieldName name of the field
    * @return field
    */
   public GenField createField(int fieldAccessFlags, Type type, String fieldName) {
@@ -69,10 +69,10 @@ public class GenClass implements Generatable, AccessFlags {
   
   /**
    * Creates a method.
-   * @param methodAccessFlags
-   * @param returnType
-   * @param methodName
-   * @param args
+   * @param methodAccessFlags access bits of the method
+   * @param returnType return type of the method
+   * @param methodName name of the method
+   * @param args argument types of the method
    * @return method
    */
   public GenMethod createMethod(int methodAccessFlags, Type returnType, String methodName, Type... args) {
@@ -84,9 +84,9 @@ public class GenClass implements Generatable, AccessFlags {
   
   /**
    * Creates a constructor.
-   * @param methodAccessFlags
-   * @param args
-   * @return method
+   * @param methodAccessFlags access bits
+   * @param args argument types of the constructor
+   * @return constructor (method with name '&lt;init&gt;')
    */
   public GenMethod createConstructor(int methodAccessFlags, Type... args) {
     

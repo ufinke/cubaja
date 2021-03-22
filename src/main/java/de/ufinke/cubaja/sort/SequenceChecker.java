@@ -8,8 +8,8 @@ import java.util.Iterator;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Checks an <tt>Iterable</tt> for proper sequence.
- * Throws an <tt>OutOfSequenceException</tt> if any data object
+ * Checks an <code>Iterable</code> for proper sequence.
+ * Throws an <code>OutOfSequenceException</code> if any data object
  * is out of sequence.
  * @author Uwe Finke
  * @param <D> data type
@@ -70,8 +70,8 @@ public class SequenceChecker<D> implements Iterable<D> {
   
   /**
    * Constructor.
-   * @param comparator
-   * @param input
+   * @param comparator comparator
+   * @param input source
    */
   public SequenceChecker(Comparator<? super D> comparator, Iterable<D> input) {
     
@@ -80,9 +80,9 @@ public class SequenceChecker<D> implements Iterable<D> {
   
   /**
    * Constructor with a name which is used in error messages.
-   * @param comparator
-   * @param input
-   * @param name
+   * @param comparator comparator
+   * @param input source
+   * @param name individual name for this sequence checker
    */
   public SequenceChecker(Comparator<? super D> comparator, Iterable<D> input, String name) {
   

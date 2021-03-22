@@ -1,15 +1,17 @@
 /**
+ * <p>
  * Package for processing CSV data.
- * <p>
+ * </p><p>
  * Main classes are 
- * {@link de.ufinke.cubaja.csv.CsvReader CsvReader} 
+ * {@link CsvReader} 
  * and 
- * {@link de.ufinke.cubaja.csv.CsvWriter CsvWriter}.
- * <p>
+ * {@link CsvWriter}.
+ * </p><p>
  * Copyright (c) 2009 - 2010, Uwe Finke. All rights reserved.
  * <br>
  * Subject to 
- * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
- * See <tt>license.txt</tt> distributed with this library.
+ * <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>. 
+ * See <code>license.txt</code> distributed with this library.
+ * </p>
  */
 package de.ufinke.cubaja.csv;

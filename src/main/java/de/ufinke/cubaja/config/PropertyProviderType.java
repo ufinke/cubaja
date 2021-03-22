@@ -11,38 +11,38 @@ public enum PropertyProviderType {
 
   /**
    * System property provider.
-   * <p/>
-   * System properties are retrieved with <tt>java.lang.System.getProperty</tt>.
+   * <p>
+   * System properties are retrieved with <code>java.lang.System.getProperty</code>.
    */
   SYSTEM,
   
   /**
    * Properties file property provider.
-   * <p/>
-   * The properties are specified in the optional file <tt>config.properties</tt>.
-   * If this resource exists, its content is loaded by the <tt>ResourceLoader</tt>.
+   * <p>
+   * The properties are specified in the optional file <code>config.properties</code>.
+   * If this resource exists, its content is loaded by the <code>ResourceLoader</code>.
    */
   CONFIG,
   
   /**
    * XML property provider.
-   * <p/>
-   * The properties are specified with name-/value-pairs in <tt>configProperty</tt> elements.
+   * <p>
+   * The properties are specified with name-/value-pairs in <code>configProperty</code> elements.
    */
   XML,
   
   /**
    * Environment variables property provider.
-   * <p/>
-   * Environment variables are retrieved with <tt>java.lang.System.getEnv</tt>.
+   * <p>
+   * Environment variables are retrieved with <code>java.lang.System.getEnv</code>.
    */
   ENVIRONMENT,
   
   /**
    * Final property provider.
-   * <p/>
+   * <p>
    * After adding this provider type, no other providers will be added to 
-   * the <tt>Configurator</tt>, neither explicit nor automatically.
+   * the <code>Configurator</code>, neither explicit nor automatically.
    */
   NULL;
 }

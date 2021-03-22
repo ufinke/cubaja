@@ -11,9 +11,9 @@ public interface ObjectWriter {
 
   /**
    * Writes an object into the writer's buffer.
-   * @param writer
-   * @param dataObject
-   * @throws Exception
+   * @param writer writer
+   * @param dataObject data object with getter methods
+   * @throws Exception when the object could not be written
    */
   public void writeObject(CsvWriter writer, Object dataObject) throws Exception;
 }

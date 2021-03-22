@@ -12,9 +12,9 @@ import java.util.NoSuchElementException;
  * Accessor to data objects matching to a key.
  * Instances are created by {@link Matcher}.
  * <p>
- * Note that the <tt>matches</tt> method may return <tt>false</tt>
+ * Note that the <code>matches</code> method may return <code>false</code>
  * after any matching data is retrieved 
- * by one of the <tt>get</tt> methods, 
+ * by one of the <code>get</code> methods, 
  * because these methods advance the source to the next item.
  * @author Uwe Finke
  * @param <D> data type
@@ -47,7 +47,7 @@ public final class MatchSource<D> {
   
   /**
    * Returns an iterator over all matching data objects.
-   * This iterator does not support the <tt>remove</tt> method.
+   * This iterator does not support the <code>remove</code> method.
    * @return an iterator
    */
   public Iterable<D> getAll() {
@@ -92,8 +92,8 @@ public final class MatchSource<D> {
   }
   
   /**
-   * Tells whether this source matches the <tt>Matcher</tt>'s key.
-   * @return <tt>true</tt> when matching, <tt>false</tt> otherwise
+   * Tells whether this source matches the <code>Matcher</code>'s key.
+   * @return <code>true</code> when matching, <code>false</code> otherwise
    */
   public boolean matches() {
     

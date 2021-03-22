@@ -21,11 +21,13 @@ public class TimestampProvider implements NamedPropertyProvider {
   }
   
   /**
+   * <p>
    * Returns a string with the actual date / time.
-   * <p/>
-   * We can specify the format by an optional <tt>parm</tt> 
-   * with name <tt>pattern</tt>.
-   * The default format is <tt>yyyyMMdd_HHmmss</tt>.
+   * </p><p>
+   * We can specify the format by an optional <code>parm</code> 
+   * with name <code>pattern</code>.
+   * The default format is <code>yyyyMMdd_HHmmss</code>.
+   * </p>
    * @return property value
    */
   public String getProperty(String name, Map<String, String> parms) {

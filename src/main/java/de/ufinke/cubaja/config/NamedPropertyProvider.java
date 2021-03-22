@@ -6,11 +6,13 @@ package de.ufinke.cubaja.config;
 import java.util.Map;
 
 /**
+ * <p>
  * PropertyProvider variant.
- * <p/>
- * A <tt>NamedPropertyProvider</tt> is needed
+ * </p><p>
+ * A <code>NamedPropertyProvider</code> is needed
  * when a property value depends on program logic and
  * the program logic depends on other configuration content.
+ * </p>
  * @author Uwe Finke
  */
 public interface NamedPropertyProvider {
@@ -18,9 +20,9 @@ public interface NamedPropertyProvider {
   /**
    * Returns a property value.
    * @param name the name of the property
-   * @param parms name/value-pairs specified by <tt>parm</tt> sub-elements of <tt>configProperty</tt>
+   * @param parms name/value-pairs specified by <code>parm</code> sub-elements of <code>configProperty</code>
    * @return the property value
-   * @throws Exception
+   * @throws Exception any exception
    */
   public String getProperty(String name, Map<String, String> parms) throws Exception;
 }

@@ -24,7 +24,7 @@ public class DOMText extends DOMContent {
   
   /**
    * Constructor with text.
-   * @param text
+   * @param text text string
    */
   public DOMText(String text) {
     
@@ -43,7 +43,7 @@ public class DOMText extends DOMContent {
 
   /**
    * Sets the text.
-   * @param text
+   * @param text text string
    */
   public void setText(String text) {
 

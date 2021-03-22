@@ -12,9 +12,9 @@ public interface ColumnEditor {
   /**
    * Edits the column.
    * @param column original column content
-   * @param colConfig
+   * @param colConfig column configuration
    * @return edited column content
-   * @throws CsvException
+   * @throws CsvException when any error occured
    */
   public String editColumn(String column, ColConfig colConfig) throws CsvException;
 }

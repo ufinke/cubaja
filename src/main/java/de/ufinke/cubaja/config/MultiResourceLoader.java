@@ -9,11 +9,11 @@ import org.xml.sax.InputSource;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * A <tt>ResourceLoader</tt> calling other <tt>ResourceLoader</tt>s.
- * Any number of <tt>ResourceLoader</tt> instances may be added.
- * On a call to <tt>loadResource</tt> the call is delegated
+ * A <code>ResourceLoader</code> calling other <code>ResourceLoader</code>s.
+ * Any number of <code>ResourceLoader</code> instances may be added.
+ * On a call to <code>loadResource</code> the call is delegated
  * to the previously added loaders in the sequence they where added
- * until a loader returns an <tt>InputSource</tt>.
+ * until a loader returns an <code>InputSource</code>.
  * @author Uwe Finke
  */
 public class MultiResourceLoader implements ResourceLoader {
@@ -32,7 +32,7 @@ public class MultiResourceLoader implements ResourceLoader {
   
   /**
    * Adds a loader to the internal list.
-   * @param loader
+   * @param loader resource loader
    */
   public void addResourceLoader(ResourceLoader loader) {
     

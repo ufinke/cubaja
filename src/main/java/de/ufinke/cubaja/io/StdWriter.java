@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 /**
- * Implementation of <tt>StdProcessor</tt> which writes lines to a file.
+ * Implementation of <code>StdProcessor</code> which writes lines to a file.
  * @author Uwe Finke
  */
 public class StdWriter implements StdProcessor {
@@ -20,9 +20,9 @@ public class StdWriter implements StdProcessor {
   private boolean flush;
 
   /**
-   * Constructor with <tt>FileConfig</tt>.
-   * @param config
-   * @throws IOException
+   * Constructor with <code>FileConfig</code>.
+   * @param config file config
+   * @throws IOException when the output file could not be created
    */
   public StdWriter(FileConfig config) throws IOException {
     
@@ -31,9 +31,9 @@ public class StdWriter implements StdProcessor {
   }
   
   /**
-   * Constructor with <tt>File</tt>.
-   * @param file
-   * @throws IOException
+   * Constructor with <code>File</code>.
+   * @param file output file
+   * @throws IOException when the output file could not be created
    */
   public StdWriter(File file) throws IOException {
   
@@ -43,8 +43,8 @@ public class StdWriter implements StdProcessor {
   
   /**
    * Constructor with file name.
-   * @param file
-   * @throws IOException
+   * @param file name of the output file
+   * @throws IOException when the output file could not be created
    */
   public StdWriter(String file) throws IOException {
     
@@ -52,11 +52,11 @@ public class StdWriter implements StdProcessor {
   }
   
   /**
-   * Sets the <tt>flush</tt> property.
-   * When this property is set to <tt>true</tt> the buffers
+   * Sets the <code>flush</code> property.
+   * When this property is set to <code>true</code> the buffers
    * are flushed after every line.
-   * Default setting in the constructors is <tt>true</tt>.
-   * @param flush
+   * Default setting in the constructors is <code>true</code>.
+   * @param flush flag whether to flush after each line or not
    */
   public void setFlush(boolean flush) {
     

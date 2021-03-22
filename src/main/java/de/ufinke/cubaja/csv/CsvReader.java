@@ -19,38 +19,40 @@ import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
 /**
+ * <p>
  * CSV reader.
- * <p>
+ * </p><p>
  * Rows are read in a loop by calling {@link #nextRow nextRow}
- * until the result is <tt>false</tt>.
- * <p>
+ * until the result is <code>false</code>.
+ * </p><p>
  * For every row, the column's content may be read as the type needed by the application.
  * Alternatively, a complete row may be read as data object with method {@link #readRow readRow}.
  * An even more convenient way to read a complete CSV file is
  * the {@link #cursor cursor} method, which combines
- * the call to <tt>nextRow</tt> and <tt>readRow</tt> within an automatic loop.
- * <p>
- * By default (with <tt>DefaultRowParser</tt>), 
- * empty columns (columns with a length of 0) are treated as <tt>null</tt> values.
+ * the call to <code>nextRow</code> and <code>readRow</code> within an automatic loop.
+ * </p><p>
+ * By default (with <code>DefaultRowParser</code>), 
+ * empty columns (columns with a length of 0) are treated as <code>null</code> values.
  * When a column is null, the read methods for numeric primitive types
- * return <tt>0</tt>; read methods for objects types return <tt>null</tt>.
- * <p>
- * For compatibility with JDBC result sets and the <tt>sql</tt> package, 
- * the position of the first column is <tt>1</tt>, not <tt>0</tt>.
- * <p>
+ * return <code>0</code>; read methods for objects types return <code>null</code>.
+ * </p><p>
+ * For compatibility with JDBC result sets and the <code>sql</code> package, 
+ * the position of the first column is <code>1</code>, not <code>0</code>.
+ * </p><p>
  * The first row is read automatically if the configuration's
- * {@link CsvConfig#hasHeaderRow hasHeaderRow} method returns <tt>true</tt>.
+ * {@link CsvConfig#hasHeaderRow hasHeaderRow} method returns <code>true</code>.
  * Special processing is performed when
  * {@link CsvConfig#setAutoCol(boolean) autoCol}
- * or {@link CsvConfig#setHeaderMatch(boolean) headerMatch} is set to <tt>true</tt>.
+ * or {@link CsvConfig#setHeaderMatch(boolean) headerMatch} is set to <code>true</code>.
  * An application may access the content of an automatically read header row
- * immediately after instantiation of the <tt>CsvReader</tt> without an explicit call
- * to <tt>nextRow</tt>.
- * <p>
+ * immediately after instantiation of the <code>CsvReader</code> without an explicit call
+ * to <code>nextRow</code>.
+ * </p><p>
  * Most methods may throw a {@link CsvException}, e.g. as a result of parsing errors.
  * An exception will also be thrown if there is an attempt to
- * read any data after a call to <tt>nextRow</tt>
- * returned <tt>false</tt>, or after the reader was closed.
+ * read any data after a call to <code>nextRow</code>
+ * returned <code>false</code>, or after the reader was closed.
+ * <p>
  * @author Uwe Finke
  */
 public class CsvReader implements ColumnReader {
@@ -78,11 +80,11 @@ public class CsvReader implements ColumnReader {
   /**
    * Constructor with configuration.
    * If you use this constructor,
-   * you have to set the configurations <tt>file</tt> property.
-   * @param config
-   * @throws IOException
-   * @throws ConfigException
-   * @throws CsvException
+   * you have to set the configurations <code>file</code> property.
+   * @param config configuration
+   * @throws IOException when reader can't be opened
+   * @throws ConfigException when configuration is insufficient
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public CsvReader(CsvConfig config) throws IOException, ConfigException, CsvException {
     
@@ -92,8 +94,9 @@ public class CsvReader implements ColumnReader {
   /**
    * Constructor with implicit default configuration.
    * With this constructor, there are no columns defined.
-   * @param reader
-   * @throws CsvException
+   * @param reader passed reader
+   * @throws IOException when reader can't be opened
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public CsvReader(Reader reader) throws IOException, CsvException {
   
@@ -102,9 +105,10 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Constructor with reader and configuration.
-   * @param reader
-   * @param config
-   * @throws CsvException
+   * @param reader passed reader
+   * @param config configuration
+   * @throws IOException when reader can't be opened
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public CsvReader(Reader reader, CsvConfig config) throws IOException, CsvException {
   
@@ -165,7 +169,7 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Sets the error handler.
-   * @param errorHandler
+   * @param errorHandler explicit error handler instance
    */
   public void setErrorHandler(ErrorHandler errorHandler) {
     
@@ -226,7 +230,7 @@ public class CsvReader implements ColumnReader {
    * Tells whether the retrieved row is empty.
    * A row is assumed to be empty when all valid column data have zero length.
    * @return flag
-   * @throws CsvException
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public boolean isEmptyRow() throws CsvException {
 
@@ -237,7 +241,7 @@ public class CsvReader implements ColumnReader {
   /**
    * Returns the complete last retrieved row.
    * @return row
-   * @throws CsvException
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public String getPlainRow() throws CsvException {
     
@@ -247,8 +251,9 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Sets a column editor.
-   * @param columnName
-   * @param editor
+   * @param columnName name of column to edit
+   * @param editor column editor instance
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public void setColumnEditor(String columnName, ColumnEditor editor) throws CsvException {
     
@@ -257,8 +262,8 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Sets a column editor.
-   * @param columnPosition
-   * @param editor
+   * @param columnPosition position of column to edit
+   * @param editor column editor instance
    */
   public void setColumnEditor(int columnPosition, ColumnEditor editor) {
     
@@ -267,7 +272,7 @@ public class CsvReader implements ColumnReader {
   
   /**
    * Sets a row filter.
-   * @param rowFilter
+   * @param rowFilter row filter instance
    */
   public void setRowFilter(RowFilter rowFilter) {
     
@@ -789,12 +794,12 @@ public class CsvReader implements ColumnReader {
   }
   
   /**
-   * Reads an <tt>enum</tt> constant.
-   * @param <E>
-   * @param columnName
-   * @param enumType
+   * Reads an <code>enum</code> constant.
+   * @param <E> Enum
+   * @param columnName name of column
+   * @param enumType enum class 
    * @return enum
-   * @throws CsvException
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public <E extends Enum<E>> E readEnum(String columnName, Class<E> enumType) throws CsvException {
     
@@ -802,12 +807,12 @@ public class CsvReader implements ColumnReader {
   }
   
   /**
-   * Reads an <tt>enum</tt> constant.
-   * @param <E>
-   * @param columnPosition
-   * @param enumType
+   * Reads an <code>enum</code> constant.
+   * @param <E> Enum
+   * @param columnPosition position of column
+   * @param enumType enum class
    * @return enum
-   * @throws CsvException
+   * @throws CsvException when a CSV interpretation problem occurs
    */
   public <E extends Enum<E>> E readEnum(int columnPosition, Class<E> enumType) throws CsvException {
     

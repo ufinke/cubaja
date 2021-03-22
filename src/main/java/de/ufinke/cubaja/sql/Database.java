@@ -25,13 +25,13 @@ import de.ufinke.cubaja.util.Text;
  * Wrapper for a database connection.
  * <p>
  * If not specified otherwise by configuration,
- * autocommit is <tt>false</tt>.
+ * autocommit is <code>false</code>.
  * This is different from default JDBC behaviour.
  * <p>
- * If <tt>log='true'</tt> is specified 
+ * If <code>log='true'</code> is specified 
  * in the configuration, statements will be logged
  * using the Apache CommonsLogging framework.
- * In the log message, each <tt>Database</tt>
+ * In the log message, each <code>Database</code>
  * instance has a unique id number.
  * @author Uwe Finke
  */
@@ -56,8 +56,8 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Uses existing connection with default configuration attributes.
-   * @param connection
-   * @throws SQLException
+   * @param connection JDBC connection
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Database(Connection connection) throws SQLException {
 
@@ -66,8 +66,8 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Connects to a database using configuration attributes.
-   * @param config
-   * @throws SQLException
+   * @param config configuration
+   * @throws SQLException  when an exception occurs during SQL execution
    */
   public Database(DatabaseConfig config) throws SQLException {
     
@@ -76,9 +76,9 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Uses existing connection with specific configuration attributes.
-   * @param connection
-   * @param config
-   * @throws SQLException
+   * @param connection JDBC connection
+   * @param config configuration
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Database(Connection connection, DatabaseConfig config) throws SQLException {
         
@@ -112,7 +112,8 @@ public class Database implements DatabaseEventListener {
    * The actions are the call of this method (a registration event with connection data will be fired), 
    * commit, rollback, close, execute (for every contained statement)
    * and prepare of query and update statements.  
-   * @param listener
+   * @param listener event listener
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void addEventListener(DatabaseEventListener listener) throws SQLException {
     
@@ -128,8 +129,8 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Returns the underlaying <tt>connection</tt> instance.
-   * @return connection
+   * Returns the underlaying <code>connection</code> instance.
+   * @return JDBC connection
    */
   public Connection getConnection() {
     
@@ -143,12 +144,12 @@ public class Database implements DatabaseEventListener {
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <tt>SQLException</tt>. This is
-   * useful e.g. for <tt>drop</tt> statements.
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
    * The SQL codes are vendor specific. 
-   * @param sql
-   * @param acceptedSqlCodes
-   * @throws SQLException
+   * @param sql SQL statement 
+   * @param acceptedSqlCodes SQL codes which are not treated as errors
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void execute(String sql, int... acceptedSqlCodes) throws SQLException {
   
@@ -163,22 +164,22 @@ public class Database implements DatabaseEventListener {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file names extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains only the
+   * The file names extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
    * plain file name without extension and without path.
    * <p>
    * There may be more than one SQL statement; each
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <tt>SQLException</tt>. This is
-   * useful e.g. for <tt>drop</tt> statements.
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
    * The SQL codes are vendor specific. 
-   * @param packageClass
-   * @param sqlResource
-   * @param acceptedSqlCodes
-   * @throws SQLException
-   * @throws IOException
+   * @param packageClass class which is located in the same package as the resource file 
+   * @param sqlResource resource file with SQL statement in it
+   * @param acceptedSqlCodes SQL codes which are not treated as errors
+   * @throws SQLException when an exception occurs during SQL execution
+   * @throws IOException when the resource could not be loaded
    */
   public void execute(Class<?> packageClass, String sqlResource, int... acceptedSqlCodes) throws SQLException, IOException {
     
@@ -186,18 +187,18 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Executes SQL provided as <tt>Sql</tt> instance immediately.
+   * Executes SQL provided as <code>Sql</code> instance immediately.
    * <p>
    * There may be more than one SQL statement; each
    * statement separated by semicolon.
    * <p>
    * You may optionally specify any number of SQL codes which are expected
-   * and should not throw an <tt>SQLException</tt>. This is
-   * useful e.g. for <tt>drop</tt> statements.
+   * and should not throw an <code>SQLException</code>. This is
+   * useful e.g. for <code>drop</code> statements.
    * The SQL codes are vendor specific. 
-   * @param sql
-   * @param acceptedSqlCodes
-   * @throws SQLException
+   * @param sql SQL instance with interpreted SQL statement
+   * @param acceptedSqlCodes SQL codes which are not treated as errors
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void execute(Sql sql, int... acceptedSqlCodes) throws SQLException {
 
@@ -244,10 +245,10 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates a <tt>Query</tt> instance with SQL provided as string.
-   * @param sql
+   * Creates a <code>Query</code> instance with SQL provided as string.
+   * @param sql SQL statement
    * @return Query
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Query createQuery(String sql) throws SQLException {
     
@@ -255,21 +256,21 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates a <tt>Query</tt> instance with SQL provided as resource.
+   * Creates a <code>Query</code> instance with SQL provided as resource.
    * <p>
    * The SQL must be written in a separate file within a java source package
    * (usually the package where the class which uses the SQL belongs to).
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file names extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains only the
+   * The file names extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
    * plain file name without extension and without path.
-   * @param packageClass
-   * @param sqlResource
+   * @param packageClass class which is located in the same package as the resource file 
+   * @param sqlResource resource file with SQL statement in it
    * @return Query
-   * @throws SQLException
-   * @throws IOException
+   * @throws SQLException when an exception occurs during SQL execution
+   * @throws IOException when the resource could not be loaded
    */
   public Query createQuery(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
     
@@ -277,10 +278,10 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates a <tt>Query</tt> instance with SQL provided as <tt>Sql</tt> object.
-   * @param sql
+   * Creates a <code>Query</code> instance with SQL provided as <code>Sql</code> object.
+   * @param sql SQL instance with interpreted SQL statement
    * @return Query
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Query createQuery(Sql sql) throws SQLException {
 
@@ -302,11 +303,11 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Returns a single result object from a query.
-   * @param <D>
-   * @param sql
+   * @param <D> type or super type of the result object
+   * @param sql SQL statement
    * @param clazz Class of result object
    * @return result object
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public <D> D select(String sql, Class<? extends D> clazz) throws SQLException {
 
@@ -315,11 +316,11 @@ public class Database implements DatabaseEventListener {
  
   /**
    * Returns a single result object from a query.
-   * @param <D>
-   * @param sql
+   * @param <D> type or super type of the result object
+   * @param sql SQL instance with interpreted SQL statement
    * @param clazz Class of result object
    * @return result object
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public <D> D select(Sql sql, Class<? extends D> clazz) throws SQLException {
    
@@ -330,12 +331,12 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates an <tt>Update</tt> instance with SQL provided as string.
-   * The SQL statement may be either <tt>insert</tt>, <tt>update</tt>
-   * or <tt>delete</tt>.
-   * @param sql
-   * @return Update
-   * @throws SQLException
+   * Creates an <code>Update</code> instance with SQL provided as string.
+   * The SQL statement may be either <code>insert</code>, <code>update</code>
+   * or <code>delete</code>.
+   * @param sql SQL statement
+   * @return prepared DDL statement
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Update createUpdate(String sql) throws SQLException {
     
@@ -343,23 +344,23 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates an <tt>Update</tt> instance with SQL provided as resource.
-   * The SQL statement may be either <tt>insert</tt>, <tt>update</tt>
-   * or <tt>delete</tt>.
+   * Creates an <code>Update</code> instance with SQL provided as resource.
+   * The SQL statement may be either <code>insert</code>, <code>update</code>
+   * or <code>delete</code>.
    * <p>
    * The SQL must be written in a separate file within a java source package
    * (usually the package where the class which uses the SQL belongs to).
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file names extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains only the
+   * The file names extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
    * plain file name without extension and without path.
-   * @param packageClass
-   * @param sqlResource
-   * @return Update
-   * @throws SQLException
-   * @throws IOException
+   * @param packageClass class which is located in the same package as the resource file 
+   * @param sqlResource resource file with SQL statement in it
+   * @return prepared DDL statement
+   * @throws SQLException when an exception occurs during SQL execution
+   * @throws IOException when the resource could not be loaded
    */
   public Update createUpdate(Class<?> packageClass, String sqlResource) throws SQLException, IOException {
     
@@ -367,10 +368,10 @@ public class Database implements DatabaseEventListener {
   }
   
   /**
-   * Creates an <tt>Update</tt> instance with SQL provided as <tt>Sql</tt> object.
-   * @param sql
-   * @return Update
-   * @throws SQLException
+   * Creates an <code>Update</code> instance with SQL provided as <code>Sql</code> object.
+   * @param sql SQL instance with interpreted SQL statement
+   * @return prepared DDL statement
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Update createUpdate(Sql sql) throws SQLException {
 
@@ -390,7 +391,7 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Executes a commit.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void commit() throws SQLException {
     
@@ -407,7 +408,7 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Exceutes a rollback.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void rollback() throws SQLException {
     
@@ -424,7 +425,7 @@ public class Database implements DatabaseEventListener {
   
   /**
    * Closes the connection.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void close() throws SQLException {
 

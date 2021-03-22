@@ -31,7 +31,7 @@ public class DOMElement extends DOMContent {
   
   /**
    * Constructor with the element's name.
-   * @param name
+   * @param name tag name
    */
   public DOMElement(String name) {
     
@@ -50,7 +50,7 @@ public class DOMElement extends DOMContent {
 
   /**
    * Sets the element's name.
-   * @param name
+   * @param name tag name
    */
   public void setName(String name) {
 
@@ -68,7 +68,7 @@ public class DOMElement extends DOMContent {
 
   /**
    * Sets the element's attributes.
-   * @param attributes
+   * @param attributes attributes of element
    */
   public void setAttributes(Map<String, String> attributes) {
     
@@ -86,7 +86,7 @@ public class DOMElement extends DOMContent {
   
   /**
    * Adds a content.
-   * @param content
+   * @param content child node
    */
   public void addContent(DOMContent content) {
     
@@ -95,8 +95,8 @@ public class DOMElement extends DOMContent {
   
   /**
    * Returns an attribute value.
-   * May be <tt>null</tt> when there is no attribute with the given name.
-   * @param name
+   * May be <code>null</code> when there is no attribute with the given name.
+   * @param name name of an attribute
    * @return value
    */
   public String getAttribute(String name) {
@@ -106,8 +106,8 @@ public class DOMElement extends DOMContent {
   
   /**
    * Returns an attribute value or a default if attribute doesn't exist.
-   * @param name
-   * @param defaultValue
+   * @param name name of an attribute
+   * @param defaultValue default value if attribute does not exist
    * @return value
    */
   public String getAttribute(String name, String defaultValue) {
@@ -118,8 +118,8 @@ public class DOMElement extends DOMContent {
   
   /**
    * Sets an attribute.
-   * @param name
-   * @param value
+   * @param name name of the attribute
+   * @param value value of the attribute
    */
   public void setAttribute(String name, String value) {
     

@@ -47,12 +47,12 @@ public class Util {
   }
   
   /**
-   * Compares two <tt>Comparable</tt>s which may be <tt>null</tt>.
-   * A <tt>null</tt> value is less than any other value.
+   * Compares two <code>Comparable</code>s which may be <code>null</code>.
+   * A <code>null</code> value is less than any other value.
    * @param <D> data type
    * @param a first object to compare
    * @param b second object to compare
-   * @return <tt>&lt;=-1</tt> (a &lt; b), <tt>0</tt> (a = b), or <tt>&gt;=1</tt> (a &gt; b)  
+   * @return <code>&lt;=-1</code> (a &lt; b), <code>0</code> (a = b), or <code>&gt;=1</code> (a &gt; b)  
    */
   static public <D extends Comparable<? super D>> int compare(D a, D b) {
     
@@ -70,10 +70,10 @@ public class Util {
   
   /**
    * Returns the maximum value.
-   * A <tt>null</tt> value isn't compared.
-   * If the paramter list is empty, the result is <tt>null</tt>.
+   * A <code>null</code> value isn't compared.
+   * If the paramter list is empty, the result is <code>null</code>.
    * @param <D> data type
-   * @param comparables
+   * @param comparables values
    * @return the maximum value
    */
   static public <D extends Comparable<? super D>> D max(D... comparables) {
@@ -94,10 +94,10 @@ public class Util {
   
   /**
    * Returns the minimum value.
-   * A <tt>null</tt> value isn't compared.
-   * If the paramter list is empty, the result is <tt>null</tt>.
+   * A <code>null</code> value isn't compared.
+   * If the paramter list is empty, the result is <code>null</code>.
    * @param <D> data type
-   * @param comparables
+   * @param comparables values
    * @return the minimum value
    */
   static public <D extends Comparable<? super D>> D min(D... comparables) {
@@ -117,10 +117,10 @@ public class Util {
   }
   
   /**
-   * Compares two <tt>int</tt> values.
+   * Compares two <code>int</code> values.
    * @param a first value
    * @param b second value
-   * @return <tt>-1</tt>, <tt>0</tt>, or <tt>1</tt>, as defined by <tt>Comparable</tt>
+   * @return <code>-1</code>, <code>0</code>, or <code>1</code>, as defined by <code>Comparable</code>
    */
   static public int compare(int a, int b) {
     
@@ -134,10 +134,10 @@ public class Util {
   }
   
   /**
-   * Compares two <tt>long</tt> values.
+   * Compares two <code>long</code> values.
    * @param a first value
    * @param b second value
-   * @return <tt>-1</tt>, <tt>0</tt>, or <tt>1</tt>, as defined by <tt>Comparable</tt>
+   * @return <code>-1</code>, <code>0</code>, or <code>1</code>, as defined by <code>Comparable</code>
    */
   static public int compare(long a, long b) {
     
@@ -151,10 +151,10 @@ public class Util {
   }
   
   /**
-   * Compares two <tt>double</tt> values.
+   * Compares two <code>double</code> values.
    * @param a first value
    * @param b second value
-   * @return <tt>-1</tt>, <tt>0</tt>, or <tt>1</tt>, as defined by <tt>Comparable</tt>
+   * @return <code>-1</code>, <code>0</code>, or <code>1</code>, as defined by <code>Comparable</code>
    */
   static public int compare(double a, double b) {
     
@@ -168,12 +168,12 @@ public class Util {
   }
   
   /**
-   * Tests if two objects which may be <tt>null</tt> are equal.
-   * If both parameters are <tt>null</tt> the result is <tt>true</tt>.
-   * @param <D>
-   * @param a
-   * @param b
-   * @return <tt>true</tt> or <tt>false</tt>
+   * Tests if two objects which may be <code>null</code> are equal.
+   * If both parameters are <code>null</code> the result is <code>true</code>.
+   * @param <D> data type
+   * @param a first value
+   * @param b second value
+   * @return <code>true</code> or <code>false</code>
    */
   static public <D extends Object> boolean isEqual(D a, D b) {
     
@@ -189,15 +189,17 @@ public class Util {
   }
   
   /**
+   * <p>
    * Returns a method name derived from a string.
-   * <p/>
+   * </p><p>
    * The result consists of the prefix, followed by
    * the modified input string.
    * All underline and hyphen characters are eliminated.
    * The first character of the input string and all characters
    * which follow the eliminated characters are returned in upper case.
+   * </p>
    * @param input an input string
-   * @param prefix a method name prefix, may be <tt>null</tt>
+   * @param prefix a method name prefix, may be <code>null</code>
    * @return a formally valid Java method name
    */
   static public String createMethodName(String input, String prefix) {
@@ -231,10 +233,10 @@ public class Util {
    * If the list of constructor argument parameters is not empty,
    * this method uses the reflection API to instantiate an object.
    * @param <D> class type
-   * @param clazz
-   * @param constructorArgs
+   * @param clazz class
+   * @param constructorArgs argument types
    * @return object
-   * @throws Exception
+   * @throws Exception when instance could not be created
    */
   static public <D> D createInstance(Class<D> clazz, Object... constructorArgs) throws Exception {
     
@@ -252,14 +254,14 @@ public class Util {
   
   /**
    * Returns the enum constant of the specified enum type with the specified name.
-   * If name is <tt>null</tt> or has a length of 0, then the result is <tt>null</tt>.
+   * If name is <code>null</code> or has a length of 0, then the result is <code>null</code>.
    * If name does not match an enum constant, there will be a second try with
    * the uppercase value of name.  
    * @param <E> the enum type
    * @param enumType the enum type
    * @param name the enum name
    * @return an enum constant
-   * @throws NoSuchEnumException
+   * @throws NoSuchEnumException when Enum has no appropriate constant
    */
   static public <E extends Enum<E>> E getEnum(Class<E> enumType, String name) throws NoSuchEnumException {
     
@@ -280,12 +282,12 @@ public class Util {
   
   /**
    * Returns the enum constant of the specified enum type with the specified ordinal number.
-   * If ordinal is <tt>-1</tt>, then the result is <tt>null</tt>.
+   * If ordinal is <code>-1</code>, then the result is <code>null</code>.
    * @param <E> the enum type
    * @param enumType the enum type
    * @param ordinal the ordinal number
    * @return an enum constant
-   * @throws NoSuchEnumException
+   * @throws NoSuchEnumException when Enum has no appropriate constant
    */
   static public <E extends Enum<E>> E getEnum(Class<E> enumType, int ordinal) throws NoSuchEnumException {
     
@@ -301,8 +303,8 @@ public class Util {
   }
   
   /**
-   * Returns the enum ordinal number or <tt>-1</tt> if the argument is <tt>null</tt>.
-   * @param enumConstant
+   * Returns the enum ordinal number or <code>-1</code> if the argument is <code>null</code>.
+   * @param enumConstant enum constant
    * @return enum ordinal
    */
   static public int getOrdinal(Enum<?> enumConstant) {
@@ -313,7 +315,7 @@ public class Util {
   /**
    * Returns the file path.
    * Returns the canonical path, or - in case of failure - the absolute path.
-   * @param file
+   * @param file file
    * @return path
    */
   static public String getPath(File file) {
@@ -327,9 +329,9 @@ public class Util {
   
   /**
    * Formats a date.
-   * Returns an empty string if date is <tt>null</tt>.
-   * @param date
-   * @param pattern
+   * Returns an empty string if date is <code>null</code>.
+   * @param date date value
+   * @param pattern formatter pattern
    * @return formatted date
    */
   static public String format(Date date, String pattern) {
@@ -343,11 +345,11 @@ public class Util {
   }
   
   /**
-   * Formats a <tt>BigDecimal</tt> to plain text.
-   * @param value
+   * Formats a <code>BigDecimal</code> to plain text.
+   * @param value numeric value
    * @param scale number of fraction digits
    * @param decimalChar the character representing the decimal point
-   * @param trim if <tt>true</tt>, trailing zeroes in the fractional part are removed
+   * @param trim if <code>true</code>, trailing zeroes in the fractional part are removed
    * @return formatted string
    */
   static public String format(BigDecimal value, int scale, char decimalChar, boolean trim) {
@@ -385,11 +387,11 @@ public class Util {
   }
   
   /**
-   * Formats a <tt>double</tt> value with a limited number of fraction digits.
-   * @param value
+   * Formats a <code>double</code> value with a limited number of fraction digits.
+   * @param value numeric value
    * @param scale number of fraction digits
    * @param decimalChar the character representing the decimal point
-   * @param trim if <tt>true</tt>, trailing zeroes in the fractional part are removed
+   * @param trim if <code>true</code>, trailing zeroes in the fractional part are removed
    * @return formatted string
    */
   static public String format(double value, int scale, char decimalChar, boolean trim) {
@@ -475,7 +477,7 @@ public class Util {
    * characters in a text are replaced by one single space character.
    * Leading and trailing whitespaces are trimmed. 
    * Returns an empty string when parameter is null.
-   * @param text
+   * @param text input string
    * @return normalized text
    */
   static public String normalize(String text) {
@@ -504,10 +506,10 @@ public class Util {
   }
   
   /**
-   * Tests whether a <tt>String</tt> doesn't have content.
-   * The result is <tt>true</tt> if the input is <tt>null</tt>
-   * or the length of the trimmed string is <tt>0</tt>.
-   * @param string
+   * Tests whether a <code>String</code> doesn't have content.
+   * The result is <code>true</code> if the input is <code>null</code>
+   * or the length of the trimmed string is <code>0</code>.
+   * @param string string to test
    * @return flag
    */
   static public boolean isEmpty(String string) {
@@ -516,10 +518,10 @@ public class Util {
   }
   
   /**
-   * Tests whether a <tt>String</tt> has content.
-   * The result is <tt>true</tt> if the input is not <tt>null</tt>
-   * and the length of the trimmed string is greater than <tt>0</tt>.
-   * @param string
+   * Tests whether a <code>String</code> has content.
+   * The result is <code>true</code> if the input is not <code>null</code>
+   * and the length of the trimmed string is greater than <code>0</code>.
+   * @param string string to test
    * @return flag
    */
   static public boolean hasContent(String string) {

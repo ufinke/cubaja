@@ -14,16 +14,16 @@ import de.ufinke.cubaja.util.Text;
  * Matches any number of sorted sources.
  * <p>
  * All sources have to be previously sorted by key in the same order.
- * If applicable, use the same <tt>Comparator</tt> for sorting and matching.
- * Keys may be <tt>null</tt>;
- * the <tt>Comparator</tt> should allow for <tt>null</tt> values
- * to avoid <tt>NullPointerException</tt>s.
+ * If applicable, use the same <code>Comparator</code> for sorting and matching.
+ * Keys may be <code>null</code>;
+ * the <code>Comparator</code> should allow for <code>null</code> values
+ * to avoid <code>NullPointerException</code>s.
  * <p>
- * The distinct keys are presented to the application by an <tt>Iterator</tt> in an ascending order
- * (ascending as defined by the <tt>Comparator</tt>). 
+ * The distinct keys are presented to the application by an <code>Iterator</code> in an ascending order
+ * (ascending as defined by the <code>Comparator</code>). 
  * For every key, the application can get the matching data objects from the {@link MatchSource} instances.
- * The <tt>Matcher</tt> ensures that any matching data objects which are not read from the
- * <tt>MatchSource</tt> are skipped before the next key in sequence is determined,
+ * The <code>Matcher</code> ensures that any matching data objects which are not read from the
+ * <code>MatchSource</code> are skipped before the next key in sequence is determined,
  * which is the lowest next key of all sources.
  * @author Uwe Finke
  * @param <K> key type
@@ -101,7 +101,7 @@ public final class Matcher<K> implements Iterable<K> {
   }
   
   /**
-   * Returns an <tt>Iterator</tt> over the key values.
+   * Returns an <code>Iterator</code> over the key values.
    */
   public Iterator<K> iterator() {
     

@@ -8,21 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Controls <tt>exectuteBatch</tt> for a group of <tt>Update</tt> instances.
+ * Controls <code>exectuteBatch</code> for a group of <code>Update</code> instances.
  * <p>
- * Any number of <tt>Update</tt> instances may be added to a
- * <tt>BatchGroup</tt>.
- * A call to the <tt>executeBatch</tt> method of this group or
- * one of the <tt>Update</tt> instances which belong to this group
- * calls <tt>executeBatch</tt> of all group members in the sequence
+ * Any number of <code>Update</code> instances may be added to a
+ * <code>BatchGroup</code>.
+ * A call to the <code>executeBatch</code> method of this group or
+ * one of the <code>Update</code> instances which belong to this group
+ * calls <code>executeBatch</code> of all group members in the sequence
  * they where added to this group.
- * Note that an <tt>executeBatch</tt> of an <tt>Update</tt> may
+ * Note that an <code>executeBatch</code> of an <code>Update</code> may
  * be forced automatically when the internal buffer 
- * (controlled by the <tt>batchSize</tt> attribute in 
- * <tt>DatabaseConfig</tt>) is full.
+ * (controlled by the <code>batchSize</code> attribute in 
+ * <code>DatabaseConfig</code>) is full.
  * <p>
- * This class may be useful for high volume DML when a <tt>delete</tt> has to
- * precede an <tt>insert</tt> statement
+ * This class may be useful for high volume DML when a <code>delete</code> has to
+ * precede an <code>insert</code> statement
  * (e.g. as alternate strategy for 'upsert' problems)
  * or in any other case where the execution sequence of batch DML statements matters.
  * @author Uwe Finke
@@ -38,9 +38,9 @@ public class BatchGroup {
   }
 
   /**
-   * Adds an <tt>Update</tt> to this group.
+   * Adds an <code>Update</code> to this group.
    * 
-   * @param update
+   * @param update preparted DML statement
    */
   public void addUpdate(Update update) {
 
@@ -48,11 +48,11 @@ public class BatchGroup {
   }
 
   /**
-   * Sets automatic commit after <tt>executeBatch</tt>. An <tt>executeBatch</tt>
-   * may be triggered automatically by one of the <tt>Update</tt> instances.
-   * Default is <tt>false</tt>.
+   * Sets automatic commit after <code>executeBatch</code>. An <code>executeBatch</code>
+   * may be triggered automatically by one of the <code>Update</code> instances.
+   * Default is <code>false</code>.
    * 
-   * @param autoCommit
+   * @param autoCommit true or false
    */
   public void setAutoCommit(boolean autoCommit) {
 
@@ -60,10 +60,10 @@ public class BatchGroup {
   }
 
   /**
-   * Calls <tt>executeBatch</tt> of all <tt>Update</tt> instances.
-   * If this group's <tt>autoCommit</tt> flag is set,
-   * a <tt>commit</tt> is send to the database connection. 
-   * @throws SQLException
+   * Calls <code>executeBatch</code> of all <code>Update</code> instances.
+   * If this group's <code>autoCommit</code> flag is set,
+   * a <code>commit</code> is send to the database connection. 
+   * @throws SQLException when an exception occurs during SQL processing
    */
   public void executeBatch() throws SQLException {
 

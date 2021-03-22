@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.config;
 
 /**
- * Type of <tt>DOMContent</tt>.
+ * Type of <code>DOMContent</code>.
  * @author Uwe Finke
  */
 public enum DOMType {

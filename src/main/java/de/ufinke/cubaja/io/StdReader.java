@@ -12,15 +12,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * Reader for <tt>stdout</tt> and <tt>stderr</tt> streams of a <tt>Process</tt>.
+ * Reader for <code>stdout</code> and <code>stderr</code> streams of a <code>Process</code>.
  * @author Uwe Finke
  */
 public class StdReader {
 
   /**
-   * Creates an instance to process <tt>stdout</tt>.
-   * @param process
-   * @param processor
+   * Creates an instance to process <code>stdout</code>.
+   * @param process runtime process
+   * @param processor instance for processing stdout lines
    * @return instance
    */
   static public StdReader stdout(Process process, StdProcessor processor) {
@@ -29,9 +29,9 @@ public class StdReader {
   }
   
   /**
-   * Creates an instance to process <tt>stderr</tt>.
-   * @param process
-   * @param processor
+   * Creates an instance to process <code>stderr</code>.
+   * @param process runtime process
+   * @param processor instance for processing stderr lines
    * @return instance
    */
   static public StdReader stderr(Process process, StdProcessor processor) {
@@ -52,7 +52,7 @@ public class StdReader {
   /**
    * Waits for end of stream and releases resources.
    * @return number of lines processed
-   * @throws Exception
+   * @throws Exception any exception during processing
    */
   public int waitFor() throws Exception {
     

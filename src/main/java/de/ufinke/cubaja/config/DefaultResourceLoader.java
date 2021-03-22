@@ -12,7 +12,7 @@ import org.xml.sax.InputSource;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Default <tt>ResourceLoader</tt> implementation.
+ * Default <code>ResourceLoader</code> implementation.
  * Loads config XML from a resource, from file system or from an internal map.
  * @author Uwe Finke
  */
@@ -50,10 +50,10 @@ public class DefaultResourceLoader implements ResourceLoader {
   
   /**
    * Adds a string as XML source.
-   * Note that <tt>resourceName</tt> should end with <tt>.xml</tt>
-   * if the string will be used due to <tt>Configurator.setName()</tt>.
-   * @param recoureName
-   * @param xml
+   * Note that <code>resourceName</code> should end with <code>.xml</code>
+   * if the string will be used due to <code>Configurator.setName()</code>.
+   * @param recoureName name which will be used as key to include the XML string
+   * @param xml string with xml
    */
   public void addString(String recoureName, String xml) {
     

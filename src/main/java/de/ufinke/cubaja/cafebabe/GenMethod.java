@@ -9,8 +9,8 @@ import java.util.List;
 
 /**
  * Wrapper for a generated method.
- * An instance is created by {@link GenClass#createField createMethod} 
- * or {@link GenClass#createField createConstructor} in <tt>GenClass</tt>.
+ * An instance is created by {@link GenClass#createMethod} 
+ * or {@link GenClass#createConstructor}.
  * @author Uwe Finke
  */
 public class GenMethod implements Generatable, AccessFlags {
@@ -53,8 +53,8 @@ public class GenMethod implements Generatable, AccessFlags {
   
   /**
    * Adds an exception.
-   * This corresponds to an entry in the <tt>throws</tt> clause of the method.
-   * @param exception
+   * This corresponds to an entry in the <code>throws</code> clause of the method.
+   * @param exception an exception type
    */
   public void addException(Type exception) {
     
@@ -70,8 +70,8 @@ public class GenMethod implements Generatable, AccessFlags {
    * The bridge method is added to the class.
    * In a bridge method, the generic arguments are casted to the 
    * argument types of the original method.
-   * @param genericReturnType
-   * @param genericArgs
+   * @param genericReturnType casted return type
+   * @param genericArgs casted argument types
    */
   public void createGenericBridge(Type genericReturnType, Type... genericArgs) {
     
