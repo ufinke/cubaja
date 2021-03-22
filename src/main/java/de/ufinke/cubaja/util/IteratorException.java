@@ -4,8 +4,8 @@
 package de.ufinke.cubaja.util;
 
 /**
- * <tt>RuntimeException</tt> wrapping another exception.
- * Needed because <tt>Iterator</tt> methods do not allow regular exceptions to be thrown.
+ * <code>RuntimeException</code> wrapping another exception.
+ * Needed because <code>Iterator</code> methods do not allow regular exceptions to be thrown.
  * @author Uwe Finke
  */
 public class IteratorException extends RuntimeException {

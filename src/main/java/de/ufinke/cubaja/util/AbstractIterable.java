@@ -9,10 +9,10 @@ import java.util.Iterator;
  * Source of iterable data.
  * <p>
  * Starts a background worker thread.
- * Within the implementation of <tt>execute</tt>
+ * Within the implementation of <code>execute</code>
  * (which runs in the background thread) 
- * call <tt>add</tt> for every source object.
- * The <tt>add</tt> method will add the object to a queue. The queue is read by <tt>iterator</tt>.   
+ * call <code>add</code> for every source object.
+ * The <code>add</code> method will add the object to a queue. The queue is read by <code>iterator</code>.   
  * @author Uwe Finke
  * @param <D> data type
  */
@@ -30,7 +30,7 @@ public abstract class AbstractIterable<D> implements Iterable<D> {
   
   /**
    * Constructor.
-   * @param queueCapacity
+   * @param queueCapacity maximum number of elements in the queue
    */
   protected AbstractIterable(int queueCapacity) {
 
@@ -41,16 +41,16 @@ public abstract class AbstractIterable<D> implements Iterable<D> {
   /**
    * Data provider method.
    * This method runs in a separate thread.
-   * @throws Exception
+   * @throws Exception any exception
    */
   protected abstract void execute() throws Exception;
   
   /**
    * Adds an object to the queue.
-   * Call this method within <tt>execute</tt>.
-   * It is not allowed to pass <tt>null</tt>.
-   * @param data
-   * @throws Exception
+   * Call this method within <code>execute</code>.
+   * It is not allowed to pass <code>null</code>.
+   * @param data object to add to the queue
+   * @throws Exception any exception
    */
   public final void add(D data) throws Exception {
     
@@ -58,7 +58,7 @@ public abstract class AbstractIterable<D> implements Iterable<D> {
   }
   
   /**
-   * Delivers the objects added by <tt>execute</tt>.
+   * Delivers the objects added by <code>execute</code>.
    */
   public final Iterator<D> iterator() {
 

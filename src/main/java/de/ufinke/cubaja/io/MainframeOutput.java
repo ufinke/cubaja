@@ -13,15 +13,15 @@ import de.ufinke.cubaja.util.Util;
 /**
  * Writes mainframe data.
  * <p>
- * The various <tt>write</tt> methods write data into an internal buffer.
- * Method <tt>drainBuffer</tt> writes the buffer's content 
+ * The various <code>write</code> methods write data into an internal buffer.
+ * Method <code>drainBuffer</code> writes the buffer's content 
  * to the target output stream.
  * <p>
  * To produce variable length records,
  * set the position manually to the start of the record's data area
  * before writing any data into the buffer.
- * Set the length value prior to the call to <tt>drainBuffer</tt>; 
- * the length may be retrieved with the <tt>getSize</tt> method.
+ * Set the length value prior to the call to <code>drainBuffer</code>; 
+ * the length may be retrieved with the <code>getSize</code> method.
  * @author Uwe Finke
  */
 public class MainframeOutput {
@@ -36,9 +36,11 @@ public class MainframeOutput {
   /**
    * Constructor.
    * <p>
-   * The <tt>charset</tt> may be either a single byte or a double byte character set.
+   * The <code>charset</code> may be either a single byte or a double byte character set.
    * Do not use a character set with a variant number of bytes for a single character
    * (such as UTF-8)!
+   * @param stream output stream
+   * @param charset character set
    */  
   public MainframeOutput(OutputStream stream, Charset charset) {
   
@@ -48,9 +50,11 @@ public class MainframeOutput {
   /**
    * Constructor.
    * <p>
-   * The <tt>charset</tt> may be either a single byte or a double byte character set.
+   * The <code>charset</code> may be either a single byte or a double byte character set.
    * Do not use a character set with a variant number of bytes for a single character
    * (such as UTF-8)!
+   * @param stream output stream
+   * @param charset name of a character set
    */  
   public MainframeOutput(OutputStream stream, String charset) {
     
@@ -61,7 +65,7 @@ public class MainframeOutput {
   
   /**
    * Closes the underlaying stream.
-   * @throws IOException
+   * @throws IOException when the stream could not be closed
    */
   public void close() throws IOException {
     
@@ -70,7 +74,7 @@ public class MainframeOutput {
   
   /**
    * Drains the internal buffer's content to the underlaying stream.
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void drainBuffer() throws IOException {
 
@@ -80,7 +84,7 @@ public class MainframeOutput {
   /**
    * Writes a record.
    * Calls {@link #drainBuffer() drainBuffer} and increments the record count.
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void nextRecord() throws IOException {
     
@@ -100,7 +104,7 @@ public class MainframeOutput {
   
   /**
    * Sets the internal buffer's position.
-   * @param offset
+   * @param offset position within the buffer, fist byte position is 0
    */
   public void setPosition(int offset) {
     
@@ -128,8 +132,8 @@ public class MainframeOutput {
   
   /**
    * Writes a raw byte.
-   * @param value
-   * @throws IOException
+   * @param value byte value
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeUnsignedByte(int value) throws IOException {
     
@@ -137,9 +141,9 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a binary <tt>byte</tt> value.
-   * @param value
-   * @throws IOException
+   * Writes a binary <code>byte</code> value.
+   * @param value byte value
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeByte(int value) throws IOException {
     
@@ -147,9 +151,9 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a binary <tt>short</tt> value.
-   * @param value
-   * @throws IOException
+   * Writes a binary <code>short</code> value.
+   * @param value short value
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeShort(int value) throws IOException {
     
@@ -157,9 +161,9 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a binary <tt>int</tt> value.
-   * @param value
-   * @throws IOException
+   * Writes a binary <code>int</code> value.
+   * @param value int value
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeInt(int value) throws IOException {
     
@@ -167,9 +171,9 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a binary <tt>long</tt> value.
-   * @param value
-   * @throws IOException
+   * Writes a binary <code>long</code> value.
+   * @param value long value
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeLong(long value) throws IOException {
     
@@ -179,15 +183,15 @@ public class MainframeOutput {
   /**
    * Writes a string.
    * <p>
-   * If the string's length is less than <tt>charCount</tt>,
+   * If the string's length is less than <code>charCount</code>,
    * it is padded to the right with spaces.
-   * If the string's length is greater than <tt>charCount</tt>,
+   * If the string's length is greater than <code>charCount</code>,
    * it is truncated.
    * <p>
-   * A <tt>null</tt> value is handled as an empty string.
-   * @param value
-   * @param charCount
-   * @throws IOException
+   * A <code>null</code> value is handled as an empty string.
+   * @param value string value
+   * @param charCount fix number of characters of the output string 
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeString(String value, int charCount) throws IOException {
     
@@ -210,10 +214,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes an <tt>int</tt> in zoned format.
-   * @param value
+   * Writes an <code>int</code> in zoned format.
+   * @param value int value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeZoned(int value, int digits) throws IOException {
     
@@ -221,10 +225,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>long</tt> in zoned format.
-   * @param value
+   * Writes a <code>long</code> in zoned format.
+   * @param value long value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeZoned(long value, int digits) throws IOException {
     
@@ -232,11 +236,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>double</tt> in zoned format
-   * @param value
+   * Writes a <code>double</code> in zoned format
+   * @param value double value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeZoned(double value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -245,11 +249,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>BigDecimal</tt> in zoned format
-   * @param value
+   * Writes a <code>BigDecimal</code> in zoned format
+   * @param value BigDecimal value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeZoned(BigDecimal value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -315,10 +319,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes an <tt>int</tt> in packed format.
-   * @param value
+   * Writes an <code>int</code> in packed format.
+   * @param value int value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writePacked(int value, int digits) throws IOException {
     
@@ -326,10 +330,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>long</tt> in packed format.
-   * @param value
+   * Writes a <code>long</code> in packed format.
+   * @param value long value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writePacked(long value, int digits) throws IOException {
     
@@ -337,11 +341,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>double</tt> in packed format
-   * @param value
+   * Writes a <code>double</code> in packed format
+   * @param value double value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writePacked(double value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -350,11 +354,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>BigDecimal</tt> in packed format
-   * @param value
+   * Writes a <code>BigDecimal</code> in packed format
+   * @param value BigDecimal value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writePacked(BigDecimal value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -461,10 +465,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes an <tt>int</tt> in unsigned packed format.
-   * @param value
+   * Writes an <code>int</code> in unsigned packed format.
+   * @param value int value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeUnsignedPacked(int value, int digits) throws IOException {
     
@@ -472,10 +476,10 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>long</tt> in unsigned packed format.
-   * @param value
+   * Writes a <code>long</code> in unsigned packed format.
+   * @param value long value
    * @param digits number of digits
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeUnsignedPacked(long value, int digits) throws IOException {
     
@@ -483,11 +487,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>double</tt> in unsigned packed format
-   * @param value
+   * Writes a <code>double</code> in unsigned packed format
+   * @param value double value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeUnsignedPacked(double value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -496,11 +500,11 @@ public class MainframeOutput {
   }
   
   /**
-   * Writes a <tt>BigDecimal</tt> in unsigned packed format
-   * @param value
+   * Writes a <code>BigDecimal</code> in unsigned packed format
+   * @param value BigDecimal value
    * @param integerDigits number of digits before imaginary decimal point
    * @param fractionalDigits number of digits after imaginary decimal point
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeUnsignedPacked(BigDecimal value, int integerDigits, int fractionalDigits) throws IOException {
     
@@ -633,7 +637,7 @@ public class MainframeOutput {
   /**
    * Writes a raw byte array.
    * @param b byte array
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeBytes(byte[] b) throws IOException {
 
@@ -645,7 +649,7 @@ public class MainframeOutput {
    * @param b byte array
    * @param off offset within the array
    * @param len number of bytes to write
-   * @throws IOException
+   * @throws IOException when there is a problem to write into the stream
    */
   public void writeBytes(byte[] b, int off, int len) throws IOException {
 
@@ -665,7 +669,7 @@ public class MainframeOutput {
   /**
    * Replaces the internal buffer.
    * May be useful to share the buffer with other instances.
-   * @param buffer
+   * @param buffer the new buffer instance
    */
   public void setBuffer(RandomAccessBuffer buffer) {
     

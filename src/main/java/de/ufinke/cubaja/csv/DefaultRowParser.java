@@ -9,15 +9,17 @@ import java.io.Reader;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Default <tt>RowParser</tt> implementation.
  * <p>
+ * Default <code>RowParser</code> implementation.
+ * </p><p>
  * If an escape character is defined, this parser supposes
  * escape character usage as described in 
- * {@link <a href="http://tools.ietf.org/html/rfc4180">rfc4180</a>},
+ * <a href="http://tools.ietf.org/html/rfc4180">rfc4180</a>,
  * with the exception that this parser allows any character to be an escape character
  * and any CR / LF combination to be a line break.
- * A line break within an escaped field will be represented by a single LF (<tt>\n</tt>)
+ * A line break within an escaped field will be represented by a single LF (<code>\n</code>)
  * character in the resulting string even if there was a CR / LF combination in the origin.
+ * </p>
  * @author Uwe Finke
  */
 public class DefaultRowParser implements RowParser {

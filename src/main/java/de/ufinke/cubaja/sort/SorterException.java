@@ -6,7 +6,7 @@ package de.ufinke.cubaja.sort;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Signals an exception thrown by <tt>Sorter</tt>.
+ * Signals an exception thrown by <code>Sorter</code>.
  * @author Uwe Finke
  */
 public class SorterException extends RuntimeException {
@@ -15,7 +15,7 @@ public class SorterException extends RuntimeException {
   
   /**
    * Constructor with forwarded cause.
-   * @param cause
+   * @param cause nested throwable
    */
   public SorterException(Throwable cause) {
     
@@ -24,7 +24,7 @@ public class SorterException extends RuntimeException {
   
   /**
    * Constructor.
-   * @param msg
+   * @param msg message text
    */
   public SorterException(String msg) {
     

@@ -22,8 +22,8 @@ public class Period implements Externalizable, Comparable<Period> {
   
   /**
    * Constructor with date values.
-   * @param begin
-   * @param end
+   * @param begin start of period
+   * @param end end of period
    */
   public Period(Date begin, Date end) {
   
@@ -33,8 +33,8 @@ public class Period implements Externalizable, Comparable<Period> {
   
   /**
    * Constructor with calendar values.
-   * @param begin
-   * @param end
+   * @param begin start of period
+   * @param end end of period
    */
   public Period(Calendar begin, Calendar end) {
     
@@ -76,7 +76,7 @@ public class Period implements Externalizable, Comparable<Period> {
   }
   
   /**
-   * Compares to another <tt>Period</tt>.
+   * Compares to another <code>Period</code>.
    */
   public int compareTo(Period other) {
     
@@ -89,7 +89,7 @@ public class Period implements Externalizable, Comparable<Period> {
   
   /**
    * Determines if a date falls into the period.
-   * @param date
+   * @param date date to test
    * @return flag
    */
   public boolean contains(Date date) {

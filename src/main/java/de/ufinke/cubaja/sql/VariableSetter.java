@@ -11,9 +11,9 @@ public interface VariableSetter {
 
   /**
    * Sets variables of a prepared statement to data objects values.
-   * @param ps
-   * @param dataObject
-   * @throws Exception
+   * @param ps prepared statement
+   * @param dataObject object with setter methods
+   * @throws Exception any exception
    */
   public void setVariables(PreparedSql ps, Object dataObject) throws Exception;
 }

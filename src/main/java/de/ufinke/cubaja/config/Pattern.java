@@ -9,24 +9,26 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Defines the pattern of attribute value or element content strings.
  * <p>
- * When a <tt>Pattern</tt> annotation exists for a setter / adder
+ * Defines the pattern of attribute value or element content strings.
+ * </p><p>
+ * When a <code>Pattern</code> annotation exists for a setter / adder
  * method of a basic parameter type, the XML attribute value or normalized element content string
- * is checked against the specified pattern by means of the <tt>String</tt>s
- * <tt>matches</tt> method.
+ * is checked against the specified pattern by means of the <code>String</code>s
+ * <code>matches</code> method.
  * If the value does not match the regular expression of the pattern, an exception will be thrown.
  * The message includes the hint. If no hint is specified, the original pattern string will be used.
- * <p/>
+ * </p><p>
  * For element nodes, there is no pattern check.
- * <p>
- * For <tt>java.util.Date</tt> parameter types, the pattern is not a regular expression.
+ * </p><p>
+ * For <code>java.util.Date</code> parameter types, the pattern is not a regular expression.
  * It is used for parsing
  * and has to be formed according
  * to the rules of {@link java.text.SimpleDateFormat}.
- * <p>
+ * </p><p>
  * For numeric parameter types, the pattern is not used for parsing but
  * can be used to limit values to an explicit number of digits.  
+ * </p>
  * @author Uwe Finke
  */
 @Retention(value=RetentionPolicy.RUNTIME)

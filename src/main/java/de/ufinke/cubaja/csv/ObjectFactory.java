@@ -11,9 +11,9 @@ public interface ObjectFactory {
 
   /**
    * Creates a data object.
-   * @param reader
-   * @return data object
-   * @throws CsvException
+   * @param reader reader
+   * @return data object data object with setter methods
+   * @throws CsvException when the object could not be created
    */
   public Object createObject(CsvReader reader) throws CsvException;
 }

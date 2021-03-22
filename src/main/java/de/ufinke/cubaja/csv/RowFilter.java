@@ -13,9 +13,9 @@ public interface RowFilter {
    * Signals whether a row should be processed.
    * A filter is used in
    * {@link CsvReader#nextRow()}.
-   * If the result is <tt>false</tt>,
+   * If the result is <code>false</code>,
    * the reader reads the next row immediately.
-   * @param reader
+   * @param reader reader
    * @return flag
    */
   public boolean acceptRow(CsvReader reader);

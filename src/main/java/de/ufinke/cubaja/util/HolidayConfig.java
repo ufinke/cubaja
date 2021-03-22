@@ -21,53 +21,56 @@ import de.ufinke.cubaja.config.EndElementHandler;
 import de.ufinke.cubaja.config.Mandatory;
 
 /**
- * Holiday definitions and informations.
  * <p>
- * XML attributes and subelements:
- * <blockquote>
- * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
- *   <tr bgcolor="#ccccff">
- *     <th align="left">Name</th>
- *     <th align="left">Description</th>
- *     <th align="center">A/E</th>
- *     <th align="center">M</th>
- *     <th align="center">U</th>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>weekday</tt></td>
- *     <td align="left" valign="top">defines weekdays as holiday (see {@link HolidayConfig.WeekdayConfig})</td>
- *     <td align="center" valign="top">E</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top"> </td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>date</tt></td>
- *     <td align="left" valign="top">defines a specific date as holiday (see {@link HolidayConfig.DateConfig})</td>
- *     <td align="center" valign="top">E</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top"> </td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>fix</tt></td>
- *     <td align="left" valign="top">defines a holiday by month and day (see {@link HolidayConfig.FixConfig})</td>
- *     <td align="center" valign="top">E</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top"> </td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>easter</tt></td>
- *     <td align="left" valign="top">defines easter dependent holiday (see {@link HolidayConfig.EasterConfig})</td>
- *     <td align="center" valign="top">E</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top"> </td>
- *     </tr>
+ * Holiday definitions and informations.
+ * </p>
+ * <table class="striped">
+ * <caption style="text-align:left">XML attributes and subelements</caption>
+ * <thead>
+ * <tr>
+ * <th scope="col" style="text-align:left">Name</th>
+ * <th scope="col" style="text-align:left">Description</th>
+ * <th scope="col" style="text-align:center">A/E</th>
+ * <th scope="col" style="text-align:center">M</th>
+ * <th scope="col" style="text-align:center">U</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td style="text-align:left"><code>weekday</code></td>
+ * <td style="text-align:left">defines weekdays as holiday (see {@link HolidayConfig.WeekdayConfig})</td>
+ * <td style="text-align:center">E</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center"> </td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>date</code></td>
+ * <td style="text-align:left">defines a specific date as holiday (see {@link HolidayConfig.DateConfig})</td>
+ * <td style="text-align:center">E</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center"> </td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>fix</code></td>
+ * <td style="text-align:left">defines a holiday by month and day (see {@link HolidayConfig.FixConfig})</td>
+ * <td style="text-align:center">E</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center"> </td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>easter</code></td>
+ * <td style="text-align:left">defines easter dependent holiday (see {@link HolidayConfig.EasterConfig})</td>
+ * <td style="text-align:center">E</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center"> </td>
+ * </tr>
+ * </tbody>
  * </table>
- * <tt>A/E</tt>: attribute or subelement
- * <br>
- * <tt>M</tt>: mandatory
- * <br>
- * <tt>U</tt>: unique
- * </blockquote>
+ * <p>
+ * <code>A/E</code>: attribute or subelement<br>
+ * <code>M</code>: mandatory<br>
+ * <code>U</code>: unique
+ * </p>
  * @author Uwe Finke
  */
 public class HolidayConfig {
@@ -289,47 +292,52 @@ public class HolidayConfig {
   // ----- entry superclass -----------------------------------------------------------------------
   
   /**
+   * <p>
    * Holiday configuration entry superclass.
    * Don't use this class directly; use subclasses.
-   * <p>
+   * </p><p>
    * The following XML attributes and subelements are common to all subclasses:
-   * <blockquote>
-   * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
-   *   <tr bgcolor="#ccccff">
-   *     <th align="left">Name</th>
-   *     <th align="left">Description</th>
-   *     <th align="center">A/E</th>
-   *     <th align="center">M</th>
-   *     <th align="center">U</th>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>name</tt></td>
-   *     <td align="left" valign="top">name of the holiday</td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>validFrom</tt></td>
-   *     <td align="left" valign="top">first day of period when this holiday is valid; format <tt>yyyy-MM-dd</tt></td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>validTo</tt></td>
-   *     <td align="left" valign="top">last day of period when this holiday is valid; format <tt>yyyy-MM-dd</tt></td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
+   * </p>
+   * <table class="striped">
+   * <caption style="text-align:left">XML attributes and subelements</caption>
+   * <thead>
+   * <tr>
+   * <th scope="col" style="text-align:left">Name</th>
+   * <th scope="col" style="text-align:left">Description</th>
+   * <th scope="col" style="text-align:center">A/E</th>
+   * <th scope="col" style="text-align:center">M</th>
+   * <th scope="col" style="text-align:center">U</th>
+   * </tr>
+   * </thead>
+   * <tbody>
+   * <tr>
+   * <td style="text-align:left"><code>name</code></td>
+   * <td style="text-align:left">name of the holiday</td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * <tr>
+   * <td style="text-align:left"><code>validFrom</code></td>
+   * <td style="text-align:left">first day of period when this holiday is valid; format <code>yyyy-MM-dd</code></td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * <tr>
+   * <td style="text-align:left"><code>validTo</code></td>
+   * <td style="text-align:left">last day of period when this holiday is valid; format <code>yyyy-MM-dd</code></td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * </tbody>
    * </table>
-   * <tt>A/E</tt>: attribute or subelement
-   * <br>
-   * <tt>M</tt>: mandatory
-   * <br>
-   * <tt>U</tt>: unique
-   * </blockquote>
+   * <p>
+   * <code>A/E</code>: attribute or subelement<br>
+   * <code>M</code>: mandatory<br>
+   * <code>U</code>: unique
+   * </p>
    */
   static protected class HolidayEntryConfig {
 
@@ -352,7 +360,7 @@ public class HolidayConfig {
      * Sets the name of the holiday.
      * The name is not used by the implementation.
      * The only purpose of this attribute is documentation in the configuration file.
-     * @param name
+     * @param name holiday name
      */
     public void setName(String name) {
 
@@ -383,7 +391,7 @@ public class HolidayConfig {
     /**
      * Sets the first day of period when this holiday is valid.
      * By default, there is no limitation.
-     * @param validFrom
+     * @param validFrom first day of valid period
      */
     public void setValidFrom(Date validFrom) {
 
@@ -402,7 +410,7 @@ public class HolidayConfig {
     /**
      * Sets the last day of period when this holiday is valid.
      * By default, there is no limitation.
-     * @param validTo
+     * @param validTo last day of valid period
      */
     public void setValidTo(Date validTo) {
 
@@ -413,33 +421,37 @@ public class HolidayConfig {
   // ----- date entry -----------------------------------------------------------------------------
   
   /**
-   * Holiday configuration entry subclass for explicit dates.
    * <p>
+   * Holiday configuration entry subclass for explicit dates.
+   * </p><p>
    * Common XML attributes are described in {@link HolidayConfig.HolidayEntryConfig}.
-   * Special XML attributes and subelements:
-   * <blockquote>
-   * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
-   *   <tr bgcolor="#ccccff">
-   *     <th align="left">Name</th>
-   *     <th align="left">Description</th>
-   *     <th align="center">A/E</th>
-   *     <th align="center">M</th>
-   *     <th align="center">U</th>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>date</tt></td>
-   *     <td align="left" valign="top">date; format <tt>yyyy-MM-dd</tt></td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
+   * </p>
+   * <table class="striped">
+   * <caption style="text-align:left">Special XML attributes and subelements</caption>
+   * <thead>
+   * <tr>
+   * <th scope="col" style="text-align:left">Name</th>
+   * <th scope="col" style="text-align:left">Description</th>
+   * <th scope="col" style="text-align:center">A/E</th>
+   * <th scope="col" style="text-align:center">M</th>
+   * <th scope="col" style="text-align:center">U</th>
+   * </tr>
+   * </thead>
+   * <tbody>
+   * <tr>
+   * <td style="text-align:left"><code>date</code></td>
+   * <td style="text-align:left">date; format <code>yyyy-MM-dd</code></td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * </tbody>
    * </table>
-   * <tt>A/E</tt>: attribute or subelement
-   * <br>
-   * <tt>M</tt>: mandatory
-   * <br>
-   * <tt>U</tt>: unique
-   * </blockquote>
+   * <p>
+   * <code>A/E</code>: attribute or subelement<br>
+   * <code>M</code>: mandatory<br>
+   * <code>U</code>: unique
+   * </p>
    */
   static public class DateConfig extends HolidayEntryConfig {
 
@@ -464,8 +476,8 @@ public class HolidayConfig {
 
     /**
      * Sets the date.
-     * The format is <tt>yyyy-MM-dd</tt>.
-     * @param date
+     * The format is <code>yyyy-MM-dd</code>.
+     * @param date single date
      */
     @Mandatory
     public void setDate(Date date) {
@@ -477,33 +489,37 @@ public class HolidayConfig {
   // ----- weekday entry --------------------------------------------------------------------------
   
   /**
-   * Holiday configuration entry subclass for weekdays.
    * <p>
+   * Holiday configuration entry subclass for weekdays.
+   * </p><p>
    * Common XML attributes are described in {@link HolidayConfig.HolidayEntryConfig}.
-   * Special XML attributes and subelements:
-   * <blockquote>
-   * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
-   *   <tr bgcolor="#ccccff">
-   *     <th align="left">Name</th>
-   *     <th align="left">Description</th>
-   *     <th align="center">A/E</th>
-   *     <th align="center">M</th>
-   *     <th align="center">U</th>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>days</tt></td>
-   *     <td align="left" valign="top">comma separated list of {@link Weekday} constants</td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
+   * </p>
+   * <table class="striped">
+   * <caption style="text-align:left">Special XML attributes and subelements</caption>
+   * <thead>
+   * <tr>
+   * <th scope="col" style="text-align:left">Name</th>
+   * <th scope="col" style="text-align:left">Description</th>
+   * <th scope="col" style="text-align:center">A/E</th>
+   * <th scope="col" style="text-align:center">M</th>
+   * <th scope="col" style="text-align:center">U</th>
+   * </tr>
+   * </thead>
+   * <tbody>
+   * <tr>
+   * <td style="text-align:left"><code>days</code></td>
+   * <td style="text-align:left">comma separated list of {@link Weekday} constants</td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * </tbody>
    * </table>
-   * <tt>A/E</tt>: attribute or subelement
-   * <br>
-   * <tt>M</tt>: mandatory
-   * <br>
-   * <tt>U</tt>: unique
-   * </blockquote>
+   * <p>
+   * <code>A/E</code>: attribute or subelement<br>
+   * <code>M</code>: mandatory<br>
+   * <code>U</code>: unique
+   * </p>
    */
   static public class WeekdayConfig extends HolidayEntryConfig {
 
@@ -528,7 +544,7 @@ public class HolidayConfig {
 
     /**
      * Sets the days.
-     * @param days
+     * @param days weekdays which are free days
      */
     @Mandatory
     public void setDays(Weekday[] days) {
@@ -540,40 +556,44 @@ public class HolidayConfig {
   // ----- fix day entry --------------------------------------------------------------------------
   
   /**
-   * Holiday configuration entry subclass for a yearly fixed holiday.
    * <p>
+   * Holiday configuration entry subclass for a yearly fixed holiday.
+   * </p><p>
    * Common XML attributes are described in {@link HolidayConfig.HolidayEntryConfig}.
-   * Special XML attributes and subelements:
-   * <blockquote>
-   * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
-   *   <tr bgcolor="#ccccff">
-   *     <th align="left">Name</th>
-   *     <th align="left">Description</th>
-   *     <th align="center">A/E</th>
-   *     <th align="center">M</th>
-   *     <th align="center">U</th>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>month</tt></td>
-   *     <td align="left" valign="top">month number, ranging from <tt>1</tt> to <tt>12</tt></td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>day</tt></td>
-   *     <td align="left" valign="top">day of month</td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
+   * </p>
+   * <table class="striped">
+   * <caption style="text-align:left">Special XML attributes and subelements</caption>
+   * <thead>
+   * <tr>
+   * <th scope="col" style="text-align:left">Name</th>
+   * <th scope="col" style="text-align:left">Description</th>
+   * <th scope="col" style="text-align:center">A/E</th>
+   * <th scope="col" style="text-align:center">M</th>
+   * <th scope="col" style="text-align:center">U</th>
+   * </tr>
+   * </thead>
+   * <tbody>
+   * <tr>
+   * <td style="text-align:left"><code>month</code></td>
+   * <td style="text-align:left">month number, ranging from <code>1</code> to <code>12</code></td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * <tr>
+   * <td style="text-align:left"><code>day</code></td>
+   * <td style="text-align:left">day of month</td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * </tbody>
    * </table>
-   * <tt>A/E</tt>: attribute or subelement
-   * <br>
-   * <tt>M</tt>: mandatory
-   * <br>
-   * <tt>U</tt>: unique
-   * </blockquote>
+   * <p>
+   * <code>A/E</code>: attribute or subelement<br>
+   * <code>M</code>: mandatory<br>
+   * <code>U</code>: unique
+   * </p>
    */
   static public class FixConfig extends HolidayEntryConfig implements EndElementHandler {
 
@@ -601,7 +621,7 @@ public class HolidayConfig {
 
     /**
      * Sets the day.
-     * @param day
+     * @param day day of month
      */
     @Mandatory
     public void setDay(int day) {
@@ -619,8 +639,8 @@ public class HolidayConfig {
     }
 
     /**
-     * Sets the month in the range from <tt>1</tt> to <tt>12</tt>.
-     * @param month
+     * Sets the month in the range from <code>1</code> to <code>12</code>.
+     * @param month month
      */
     @Mandatory
     public void setMonth(int month) {
@@ -631,7 +651,7 @@ public class HolidayConfig {
     /**
      * Checks correct settings.
      * Used internally during parse.
-     * @throws ConfigException
+     * @throws ConfigException when the day / month combination is invalid
      */
     public void endElement() throws ConfigException {
 
@@ -644,33 +664,37 @@ public class HolidayConfig {
   // ----- easter entry ---------------------------------------------------------------------------
   
   /**
-   * Holiday configuration entry subclass for a easter dependent holiday.
    * <p>
+   * Holiday configuration entry subclass for a easter dependent holiday.
+   * </p><p>
    * Common XML attributes are described in {@link HolidayConfig.HolidayEntryConfig}.
-   * Special XML attributes and subelements:
-   * <blockquote>
-   * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
-   *   <tr bgcolor="#ccccff">
-   *     <th align="left">Name</th>
-   *     <th align="left">Description</th>
-   *     <th align="center">A/E</th>
-   *     <th align="center">M</th>
-   *     <th align="center">U</th>
-   *     </tr>
-   *   <tr bgcolor="#eeeeff">
-   *     <td align="left" valign="top"><tt>offset</tt></td>
-   *     <td align="left" valign="top">number of days between easter sunday and this holiday</td>
-   *     <td align="center" valign="top">A</td>
-   *     <td align="center" valign="top"> </td>
-   *     <td align="center" valign="top">x</td>
-   *     </tr>
+   * </p>
+   * <table class="striped">
+   * <caption style="text-align:left">Special XML attributes and subelements</caption>
+   * <thead>
+   * <tr>
+   * <th scope="col" style="text-align:left">Name</th>
+   * <th scope="col" style="text-align:left">Description</th>
+   * <th scope="col" style="text-align:center">A/E</th>
+   * <th scope="col" style="text-align:center">M</th>
+   * <th scope="col" style="text-align:center">U</th>
+   * </tr>
+   * </thead>
+   * <tbody>
+   * <tr>
+   * <td style="text-align:left"><code>offset</code></td>
+   * <td style="text-align:left">number of days between easter sunday and this holiday</td>
+   * <td style="text-align:center">A</td>
+   * <td style="text-align:center"> </td>
+   * <td style="text-align:center">x</td>
+   * </tr>
+   * </tbody>
    * </table>
-   * <tt>A/E</tt>: attribute or subelement
-   * <br>
-   * <tt>M</tt>: mandatory
-   * <br>
-   * <tt>U</tt>: unique
-   * </blockquote>
+   * <p>
+   * <code>A/E</code>: attribute or subelement<br>
+   * <code>M</code>: mandatory<br>
+   * <code>U</code>: unique
+   * </p>
    */
   static public class EasterConfig extends HolidayEntryConfig {
 
@@ -696,7 +720,7 @@ public class HolidayConfig {
     /**
      * Sets the offset to easter sunday.
      * Negative values define days before easter.
-     * @param offset
+     * @param offset day difference in comparision to easter sunday
      */
     @Mandatory
     public void setOffset(int offset) {
@@ -720,7 +744,7 @@ public class HolidayConfig {
   
   /**
    * Shows if calendar value is a holiday.
-   * @param cal
+   * @param cal calendar
    * @return flag
    */
   public boolean isHoliday(Calendar cal) {
@@ -733,7 +757,7 @@ public class HolidayConfig {
   
   /**
    * Shows if date is a holiday.
-   * @param date
+   * @param date date
    * @return flag
    */
   public boolean isHoliday(Date date) {
@@ -745,7 +769,7 @@ public class HolidayConfig {
   
   /**
    * Shows if calendar value is a workday.
-   * @param cal
+   * @param cal calendar
    * @return flag
    */
   public boolean isWorkday(Calendar cal) {
@@ -755,7 +779,7 @@ public class HolidayConfig {
   
   /**
    * Shows if date is a workday.
-   * @param date
+   * @param date date
    * @return flag
    */
   public boolean isWorkday(Date date) {
@@ -765,7 +789,7 @@ public class HolidayConfig {
   
   /**
    * Adds a date entry.
-   * @param dateConfig
+   * @param dateConfig holiday definition for a single explicit date
    */
   public void addDate(DateConfig dateConfig) {
     
@@ -774,7 +798,7 @@ public class HolidayConfig {
   
   /**
    * Adds a weekday entry.
-   * @param weekdayConfig
+   * @param weekdayConfig holiday definition for weekdays
    */
   public void addWeekday(WeekdayConfig weekdayConfig) {
     
@@ -783,7 +807,7 @@ public class HolidayConfig {
   
   /**
    * Adds a fix day entry.
-   * @param fixConfig
+   * @param fixConfig holiday definition which occurs every year on the same day
    */
   public void addFix(FixConfig fixConfig) {
     
@@ -792,7 +816,7 @@ public class HolidayConfig {
   
   /**
    * Adds an easter dependent entry.
-   * @param easterConfig
+   * @param easterConfig holiday definition where the concrete date in a year depends on easter sunday
    */
   public void addEaster(EasterConfig easterConfig) {
     

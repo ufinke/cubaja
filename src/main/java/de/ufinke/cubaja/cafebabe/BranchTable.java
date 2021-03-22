@@ -10,9 +10,8 @@ import java.util.List;
 import de.ufinke.cubaja.util.Util;
 
 /**
- * Parameter for <tt>lookupswitch</tt> and <tt>tableswitch</tt> instructions.
- * See {@link CodeAttribute#lookupswitch(BranchTable) lookupswitch}
- * and {@link CodeAttribute#tableswitch(BranchTable) tableswitch}.
+ * Parameter for {@link CodeAttribute#lookupswitch(BranchTable) lookupswitch}
+ * and {@link CodeAttribute#tableswitch(BranchTable) tableswitch} instructions.
  * For definition of jump targets (labels) see 
  * {@link CodeAttribute#defineLabel(String) defineLabel}. 
  * @author Uwe Finke
@@ -47,7 +46,7 @@ public class BranchTable {
   
   /**
    * Constructor with the default jump target.
-   * @param defaultLabelName
+   * @param defaultLabelName label of the default jump target
    */
   public BranchTable(String defaultLabelName) {
     
@@ -57,8 +56,8 @@ public class BranchTable {
   
   /**
    * Adds a jump target.
-   * @param key
-   * @param labelName
+   * @param key case value
+   * @param labelName label of the key's jump target
    */
   public void addBranch(int key, String labelName) {
     

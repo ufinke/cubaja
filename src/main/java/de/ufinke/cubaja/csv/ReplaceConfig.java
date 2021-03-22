@@ -6,45 +6,47 @@ package de.ufinke.cubaja.csv;
 import de.ufinke.cubaja.config.Mandatory;
 
 /**
- * Replacement definition.
  * <p>
- * A <tt>ColConfig</tt>
+ * Replacement definition.
+ * </p><p>
+ * A <code>ColConfig</code>
  * may contain any number of replacement definitions.
  * For every definition, 
  * the replacement of the retrieved column content string is 
  * delegated to {@link java.lang.String#replaceAll String.replaceAll}.
- * <p>
- * XML attributes and subelements:
- * <blockquote>
- * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
- *   <tr bgcolor="#ccccff">
- *     <th align="left">Name</th>
- *     <th align="left">Description</th>
- *     <th align="center">A/E</th>
- *     <th align="center">M</th>
- *     <th align="center">U</th>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>regex</tt></td>
- *     <td align="left" valign="top">the regular expression</td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top">x</td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>replacement</tt></td>
- *     <td align="left" valign="top">the replacement string</td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top">x</td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
+ * </p>
+ * <table class="striped">
+ * <caption style="text-align:left">XML attributes and subelements</caption>
+ * <thead>
+ * <tr>
+ * <th scope="col" style="text-align:left">Name</th>
+ * <th scope="col" style="text-align:left">Description</th>
+ * <th scope="col" style="text-align:center">A/E</th>
+ * <th scope="col" style="text-align:center">M</th>
+ * <th scope="col" style="text-align:center">U</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>regex</code></td>
+ * <td style="text-align:left;vertical-align:top">the regular expression</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top">x</td>
+ * <td style="text-align:center;vertical-align:top">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>replacement</code></td>
+ * <td style="text-align:left;vertical-align:top">the replacement string</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top">x</td>
+ * <td style="text-align:center;vertical-align:top">x</td>
+ * </tr>
+ * </tbody>
  * </table>
- * <tt>A/E</tt>: attribute or subelement
- * <br/>
- * <tt>M</tt>: mandatory
- * <br/>
- * <tt>U</tt>: unique
- * </blockquote>
+ * <p>
+ * <code>A/E</code>: attribute or subelement<br>
+ * <code>M</code>: mandatory<br>
+ * <code>U</code>: unique
  * </p>
  * @author Uwe Finke
  */
@@ -62,7 +64,7 @@ public class ReplaceConfig {
 
   /**
    * Returns the regular expression.
-   * @return regex
+   * @return regex pattern
    */
   public String getRegex() {
 
@@ -71,7 +73,7 @@ public class ReplaceConfig {
 
   /**
    * Sets the regular expression.
-   * @param regex
+   * @param regex pattern
    */
   @Mandatory
   public void setRegex(String regex) {
@@ -90,7 +92,7 @@ public class ReplaceConfig {
 
   /**
    * Sets the replacement string.
-   * @param replacement
+   * @param replacement text which replaces the pattern
    */
   @Mandatory
   public void setReplacement(String replacement) {

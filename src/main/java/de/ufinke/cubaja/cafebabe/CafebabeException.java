@@ -10,8 +10,8 @@ package de.ufinke.cubaja.cafebabe;
 public class CafebabeException extends Exception {
 
   /**
-   * Constructor.
-   * @param message
+   * Constructor
+   * @param message message text
    */
   public CafebabeException(String message) {
     

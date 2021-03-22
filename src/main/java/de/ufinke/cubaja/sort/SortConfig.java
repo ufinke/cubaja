@@ -4,74 +4,77 @@
 package de.ufinke.cubaja.sort;
 
 /**
- * Sort configuration.
  * <p>
- * XML attributes and subelements:
- * <blockquote>
- * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
- *   <tr bgcolor="#ccccff">
- *     <th align="left">Name</th>
- *     <th align="left">Description</th>
- *     <th align="center">A/E</th>
- *     <th align="center">M</th>
- *     <th align="center">U</th>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>algorithm</tt></td>
- *     <td align="left" valign="top">the name of a class which implements {@link SortAlgorithm}; default is <tt>de.ufinke.cubaja.sort.Quicksort</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>workDirectory</tt></td>
- *     <td align="left" valign="top">directory for temporary files; default is the value of system property <tt>java.io.tmpdir</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>filePrefix</tt></td>
- *     <td align="left" valign="top">name prefix of temporary files; default is <tt>sort</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>log</tt></td>
- *     <td align="left" valign="top">if set to <tt>true</tt>, trace and debug messages are written to logger <tt>de.ufinke.cubaja.sort.Sorter</tt>; default is <tt>false</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>logInterval</tt></td>
- *     <td align="left" valign="top">time interval between trace messages in seconds; default is <tt>60</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>runSize</tt></td>
- *     <td align="left" valign="top">maximum number of objects in a run (see {@link #setRunSize setRunSize}); default is <tt>131072</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
- *   <tr bgcolor="#eeeeff">
- *     <td align="left" valign="top"><tt>blockSize</tt></td>
- *     <td align="left" valign="top">number of bytes in a temporary file block (see {@link #setBlockSize setBlockSize}; default is <tt>15360</tt></td>
- *     <td align="center" valign="top">A</td>
- *     <td align="center" valign="top"> </td>
- *     <td align="center" valign="top">x</td>
- *     </tr>
+ * Sort configuration.
+ * </p>
+ * <table class="striped">
+ * <caption style="text-align:left">XML attributes and subelements</caption>
+ * <thead>
+ * <tr>
+ * <th scope="col" style="text-align:left">Name</th>
+ * <th scope="col" style="text-align:left">Description</th>
+ * <th scope="col" style="text-align:center">A/E</th>
+ * <th scope="col" style="text-align:center">M</th>
+ * <th scope="col" style="text-align:center">U</th>
+ * </tr>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td style="text-align:left"><code>algorithm</code></td>
+ * <td style="text-align:left">the name of a class which implements {@link SortAlgorithm}; default is <code>de.ufinke.cubaja.sort.Quicksort</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>workDirectory</code></td>
+ * <td style="text-align:left">directory for temporary files; default is the value of system property <code>java.io.tmpdir</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>filePrefix</code></td>
+ * <td style="text-align:left">name prefix of temporary files; default is <code>sort</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>log</code></td>
+ * <td style="text-align:left">if set to <code>true</code>, trace and debug messages are written to logger <code>de.ufinke.cubaja.sort.Sorter</code>; default is <code>false</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>logInterval</code></td>
+ * <td style="text-align:left">time interval between trace messages in seconds; default is <code>60</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>runSize</code></td>
+ * <td style="text-align:left">maximum number of objects in a run (see {@link #setRunSize setRunSize}); default is <code>131072</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * <tr>
+ * <td style="text-align:left"><code>blockSize</code></td>
+ * <td style="text-align:left">number of bytes in a temporary file block (see {@link #setBlockSize setBlockSize}; default is <code>15360</code></td>
+ * <td style="text-align:center">A</td>
+ * <td style="text-align:center"> </td>
+ * <td style="text-align:center">x</td>
+ * </tr>
+ * </tbody>
  * </table>
- * <tt>A/E</tt>: attribute or subelement
- * <br>
- * <tt>M</tt>: mandatory
- * <br>
- * <tt>U</tt>: unique
- * </blockquote>
+ * <p>
+ * <code>A/E</code>: attribute or subelement<br>
+ * <code>M</code>: mandatory<br>
+ * <code>U</code>: unique
+ * </p>
  * @author Uwe Finke
  */
 public class SortConfig {
@@ -107,7 +110,7 @@ public class SortConfig {
     }
     
     try {
-      return algorithm.getClass().newInstance();
+      return algorithm.getClass().getConstructor().newInstance();
     } catch (Exception e) {
       throw new SorterException(e);
     }
@@ -115,8 +118,8 @@ public class SortConfig {
 
   /**
    * Sets the sort algorithm.
-   * Default is <tt>Quicksort</tt>
-   * @param algorithm
+   * Default is <code>Quicksort</code>
+   * @param algorithm sort algorithm implementation
    */
   public void setAlgorithm(SortAlgorithm algorithm) {
 
@@ -137,8 +140,8 @@ public class SortConfig {
 
   /**
    * Sets the work directory for temporary files.
-   * Default is the directory supplied by system property <tt>java.io.tmpdir</tt>.
-   * @param workDirectory
+   * Default is the directory supplied by system property <code>java.io.tmpdir</code>.
+   * @param workDirectory directory for temporary file
    */
   public void setWorkDirectory(String workDirectory) {
 
@@ -159,8 +162,8 @@ public class SortConfig {
 
   /**
    * Sets the file name prefix for temporary files.
-   * Default is <tt>sort</tt>.
-   * @param filePrefix
+   * Default is <code>sort</code>.
+   * @param filePrefix file name prefix for temporary file
    */
   public void setFilePrefix(String filePrefix) {
 
@@ -179,10 +182,10 @@ public class SortConfig {
   /**
    * Determines whether sort activities shall be logged.
    * Default is no logging.
-   * If logging is set to <tt>true</tt> then
+   * If logging is set to <code>true</code> then
    * debug and trace messages are written
-   * to logger <tt>de.ufinke.cubaja.sort.Sorter</tt>.
-   * @param log
+   * to logger <code>de.ufinke.cubaja.sort.Sorter</code>.
+   * @param log true or false
    */
   public void setLog(boolean log) {
 
@@ -203,11 +206,11 @@ public class SortConfig {
   
   /**
    * Sets the delay between trace log messages in seconds.
-   * Default is <tt>60</tt>.
+   * Default is <code>60</code>.
    * If trace is enabled for the logger,
    * the number of processed objects is logged after 
-   * every <tt>logInterval</tt> seconds.
-   * @param logInterval
+   * every <code>logInterval</code> seconds.
+   * @param logInterval seconds between log messages
    */
   public void setLogInterval(int logInterval) {
   
@@ -232,7 +235,7 @@ public class SortConfig {
    * The number of objects which is hold by the JVM heap
    * is approximately two times the run size.
    * Default run size is 131072.
-   * @param runSize
+   * @param runSize maximum number of objects held in internal arrays
    */
   public void setRunSize(int runSize) {
   
@@ -253,9 +256,9 @@ public class SortConfig {
    * Serialized objects are written to disk in a block of bytes.
    * The content of the internal buffer is written
    * when the buffers size exceeds the block size.
-   * Default block size is <tt>15360</tt> (15K).
+   * Default block size is <code>15360</code> (15K).
    * As result, the effective block size is between 15K and 16K for normal sized data objects.
-   * @param blockSize
+   * @param blockSize minimum number of bytes before serialized objects are written to the temporary file 
    */
   public void setBlockSize(int blockSize) {
   

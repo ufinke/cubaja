@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Wrapper for <tt>insert</tt>, <tt>update</tt> or <tt>delete</tt> statements.
+ * Wrapper for <code>insert</code>, <code>update</code> or <code>delete</code> statements.
  * An instance is created by an appropriate {@link Database} method.
  * @author Uwe Finke
  */
@@ -35,9 +35,9 @@ public class Update extends PreparedSql {
 
   /**
    * Executes the statement immediately.
-   * Calls the <tt>PreparedStatement</tt>'s <tt>executeUpdate</tt> method.
+   * Calls the <code>PreparedStatement</code>'s <code>executeUpdate</code> method.
    * @return number of concerned rows.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public int executeUpdate() throws SQLException {
     
@@ -48,16 +48,16 @@ public class Update extends PreparedSql {
    * Adds a row to a bulk operation.
    * <p>
    * Calls the
-   * <tt>PreparedStatement</tt>'s <tt>addBatch</tt> method.
-   * If the configuration's <tt>batchSize</tt> value
+   * <code>PreparedStatement</code>'s <code>addBatch</code> method.
+   * If the configuration's <code>batchSize</code> value
    * has been reached, this method  
-   * calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method
+   * calls the <code>PreparedStatement</code>'s <code>executeBatch</code> method
    * automatically.
    * <p>
-   * If this <tt>Update</tt> is a member of a {@link BatchGroup},
+   * If this <code>Update</code> is a member of a {@link BatchGroup},
    * the result will always be an empty array.
-   * @return array of number of concerned rows (result from <tt>executeBatch</tt>)
-   * @throws SQLException
+   * @return array of number of concerned rows (result from <code>executeBatch</code>)
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public int[] addBatch() throws SQLException {
 
@@ -81,13 +81,13 @@ public class Update extends PreparedSql {
   }
   
   /**
-   * Writes the rows supplied by <tt>addBatch</tt> to the database.
-   * Calls the <tt>PreparedStatement</tt>'s <tt>executeBatch</tt> method.
+   * Writes the rows supplied by <code>addBatch</code> to the database.
+   * Calls the <code>PreparedStatement</code>'s <code>executeBatch</code> method.
    * <p>
-   * If this <tt>Update</tt> is a member of a {@link BatchGroup},
+   * If this <code>Update</code> is a member of a {@link BatchGroup},
    * the result will always be an empty array.
-   * @return array of number of concerned rows (not including the result of intermediate calls triggered automatically by <tt>addBatch</tt>)
-   * @throws SQLException
+   * @return array of number of concerned rows (not including the result of intermediate calls triggered automatically by <code>addBatch</code>)
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public int[] executeBatch() throws SQLException {
 
@@ -117,7 +117,7 @@ public class Update extends PreparedSql {
   
   /**
    * Clears the buffer build by previous calls of addBatch.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void clearBatch() throws SQLException {
     
@@ -126,9 +126,9 @@ public class Update extends PreparedSql {
   }
   
   /**
-   * Returns the total number of <tt>addBatch</tt> calls.
-   * After a direct call to <tt>executeBatch</tt> the counter
-   * is reset on the first subsequent call to <tt>addBatch</tt>.
+   * Returns the total number of <code>addBatch</code> calls.
+   * After a direct call to <code>executeBatch</code> the counter
+   * is reset on the first subsequent call to <code>addBatch</code>.
    * @return number of requests
    */
   public int getBatchCount() {

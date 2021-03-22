@@ -4,15 +4,15 @@
 package de.ufinke.cubaja.csv;
 
 /**
- * <tt>CsvException</tt> handler.
+ * <code>CsvException</code> handler.
  * @author Uwe Finke
  */
 public interface ErrorHandler {
 
   /**
    * Handle an exception.
-   * @param error
-   * @throws CsvException
+   * @param error exception to handle
+   * @throws CsvException forwarded excption
    */
   public void handleError(CsvException error) throws CsvException;
 }

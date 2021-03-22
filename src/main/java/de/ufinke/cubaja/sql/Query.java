@@ -23,7 +23,7 @@ import de.ufinke.cubaja.util.RowIterator;
 import de.ufinke.cubaja.util.Text;
 
 /**
- * Wrapper for <tt>select</tt> statements and result sets.
+ * Wrapper for <code>select</code> statements and result sets.
  * An instance is created by an appropriate {@link Database} method.
  * @author Uwe Finke
  */
@@ -69,7 +69,7 @@ public class Query extends PreparedSql implements ColumnReader {
   /**
    * Returns the result sets meta data.
    * @return meta data
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public ResultSetMetaData getMetaData() throws SQLException {
     
@@ -82,7 +82,7 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Closes the result set.
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public void closeResultSet() throws SQLException {
     
@@ -237,10 +237,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by name as <tt>java.sql.Date</tt>.
-   * @param columnName
+   * Reads a date column identified by name as <code>java.sql.Date</code>.
+   * @param columnName name of column
    * @return Date
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.sql.Date readSqlDate(String columnName) throws SQLException {
 
@@ -248,10 +248,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by position as <tt>java.sql.Date</tt>.
-   * @param columnPosition
+   * Reads a date column identified by position as <code>java.sql.Date</code>.
+   * @param columnPosition, starting with 1
    * @return Date
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.sql.Date readSqlDate(int columnPosition) throws SQLException {
 
@@ -260,10 +260,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a timestamp column identified by name as <tt>Timestamp</tt>.
-   * @param columnName
+   * Reads a timestamp column identified by name as <code>Timestamp</code>.
+   * @param columnName name of column
    * @return Timestamp
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Timestamp readSqlTimestamp(String columnName) throws SQLException {
 
@@ -271,10 +271,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a timestamp column identified by position as <tt>Timestamp</tt>.
-   * @param columnPosition
+   * Reads a timestamp column identified by position as <code>Timestamp</code>.
+   * @param columnPosition, starting with 1
    * @return Timestamp
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Timestamp readSqlTimestamp(int columnPosition) throws SQLException {
 
@@ -283,10 +283,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by name as <tt>Time</tt>.
-   * @param columnName
+   * Reads a time column identified by name as <code>Time</code>.
+   * @param columnName name of column
    * @return Time
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Time readSqlTime(String columnName) throws SQLException {
 
@@ -294,10 +294,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by position as <tt>Time</tt>.
-   * @param columnPosition
+   * Reads a time column identified by position as <code>Time</code>.
+   * @param columnPosition, starting with 1
    * @return Time
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Time readSqlTime(int columnPosition) throws SQLException {
 
@@ -306,10 +306,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a date column identified by name as <tt>java.util.Date</tt>.
-   * @param columnName
+   * Reads a date column identified by name as <code>java.util.Date</code>.
+   * @param columnName name of column
    * @return Date
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readDate(String columnName) throws SQLException {
     
@@ -317,10 +317,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a date column identified by position as <tt>java.util.Date</tt>.
-   * @param columnPosition
+   * Reads a date column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition, starting with 1
    * @return Date
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readDate(int columnPosition) throws SQLException {
     
@@ -329,10 +329,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a timestamp column identified by name as <tt>java.util.Date</tt>.
-   * @param columnName
+   * Reads a timestamp column identified by name as <code>java.util.Date</code>.
+   * @param columnName name of column
    * @return Timestamp
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readTimestamp(String columnName) throws SQLException {
     
@@ -340,10 +340,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a timestamp column identified by position as <tt>java.util.Date</tt>.
-   * @param columnPosition
+   * Reads a timestamp column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition, starting with 1
    * @return Timestamp
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readTimestamp(int columnPosition) throws SQLException {
 
@@ -352,10 +352,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
 
   /**
-   * Reads a time column identified by name as <tt>java.util.Date</tt>.
-   * @param columnName
+   * Reads a time column identified by name as <code>java.util.Date</code>.
+   * @param columnName name of column
    * @return Time
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readTime(String columnName) throws SQLException {
     
@@ -363,10 +363,10 @@ public class Query extends PreparedSql implements ColumnReader {
   }
   
   /**
-   * Reads a time column identified by position as <tt>java.util.Date</tt>.
-   * @param columnPosition
+   * Reads a time column identified by position as <code>java.util.Date</code>.
+   * @param columnPosition, starting with 1
    * @return java.util.Date
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public java.util.Date readTime(int columnPosition) throws SQLException {
 
@@ -502,9 +502,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a byte array column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return byte array
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public byte[] readBytes(String columnName) throws SQLException {
     
@@ -513,9 +513,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a byte array column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return byte array
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public byte[] readBytes(int columnPosition) throws SQLException {
     
@@ -525,9 +525,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a ASCII column identified by name. 
-   * @param columnName
+   * @param columnName name of column
    * @return input stream
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public InputStream readAsciiStream(String columnName) throws SQLException {
     
@@ -536,9 +536,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a ASCII column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return input stream
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public InputStream readAsciiStream(int columnPosition) throws SQLException {
     
@@ -548,9 +548,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a binary column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return input stream
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public InputStream readBinaryStream(String columnName) throws SQLException {
     
@@ -559,9 +559,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a binary column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return input stream
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public InputStream readBinaryStream(int columnPosition) throws SQLException {
     
@@ -571,9 +571,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a character stream column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return reader
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Reader readCharacterStream(String columnName) throws SQLException {
     
@@ -582,9 +582,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a character stream column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return reader
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Reader readCharacterStream(int columnPosition) throws SQLException {
     
@@ -594,9 +594,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a BLOB column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return blob
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Blob readBlob(String columnName) throws SQLException {
     
@@ -605,9 +605,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a BLOB column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return blob
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Blob readBlob(int columnPosition) throws SQLException {
     
@@ -617,9 +617,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a CLOB column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return clob
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Clob readClob(String columnName) throws SQLException {
     
@@ -628,9 +628,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a CLOB column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return clob
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Clob readClob(int columnPosition) throws SQLException {
     
@@ -640,9 +640,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads an array column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return array
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Array readArray(String columnName) throws SQLException {
     
@@ -651,9 +651,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads an array column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return array
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Array readArray(int columnPosition) throws SQLException {
     
@@ -663,9 +663,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a Ref column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return ref
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Ref readRef(String columnName) throws SQLException {
     
@@ -674,9 +674,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a Ref column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return ref
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Ref readRef(int columnPosition) throws SQLException {
     
@@ -686,9 +686,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a URL column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return URL
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public URL readURL(String columnName) throws SQLException {
     
@@ -697,9 +697,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads a URL column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return URL
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public URL readURL(int columnPosition) throws SQLException {
     
@@ -709,9 +709,9 @@ public class Query extends PreparedSql implements ColumnReader {
 
   /**
    * Reads a object column identified by name.
-   * @param columnName
+   * @param columnName name of column
    * @return object
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Object readObject(String columnName) throws SQLException {
     
@@ -720,9 +720,9 @@ public class Query extends PreparedSql implements ColumnReader {
   
   /**
    * Reads an object column identified by position.
-   * @param columnPosition
+   * @param columnPosition, starting with 1
    * @return object
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public Object readObject(int columnPosition) throws SQLException {
     
@@ -774,11 +774,11 @@ public class Query extends PreparedSql implements ColumnReader {
   /**
    * Reads a single row and closes the result set.
    * Throws an exception if the result set contains more than one row.
-   * Returns <tt>null</tt> if the result set is empty.
-   * @param <D>
+   * Returns <code>null</code> if the result set is empty.
+   * @param <D> type or super type of result object
    * @param clazz the data objects class
    * @return data object
-   * @throws SQLException
+   * @throws SQLException when an exception occurs during SQL execution
    */
   public <D> D select(Class<? extends D> clazz) throws SQLException {
     

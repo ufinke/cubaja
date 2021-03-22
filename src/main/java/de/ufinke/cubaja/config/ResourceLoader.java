@@ -12,10 +12,10 @@ import org.xml.sax.InputSource;
 public interface ResourceLoader {
 
   /**
-   * Provides an <tt>org.xml.sax.InputSource</tt> for an XML resource. 
+   * Provides an <code>org.xml.sax.InputSource</code> for an XML resource. 
    * @param resourceName the XML resource name
-   * @return the <tt>InputSource</tt> which will be parsed
-   * @throws Exception
+   * @return the <code>InputSource</code> which will be parsed
+   * @throws Exception any exception
    */
   public InputSource loadResource(String resourceName) throws Exception;
   

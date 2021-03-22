@@ -14,17 +14,19 @@ import java.io.Reader;
 public interface RowParser {
 
   /**
-   * Called during <tt>CsvReader</tt> initialization.
-   * @param in
-   * @param config
-   * @throws CsvException
+   * Called during <code>CsvReader</code> initialization.
+   * @param in reader
+   * @param config CSV configuration
+   * @throws CsvException CSV input could not be parsed
+   * @throws IOException passed from reader
    */
   public void init(Reader in, CsvConfig config) throws IOException, CsvException;
 
   /**
-   * Returns next row, or <tt>null</tt> when EOF.
+   * Returns next row, or <code>null</code> when EOF.
    * @return complete row
-   * @throws IOException
+   * @throws CsvException CSV input could not be parsed
+   * @throws IOException passed from reader
    */
   public String readRow() throws IOException, CsvException;
   
@@ -36,9 +38,9 @@ public interface RowParser {
   
   /**
    * Returns a column.
-   * @param index
+   * @param index index of column
    * @return net column content
-   * @throws CsvException
+   * @throws CsvException CSV input could not be parsed
    */
   public String getColumn(int index) throws CsvException;
 

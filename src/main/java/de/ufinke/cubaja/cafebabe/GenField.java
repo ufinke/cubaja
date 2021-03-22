@@ -7,7 +7,7 @@ import java.io.DataOutputStream;
 
 /**
  * Wrapper for a generated field.
- * An instance is created by {@link GenClass#createField createField} in <tt>GenClass</tt>.
+ * An instance is created by {@link GenClass#createField}.
  * The methods give the opportunity to assign constant values.
  * @author Uwe Finke
  */
@@ -28,8 +28,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign a <tt>long</tt> constant.
-   * @param value
+   * Assign a <code>long</code> constant.
+   * @param value long value
    */
   public void setConstantValue(long value) {
     
@@ -37,8 +37,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign a <tt>float</tt> constant.
-   * @param value
+   * Assign a <code>float</code> constant.
+   * @param value float value
    */
   public void setConstantValue(float value) {
     
@@ -46,8 +46,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign a <tt>double</tt> constant.
-   * @param value
+   * Assign a <code>double</code> constant.
+   * @param value double value
    */
   public void setConstantValue(double value) {
     
@@ -55,8 +55,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign an <tt>integer</tt> constant.
-   * @param value
+   * Assign an <code>integer</code> constant.
+   * @param value int value
    */
   public void setConstantValue(int value) {
     
@@ -64,8 +64,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign a <tt>boolean</tt> constant.
-   * @param value
+   * Assign a <code>boolean</code> constant.
+   * @param value boolean value
    */
   public void setConstantValue(boolean value) {
     
@@ -73,8 +73,8 @@ public class GenField implements Generatable, AccessFlags {
   }
   
   /**
-   * Assign a <tt>String</tt> constant.
-   * @param value
+   * Assign a <code>String</code> constant.
+   * @param value string value
    */
   public void setConstantValue(String value) {
     

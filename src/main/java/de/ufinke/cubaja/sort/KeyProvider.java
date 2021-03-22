@@ -4,7 +4,7 @@
 package de.ufinke.cubaja.sort;
 
 /**
- * Interface for data types that provide their key values for <tt>Matcher</tt>.
+ * Interface for data types that provide their key values for <code>Matcher</code>.
  * @author Uwe Finke
  * @param <K> key type
  */

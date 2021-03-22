@@ -11,7 +11,7 @@ public interface EndElementHandler {
 
   /**
    * Called after all attributes and sub-elements have been set.
-   * @throws Exception
+   * @throws Exception any exception
    */
   public void endElement() throws Exception;  
 }

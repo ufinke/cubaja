@@ -17,178 +17,162 @@ import de.ufinke.cubaja.util.Text;
 import de.ufinke.cubaja.util.Util;
 
 /**
- * Global configuration properties.
  * <p>
- * XML attributes and subelements: <blockquote>
- * <table border="0" cellspacing="3" cellpadding="2" summary="Attributes and subelements.">
- * <tr bgcolor="#ccccff">
- * <th align="left">Name</th>
- * <th align="left">Description</th>
- * <th align="center">A/E</th>
- * <th align="center">M</th>
- * <th align="center">U</th>
+ * Global configuration properties.
+ * </p>
+ * <table class="striped">
+ * <caption style="text-align:left">XML attributes and subelements</caption>
+ * <thead>
+ * <tr>
+ * <th scope="col" style="text-align:left">Name</th>
+ * <th scope="col" style="text-align:left">Description</th>
+ * <th scope="col" style="text-align:center">A/E</th>
+ * <th scope="col" style="text-align:center">M</th>
+ * <th scope="col" style="text-align:center">U</th>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>file</tt></td>
- * <td align="left" valign="top">file name; mandatory if {@link CsvReader}
- * constructor without <tt>Reader</tt> 
- * or {@link CsvWriter} constructor without <tt>Writer</tt> parameter is used</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * </thead>
+ * <tbody>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>file</code></td>
+ * <td style="text-align:left;vertical-align:top">file name; mandatory if {@link CsvReader} constructor without <code>Reader</code> or {@link CsvWriter} constructor without <code>Writer</code> parameter is used</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>charset</tt></td>
- * <td align="left" valign="top">character set name</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>charset</code></td>
+ * <td style="text-align:left;vertical-align:top">character set name</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>separator</tt></td>
- * <td align="left" valign="top">character which separates columns (default: tab
- * [<tt>x'09'</tt>])</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>separator</code></td>
+ * <td style="text-align:left;vertical-align:top">character which separates columns (default: tab [<code>x'09'</code>])</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>escapeChar</tt></td>
- * <td align="left" valign="top">character which delimits text containing
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>escapeChar</code></td>
+ * <td style="text-align:left;vertical-align:top">character which delimits text containing
  * separator characters (default: there is no escape character)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>parser</tt></td>
- * <td align="left" valign="top">class name of a
- * {@link de.ufinke.cubaja.csv.RowParser RowParser} implementation (default:
- * {@link de.ufinke.cubaja.csv.DefaultRowParser DefaultRowParser})</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>parser</code></td>
+ * <td style="text-align:left;vertical-align:top">class name of a {@link RowParser} implementation (default: {@link DefaultRowParser})</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>trim</tt></td>
- * <td align="left" valign="top">global trim attribute for column content
- * (default: <tt>false</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>trim</code></td>
+ * <td style="text-align:left;vertical-align:top">global trim attribute for column content (default: <code>false</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>decimalChar</tt></td>
- * <td align="left" valign="top">global character for decimal point; may be a
- * point or a comma (default for parsing: both point and comma are decimalChars; 
- * default for formatting: depends on <tt>Locale</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>decimalChar</code></td>
+ * <td style="text-align:left;vertical-align:top">global character for decimal point; may be a point or a comma (default for parsing: both point and comma are decimalChars;  default for formatting: depends on <code>Locale</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>scale</tt></td>
- * <td align="left" valign="top">maximum number of fractional digits in formatted decimal numbers
- * (default: 2)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>scale</code></td>
+ * <td style="text-align:left;vertical-align:top">maximum number of fractional digits in formatted decimal numbers (default: 2)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>datePattern</tt></td>
- * <td align="left" valign="top">global date format pattern as described in
- * {@link java.text.SimpleDateFormat} (default: <tt>yyyy-MM-dd</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>datePattern</code></td>
+ * <td style="text-align:left;vertical-align:top">global date format pattern as described in {@link java.text.SimpleDateFormat} (default: <code>yyyy-MM-dd</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>trueValue</tt></td>
- * <td align="left" valign="top">value representing boolean <tt>true</tt>
- * (default: <tt>true</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>trueValue</code></td>
+ * <td style="text-align:left;vertical-align:top">value representing boolean <code>true</code> (default: <code>true</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>falseValue</tt></td>
- * <td align="left" valign="top">value representing boolean <tt>false</tt>
- * (default: <tt>false</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>falseValue</code></td>
+ * <td style="text-align:left;vertical-align:top">value representing boolean <code>false</code>
+ * (default: <code>false</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>nullValue</tt></td>
- * <td align="left" valign="top">replacement for <tt>null</tt> (default: empty column is <tt>null</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>nullValue</code></td>
+ * <td style="text-align:left;vertical-align:top">replacement for <code>null</code> (default: empty column is <code>null</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>header</tt></td>
- * <td align="left" valign="top">flag whether there is a header row (default: <tt>false</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>header</code></td>
+ * <td style="text-align:left;vertical-align:top">flag whether there is a header row (default: <code>false</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>autoCol</tt></td>
- * <td align="left" valign="top">flag whether there is a header row
- * and columns shall be automatically created according to the header row's content
- * (default: <tt>false</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>autoCol</code></td>
+ * <td style="text-align:left;vertical-align:top">flag whether there is a header row and columns shall be automatically created according to the header row's content (default: <code>false</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>headerMatch</code></td>
+ * <td style="text-align:left;vertical-align:top">flag whether there is a header row and column positions depend on the position of their defined header text within the header row (default: <code>false</code>)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>headerMatch</tt></td>
- * <td align="left" valign="top">flag whether there is a header row
- * and column positions depend on the position of their defined header text within the header row
- * (default: <tt>false</tt>)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>rowFilter</code></td>
+ * <td style="text-align:left;vertical-align:top">class name of a {@link RowFilter} implementation</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>rowFilter</tt></td>
- * <td align="left" valign="top">class name of a
- * {@link de.ufinke.cubaja.csv.RowFilter RowFilter} implementation</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>formatter</code></td>
+ * <td style="text-align:left;vertical-align:top">class name of a {@link RowFormatter} implementation (default: {@link DefaultRowFormatter})</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>formatter</tt></td>
- * <td align="left" valign="top">class name of a
- * {@link de.ufinke.cubaja.csv.RowFormatter RowFormatter} implementation
- * (default: {@link de.ufinke.cubaja.csv.DefaultRowFormatter
- * DefaultRowFormatter})</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>rowSeparator</code></td>
+ * <td style="text-align:left;vertical-align:top">separator between rows (lines) used by <code>CsvWriter</code> (default: platform dependent JVM default)</td>
+ * <td style="text-align:center;vertical-align:top">A</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top">x</td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>rowSeparator</tt></td>
- * <td align="left" valign="top">separator between rows (lines) used by
- * <tt>CsvWriter</tt> (default: platform dependent JVM default)</td>
- * <td align="center" valign="top">A</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top">x</td>
+ * <tr>
+ * <td style="text-align:left;vertical-align:top"><code>col</code></td>
+ * <td style="text-align:left;vertical-align:top">column definition (see {@link ColConfig})</td>
+ * <td style="text-align:center;vertical-align:top">E</td>
+ * <td style="text-align:center;vertical-align:top"></td>
+ * <td style="text-align:center;vertical-align:top"></td>
  * </tr>
- * <tr bgcolor="#eeeeff">
- * <td align="left" valign="top"><tt>col</tt></td>
- * <td align="left" valign="top">column definition (see
- * {@link de.ufinke.cubaja.csv.ColConfig ColConfig})</td>
- * <td align="center" valign="top">E</td>
- * <td align="center" valign="top"></td>
- * <td align="center" valign="top"></td>
- * </tr>
+ * </tbody>
  * </table>
- * <tt>A/E</tt>: attribute or subelement <br/>
- * <tt>M</tt>: mandatory <br/>
- * <tt>U</tt>: unique </blockquote>
+ * <p>
+ * <code>A/E</code>: attribute or subelement <br>
+ * <code>M</code>: mandatory <br>
+ * <code>U</code>: unique
  * </p>
  * 
  * @author Uwe Finke
@@ -242,7 +226,7 @@ public class CsvConfig {
   /**
    * Sets a customized default column configuration.
    * A standard default column configuration is created by the constructor.
-   * @param defaultColConfig
+   * @param defaultColConfig config with default values
    */
   public void setDefaultColConfig(ColConfig defaultColConfig) {
     
@@ -253,9 +237,9 @@ public class CsvConfig {
 
   /**
    * Returns a column configuration for a column identified by name.
-   * The result is <tt>null</tt> if there is no column with the given name.
+   * The result is <code>null</code> if there is no column with the given name.
    * 
-   * @param columnName
+   * @param columnName name of column
    * @return column config
    */
   public ColConfig getColConfig(String columnName) {
@@ -266,9 +250,9 @@ public class CsvConfig {
   /**
    * Returns a column configuration for a column identified by position.
    * Returns the default column configuration if there is no column with the given index.
-   * The position property of the default column is <tt>0</tt>.
+   * Position count starts with <code>1</code>; the position property of the default column is <code>0</code>.
    * 
-   * @param position
+   * @param position position of column
    * @return column config
    */
   public ColConfig getColConfig(int position) {
@@ -306,8 +290,8 @@ public class CsvConfig {
   /**
    * Returns the position of a column identified by name.
    * 
-   * @param columnName
-   * @return position
+   * @param columnName name of column
+   * @return position position of column. Position count starts with <code>1</code>
    * @throws CsvException
    *         if name does not exist
    */
@@ -323,7 +307,7 @@ public class CsvConfig {
   /**
    * Sets the file name.
    * 
-   * @param fileName
+   * @param fileName file path and name
    */
   public void setFile(String fileName) {
 
@@ -334,7 +318,7 @@ public class CsvConfig {
   /**
    * Sets the charset.
    * 
-   * @param charset
+   * @param charset charset name
    */
   public void setCharset(String charset) {
 
@@ -342,10 +326,10 @@ public class CsvConfig {
   }
 
   /**
-   * Returns a <tt>FileConfig</tt>.
+   * Returns a <code>FileConfig</code>.
    * @return file config
    * @throws ConfigException
-   *         if the <tt>file</tt> attribute is not set
+   *         if the <code>file</code> attribute is not set
    */
   public FileConfig getFile() throws ConfigException {
     
@@ -366,7 +350,7 @@ public class CsvConfig {
   /**
    * Sets the column separator character.
    * 
-   * @param separator
+   * @param separator column separator
    */
   public void setSeparator(Character separator) {
 
@@ -375,9 +359,9 @@ public class CsvConfig {
 
   /**
    * Returns the column separator character. The default separator is the tab
-   * character (<tt>\t</tt>).
+   * character (<code>\t</code>).
    * 
-   * @return separator
+   * @return separator column separator
    */
   public Character getSeparator() {
 
@@ -391,7 +375,7 @@ public class CsvConfig {
    * Sets the character which delimits the column content. Typically, this is
    * the quote character.
    * 
-   * @param escapeChar
+   * @param escapeChar column content delimiter
    */
   public void setEscapeChar(Character escapeChar) {
 
@@ -402,7 +386,7 @@ public class CsvConfig {
    * Returns the column content delimiter character. By default, no such
    * character is defined.
    * 
-   * @return delimiter char
+   * @return column content delimiter char
    */
   public Character getEscapeChar() {
 
@@ -412,7 +396,7 @@ public class CsvConfig {
   /**
    * Sets the parser which separates columns.
    * 
-   * @param parser
+   * @param parser parser instance
    */
   public void setParser(RowParser parser) {
 
@@ -422,7 +406,7 @@ public class CsvConfig {
   /**
    * Returns the parser. By default, this is a {@link DefaultRowParser}.
    * 
-   * @return parser
+   * @return parser instance
    */
   public RowParser getParser() {
 
@@ -436,8 +420,8 @@ public class CsvConfig {
    * Returns the global decimal point character. By default, both point and
    * comma are decimal point characters.
    * <p>
-   * For <tt>CsvWriter</tt>, the default decimal point character 
-   * depends on the default <tt>Locale</tt>.
+   * For <code>CsvWriter</code>, the default decimal point character 
+   * depends on the default <code>Locale</code>.
    * 
    * @return decimal point charcter
    */
@@ -462,7 +446,7 @@ public class CsvConfig {
    * Sets the global decimal point character.
    * Should be point or comma; other values may lead to unpredictable results.
    * 
-   * @param decimalChar
+   * @param decimalChar point or comma as decimal separator
    */
   public void setDecimalChar(Character decimalChar) {
 
@@ -472,7 +456,7 @@ public class CsvConfig {
   /**
    * Sets the global date pattern.
    * 
-   * @param datePattern
+   * @param datePattern date pattern. Example: <code>dd.MM.yyyy</code>
    */
   public void setDatePattern(String datePattern) {
 
@@ -482,7 +466,7 @@ public class CsvConfig {
 
   /**
    * Returns the global date format. 
-   * The default pattern is <tt>yyyy-MM-dd</tt>.
+   * The default pattern is <code>yyyy-MM-dd</code>.
    * 
    * @return date format
    */
@@ -498,7 +482,7 @@ public class CsvConfig {
    * Returns the global trim property. When set, column content is trimmed before
    * further processing. Note that on read operations which parse numbers, the
    * content is always trimmed. By default, the trim property is
-   * <tt>false</tt>.
+   * <code>false</code>.
    * 
    * @return trim propery
    */
@@ -513,7 +497,7 @@ public class CsvConfig {
   /**
    * Sets the global trim property.
    * 
-   * @param trim
+   * @param trim flag wether to trim column content
    */
   public void setTrim(Boolean trim) {
 
@@ -521,10 +505,10 @@ public class CsvConfig {
   }
 
   /**
-   * Tells whether the CSV input has a header row. This is <tt>true</tt>
+   * Tells whether the CSV input has a header row. This is <code>true</code>
    * if any of the {@link #setHeader(boolean) header}, the
    * {@link #setAutoCol(boolean) autoCol} 
-   * or the {@link #setHeaderMatch(boolean) headerMatch} properties is <tt>true</tt>.
+   * or the {@link #setHeaderMatch(boolean) headerMatch} properties is <code>true</code>.
    * 
    * @return flag
    */
@@ -536,11 +520,12 @@ public class CsvConfig {
   /**
    * Signals whether the CSV source or target has a header row.
    * <p>
-   * When this attribute is set to <tt>true</tt>, 
-   * a <tt>CsvReader</tt> does not treat the first row's content as data,
-   * and a <tt>CsvWriter</tt> will automatically write a header row.
+   * When this attribute is set to <code>true</code>, 
+   * a <code>CsvReader</code> does not treat the first row's content as data,
+   * and a <code>CsvWriter</code> will automatically write a header row.
+   * </p>
    * 
-   * @param header
+   * @param header flag wether there is a header row
    */
   public void setHeader(boolean header) {
 
@@ -548,21 +533,21 @@ public class CsvConfig {
   }
   
   /**
-   * Sets the <tt>autoCol</tt> property.
+   * Sets the <code>autoCol</code> property.
    * <p>
-   * If set to <tt>true</tt>, a <tt>CsvReader</tt> will
+   * If set to <code>true</code>, a <code>CsvReader</code> will
    * configure columns automatically. The column names and positions are 
    * derived from the header row's content.
    * Within a derived column name, non-Java characters are replaced by underlines.
    * The derived column name is in lower case letters.
-   * <p>
-   * If a <tt>ColConfig</tt> with the same name has been already defined,
+   * </p><p>
+   * If a <code>ColConfig</code> with the same name has been already defined,
    * it will not be replaced.
-   * <p>
-   * An automatically added <tt>ColConfig</tt> instance is of the same class
+   * </p><p>
+   * An automatically added <code>ColConfig</code> instance is of the same class
    * as the {@link #setDefaultColConfig(ColConfig) default column}.
-   * 
-   * @param autoCol
+   * </p>
+   * @param autoCol flag wether there is a header row with column names
    */
   public void setAutoCol(boolean autoCol) {
     
@@ -570,7 +555,7 @@ public class CsvConfig {
   }
   
   /**
-   * Returns the <tt>autoCol</tt> property.
+   * Returns the <code>autoCol</code> property.
    * 
    * @return flag
    */
@@ -608,14 +593,14 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the <tt>headerMatch</tt> property.
-   * If set to <tt>true</tt>, a <tt>CsvReader</tt> will
+   * Sets the <code>headerMatch</code> property.
+   * If set to <code>true</code>, a <code>CsvReader</code> will
    * identify the columns' position by header text.
    * If there is any column with a {@link ColConfig#setHeader(String) header} property
    * and that header text is not found within the header row,
    * an exception will be thrown.
    * 
-   * @param headerMatch
+   * @param headerMatch flag wether columns are identified by text in header row
    */
   public void setHeaderMatch(boolean headerMatch) {
     
@@ -623,7 +608,7 @@ public class CsvConfig {
   }
   
   /**
-   * Returns the <tt>headerMatch</tt> property.
+   * Returns the <code>headerMatch</code> property.
    * 
    * @return flag
    */
@@ -645,7 +630,7 @@ public class CsvConfig {
   /**
    * Sets a row filter.
    * 
-   * @param rowFilter
+   * @param rowFilter row filter implementation
    */
   public void setRowFilter(RowFilter rowFilter) {
 
@@ -655,7 +640,7 @@ public class CsvConfig {
   /**
    * Adds a column definition.
    * 
-   * @param column
+   * @param column config of new column
    */
   public void addCol(ColConfig column) {
 
@@ -704,7 +689,7 @@ public class CsvConfig {
   }
   
   /**
-   * Returns the formatter for <tt>CsvWriter</tt> output.
+   * Returns the formatter for <code>CsvWriter</code> output.
    * 
    * @return formatter
    */
@@ -717,10 +702,10 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the formatter for <tt>CsvWriter</tt> output. Default is
+   * Sets the formatter for <code>CsvWriter</code> output. Default is
    * {@link DefaultRowFormatter}.
    * 
-   * @param formatter
+   * @param formatter formatter implementation
    */
   public void setFormatter(RowFormatter formatter) {
 
@@ -728,7 +713,7 @@ public class CsvConfig {
   }
 
   /**
-   * Returns the row separator needed for <tt>CsvWriter</tt>.
+   * Returns the row separator needed for <code>CsvWriter</code>.
    * 
    * @return row separator character(s)
    */
@@ -741,11 +726,11 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the row separator needed for <tt>CsvWriter</tt>. Default is the
+   * Sets the row separator needed for <code>CsvWriter</code>. Default is the
    * platform dependent separator returned by
-   * <tt>System.getProperty("line.separator")</tt>.
+   * <code>System.getProperty("line.separator")</code>.
    * 
-   * @param rowSeparator
+   * @param rowSeparator line separator
    */
   public void setRowSeparator(String rowSeparator) {
 
@@ -753,7 +738,7 @@ public class CsvConfig {
   }
 
   /**
-   * Retrieves the representation of boolean value <tt>true</tt>.
+   * Retrieves the representation of boolean value <code>true</code>.
    * 
    * @return true value
    */
@@ -766,10 +751,10 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the representation of boolean value <tt>true</tt>. Default is
-   * <tt>true</tt>.
+   * Sets the representation of boolean value <code>true</code>. Default is
+   * <code>true</code>.
    * 
-   * @param trueValue
+   * @param trueValue text representation of <code>true</code>
    */
   public void setTrueValue(String trueValue) {
 
@@ -777,7 +762,7 @@ public class CsvConfig {
   }
 
   /**
-   * Retrieves the representation of boolean value <tt>false</tt>.
+   * Retrieves the representation of boolean value <code>false</code>.
    * 
    * @return false value
    */
@@ -790,9 +775,9 @@ public class CsvConfig {
   }
 
   /**
-   * Sets the representation of boolean value <tt>false</tt>.
+   * Sets the representation of boolean value <code>false</code>.
    * 
-   * @param falseValue
+   * @param falseValue text representation of <code>false</code>
    */
   public void setFalseValue(String falseValue) {
 
@@ -800,9 +785,9 @@ public class CsvConfig {
   }
   
   /**
-   * Retrieves the replacement for <tt>null</tt> values.
+   * Retrieves the replacement for <code>null</code> values.
    * A {@link CsvReader} replaces the content of an empty column with this value.
-   * A {@link CsvWriter} replaces <tt>null</tt> by this value. 
+   * A {@link CsvWriter} replaces <code>null</code> by this value. 
    * @return null value
    */
   public String getNullValue() {
@@ -811,9 +796,9 @@ public class CsvConfig {
   }
   
   /**
-   * Sets the replacement value for <tt>null</tt>.
-   * By default, <tt>null</tt> values remain <tt>null<tt>.
-   * @param nullValue
+   * Sets the replacement value for <code>null</code>.
+   * By default, <code>null</code> values remains <code>null</code> (nothing).
+   * @param nullValue alternative <code>null</code> representation 
    */
   public void setNullValue(String nullValue) {
     
@@ -828,16 +813,16 @@ public class CsvConfig {
   public Integer getScale() {
 
     if (scale == null) {
-      scale = new Integer(2);
+      scale = Integer.valueOf(2);
     }
     return scale;
   }
 
   /**
    * Sets the global number of fractional digits for decimal numbers.
-   * Default is <tt>2</tt>.
+   * Default is <code>2</code>.
    * 
-   * @param scale
+   * @param scale scale of decimal numbers
    */
   public void setScale(Integer scale) {
 

@@ -29,7 +29,7 @@ public enum Weekday {
   }
 
   /**
-   * Returns the corresponding <tt>Calendar</tt> constant.
+   * Returns the corresponding <code>Calendar</code> constant.
    * @return constant
    */
   public int getCalendarConstant() {
@@ -48,7 +48,7 @@ public enum Weekday {
   
   /**
    * Returns the weekday of a date.
-   * @param date
+   * @param date date
    * @return weekday
    */
   static public Weekday getWeekday(Date date) {
@@ -60,7 +60,7 @@ public enum Weekday {
   
   /**
    * Returns a weekday corresponding to a calendar value.
-   * @param cal
+   * @param cal calendar
    * @return weekday
    */
   static public Weekday getWeekday(Calendar cal) {

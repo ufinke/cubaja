@@ -9,7 +9,7 @@ import static java.sql.Connection.TRANSACTION_REPEATABLE_READ;
 import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 
 /**
- * Enum wrapper for <tt>Connection</tt> transaction isolation constants.
+ * Enum wrapper for <code>Connection</code> transaction isolation constants.
  * @author Uwe Finke
  */
 public enum TransactionIsolation {

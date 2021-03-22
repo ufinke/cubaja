@@ -1,48 +1,51 @@
 /**
- * Easy access to XML configuration data.
  * <p>
+ * Easy access to XML configuration data.
+ * </p>
  * <b>Introduction</b>
  * <p>
  * The idea is to unburden the application from interpreting typeless configuration data. 
  * Instead, the application relies on typesafe data which can
  * be retrieved from objects giving a really object oriented view on the configuration.
  * This framework makes configuration issues as easy as coding simple data access objects.
- * <p>
- * The central class of this package is {@link de.ufinke.cubaja.config.Configurator Configurator}.
- * <p>
+ * </p><p>
+ * The central class of this package is {@link Configurator}.
+ * </p>
  * <b>Configuration objects</b>
  * <p>
  * An arbitrary configuration object represents
  * an XML element. Like XML elements, the element node objects may be nested.
  * For every type of XML element, there is a corresponding class.
  * These classes have 'setter' and 'adder' methods; their names begin
- * with <tt>set</tt> or <tt>add</tt>, followed by the name of an XML attribute
+ * with <code>set</code> or <code>add</code>, followed by the name of an XML attribute
  * or the tag name of an XML element. The difference between setter and adder methods is 
  * that setters may be invoked only once (for an attribute value or a unique subelement),
  * whereas adders may be invoked any number of times. 
  * Within an adder method, the passed parameter is typically added to a collection.
- * <p>
- * Setter and adder methods must have a <tt>void</tt> return type and exactly one
+ * </p><p>
+ * Setter and adder methods must have a <code>void</code> return type and exactly one
  * parameter. Built-in supported parameter types are
+ * </p>
  * <ul>
  *   <li>all primitive types and their corresponding object classes</li>
- *   <li><tt>String</tt></li> 
- *   <li><tt>java.util.Date</tt></li>
- *   <li><tt>java.math.BigInteger</tt></li>
- *   <li><tt>java.math.BigDecimal</tt></li>
- *   <li><tt>Enum</tt> types</li>
- *   <li><tt>Class</tt> (the parameter is a class name)</li>
+ *   <li><code>String</code></li> 
+ *   <li><code>java.util.Date</code></li>
+ *   <li><code>java.math.BigInteger</code></li>
+ *   <li><code>java.math.BigDecimal</code></li>
+ *   <li><code>Enum</code> types</li>
+ *   <li><code>Class</code> (the parameter is a class name)</li>
  *   <li>any interfaces (the parameter is the name of an implementing class)</li>
  * </ul>
+ * <p>
  * Other types with a public parameterless constructor are considered to be element nodes.
  * Those types do not need to extend or implement supertypes or interfaces.
  * But if such a type implements 
- * {@link de.ufinke.cubaja.config.StartElementHandler StartElementHandler},
- * {@link de.ufinke.cubaja.config.EndElementHandler} 
- * or {@link de.ufinke.cubaja.config.ParameterFactoryProvider}, 
+ * {@link StartElementHandler},
+ * {@link EndElementHandler} 
+ * or {@link ParameterFactoryProvider}, 
  * the implemented methods will
  * be called during the configuration process to gain more control for special purposes.
- * <p>
+ * </p><p>
  * An attribute value will be passed to the actual element node object
  * as the appropriate parameter type when processing the starting XML element tag.
  * Element content (subelements) 
@@ -52,66 +55,66 @@
  * the attribute value or element content may be a comma separated list which is split 
  * into separate trimmed strings. The strings are processed in the same way as single values
  * and collected in an array.
- * <p>
+ * </p><p>
  * The application passes its root configuration object to the
  * {@link de.ufinke.cubaja.config.Configurator#configure configure}
- * method of a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
- * Before processing, the 
- * {@link de.ufinke.cubaja.config.Configurator Configurator} may be customized,
+ * method of a <code>Configurator</code> instance.
+ * Before processing, the <code>Configurator</code> may be customized,
  * e.g. by setting the name of the XML source,
  * applying properties, setting patterns, or providing 
- * {@link de.ufinke.cubaja.config.ParameterFactoryFinder ParameterFactoryFinder}s
+ * {@link ParameterFactoryFinder}s
  * for your own parameter types.  
- * <p>
+ * </p>
  * <b>Properties</b>
  * <p>
  * The XML attribute values or element content may contain properties of the form 
- * <tt>${<i>propertyName</i>}</tt>.
+ * <code>${<i>propertyName</i>}</code>.
  * Those properties are replaced by their actual values when the
  * parameter types of the setter / adder methods are processed.
  * There are several possible sources for property values, all provided by implementations
- * of {@link de.ufinke.cubaja.config.PropertyProvider PropertyProvider}. 
+ * of {@link PropertyProvider}. 
  * Basic property providers are defined by enum
- * {@link de.ufinke.cubaja.config.PropertyProviderType PropertyProviderType}. 
- * Additionally, you can write your own providers or pass an instance of <tt>java.util.Properties</tt>.
- * <p>
+ * {@link PropertyProviderType}. 
+ * Additionally, you can write your own providers or pass an instance of <code>java.util.Properties</code>.
+ * </p><p>
  * The properties' search order is defined by the order of  
  * {@link de.ufinke.cubaja.config.Configurator#addPropertyProvider addPropertyProvider} method calls.
  * Basic property providers are automatically appended to the search order 
- * if they were not defined explicitly and there is no <tt>NULL</tt> property provider.
+ * if they were not defined explicitly and there is no <code>NULL</code> property provider.
  * The default order is as follows:
+ * </p>
  * <ol>
  *   <li>
- *     <tt>SYSTEM</tt>
+ *     <code>SYSTEM</code>
  *     <br>
  *     System properties.
  *   </li>
  *   <li>
- *     <tt>CONFIG</tt>
+ *     <code>CONFIG</code>
  *     <br>
- *     Properties in an optional resource <tt>config.properties</tt>
+ *     Properties in an optional resource <code>config.properties</code>
  *     which is loaded by the resource loader.
  *   </li>
  *   <li>
- *     <tt>XML</tt>
+ *     <code>XML</code>
  *     <br>
  *     Properties defined in the XML document with the special element
  *     <br>
- *     <tt>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</tt>.
+ *     <code>&lt;configProperty name="<i>name</i>" value="<i>value</i>/"&gt;</code>.
  *   </li>
  *   <li>
- *     <tt>ENVIRONMENT</tt>
+ *     <code>ENVIRONMENT</code>
  *     <br>
  *     Environment variables.
  *   </li>
  * </ol>
  * <p>
  * The {@link de.ufinke.cubaja.config.Configurator#configure configure} method may be called 
- * more than once on a {@link de.ufinke.cubaja.config.Configurator Configurator} instance.
+ * more than once on an <code>Configurator</code> instance.
  * This is useful when a big configuration should be split into several independent files
  * (e.g. technical and end-user responsibility) and the same basic settings should be used.
  * The provider for property type 
- * <tt>XML</tt> is stored in a stack.
+ * <code>XML</code> is stored in a stack.
  * The properties are searched from the top of the stack downward.
  * On every call to {@link de.ufinke.cubaja.config.Configurator#configure configure},
  * the actual XML provider is initialized
@@ -125,71 +128,72 @@
  * There is a corresponding method
  * {@link de.ufinke.cubaja.config.Configurator#popXMLProperties popXMLProperties} 
  * to pop a provider off the stack.
- * <p>
- * Implementations of {@link de.ufinke.cubaja.config.NamedPropertyProvider NamedPropertyProvider} 
+ * </p><p>
+ * Implementations of {@link NamedPropertyProvider} 
  * are not part of the search sequence.
- * The provider is called directly when a <tt>configProperty</tt> element
- * with an attribute '<tt>provider</tt>' is encountered. Such <tt>configProperty</tt>
- * elements may have sub-elements with the tag name '<tt>parm</tt>', containing attributes
- * '<tt>name</tt>' and '<tt>value</tt>'.
- * <p>
+ * The provider is called directly when a <code>configProperty</code> element
+ * with an attribute '<code>provider</code>' is encountered. Such <code>configProperty</code>
+ * elements may have sub-elements with the tag name '<code>parm</code>', containing attributes
+ * '<code>name</code>' and '<code>value</code>'.
+ * </p><p>
  * Named property providers are defined by the application, or within the XML. For the latter,
- * code an element '<tt>configPropertyProvider</tt>' with the attributes
- * '<tt>name</tt>' (the name of the provider) and '<tt>class</tt>' (the implementing class name).
+ * code an element '<code>configPropertyProvider</code>' with the attributes
+ * '<code>name</code>' (the name of the provider) and '<code>class</code>' (the implementing class name).
  * The class has to be in the classpath.
- * <p>
+ * </p><p>
  * <b>Includes</b>
- * <p>
- * The special element <tt>configInclude</tt> with an attribute named <tt>include</tt>
+ * </p><p>
+ * The special element <code>configInclude</code> with an attribute named <code>include</code>
  * includes the named resource (or file) while parsing. The root element of the included resource
  * is discarded but its children are processed as if they had been defined in
  * the root document.
  * </p>
  * <b>Settings</b>
  * <p>
- * There is another special element named <tt>configSettings</tt> to set the parser's behaviour.
+ * There is another special element named <code>configSettings</code> to set the parser's behaviour.
  * Possible attributes are
+ * </p>
  * <ol>
  *   <li>
- *     <tt>datePattern</tt>
+ *     <code>datePattern</code>
  *     <br>
  *     The date pattern for parsing date values.
  *     For a description how to code the pattern see {@link java.text.SimpleDateFormat}.
- *     Default is <tt>yyyy-MM-dd</tt>.
+ *     Default is <code>yyyy-MM-dd</code>.
  *   </li>
  *   <li>
- *     <tt>trueValues</tt>
+ *     <code>trueValues</code>
  *     <br>
- *     A comma separated list of constants representing the boolean value <tt>true</tt>.
- *     Default is <tt>true,yes,on</tt>.
+ *     A comma separated list of constants representing the boolean value <code>true</code>.
+ *     Default is <code>true,yes,on</code>.
  *   </li>
  *   <li>
- *     <tt>falseValues</tt>
+ *     <code>falseValues</code>
  *     <br>
- *     A comma separated list of constants representing the boolean value <tt>false</tt>.
- *     Default is <tt>false,no,off</tt>.
+ *     A comma separated list of constants representing the boolean value <code>false</code>.
+ *     Default is <code>false,no,off</code>.
  *   </li>
  *   <li>
- *     <tt>decimalPoint</tt>
+ *     <code>decimalPoint</code>
  *     <br>
  *     The decimal point character, which may be a point or a comma.
  *     By default, both characters are processed as decimal point.
  *   </li>
  *   <li>
- *     <tt>processEscape</tt>
+ *     <code>processEscape</code>
  *     <br>
  *     Enables or disables processing of escape characters 
- *     (introduced by backslash, i.e. <tt>\n</tt> for newline).
- *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
+ *     (introduced by backslash, i.e. <code>\n</code> for newline).
+ *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
  *     processing, other values disable processing.
  *     By default, processing is enabled.
  *   </li>
  *   <li>
- *     <tt>processProperties</tt>
+ *     <code>processProperties</code>
  *     <br>
  *     Enables or disables processing of properties
- *     (that is, replacement of <tt>${...}</tt> sequences).
- *     The values <tt>true</tt>, <tt>yes</tt> or <tt>on</tt> enable
+ *     (that is, replacement of <code>${...}</code> sequences).
+ *     The values <code>true</code>, <code>yes</code> or <code>on</code> enable
  *     processing, other values disable processing.
  *     By default, processing is enabled.
  *   </li>
@@ -198,7 +202,8 @@
  * Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
  * <br>
  * Subject to 
- * {@link <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>}. 
- * See <tt>license.txt</tt> distributed with this library.
+ * <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>. 
+ * See <code>license.txt</code> distributed with this library.
+ * </p>
  */
 package de.ufinke.cubaja.config;

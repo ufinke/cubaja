@@ -14,7 +14,7 @@ public class DOMContent {
   
   /**
    * Constructor.
-   * @param type
+   * @param type type of this content node (element or text)
    */
   protected DOMContent(DOMType type) {
   
@@ -23,7 +23,7 @@ public class DOMContent {
   
   /**
    * Returns the type.
-   * Useful for <tt>switch</tt> statements.
+   * Useful for <code>switch</code> statements.
    * @return type of this content node
    */
   public DOMType getType() {

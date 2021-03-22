@@ -37,11 +37,11 @@ public class CsvWriter {
   /**
    * Constructor with configuration.
    * If you use this constructor,
-   * you have to set the configurations <tt>file</tt> property.
-   * @param config
-   * @throws IOException
-   * @throws ConfigException
-   * @throws CsvException
+   * you have to set the configurations <code>file</code> property.
+   * @param config configuration
+   * @throws IOException when writer can't be opened
+   * @throws ConfigException when configuration is insufficient
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public CsvWriter(CsvConfig config) throws ConfigException, IOException, CsvException {
     
@@ -51,8 +51,9 @@ public class CsvWriter {
   /**
    * Constructor with implicit default configuration.
    * With this constructor, there are no columns defined.
-   * @param writer
-   * @throws CsvException
+   * @param writer passed writer
+   * @throws IOException when writer can't be opened
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public CsvWriter(Writer writer) throws IOException, CsvException {
     
@@ -61,9 +62,10 @@ public class CsvWriter {
   
   /**
    * Constructor with writer and configuration.
-   * @param writer
-   * @param config
-   * @throws CsvException
+   * @param writer passed writer
+   * @param config configuration
+   * @throws IOException when writer can't be opened
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public CsvWriter(Writer writer, CsvConfig config) throws IOException, CsvException {
   
@@ -95,7 +97,8 @@ public class CsvWriter {
   
   /**
    * Closes the underlaying writer.
-   * @throws IOException
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void close() throws IOException, CsvException {
     
@@ -106,8 +109,8 @@ public class CsvWriter {
   
   /**
    * Advances to next row.
-   * @throws IOException
-   * @throws CsvException
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void nextRow() throws IOException, CsvException {
     
@@ -126,9 +129,9 @@ public class CsvWriter {
   
   /**
    * Returns the position of a named column.
-   * @param columnName
+   * @param columnName name of column
    * @return position
-   * @throws CsvException
+   * @throws CsvException when column could not be retrieved
    */
   public int getColumnPosition(String columnName) throws CsvException {
 
@@ -162,11 +165,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>String</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>String</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, String value) throws IOException, CsvException {
     
@@ -174,11 +177,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by position with a <tt>String</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>String</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, String value) throws IOException, CsvException {
 
@@ -200,11 +203,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>boolean</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>boolean</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, boolean value) throws IOException, CsvException {
     
@@ -212,11 +215,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>boolean</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>boolean</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, boolean value) throws IOException, CsvException {
     
@@ -225,11 +228,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>Boolean</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Boolean</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Boolean value) throws IOException, CsvException {
     
@@ -237,11 +240,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Boolean</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Boolean</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Boolean value) throws IOException, CsvException {
     
@@ -259,11 +262,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>char</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>char</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, char value) throws IOException, CsvException {
     
@@ -271,11 +274,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>char</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>char</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, char value) throws IOException, CsvException {
     
@@ -284,11 +287,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>Character</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Character</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Character value) throws IOException, CsvException {
     
@@ -296,11 +299,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Character</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Character</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Character value) throws IOException, CsvException {
     
@@ -318,11 +321,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>byte</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>byte</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, byte value) throws IOException, CsvException {
     
@@ -330,11 +333,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>byte</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>byte</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, byte value) throws IOException, CsvException {
     
@@ -343,11 +346,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with an <tt>short</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with an <code>short</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, short value) throws IOException, CsvException {
     
@@ -355,11 +358,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>short</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>short</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, short value) throws IOException, CsvException {
     
@@ -368,11 +371,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with an <tt>int</tt> (or <tt>byte</tt> or <tt>short</tt>).
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, int value) throws IOException, CsvException {
     
@@ -380,11 +383,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with an <tt>int</tt> (or <tt>byte</tt> or <tt>short</tt>).
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with an <code>int</code> (or <code>byte</code> or <code>short</code>).
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, int value) throws IOException, CsvException {
     
@@ -393,11 +396,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>Byte</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Byte</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Byte value) throws IOException, CsvException {
     
@@ -405,11 +408,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Byte</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Byte</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Byte value) throws IOException, CsvException {
     
@@ -422,11 +425,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>Short</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Short</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Short value) throws IOException, CsvException {
     
@@ -434,11 +437,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Short</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Short</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Short value) throws IOException, CsvException {
     
@@ -451,11 +454,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with an <tt>Integer</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with an <code>Integer</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Integer value) throws IOException, CsvException {
     
@@ -463,11 +466,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with an <tt>Integer</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with an <code>Integer</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Integer value) throws IOException, CsvException {
     
@@ -485,11 +488,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>long</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>long</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, long value) throws IOException, CsvException {
     
@@ -497,11 +500,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>long</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>long</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, long value) throws IOException, CsvException {
     
@@ -510,11 +513,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>Long</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Long</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Long value) throws IOException, CsvException {
     
@@ -522,11 +525,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Long</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Long</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Long value) throws IOException, CsvException {
     
@@ -545,11 +548,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>double</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>double</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, double value) throws IOException, CsvException {
     
@@ -557,11 +560,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>double</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>double</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, double value) throws IOException, CsvException {
     
@@ -570,11 +573,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>float</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>float</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, float value) throws IOException, CsvException {
     
@@ -582,11 +585,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>float</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>float</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, float value) throws IOException, CsvException {
     
@@ -595,11 +598,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by name with a <tt>Double</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Double</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Double value) throws IOException, CsvException {
     
@@ -607,11 +610,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Double</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Double</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Double value) throws IOException, CsvException {
     
@@ -624,11 +627,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>Float</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Float</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Float value) throws IOException, CsvException {
     
@@ -636,11 +639,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Float</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Float</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Float value) throws IOException, CsvException {
     
@@ -653,11 +656,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>BigDecimal</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>BigDecimal</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, BigDecimal value) throws IOException, CsvException {
     
@@ -665,11 +668,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>BigDecimal</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>BigDecimal</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, BigDecimal value) throws IOException, CsvException {
     
@@ -682,11 +685,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>BigInteger</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>BigInteger</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, BigInteger value) throws IOException, CsvException {
     
@@ -694,11 +697,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>BigInteger</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>BigInteger</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, BigInteger value) throws IOException, CsvException {
     
@@ -711,11 +714,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with a <tt>Date</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with a <code>Date</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Date value) throws IOException, CsvException {
     
@@ -723,11 +726,11 @@ public class CsvWriter {
   }
 
   /**
-   * Fills column identified by position with a <tt>Date</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with a <code>Date</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Date value) throws IOException, CsvException {
     
@@ -740,11 +743,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by name with an <tt>Enum</tt>.
-   * @param columnName
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by name with an <code>Enum</code>.
+   * @param columnName name of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(String columnName, Enum<?> value) throws IOException, CsvException {
     
@@ -752,11 +755,11 @@ public class CsvWriter {
   }
   
   /**
-   * Fills column identified by position with an <tt>Enum</tt>.
-   * @param position
-   * @param value
-   * @throws IOException
-   * @throws CsvException
+   * Fills column identified by position with an <code>Enum</code>.
+   * @param position position of column
+   * @param value column value
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void write(int position, Enum<?> value) throws IOException, CsvException {
     
@@ -770,8 +773,8 @@ public class CsvWriter {
   
   /**
    * Fills columns from getter methods of data object.
-   * @param dataObject
-   * @throws CsvException
+   * @param dataObject data object
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void writeObject(Object dataObject) throws CsvException {
     
@@ -793,11 +796,11 @@ public class CsvWriter {
   
   /**
    * Fills columns from getter methods of data object and writes row.
-   * This method just calls <tt>writeObject</tt>
-   * and <tt>nextRow</tt>.
-   * @param dataObject
-   * @throws IOException
-   * @throws CsvException
+   * This method just calls <code>writeObject</code>
+   * and <code>nextRow</code>.
+   * @param dataObject data object
+   * @throws IOException when an i/o error occurs
+   * @throws CsvException when a CSV formatting problem occurs
    */
   public void writeRow(Object dataObject) throws IOException, CsvException {
     

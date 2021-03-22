@@ -25,8 +25,8 @@ import de.ufinke.cubaja.util.Text;
  * <p>
  * By default, this class splits consecutive statements
  * (separated by semicolon) into a list of statements.
- * Text between line comments <tt>--{beginStatement}</tt>
- * and <tt>--{endStatement}</tt> are treated as a single SQL statement.
+ * Text between line comments <code>--{beginStatement}</code>
+ * and <code>--{endStatement}</code> are treated as a single SQL statement.
  * These comments are necessary to process 
  * stored procedure definitions or proprietary SQL scripts.
  * @author Uwe Finke
@@ -62,7 +62,7 @@ public class Sql {
   
   /**
    * Constructor with initial SQL text.
-   * @param sql
+   * @param sql initial SQL text
    */
   public Sql(String sql) {
     
@@ -72,8 +72,8 @@ public class Sql {
   
   /**
    * Constructor which reads initial SQL text from a reader.
-   * @param reader
-   * @throws IOException
+   * @param reader reader
+   * @throws IOException I/O problem
    */
   public Sql(Reader reader) throws IOException {
     
@@ -89,12 +89,12 @@ public class Sql {
    * We have to specify a class within that package as parameter. 
    * This may be any class, but usually it will be the class which uses
    * the SQL.
-   * The file names extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains only the
+   * The file names extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains only the
    * plain file name without extension and without path.
-   * @param packageClass
-   * @param sqlResource
-   * @throws IOException
+   * @param packageClass class in the same package as the resource file
+   * @param sqlResource name of resource file within the package
+   * @throws IOException I/O problem
    */
   public Sql(Class<?> packageClass, String sqlResource) throws IOException {
     
@@ -398,7 +398,7 @@ public class Sql {
   
   /**
    * Appends a line.
-   * @param line
+   * @param line another line of the SQL statement
    * @return this
    */
   public Sql append(String line) {
@@ -417,9 +417,9 @@ public class Sql {
   
   /**
    * Appends lines from a reader.
-   * @param reader
+   * @param reader reader
    * @return this
-   * @throws IOException
+   * @throws IOException I/O problem
    */
   public Sql append(Reader reader) throws IOException {
 
@@ -440,24 +440,24 @@ public class Sql {
    * Appends lines from a resource.
    * <p>
    * The SQL must be written in a separate file within a java source package.
-   * The <tt>packageClass</tt> parameter specifies
+   * The <code>packageClass</code> parameter specifies
    * a class which is located in the same package as the SQL resource. 
    * This may be any class, but usually it will be the class which uses
-   * the SQL (then the parameter simply is '<tt>getClass()</tt>').
+   * the SQL (then the parameter simply is '<code>getClass()</code>').
    * <p>
-   * The file names extension must be <tt>sql</tt> (lower case).
-   * The <tt>sqlResource</tt> parameter contains the file name without extension
+   * The file names extension must be <code>sql</code> (lower case).
+   * The <code>sqlResource</code> parameter contains the file name without extension
    * (the extension is appended by this method automatically).
    * There is no prefix or path required when the resource resides in the same package
-   * as the <tt>packageClass</tt>. The resource is loaded following the rules
+   * as the <code>packageClass</code>. The resource is loaded following the rules
    * defined by {@link java.lang.Class#getResourceAsStream(String) getResourceAsStream}.
    * <p>
-   * To be platform independent on runtime, the resource must be coded in <tt>UTF-8</tt>.
+   * To be platform independent on runtime, the resource must be coded in <code>UTF-8</code>.
    * Don't forget to customize your development editor.
-   * @param packageClass
-   * @param sqlResource
+   * @param packageClass class in the same package as the resource file
+   * @param sqlResource name of resource file within the package
    * @return this
-   * @throws IOException
+   * @throws IOException I/O problem
    */
   public Sql append(Class<?> packageClass, String sqlResource) throws IOException {
     
@@ -484,12 +484,12 @@ public class Sql {
   
   /**
    * Appends a list of values separated by comma.
-   * If an object type is not a subtype of <tt>Number</tt>,
+   * If an object type is not a subtype of <code>Number</code>,
    * the value will be enclosed by apostrophs.
    * <p>
-   * Useful for <tt>IN</tt> predicates.
+   * Useful for <code>IN</code> predicates.
    * The parantheses are not generated automatically.
-   * @param value
+   * @param value array with values
    * @return this
    */
   public Sql appendList(Object[] value) {
@@ -518,12 +518,12 @@ public class Sql {
   
   /**
    * Appends a list of values separated by comma.
-   * If an object type is not a subtype of <tt>Number</tt>,
+   * If an object type is not a subtype of <code>Number</code>,
    * the value will be enclosed by apostrophs.
    * <p>
-   * Useful for <tt>IN</tt> predicates.
+   * Useful for <code>IN</code> predicates.
    * The parantheses are not generated automatically.
-   * @param value
+   * @param value collection with values
    * @return this
    */
   public Sql appendList(Collection<Object> value) {
@@ -538,9 +538,9 @@ public class Sql {
   /**
    * Appends a list of integer values separated by comma.
    * <p>
-   * Useful for <tt>IN</tt> predicates.
+   * Useful for <code>IN</code> predicates.
    * The parantheses are not generated automatically.
-   * @param value
+   * @param value array with values
    * @return this
    */
   public Sql appendList(int[] value) {
@@ -562,10 +562,10 @@ public class Sql {
   }
   
   /**
-   * Generates SQL code for <tt>update</tt> statements.
+   * Generates SQL code for <code>update</code> statements.
    * The variables in the list are expanded to 
-   * <tt>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</tt>.
-   * @param variables
+   * <code>set <i>var1</i> = :<i>var1</i>, <i>var2</i> = :<i>var2</i> ...</code>.
+   * @param variables field names
    * @return this
    */
   public Sql appendUpdate(String... variables) {
@@ -586,10 +586,10 @@ public class Sql {
   }
   
   /**
-   * Generates SQL code for <tt>insert</tt> statements.
+   * Generates SQL code for <code>insert</code> statements.
    * The variables in the list are expanded to 
-   * <tt>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</tt>.
-   * @param variables
+   * <code>(<i>var1</i>, <i>var2</i>, ...) values (:<i>var1</i>, :<i>var2</i> ...)</code>.
+   * @param variables field names
    * @return this
    */
   public Sql appendInsert(String... variables) {
@@ -615,10 +615,10 @@ public class Sql {
   
   /**
    * Sets a property to a value.
-   * Properties like '<tt>${<i>name</i>}</tt> are replaced by the value
+   * Properties like '<code>${<i>name</i>}</code> are replaced by the value
    * before the formatted statement is retrieved.
-   * @param name
-   * @param value
+   * @param name name of property
+   * @param value value which replaces the property
    * @return this
    */
   public Sql resolve(String name, String value) {
@@ -644,8 +644,8 @@ public class Sql {
    * Sets a property to a generated collection value.
    * The array elements are formatted as in {@link #appendList(Object[]) appendList},
    * then {@link #resolve(String, String) resolve} is called.
-   * @param name
-   * @param value
+   * @param name name of property
+   * @param value array with values which replace the properties as a comma separated list
    * @return this
    */
   public Sql resolve(String name, Object[] value) {
@@ -676,8 +676,8 @@ public class Sql {
    * Sets a property to a generated collection value.
    * The collection elements are formatted as in {@link #appendList(Collection) appendList},
    * then {@link #resolve(String, String) resolve} is called.
-   * @param name
-   * @param value
+   * @param name name of property
+   * @param value collection of values which replace the properties as a comma separated list
    * @return this
    */
   public Sql resolve(String name, Collection<Object> value) {
@@ -689,8 +689,8 @@ public class Sql {
    * Sets a property to a generated collection value.
    * The collection elements are formatted as in {@link #appendList(int[]) appendList},
    * then {@link #resolve(String, String) resolve} is called.
-   * @param name
-   * @param value
+   * @param name name of property
+   * @param value array of values which replace the properties as a comma separated list
    * @return this
    */
   public Sql resolve(String name, int[] value) {

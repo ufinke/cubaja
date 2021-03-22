@@ -29,9 +29,9 @@ public interface Generator extends AccessFlags {
 
   /**
    * Generates bytecode.
-   * @param className
-   * @return <tt>GenClass</tt> containing the bytecode.
-   * @throws Exception
+   * @param className name of the class
+   * @return <code>GenClass</code> containing the bytecode.
+   * @throws Exception any exception during bytecode generation 
    */
   public GenClass generate(String className) throws Exception;
 }

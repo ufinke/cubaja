@@ -16,9 +16,9 @@ import de.ufinke.cubaja.util.Text;
  * If the number of objects exceeds the estimated number which should fit into memory,
  * presorted runs with serialized objects are written
  * to a temporary file.
- * An object is put to the sorter with the <tt>add</tt> method.
+ * An object is put to the sorter with the <code>add</code> method.
  * Sorted objects are retrieved with an iterator;
- * <tt>Sorter</tt> implements the appropriate <tt>Iterable</tt>.
+ * <code>Sorter</code> implements the appropriate <code>Iterable</code>.
  * <p>
  * The implementation uses up to 3 threads:
  * the first is the application thread that adds and retrieves
@@ -26,19 +26,19 @@ import de.ufinke.cubaja.util.Text;
  * handles IO to and from a temporary file (if needed).
  * <p>
  * It is strongly recommended to control the maximum heap size
- * with the JVM <tt>Xmx</tt> runtime parameter.
- * A value of about <tt>1000M</tt> should be sufficient 
+ * with the JVM <code>Xmx</code> runtime parameter.
+ * A value of about <code>1000M</code> should be sufficient 
  * to sort over 100 million medium sized objects, 
  * assumed that the application doesn't need much heap space
  * for other purpose than sort.
  * If heap size is a problem, or objects are very large,
  * memory requirements may be tuned with
- * the <tt>runSize</tt> and <tt>blockSize</tt> properties
+ * the <code>runSize</code> and <code>blockSize</code> properties
  * in {@link SortConfig}. 
  * Lower property values increase the number of maximum total objects,
  * but performance may suffer. Higher values do not necessarily improve performance. 
- * If your application uses the <tt>config</tt> package, 
- * it would be a good idea to add a <tt>SortConfig</tt> to the configuration.
+ * If your application uses the <code>config</code> package, 
+ * it would be a good idea to add a <code>SortConfig</code> to the configuration.
  * Doing so, you have control over
  * the sort parameters at runtime.
  * @author Uwe Finke
@@ -65,7 +65,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   /**
    * Constructor with default configuration.
-   * @param comparator
+   * @param comparator comparator
    */
   public Sorter(Comparator<? super D> comparator) {
     
@@ -74,8 +74,8 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   /**
    * Constructor with explicit configuration.
-   * @param comparator
-   * @param config
+   * @param comparator comparator
+   * @param config configuration
    */
   public Sorter(Comparator<? super D> comparator, SortConfig config) {
   
@@ -92,9 +92,9 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   
   /**
    * Adds an object.
-   * @param element
-   * @throws SorterException
-   * @throws IllegalStateException
+   * @param element object which is put into the sorter
+   * @throws SorterException when a problem occurs during sort
+   * @throws IllegalStateException when an object is put into the sorter after <code>iterator()</code> has been called
    */
   public void add(D element) throws SorterException, IllegalStateException {
   
@@ -142,7 +142,7 @@ public class Sorter<D extends Serializable> implements Iterable<D> {
   /**
    * Retrieves the sorted objects.
    */
-  public Iterator<D> iterator() throws SorterException {
+  public Iterator<D> iterator() throws SorterException, IllegalStateException {
 
     if (state != State.PUT) {
       throw new IllegalStateException(text.get("illegalState", state));

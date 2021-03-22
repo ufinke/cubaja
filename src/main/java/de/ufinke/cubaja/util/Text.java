@@ -11,7 +11,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Combines <tt>ResourceBundle</tt> and <tt>MessageFormat</tt>.
+ * Combines <code>ResourceBundle</code> and <code>MessageFormat</code>.
  * @author Uwe Finke
  */
 public class Text {
@@ -24,9 +24,9 @@ public class Text {
   }
   
   /**
-   * Returns a <tt>Text</tt> instance unique to the package.
-   * @param clazz
-   * @return package <tt>Text</tt> instance
+   * Returns a <code>Text</code> instance unique to the package.
+   * @param clazz class which is located in the same package as the message text resource
+   * @return package <code>Text</code> instance
    */
   static public synchronized Text getPackageInstance(Class<?> clazz) {
   
@@ -63,10 +63,12 @@ public class Text {
   }
   
   /**
+   * <p>
    * Constructor with the using class and a locale.
-   * <p/>
+   * </p><p>
    * The bundle name is derived from the class' package name
-   * suffixed with '<tt>.text</tt>'.
+   * suffixed with '<code>.text</code>'.
+   * </p>
    * @param usingClass the using class
    * @param locale locale
    */
@@ -76,10 +78,12 @@ public class Text {
   }
   
   /**
+   * <p>
    * Constructor with the using class and the default locale.
-   * <p/>
+   * </p><p>
    * The bundle name is derived from the class' package name
-   * suffixed with '<tt>.text</tt>'.
+   * suffixed with '<code>.text</code>'.
+   * </p>
    * @param usingClass the using class
    */
   public Text(Class<?> usingClass) {

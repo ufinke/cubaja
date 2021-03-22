@@ -13,7 +13,7 @@ public interface PropertyProvider {
    * Returns a property value.
    * @param name property name
    * @return property value
-   * @throws Exception
+   * @throws Exception when any error occured
    */
   public String getProperty(String name) throws Exception;
 }
