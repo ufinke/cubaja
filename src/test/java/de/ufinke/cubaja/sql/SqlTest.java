@@ -13,7 +13,7 @@ public class SqlTest {
   static public void environment() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/sql"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/sql"));
     SqlTestConfig config = configurator.configure(new SqlTestConfig());
     database = new Database(config.getDatabase());
   }

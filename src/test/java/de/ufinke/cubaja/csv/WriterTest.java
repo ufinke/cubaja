@@ -12,7 +12,7 @@ public class WriterTest {
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/csv"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/csv"));
     configurator.setName("data_config");
     CsvConfig config = configurator.configure(new CsvConfig());
     

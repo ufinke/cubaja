@@ -10,7 +10,7 @@ public class PropertiesTest {
   public void errorTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/properties"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/properties"));
     configurator.setName("error_config");
     
     try {

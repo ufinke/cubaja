@@ -11,7 +11,7 @@ public class DatepatternTest {
   public void datepatternTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/datepattern"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/datepattern"));
     configurator.setName("datepattern_config");
     
     TestConfig config = configurator.configure(new TestConfig());

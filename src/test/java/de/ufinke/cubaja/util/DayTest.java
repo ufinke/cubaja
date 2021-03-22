@@ -13,7 +13,7 @@ public class DayTest {
   static public void environment() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/util"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/util"));
     configurator.setName("holiday_config");
     holidays = configurator.configure(new HolidayConfig());
   }

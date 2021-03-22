@@ -11,7 +11,7 @@ public class ConfiguratorTest {
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/include"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/include"));
     configurator.setName("inline_include_config");
     Config config = configurator.configure(new Config());
     

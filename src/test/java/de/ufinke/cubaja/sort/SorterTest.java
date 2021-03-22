@@ -11,7 +11,7 @@ public class SorterTest {
   public void sort() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/sort"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/sort"));
     configurator.setName("sorter_config");
     SorterTestConfig config = configurator.configure(new SorterTestConfig());
     
