@@ -70,7 +70,8 @@ class ObjectFactoryGenerator implements Generator {
       createSetterMap(dataClass);
     }
     
-    Class<?> factoryClass = Loader.createClass(dataClass, this, "CsvReaderObjectFactory", dataClass);
+    Class<?> contextClass = (builtin == null) ? dataClass : getClass();
+    Class<?> factoryClass = Loader.createClass(contextClass, this, "CsvReaderObjectFactory", dataClass);
     lastFactory = (ObjectFactory) factoryClass.newInstance();
     factoryMap.put(dataClass, lastFactory);
     
