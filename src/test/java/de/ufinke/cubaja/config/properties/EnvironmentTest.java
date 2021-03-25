@@ -10,7 +10,8 @@ public class EnvironmentTest {
   public void environmentTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/properties"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/properties"));
+    configurator.setProcessEscape(false);
     configurator.setName("environment_config");
     
     TestConfig config = configurator.configure(new TestConfig());

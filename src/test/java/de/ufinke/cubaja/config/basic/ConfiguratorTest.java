@@ -13,7 +13,7 @@ public class ConfiguratorTest {
   public void basicTest() throws Exception {
     
     Configurator configurator = new Configurator();
-    configurator.setResourceLoader(new FileResourceLoader("test/de/ufinke/cubaja/config/basic"));
+    configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/basic"));
     configurator.setName("basic_config");
     TestConfig config = configurator.configure(new TestConfig());
     

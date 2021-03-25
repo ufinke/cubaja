@@ -2,7 +2,7 @@
 
 <config>
 
-  <database driver="com.mysql.jdbc.Driver"
+  <database driver="com.mysql.cj.jdbc.Driver"
             url="jdbc:mysql://localhost:3306/cubaja"
             user="cubaja"
             password="test"
