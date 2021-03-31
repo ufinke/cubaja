@@ -4,7 +4,7 @@
          
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.ufinke.cubaja</groupId>
+    <groupId>de.ufinke</groupId>
     <artifactId>cubaja</artifactId>
     <version>1.6.0</version>
 
