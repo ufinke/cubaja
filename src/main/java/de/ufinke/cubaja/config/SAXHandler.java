@@ -8,6 +8,7 @@ import static de.ufinke.cubaja.config.ElementKind.INCLUDE;
 import static de.ufinke.cubaja.config.ElementKind.INCLUDED_CONTENT;
 import static de.ufinke.cubaja.config.ElementKind.INCLUDED_ROOT;
 import static de.ufinke.cubaja.config.ElementKind.INCLUDE_DEFINITION;
+import static de.ufinke.cubaja.config.ElementKind.INCLUDE_OPTIONAL;
 import static de.ufinke.cubaja.config.ElementKind.NODE;
 import static de.ufinke.cubaja.config.ElementKind.PROPERTY;
 import static de.ufinke.cubaja.config.ElementKind.PROPERTY_PARM;
@@ -16,17 +17,20 @@ import static de.ufinke.cubaja.config.ElementKind.PROPERTY_PROVIDER_DEFINITION;
 import static de.ufinke.cubaja.config.ElementKind.ROOT_NODE;
 import static de.ufinke.cubaja.config.ElementKind.SETTINGS;
 import static de.ufinke.cubaja.config.ElementKind.UNKNOWN;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.XMLReader;
 import org.xml.sax.ext.DefaultHandler2;
 import org.xml.sax.helpers.XMLReaderFactory;
+
 import de.ufinke.cubaja.util.Text;
 
 class SAXHandler extends DefaultHandler2 {
@@ -116,7 +120,7 @@ class SAXHandler extends DefaultHandler2 {
   void parse(String resourceName) throws ConfigException {
     
     try {
-      runXMLReader(resourceName);
+      runXMLReader(resourceName, false);
     } catch (PassedSAXException p) {
       Throwable t = p.getCause();
       while (t instanceof PassedSAXException) {
@@ -170,16 +174,27 @@ class SAXHandler extends DefaultHandler2 {
     sb.append(']');
   }
   
-  private void runXMLReader(String resourceName) throws Exception {
+  private void runXMLReader(String resourceName, boolean ignoreMissingResource) throws Exception {
       
     InputSource source = null;
     
     IncludeDefinition definition = includeMap.get(resourceName);
-    if (definition == null) {      
-      source = loader.loadResource(resourceName);
-      if (source == null) {
-        throw new ConfigException(text.get("resourceNotFound", resourceName));        
-      }
+    if (definition == null) {
+    	if (ignoreMissingResource) {
+    		try {
+          source = loader.loadResource(resourceName);
+    		} catch (Exception e) {
+    			return;
+    		}
+    		if (source == null) {
+    			return;
+    		}
+    	} else {
+        source = loader.loadResource(resourceName);
+        if (source == null) {
+          throw new ConfigException(text.get("resourceNotFound", resourceName));        
+        }
+    	}
       source.setPublicId(resourceName);
     } else {
       source = new InputSource(new StringReader(definition.toString()));
@@ -338,6 +353,7 @@ class SAXHandler extends DefaultHandler2 {
         endIncludedContent(element);
         break;
       case INCLUDE:
+      case INCLUDE_OPTIONAL:
         endInclude(element);
         break;
       case INCLUDE_DEFINITION:
@@ -614,31 +630,37 @@ class SAXHandler extends DefaultHandler2 {
   
   private void startInclude(ElementProxy element, Attributes atts) throws Exception {
     
-    int includeIndex = atts.getIndex("", "include");
-    int defineIndex = atts.getIndex("", "define");
-    
-    if ((includeIndex == -1 && defineIndex == -1) || (includeIndex > -1 && defineIndex > -1)) {
+  	if (atts.getLength() != 1) {
       throw new ConfigException(text.get("includeAttr"));
-    }
-    
-    if (includeIndex > -1) {
-      includeStack.push(resolve(atts.getValue(includeIndex), false));
-    }
-    
-    if (defineIndex > -1) {
-      element.setKind(INCLUDE_DEFINITION);
-      includeDefinition = new IncludeDefinition(atts.getValue(defineIndex), locatorStack.peek());
-      includedContent = true;
-    }
+  	}
+  	
+  	String attributeName = atts.getLocalName(0);
+  	String attributeValue = atts.getValue(0);
+  	
+  	switch (attributeName) {
+  		case "include":
+        includeStack.push(resolve(attributeValue, false));
+  			break;
+  		case "includeOptional":
+        element.setKind(INCLUDE_OPTIONAL);
+        includeStack.push(resolve(attributeValue, false));
+  			break;
+  		case "define":
+        element.setKind(INCLUDE_DEFINITION);
+        includeDefinition = new IncludeDefinition(attributeValue, locatorStack.peek());
+        includedContent = true;
+  			break;
+  		default:
+        throw new ConfigException(text.get("includeAttr"));
+  	}
   }
 
-  @SuppressWarnings("unused")
   private void endInclude(ElementProxy element) throws Exception {
     
-    runXMLReader(includeStack.pop()); 
+  	boolean ignoreMissingResource = (element.getKind() == INCLUDE_OPTIONAL);
+    runXMLReader(includeStack.pop(), ignoreMissingResource); 
   }
   
-  @SuppressWarnings("unused")
   private void endIncludeDefinition(ElementProxy element) {
     
     includeMap.put(includeDefinition.getName(), includeDefinition);

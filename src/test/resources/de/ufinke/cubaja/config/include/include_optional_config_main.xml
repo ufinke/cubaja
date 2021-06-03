@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<config>
+
+	<configInclude include="include_optional_config_sub.xml"/>
+	<configInclude includeOptional="include_optional_config_missing.xml"/>
+  
+</config>
