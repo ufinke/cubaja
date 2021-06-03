@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-
-<config>
-
-	<configInclude includeOptional="include_optional_config_missing.xml"/>
-	<configInclude includeOptional="include_inline_config.xml"/>
-  
-</config>
