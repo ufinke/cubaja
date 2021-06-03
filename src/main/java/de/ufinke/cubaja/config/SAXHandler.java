@@ -1,4 +1,4 @@
-// Copyright (c) 2008 - 2020, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 - 2021, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;
@@ -737,7 +737,6 @@ class SAXHandler extends DefaultHandler2 {
     entry.addParm(name, value);
   }
   
-  @SuppressWarnings("unused")
   private void startPropertyProviderDefinition(ElementProxy element, Attributes atts) throws Exception {
     
     int nameIndex = atts.getIndex("", "name");
@@ -757,7 +756,6 @@ class SAXHandler extends DefaultHandler2 {
     }
   }
   
-  @SuppressWarnings("unused")
   private void startSettings(ElementProxy element, Attributes atts) throws Exception {
 
     for (int i = 0; i < atts.getLength(); i++) {

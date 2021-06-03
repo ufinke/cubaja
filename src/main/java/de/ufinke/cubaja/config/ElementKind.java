@@ -1,4 +1,4 @@
-// Copyright (c) 2008, Uwe Finke. All rights reserved.
+// Copyright (c) 2008 -2021, Uwe Finke. All rights reserved.
 // Subject to BSD License. See "license.txt" distributed with this package.
 
 package de.ufinke.cubaja.config;

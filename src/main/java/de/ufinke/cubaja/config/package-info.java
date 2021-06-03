@@ -143,11 +143,31 @@
  * </p><p>
  * <b>Includes</b>
  * </p><p>
- * The special element <code>configInclude</code> with an attribute named <code>include</code>
- * includes the named resource (or file) while parsing. The root element of the included resource
- * is discarded but its children are processed as if they had been defined in
- * the root document.
+ * The special element <code>configInclude</code> allows to include XML from other resources.
+ * The element requires one of the following attributes:
  * </p>
+ * <ol>
+ * 	 <li>
+ * 		 <code>include</code>
+ * 	   <br>
+ *     Name of a resource. The root element of the included resource
+ *     is discarded but its children are processed as if they had been defined in
+ *     the root document.
+ * 	 </li>
+ * 	 <li>
+ * 		 <code>includeOptional</code>
+ * 	   <br>
+ *     Name of an optional resource.
+ *     Same as <code>include</code>, but no exception is thrown when the resource could not be found. 
+ * 	 </li>
+ * 	 <li>
+ * 		 <code>define</code>
+ * 	   <br>
+ *     Name of an inline XML block.
+ *     The block may be included later like a normal classpath or file resource. 
+ * 	 </li>
+ * </ol>
+ * <p>
  * <b>Settings</b>
  * <p>
  * There is another special element named <code>configSettings</code> to set the parser's behaviour.
@@ -199,7 +219,7 @@
  *   </li>
  * </ol>
  * <p>
- * Copyright (c) 2006 - 2010, Uwe Finke. All rights reserved.
+ * Copyright (c) 2006 - 2021, Uwe Finke. All rights reserved.
  * <br>
  * Subject to 
  * <a href="http://www.opensource.org/licenses/bsd-license.php">BSD License</a>. 
