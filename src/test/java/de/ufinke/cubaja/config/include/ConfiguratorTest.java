@@ -12,7 +12,7 @@ public class ConfiguratorTest {
     
     Configurator configurator = new Configurator();
     configurator.setResourceLoader(new FileResourceLoader("src/test/resources/de/ufinke/cubaja/config/include"));
-    configurator.setName("inline_include_config");
+    configurator.setName("include_optional_config_main");
     Config config = configurator.configure(new Config());
     
     assertEquals(1, config.getFooList().get(0).getBar());
